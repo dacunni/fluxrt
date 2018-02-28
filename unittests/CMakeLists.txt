@@ -15,9 +15,9 @@ add_executable(quaternion quaternion.cpp)
 #link_directories(/usr/local/lib)
 
 set(LIBS
-    micromath
     ${GTEST_BOTH_LIBRARIES}
    )
+#    micromath
 #    m
 #    c)
 

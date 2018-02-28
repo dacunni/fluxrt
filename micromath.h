@@ -8,7 +8,7 @@
 #include "vectortypes.h"
 #include "quaternion.h"
 
-#include "Matrix.h"
+#include "matrix.h"
 
 #endif
 
