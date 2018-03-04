@@ -10,5 +10,7 @@
 
 #include "matrix.h"
 
+#include "ray.h"
+
 #endif
 

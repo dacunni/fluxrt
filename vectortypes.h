@@ -1,5 +1,5 @@
-#ifndef __position3_H__
-#define __position3_H__
+#ifndef __VECTORTYPES_H__
+#define __VECTORTYPES_H__
 
 #include "vec3.h"
 
@@ -15,33 +15,13 @@ struct Direction3 : public vec3
     explicit Direction3() : vec3() {}
     explicit Direction3(const vec3 & a) : vec3(a) {}
 	explicit Direction3(float xn, float yn, float zn) : vec3(xn, yn, zn) {}
+	inline Direction3 normalized() const { return Direction3(vec3::normalized()); }
 };
 
-#if 0
-static Position3 foo(vec3 a) {
-    return Position3(a);
-}
-
-static Position3 bar(Direction3 a) {
-    //return a;
-    return Position3(a);
-}
-
-static Direction3 bar(Position3 a) {
-    //return a;
-    return Direction3(a);
-}
-#endif
-
-#if 0
-static Position3 foo(const Position3 & a, const Position3 & b) {
-    return Position3(add(a, b));
-}
-
-static Direction3 foo(const Direction3 & a, const Direction3 & b) {
-    return Direction3(add(a, b));
-}
-#endif
-
+inline Position3 add(const Position3 & a, const Direction3 & b) { return Position3(add((vec3) a, (vec3) b)); }
+inline Position3 subtract(const Position3 & a, const Direction3 & b) { return Position3(subtract((vec3) a, (vec3) b)); }
+inline Direction3 subtract(const Position3 & a, const Position3 & b) { return Direction3(subtract((vec3) a, (vec3) b)); }
+inline Direction3 subtract(const Direction3 & a, const Direction3 & b) { return Direction3(subtract((vec3) a, (vec3) b)); }
+inline Direction3 scale(const Direction3 & a, float s) { return Direction3(scale((vec3)a, s)); }
 
 #endif
