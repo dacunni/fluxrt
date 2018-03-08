@@ -28,7 +28,7 @@ struct vec3
     }
     inline void normalize() { *this = this->normalized(); }
 
-    float x, y, z, w;
+    float x, y, z;
 };
 
 static const vec3 zerovec3(0.0f, 0.0f, 0.0f);
