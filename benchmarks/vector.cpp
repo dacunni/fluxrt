@@ -2,21 +2,41 @@
 #include <random>
 #include "micromath.h"
 
-static void Vec4Creation(benchmark::State& state) {
+static void Vec4DefaultConstruction(benchmark::State& state) {
     for (auto _ : state) {
         vec4 r;
         benchmark::DoNotOptimize(r);
     }
 }
-BENCHMARK(Vec4Creation);
+BENCHMARK(Vec4DefaultConstruction);
 
-static void Vec3Creation(benchmark::State& state) {
+static void Vec3DefaultConstruction(benchmark::State& state) {
     for (auto _ : state) {
         vec3 r;
         benchmark::DoNotOptimize(r);
     }
 }
-BENCHMARK(Vec3Creation);
+BENCHMARK(Vec3DefaultConstruction);
+
+static void Vec4CopyConstruction(benchmark::State& state) {
+    vec4 s;
+    benchmark::DoNotOptimize(s);
+    for (auto _ : state) {
+        vec4 r(s);
+        benchmark::DoNotOptimize(r);
+    }
+}
+BENCHMARK(Vec4CopyConstruction);
+
+static void Vec3CopyConstruction(benchmark::State& state) {
+    vec3 s;
+    benchmark::DoNotOptimize(s);
+    for (auto _ : state) {
+        vec3 r(s);
+        benchmark::DoNotOptimize(r);
+    }
+}
+BENCHMARK(Vec3CopyConstruction);
 
 static void Vec4Magnitude(benchmark::State& state) {
     vec4 v(1.3, 4.2, 5.6);
@@ -81,6 +101,30 @@ static void Vec3Add(benchmark::State& state) {
     }
 }
 BENCHMARK(Vec3Add);
+
+static void Vec3Subtract(benchmark::State& state) {
+    vec3 a, b, r;
+    benchmark::DoNotOptimize(a);
+    benchmark::DoNotOptimize(b);
+    for (auto _ : state) {
+        r = subtract(a, b);
+        benchmark::DoNotOptimize(r);
+    }
+}
+BENCHMARK(Vec3Subtract);
+
+static void Vec3Scale(benchmark::State& state) {
+    vec3 r;
+    float s = 0.0f;
+    benchmark::DoNotOptimize(r);
+    benchmark::DoNotOptimize(s);
+    for (auto _ : state) {
+        r = scale(r, s);
+        benchmark::DoNotOptimize(r);
+        benchmark::DoNotOptimize(s);
+    }
+}
+BENCHMARK(Vec3Scale);
 
 static void Vec3Dot(benchmark::State& state) {
     vec3 a, b;
