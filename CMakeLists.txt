@@ -4,13 +4,13 @@ PROJECT (micromath)
 
 SET(CMAKE_CXX_FLAGS "-std=c++11 -O2")
 
-#set(SRCS
-#    matrix.cpp
-#    )
-#ADD_LIBRARY(micromath ${SRCS})
+set(SRCS
+    vec3.cpp
+    )
+ADD_LIBRARY(micromath ${SRCS})
 
 add_subdirectory(benchmarks)
-#add_subdirectory(python)
+add_subdirectory(python)
 
 enable_testing()
 add_subdirectory(unittests)

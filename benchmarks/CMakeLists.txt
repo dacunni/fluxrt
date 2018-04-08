@@ -11,6 +11,7 @@ link_directories(/usr/local/lib)
 
 set(LIBS
     benchmark
+    micromath
    )
 #    micromath
 #    m

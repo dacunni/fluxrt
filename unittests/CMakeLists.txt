@@ -16,8 +16,8 @@ add_executable(quaternion quaternion.cpp)
 
 set(LIBS
     ${GTEST_BOTH_LIBRARIES}
+    micromath
    )
-#    micromath
 #    m
 #    c)
 
