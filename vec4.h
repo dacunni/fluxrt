@@ -39,6 +39,10 @@ struct vec4
         return *this;
     }
 
+    static vec4 zero();
+
+    std::string string() const;
+
     float x, y, z, w;
 };
 

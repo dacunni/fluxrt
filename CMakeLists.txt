@@ -6,6 +6,7 @@ SET(CMAKE_CXX_FLAGS "-std=c++11 -O2")
 
 set(SRCS
     vec3.cpp
+    vec4.cpp
     )
 ADD_LIBRARY(micromath ${SRCS})
 
