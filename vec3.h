@@ -6,7 +6,7 @@
 
 struct vec3
 {
-    inline vec3() : x(0.0f), y(0.0f), z(0.0f) {}
+    inline vec3() = default;
     inline vec3(const vec3 & a) : x(a.x), y(a.y), z(a.z) {}
 	inline vec3(float xn, float yn, float zn) : x(xn), y(yn), z(zn) {}
     inline ~vec3() = default;
@@ -32,7 +32,9 @@ struct vec3
 
     static vec3 zero();
 
-    float x, y, z;
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
 };
 
 inline bool operator==(const vec3 & a, const vec3 & b) { return a.x == b.x && a.y == b.y && a.z == b.z; }

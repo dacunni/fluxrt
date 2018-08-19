@@ -6,7 +6,7 @@
 
 struct vec4
 {
-    inline vec4() : x(0.0f), y(0.0f), z(0.0f), w(1.0f) {}
+    inline vec4() = default;
     inline vec4(const vec4 & a) : x(a.x), y(a.y), z(a.z), w(a.w) {}
 	inline vec4(float xn, float yn, float zn, float wn = 1.0f) : x(xn), y(yn), z(zn), w(wn) {}
     inline ~vec4() = default;
@@ -43,7 +43,10 @@ struct vec4
 
     std::string string() const;
 
-    float x, y, z, w;
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
+    float w = 1.0f;
 };
 
 inline vec4 scale(const vec4 & a, float s) {

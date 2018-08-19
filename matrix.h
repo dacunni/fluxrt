@@ -17,11 +17,11 @@
 class AffineMatrix 
 {
 public:
-	inline AffineMatrix() {}
+	inline AffineMatrix() = default;
 	inline AffineMatrix(float d00, float d01, float d02, float d03,
-                 float d10, float d11, float d12, float d13,
-                 float d20, float d21, float d22, float d23);
-	inline ~AffineMatrix() {}
+                        float d10, float d11, float d12, float d13,
+                        float d20, float d21, float d22, float d23);
+	inline ~AffineMatrix() = default;
 	
 	inline float & at(int r, int c) { return data[r * 4 + c]; }
 	inline float at(int r, int c) const { return data[r * 4 + c]; }

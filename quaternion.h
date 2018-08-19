@@ -6,7 +6,7 @@
 class quaternion 
 {
 public:
-	inline quaternion();
+	inline quaternion() = default;
 	inline quaternion(const quaternion & a);
 	inline quaternion(float x, float y, float z, float r = 1.0f);
 	inline ~quaternion() {}
@@ -16,7 +16,10 @@ public:
     // IMPLEMENT ME
     inline quaternion conjugate();
     
-    float x, y, z, r;
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
+    float r = 1.0f;
 };
 
 // quaternion math functions

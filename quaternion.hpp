@@ -3,12 +3,6 @@
 
 #include <cmath>
 
-inline quaternion::quaternion()
-    : x(0.0f), y(0.0f), z(0.0f), r(1.0f)
-{
-
-}
-
 inline quaternion::quaternion(const quaternion & a)
 {
 	x = a.x;
