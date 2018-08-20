@@ -3,9 +3,8 @@
 
 #include "vec3.h"
 
-class quaternion 
+struct quaternion 
 {
-public:
 	inline quaternion() = default;
 	inline quaternion(const quaternion & a);
 	inline quaternion(float x, float y, float z, float r = 1.0f);

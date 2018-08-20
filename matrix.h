@@ -14,9 +14,8 @@
 //  Where R is a rotation matrix, and T is a translation vector.
 //  The last row is always implied
 //
-class AffineMatrix 
+struct AffineMatrix 
 {
-public:
 	inline AffineMatrix() = default;
 	inline AffineMatrix(float d00, float d01, float d02, float d03,
                         float d10, float d11, float d12, float d13,

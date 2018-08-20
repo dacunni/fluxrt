@@ -10,6 +10,8 @@
 
 #include "matrix.h"
 
+#include "slab.h"
+
 #include "ray.h"
 
 #endif
