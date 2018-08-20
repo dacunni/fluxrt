@@ -17,16 +17,6 @@ struct Ray
     Direction3 direction;
 };
 
-struct Sphere
-{
-	inline Sphere() = default;
-	inline Sphere(const Position3 & c, float r) : center(c), radius(r) {}
-	inline ~Sphere() = default;
-
-	Position3 center;
-	float radius;
-};
-
 struct RayIntersection {
     inline RayIntersection() = default;
     inline ~RayIntersection() = default;
@@ -35,12 +25,5 @@ struct RayIntersection {
     Direction3 normal;
     float distance = std::numeric_limits<float>::max();
 };
-
-
-inline bool intersects(const Ray & ray, const Sphere & sphere, float minDistance);
-
-inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDistance, RayIntersection & intersection);
-
-#include "raysphere.hpp"
 
 #endif

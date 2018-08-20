@@ -7,12 +7,12 @@
 #include "vec4.h"
 #include "vectortypes.h"
 #include "quaternion.h"
-
 #include "matrix.h"
 
-#include "slab.h"
-
 #include "ray.h"
+
+#include "sphere.h"
+#include "slab.h"
 
 #endif
 
