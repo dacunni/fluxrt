@@ -13,10 +13,9 @@ struct Sphere
 	float radius;
 };
 
+// Ray intersection
 inline bool intersects(const Ray & ray, const Sphere & sphere, float minDistance);
-
 inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDistance, RayIntersection & intersection);
 
 #include "sphere.hpp"
-
 #endif

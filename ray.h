@@ -5,7 +5,7 @@
 #include <limits>
 #include <float.h>
 
-#include "vec3.h"
+#include "vectortypes.h"
 
 struct Ray
 {

@@ -23,8 +23,12 @@ add_executable(matrix_bench matrix.cpp)
 target_link_libraries(matrix_bench ${LIBS})
 add_executable(slab_bench slab.cpp)
 target_link_libraries(slab_bench ${LIBS})
-add_executable(rayintersect_bench rayintersect.cpp)
-target_link_libraries(rayintersect_bench ${LIBS})
+
+add_executable(raysphere raysphere.cpp)
+target_link_libraries(raysphere ${LIBS})
+add_executable(rayslab rayslab.cpp)
+target_link_libraries(rayslab ${LIBS})
+
 add_executable(stdlib_bench stdlib.cpp)
 target_link_libraries(stdlib_bench ${LIBS})
 

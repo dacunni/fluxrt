@@ -1,6 +1,8 @@
 #ifndef __Slab__
 #define __Slab__
 
+#include "ray.h"
+
 struct Slab
 {
     inline Slab() = default;
@@ -27,6 +29,10 @@ struct Slab
 };
 
 Slab merge(const Slab & a, const Slab & b);
+
+// Ray intersection
+inline bool intersects(const Ray & ray, const Slab & slab, float minDistance);
+inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistance, RayIntersection & intersection);
 
 #include "slab.hpp"
 #endif
