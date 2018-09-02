@@ -9,18 +9,14 @@ include_directories(..)
 
 link_directories(/usr/local/lib)
 
-set(LIBS
-    benchmark
-    micromath
-   )
-#    micromath
-#    m
-#    c)
+set(LIBS benchmark micromath)
 
 add_executable(vector_bench vector.cpp)
 target_link_libraries(vector_bench ${LIBS})
 add_executable(matrix_bench matrix.cpp)
 target_link_libraries(matrix_bench ${LIBS})
+add_executable(quaternion_bench quaternion.cpp)
+target_link_libraries(quaternion_bench ${LIBS})
 add_executable(slab_bench slab.cpp)
 target_link_libraries(slab_bench ${LIBS})
 
