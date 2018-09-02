@@ -21,6 +21,18 @@ inline quaternion::quaternion(const vec3 & v, float rn)
     set(v.x, v.y, v.z, rn);
 }
 
+inline quaternion quaternion::axisAngle(const vec3 & axis, float angle)
+{
+    return unitAxisAngle(axis.normalized(), angle);
+}
+
+inline quaternion quaternion::unitAxisAngle(const vec3 & axis, float angle)
+{
+    float c = std::cos(angle * 0.5f);
+    float s = std::sin(angle * 0.5f);
+    return quaternion(axis.x * s, axis.y * s, axis.z * s, c);
+}
+
 inline void quaternion::set(float xn, float yn, float zn, float rn)
 {
 	x = xn;
@@ -49,11 +61,11 @@ inline quaternion mult(const quaternion & q, const quaternion & p)
                       s1 * s2 - dot(v1, v2));
 }
 
-inline quaternion rotate(const quaternion & q, const vec3 & v)
+inline vec3 rotate(const quaternion & q, const vec3 & v)
 {
-    quaternion r;
-    // IMPLEMENT ME
-    return r;
+    quaternion r = mult(q, mult(quaternion(v.x, v.y, v.z),
+                                conjugate(q)));
+    return vec3(r.x, r.y, r.z);
 }
 
 #endif

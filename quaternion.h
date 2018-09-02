@@ -11,6 +11,10 @@ struct quaternion
     inline quaternion(const vec3 & v, float r = 1.0f);
     inline ~quaternion() = default;
 
+    // Factory
+    static inline quaternion axisAngle(const vec3 & axis, float angle);
+    static inline quaternion unitAxisAngle(const vec3 & axis, float angle);
+
     inline void set(float x, float y, float z, float r);
 
     float x = 0.0f;
@@ -23,7 +27,7 @@ inline float norm(const quaternion & q);
 inline quaternion conjugate(const quaternion & q);
 
 inline quaternion mult(const quaternion & q, const quaternion & p);
-inline quaternion rotate(const quaternion & q, const vec3 & v);
+inline vec3 rotate(const quaternion & q, const vec3 & v);
 
 #include "quaternion.hpp"
 
