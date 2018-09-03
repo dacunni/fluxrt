@@ -8,6 +8,7 @@ set(SRCS
     vec3.cpp
     vec4.cpp
     slab.cpp
+    triangle.cpp
     )
 ADD_LIBRARY(micromath ${SRCS})
 

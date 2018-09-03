@@ -13,6 +13,7 @@
 
 #include "sphere.h"
 #include "slab.h"
+#include "triangle.h"
 
 #endif
 

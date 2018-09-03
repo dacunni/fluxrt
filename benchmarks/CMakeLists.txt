@@ -24,6 +24,8 @@ add_executable(raysphere raysphere.cpp)
 target_link_libraries(raysphere ${LIBS})
 add_executable(rayslab rayslab.cpp)
 target_link_libraries(rayslab ${LIBS})
+add_executable(raytriangle raytriangle.cpp)
+target_link_libraries(raytriangle ${LIBS})
 
 add_executable(stdlib_bench stdlib.cpp)
 target_link_libraries(stdlib_bench ${LIBS})
