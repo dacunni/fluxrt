@@ -15,5 +15,7 @@
 #include "slab.h"
 #include "triangle.h"
 
+#include "image.h"
+
 #endif
 

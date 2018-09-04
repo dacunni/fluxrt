@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 2.6)
 
 PROJECT (micromath)
 
+include_directories(external/stb)
+
 SET(CMAKE_CXX_FLAGS "-std=c++11 -O2")
 
 set(SRCS
+    image.cpp
     vec3.cpp
     vec4.cpp
     slab.cpp
@@ -17,4 +20,6 @@ add_subdirectory(python)
 
 enable_testing()
 add_subdirectory(unittests)
+
+add_subdirectory(tests)
 
