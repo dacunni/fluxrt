@@ -8,6 +8,7 @@
 #include "vectortypes.h"
 #include "quaternion.h"
 #include "matrix.h"
+#include "rng.h"
 
 #include "ray.h"
 

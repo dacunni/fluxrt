@@ -10,6 +10,7 @@ set(SRCS
     image.cpp
     vec3.cpp
     vec4.cpp
+    rng.cpp
     slab.cpp
     triangle.cpp
     )

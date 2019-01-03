@@ -1,7 +1,6 @@
 #ifndef __VEC4_H__
 #define __VEC4_H__
 
-#include <cmath>
 #include "base.h"
 
 struct vec4
