@@ -4,16 +4,9 @@
 
 void Slab::correctMinMax(void)
 {
-#if 0
-    std::tie(xmin, xmax) = std::minmax(xmin, xmax);
-    std::tie(ymin, ymax) = std::minmax(ymin, ymax);
-    std::tie(zmin, zmax) = std::minmax(zmin, zmax);
-#else
-    // DAC: Faster in benchmarks than the above
     if(xmin > xmax) { std::swap(xmin, xmax); }
     if(ymin > ymax) { std::swap(ymin, ymax); }
     if(zmin > zmax) { std::swap(zmin, zmax); }
-#endif
 }
 
 float Slab::maxdim() const
