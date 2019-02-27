@@ -7,9 +7,11 @@ include_directories(external/stb)
 SET(CMAKE_CXX_FLAGS "-std=c++11 -O2")
 
 set(SRCS
+    fresnel.cpp
     image.cpp
     vec3.cpp
     vec4.cpp
+    optics.cpp
     rng.cpp
     slab.cpp
     triangle.cpp

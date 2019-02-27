@@ -10,6 +10,9 @@
 #include "matrix.h"
 #include "rng.h"
 
+#include "optics.h"
+#include "fresnel.h"
+
 #include "ray.h"
 
 #include "sphere.h"
