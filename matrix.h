@@ -21,12 +21,19 @@ struct AffineMatrix
                         float d10, float d11, float d12, float d13,
                         float d20, float d21, float d22, float d23);
 	inline ~AffineMatrix() = default;
+
+    // Special transform factories
+    // Transformations
+    static inline AffineMatrix translation(const vec3 & d);
+    static inline AffineMatrix scale(float xs, float ys, float zs);
+    static inline AffineMatrix rotation(const vec3 & axis, float angle);
+    static inline AffineMatrix rotation(float angle, const vec3 & axis);
+	
+	void identity();
 	
 	inline float & at(int r, int c) { return data[r * 4 + c]; }
 	inline float at(int r, int c) const { return data[r * 4 + c]; }
     
-	void identity();
-	
 	float data[12];
 };
 
@@ -49,12 +56,6 @@ inline AffineMatrix scale(const AffineMatrix & A, float s);
 
 inline void inverse(const AffineMatrix & A, AffineMatrix & R);
 inline AffineMatrix inverse(const AffineMatrix & A);
-
-// Transformations
-inline AffineMatrix makeTranslationAffine(const vec3 & d);
-inline AffineMatrix makeScaleAffine(float xs, float ys, float zs);
-inline AffineMatrix makeRotationAffine(const vec3 & axis, float angle);
-inline AffineMatrix makeRotationAffine(float angle, const vec3 & axis);
 
 #include "matrix.hpp"
 

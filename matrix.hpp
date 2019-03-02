@@ -1,4 +1,5 @@
-#include <math.h>
+#include <cassert>
+#include <cmath>
 #include <stdio.h>
 #include <sstream>
 
@@ -11,6 +12,38 @@ inline AffineMatrix::AffineMatrix(float d00, float d01, float d02, float d03,
     at(2, 0) = d20; at(2, 1) = d21; at(2, 2) = d22; at(2, 3) = d23;
 }
 
+inline AffineMatrix AffineMatrix::translation(const vec3 & d)
+{
+    return AffineMatrix(1.0, 0.0, 0.0, d.x,
+                        0.0, 1.0, 0.0, d.y,
+                        0.0, 0.0, 1.0, d.z);
+}
+
+inline AffineMatrix AffineMatrix::scale(float xs, float ys, float zs)
+{
+    return AffineMatrix( xs, 0.0, 0.0, 0.0,
+                        0.0,  ys, 0.0, 0.0,
+                        0.0, 0.0,  zs, 0.0);
+}
+
+inline AffineMatrix AffineMatrix::rotation(const vec3 & axis, float angle)
+{
+    float ca = std::cos( angle );
+    float omca = 1.0f - ca;
+    float sa = std::sin( angle );
+    auto u = axis.normalized();
+    
+    return AffineMatrix(      ca + u.x * u.x * omca, u.x * u.y * omca - u.z * sa, u.x * u.z * omca + u.y * sa, 0.0,
+                        u.y * u.x * omca + u.z * sa,       ca + u.y * u.y * omca, u.y * u.z * omca - u.x * sa, 0.0,
+                        u.z * u.x * omca - u.y * sa, u.z * u.y * omca + u.x * sa,       ca + u.z * u.z * omca, 0.0);
+}
+
+inline AffineMatrix AffineMatrix::rotation(float angle, const vec3 & axis)
+{
+    return rotation(axis, angle);
+}
+
+
 inline void AffineMatrix::identity() 
 {
     at(0, 0) = 1.0f; at(0, 1) = 0.0f; at(0, 2) = 0.0f; at(0, 3) = 0.0f;
@@ -18,9 +51,16 @@ inline void AffineMatrix::identity()
     at(2, 0) = 0.0f; at(2, 1) = 0.0f; at(2, 2) = 1.0f; at(2, 3) = 0.0f;
 }
 
-// TODO - handle R being the same as one of A or B
 inline void mult(const AffineMatrix & A, const AffineMatrix & B, AffineMatrix & R)
 {
+    // TODO - handle R being the same as one of A or B
+    //assert(!(&R == &A || &R == &B));
+#if 0 // Trying to handle this case, but it kills benchmarks
+    if(&R == &A || &R == &B) {
+        auto Q = mult(A, B);
+        R = Q;
+    }
+#endif
 #if 1
     for(int r = 0; r < 3; r++) {
         for(int c = 0; c < 4; c++) {
@@ -129,36 +169,4 @@ inline AffineMatrix inverse(const AffineMatrix & A)
     inverse(A, R);
     return R;
 }
-
-inline AffineMatrix makeTranslationAffine(const vec3 & d)
-{
-    return AffineMatrix(1.0, 0.0, 0.0, d.x,
-                        0.0, 1.0, 0.0, d.y,
-                        0.0, 0.0, 1.0, d.z);
-}
-
-inline AffineMatrix makeScaleAffine(float xs, float ys, float zs)
-{
-    return AffineMatrix( xs, 0.0, 0.0, 0.0,
-                        0.0,  ys, 0.0, 0.0,
-                        0.0, 0.0,  zs, 0.0);
-}
-
-inline AffineMatrix makeRotationAffine(const vec3 & axis, float angle)
-{
-    float ca = std::cos( angle );
-    float omca = 1.0f - ca;
-    float sa = std::sin( angle );
-    auto u = axis.normalized();
-    
-    return AffineMatrix(      ca + u.x * u.x * omca, u.x * u.y * omca - u.z * sa, u.x * u.z * omca + u.y * sa, 0.0,
-                        u.y * u.x * omca + u.z * sa,       ca + u.y * u.y * omca, u.y * u.z * omca - u.x * sa, 0.0,
-                        u.z * u.x * omca - u.y * sa, u.z * u.y * omca + u.x * sa,       ca + u.z * u.z * omca, 0.0);
-}
-
-inline AffineMatrix makeRotationAffine(float angle, const vec3 & axis)
-{
-    return makeRotationAffine(axis, angle);
-}
-
 
