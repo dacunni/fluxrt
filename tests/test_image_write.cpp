@@ -35,6 +35,19 @@ int main(int argc, char ** argv)
     //writeHDR(imageFx3, "test_fx3.hdr");
     //writeHDR(imageFx1, "test_fx1.hdr");
 
+    auto imageColorRange = testpattern::colorRange<float>();
+    writePNG(imageColorRange, "test_color_range.png");
+    auto imageColorRangeGamma = applyGamma(imageColorRange, 1.0/2.0f);
+    writePNG(imageColorRangeGamma, "test_color_range_gamma_2p0.png");
+    imageColorRangeGamma = applyGamma(imageColorRange, 1.0/2.2f);
+    writePNG(imageColorRangeGamma, "test_color_range_gamma_2p2.png");
+    imageColorRangeGamma = applyGamma(imageColorRange, 1.0/2.4f);
+    writePNG(imageColorRangeGamma, "test_color_range_gamma_2p4.png");
+    imageColorRangeGamma = applyGamma(imageColorRange, 1.0/2.6f);
+    writePNG(imageColorRangeGamma, "test_color_range_gamma_2p6.png");
+    imageColorRangeGamma = applyStandardGamma(imageColorRange);
+    writePNG(imageColorRangeGamma, "test_color_range_gamma_corrected.png");
+
     return EXIT_SUCCESS;
 }
 

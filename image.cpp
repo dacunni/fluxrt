@@ -37,3 +37,4 @@ bool writeHDR<float>(const Image<float> & image, const char * filename)
 }
 #endif
 
+

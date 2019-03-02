@@ -19,6 +19,7 @@
 #include "slab.h"
 #include "triangle.h"
 
+#include "color.h"
 #include "image.h"
 
 #endif

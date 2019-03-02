@@ -31,5 +31,23 @@ bool writePNG(const Image<T> & image, const char * filename);
 template<typename T, typename S>
 Image<T> convert(const Image<S> & image);
 
+template<typename T>
+Image<T> applyGamma(const Image<T> & image, float gamma);
+
+static const float gammaCorrectionFactor = 1.0f / 2.4f;
+
+template<typename T>
+Image<T> applyStandardGamma(const Image<T> & image) {
+    return applyGamma(image, gammaCorrectionFactor);
+}
+
+namespace testpattern {
+
+template<typename T>
+Image<T> colorRange();
+
+}; // namespace testpattern
+
+
 #include "image.hpp"
 #endif
