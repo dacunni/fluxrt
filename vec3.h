@@ -35,6 +35,7 @@ inline vec3 operator+(const vec3 & a, const vec3 & b) { return add(a, b); }
 
 inline vec3 subtract(const vec3 & a, const vec3 & b) { return vec3(a.x - b.x, a.y - b.y, a.z - b.z); }
 inline vec3 operator-(const vec3 & a, const vec3 & b) { return subtract(a, b); }
+inline vec3 operator-(const vec3 & a) { return a.negated(); }
 
 inline vec3 scale(const vec3 & a, float s) { return vec3(a.x * s, a.y * s, a.z * s); }
 inline vec3 operator*(const vec3 & a, float s) { return scale(a, s); }

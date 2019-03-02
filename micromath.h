@@ -8,6 +8,8 @@
 #include "vectortypes.h"
 #include "quaternion.h"
 #include "matrix.h"
+#include "transform.h"
+
 #include "rng.h"
 
 #include "optics.h"

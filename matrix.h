@@ -23,7 +23,6 @@ struct AffineMatrix
 	inline ~AffineMatrix() = default;
 
     // Special transform factories
-    // Transformations
     static inline AffineMatrix translation(const vec3 & d);
     static inline AffineMatrix scale(float xs, float ys, float zs);
     static inline AffineMatrix rotation(const vec3 & axis, float angle);
