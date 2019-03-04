@@ -15,15 +15,9 @@ add_executable(slab slab.cpp)
 add_executable(random random.cpp)
 add_executable(fresnel fresnel.cpp)
 add_executable(barycentric barycentric.cpp)
+add_executable(raysphere raysphere.cpp)
 
-#link_directories(/usr/local/lib)
-
-set(LIBS
-    ${GTEST_BOTH_LIBRARIES}
-    micromath
-   )
-#    m
-#    c)
+set(LIBS ${GTEST_BOTH_LIBRARIES} micromath)
 
 target_link_libraries(vec3 ${LIBS})
 target_link_libraries(vec4 ${LIBS})
@@ -32,6 +26,7 @@ target_link_libraries(slab ${LIBS})
 target_link_libraries(random ${LIBS})
 target_link_libraries(fresnel ${LIBS})
 target_link_libraries(barycentric ${LIBS})
+target_link_libraries(raysphere ${LIBS})
 
 add_test(AllTestsInVec3 vec3)
 add_test(AllTestsInVec4 vec4)
@@ -40,5 +35,6 @@ add_test(AllTestsInSlab slab)
 add_test(AllTestsInRandom random)
 add_test(AllTestsInFresnel fresnel)
 add_test(AllTestsInBarycentric barycentric)
+add_test(AllTestsInRaySphere raysphere)
 
 
