@@ -40,6 +40,7 @@ inline vec3 operator-(const vec3 & a) { return a.negated(); }
 inline vec3 scale(const vec3 & a, float s) { return vec3(a.x * s, a.y * s, a.z * s); }
 inline vec3 operator*(const vec3 & a, float s) { return scale(a, s); }
 inline vec3 operator*(float s, const vec3 & a) { return scale(a, s); }
+inline vec3 operator/(const vec3 & a, float s) { return scale(a, 1.0f / s); }
 
 inline float dot(const vec3 & a, const vec3 & b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
 inline float clampedDot(const vec3 & a, const vec3 & b) { return std::max(dot(a, b), 0.0f); }
