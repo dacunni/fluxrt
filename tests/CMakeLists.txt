@@ -14,6 +14,17 @@ if(RUN_INSPECTION_TESTS)
                        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_image_write)
 endif(RUN_INSPECTION_TESTS)
 
+ADD_EXECUTABLE (test_simple_intersection test_simple_intersection.cpp)
+TARGET_LINK_LIBRARIES (test_simple_intersection micromath)
+
+if(RUN_INSPECTION_TESTS)
+    ADD_CUSTOM_COMMAND(TARGET test_simple_intersection POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/simple_intersection)
+    ADD_CUSTOM_COMMAND(TARGET test_simple_intersection POST_BUILD
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/simple_intersection
+                       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_simple_intersection)
+endif(RUN_INSPECTION_TESTS)
+
 ADD_EXECUTABLE (test_fresnel test_fresnel.cpp)
 TARGET_LINK_LIBRARIES (test_fresnel micromath)
 

@@ -1,3 +1,30 @@
+#include "barycentric.h"
+
+inline bool intersects(const Ray & ray, const Triangle & triangle, float minDistance)
+{
+    return intersectsTriangle(ray,
+                              triangle.vertices[0],
+                              triangle.vertices[1],
+                              triangle.vertices[2],
+                              minDistance);
+}
+
+inline bool findIntersection(const Ray & ray, const Triangle & triangle, float minDistance, RayIntersection & intersection)
+{
+    float t = FLT_MAX;
+    const auto & v0 = triangle.vertices[0];
+    const auto & v1 = triangle.vertices[1];
+    const auto & v2 = triangle.vertices[2];
+    if(!intersectsTriangle(ray, v0, v1, v2, minDistance, &t)) {
+        return false;
+    }
+
+    intersection.distance = t;
+    intersection.position = ray.origin + ray.direction * t;
+    auto bary = barycentricForPointInTriangle(intersection.position, v0, v1, v2);
+    intersection.normal = cross(v2 - v0, v1 - v0);
+    return true;
+}
 
 inline bool intersectsTriangle(const Ray & ray,
                                const vec3 & v0, const vec3 & v1, const vec3 & v2,

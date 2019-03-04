@@ -39,4 +39,8 @@ inline Direction3 scale(const Direction3 & a, float s) { return Direction3(scale
 inline Direction3 operator*(const Direction3 & a, float s) { return scale(a, s); }
 inline Direction3 operator*(float s, const Direction3 & a) { return scale(a, s); }
 
+inline Direction3 cross(const Direction3 & a, const Direction3 & b) { return Direction3(cross((vec3)a, (vec3)b)); }
+inline Direction3 mirror(const Direction3 & a, const Direction3 & n) { return Direction3(mirror((vec3)a, (vec3)n)); }
+inline Direction3 refract(const Direction3 & a, const Direction3 & n, float n1, float n2) { return Direction3(refract((vec3)a, (vec3)n, n1, n2)); }
+
 #endif

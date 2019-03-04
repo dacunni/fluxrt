@@ -2,6 +2,7 @@
 #define __IMAGE_H__
 
 #include <vector>
+#include <string>
 
 template<typename T>
 struct Image
@@ -25,6 +26,9 @@ struct Image
 
 template<typename T>
 bool writePNG(const Image<T> & image, const char * filename);
+template<typename T>
+bool writePNG(const Image<T> & image, const std::string & filename) { return writePNG(image, filename.c_str()); }
+
 //template<typename T>
 //bool writeHDR(const Image<T> & image, const char * filename);
 

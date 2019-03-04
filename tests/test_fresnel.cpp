@@ -127,8 +127,8 @@ void make_beers_law_images()
         { 0.2, 0.2, 0.2 }
     };
 
-    for(int x = 0; x < w; x++) {
-        for(int y = 0; y < h; y++) {
+    for(int y = 0; y < h; y++) {
+        for(int x = 0; x < w; x++) {
             for(int c = 0; c < 3; c++) {
                 int band = y * 5 / h;
                 float a = optics::beersLawAttenuation(att[band][c], 10.0f * (float) x / (w - 1));
