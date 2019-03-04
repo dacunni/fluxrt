@@ -19,9 +19,24 @@ struct Direction3 : public vec3
 };
 
 inline Position3 add(const Position3 & a, const Direction3 & b) { return Position3(add((vec3) a, (vec3) b)); }
+inline Position3 operator+(const Position3 & a, const Direction3 & b) { return add(a, b); }
+
+inline Direction3 add(const Direction3 & a, const Direction3 & b) { return Direction3(add((vec3) a, (vec3) b)); }
+inline Direction3 operator+(const Direction3 & a, const Direction3 & b) { return add(a, b); }
+
 inline Position3 subtract(const Position3 & a, const Direction3 & b) { return Position3(subtract((vec3) a, (vec3) b)); }
+inline Position3 operator-(const Position3 & a, const Direction3 & b) { return subtract(a, b); }
+
 inline Direction3 subtract(const Position3 & a, const Position3 & b) { return Direction3(subtract((vec3) a, (vec3) b)); }
+inline Direction3 operator-(const Position3 & a, const Position3 & b) { return subtract(a, b); }
+
 inline Direction3 subtract(const Direction3 & a, const Direction3 & b) { return Direction3(subtract((vec3) a, (vec3) b)); }
+inline Direction3 operator-(const Direction3 & a, const Direction3 & b) { return subtract(a, b); }
+
+inline Direction3 operator-(const Direction3 & a) { return Direction3(a.negated()); }
+
 inline Direction3 scale(const Direction3 & a, float s) { return Direction3(scale((vec3)a, s)); }
+inline Direction3 operator*(const Direction3 & a, float s) { return scale(a, s); }
+inline Direction3 operator*(float s, const Direction3 & a) { return scale(a, s); }
 
 #endif
