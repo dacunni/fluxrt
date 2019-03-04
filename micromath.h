@@ -3,6 +3,7 @@
 
 #include "base.h"
 
+#include "barycentric.h"
 #include "vec3.h"
 #include "vec4.h"
 #include "vectortypes.h"
@@ -20,6 +21,7 @@
 #include "sphere.h"
 #include "slab.h"
 #include "triangle.h"
+#include "trianglemesh.h"
 
 #include "color.h"
 #include "image.h"

@@ -1,7 +1,8 @@
 
 inline bool intersectsTriangle(const Ray & ray,
                                const vec3 & v0, const vec3 & v1, const vec3 & v2,
-                               float minDistance)
+                               float minDistance,
+                               float * distance)
 {
     const float epsilon = 1.0e-6;
 
@@ -34,6 +35,8 @@ inline bool intersectsTriangle(const Ray & ray,
         return false;   // intersection out of u/v range
 
     float t = inv_det * dot(e2, Q);
+    if(distance)
+        *distance = t;
     return t > minDistance;
 }
 

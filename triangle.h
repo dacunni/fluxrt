@@ -12,6 +12,7 @@ struct Triangle
     vec3 vertices[3];
 };
 
+
 // TODO - all of this
 
 // Ray intersection
@@ -20,7 +21,8 @@ struct Triangle
 
 inline bool intersectsTriangle(const Ray & ray,
                                const vec3 & v0, const vec3 & v1, const vec3 & v2,
-                               float minDistance);
+                               float minDistance,
+                               float * distance = nullptr);
 
 // ray / triangle array
 bool intersectsTriangles(const Ray & ray,

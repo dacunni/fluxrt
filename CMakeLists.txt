@@ -7,6 +7,7 @@ include_directories(external/stb)
 SET(CMAKE_CXX_FLAGS "-std=c++11 -O2")
 
 set(SRCS
+    barycentric.cpp
     color.cpp
     fresnel.cpp
     image.cpp
@@ -16,6 +17,7 @@ set(SRCS
     rng.cpp
     slab.cpp
     triangle.cpp
+    trianglemesh.cpp
     )
 ADD_LIBRARY(micromath ${SRCS})
 
