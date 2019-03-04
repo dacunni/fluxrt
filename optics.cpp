@@ -15,4 +15,9 @@ float snellsLawSine(float n_i, float sin_i, float n_o)
     return n_i / n_o * sin_i;
 }
 
+float beersLawAttenuation(float att, float dist)
+{
+    return std::exp(-att * dist);
+}
+
 }; // optics

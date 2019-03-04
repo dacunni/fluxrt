@@ -28,6 +28,7 @@ if(RUN_INSPECTION_TESTS)
                        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/plot_xy.py images/snell_angle_vaccuum_to_all.png snell_angle_ni_1.00_nt_*txt
                        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/plot_xy.py images/snell_angle_all_to_vaccuum.png snell_angle_ni_*_nt_1.00.txt
                        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/plot_xy.py images/fresnel_dialectric_ni_1.00_nt_1.50.png fresnel_dialectric_*_ni_1.00_nt_1.50.txt
-                       COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/plot_xy.py images/fresnel_dialectric_ni_1.50_nt_1.00.png fresnel_dialectric_*_ni_1.50_nt_1.00.txt)
+                       COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/plot_xy.py images/fresnel_dialectric_ni_1.50_nt_1.00.png fresnel_dialectric_*_ni_1.50_nt_1.00.txt
+                       COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/plot_xy.py images/beers_law.png beers_law_*.txt)
 endif(RUN_INSPECTION_TESTS)
 

@@ -9,6 +9,11 @@ float snellsLawAngle(float n_i, float angle_i, float n_o);
 // Snell's Law : Sine formulation
 float snellsLawSine(float n_i, float sin_i, float n_o);
 
+// Beer's Law attenuation at a given distance for a substance with a constant
+// attenuation coefficient. This is a unitless quantity that relates
+// transmitted radiant flux to incident radiant flux.
+float beersLawAttenuation(float att, float dist);
+
 }; // optics
 
 #endif

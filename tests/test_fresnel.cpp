@@ -103,6 +103,42 @@ void plot_snell(float n_i, float n_t)
     plot_data(filename, values_0_to_halfpi(100), [&](float x) { return optics::snellsLawAngle(n_i, x, n_t); });
 }
 
+void plot_beers_law(float att, float max_dist)
+{
+    std::stringstream ss;
+    ss << "beers_law_" << std::fixed << std::setprecision(2) << att
+        << file_extension;
+    std::string filename = ss.str();
+
+    plot_data(filename, values_in_range(0.0f, 10.0f, 100), [&](float x) { return optics::beersLawAttenuation(att, x); });
+}
+
+void make_beers_law_images()
+{
+    const int w = 512, h = 128;
+    Image<float> image(w, h, 3);
+
+    float bg[3]  = { 1.0f, 1.0f, 1.0f };
+    float att[5][3] = {
+        { 0.2, 0.7, 0.7 },
+        { 0.7, 0.2, 0.7 },
+        { 0.7, 0.7, 0.2 },
+        { 0.8, 0.8, 0.8 },
+        { 0.2, 0.2, 0.2 }
+    };
+
+    for(int x = 0; x < w; x++) {
+        for(int y = 0; y < h; y++) {
+            for(int c = 0; c < 3; c++) {
+                int band = y * 5 / h;
+                float a = optics::beersLawAttenuation(att[band][c], 10.0f * (float) x / (w - 1));
+                image.set(x, y, c, a);
+            }
+        }
+    }
+    writePNG(applyStandardGamma(image), "beers_law_white_bg.png");
+}
+
 int main(int argc, char ** argv)
 {
     auto F_0_to_1 = values_in_range(0.0, 1.0, 10);
@@ -120,6 +156,12 @@ int main(int argc, char ** argv)
 
     plot_fresnel_dialectric_precise(1.0, 1.5);
     plot_fresnel_dialectric_precise(1.5, 1.0);
+
+    auto beers_atts = values_in_range(0.0f, 1.0f, 11);
+    for(auto att : beers_atts) {
+        plot_beers_law(att, 10);
+    }
+    make_beers_law_images();
 
     return EXIT_SUCCESS;
 }
