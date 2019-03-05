@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 PROJECT (micromath)
 
 include_directories(external/stb)
+include_directories(external/tinyobjloader)
 
 SET(CMAKE_CXX_FLAGS "-std=c++11 -O2")
 

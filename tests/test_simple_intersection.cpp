@@ -84,6 +84,13 @@ int main(int argc, char ** argv)
     triangle.vertices[2] = Position3( 0.5, -0.5, -0.3f);
     make_intersection_images(triangle, "triangle");
 
+    TriangleMesh mesh;
+    if(!loadTriangleMesh(mesh, "models/blender", "sphere.obj")) {
+        std::cerr << "Error loading mesh\n";
+        return EXIT_FAILURE;
+    }
+    make_intersection_images(mesh, "mesh");
+
     return EXIT_SUCCESS;
 }
 

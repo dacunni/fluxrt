@@ -14,6 +14,10 @@ inline Slab::Slab(float xmind, float ymind, float zmind, float sz) :
     correctMinMax();
 }
 
+inline Slab::Slab(const Position3 & minpos, const Position3 & maxpos)
+    : Slab(minpos.x, minpos.y, minpos.z, maxpos.x, maxpos.y, maxpos.z)
+{ }
+
 inline bool intersects(const Ray & ray, const Slab & slab, float minDistance)
 {
     // TODO: Handle NaNs

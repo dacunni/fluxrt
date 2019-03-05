@@ -11,10 +11,18 @@ struct TriangleMesh
     inline TriangleMesh() = default;
     inline ~TriangleMesh() = default;
 
+    void printMeta() const;
+
     std::vector<Position3> vertices;
     std::vector<Direction3> normals;
-    std::vector<uint32_t> indices;
+    struct {
+        std::vector<uint32_t> vertex;
+        std::vector<uint32_t> normal;
+    } indices;
 };
+
+bool loadTriangleMesh(TriangleMesh & mesh,
+                      const std::string & path, const std::string & filename);
 
 // Ray intersection
 bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance);
