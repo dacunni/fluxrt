@@ -11,6 +11,12 @@ struct TriangleMesh
     inline TriangleMesh() = default;
     inline ~TriangleMesh() = default;
 
+    size_t numTriangles() const;
+    bool hasNormals() const;
+
+    const Position3 & triangleVertex(uint32_t tri, uint32_t index) const;
+    const Direction3 & triangleNormal(uint32_t tri, uint32_t index) const;
+
     void printMeta() const;
 
     std::vector<Position3> vertices;

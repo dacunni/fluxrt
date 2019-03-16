@@ -12,7 +12,7 @@ struct Slab
     inline Slab(const Position3 & minpos, const Position3 & maxpos);
     inline ~Slab() = default;
     
-    void correctMinMax( void );
+    void correctMinMax(void);
 
     inline float xdim() const { return std::abs(xmax - xmin); }
     inline float ydim() const { return std::abs(ymax - ymin); }

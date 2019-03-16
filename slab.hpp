@@ -8,8 +8,7 @@ inline Slab::Slab(float xmind, float ymind, float zmind,
 }
 
 inline Slab::Slab(float xmind, float ymind, float zmind, float sz) :
-    xmin(xmind), ymin(ymind), zmin(zmind), 
-    xmax(xmind + sz), ymax(ymind + sz), zmax(zmind + sz)
+    Slab(xmind, ymind, zmind, xmind + sz, ymind + sz, zmind + sz)
 {
     correctMinMax();
 }
@@ -21,7 +20,7 @@ inline Slab::Slab(const Position3 & minpos, const Position3 & maxpos)
 inline bool intersects(const Ray & ray, const Slab & slab, float minDistance)
 {
     // TODO: Handle NaNs
-    vec3 dinv( 1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z );
+    vec3 dinv(1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z);
     float tx1 = (slab.xmin - ray.origin.x) * dinv.x;
     float tx2 = (slab.xmax - ray.origin.x) * dinv.x;
 
@@ -77,7 +76,7 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
     
     // Determine which sides of the box to label "near" or "far" depending on the
     // ray direction
-    if( ray.direction.x >= 0.0f ) {
+    if(ray.direction.x >= 0.0f) {
         xn = slab.xmin;
         xf = slab.xmax;
         nix = X_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
@@ -88,7 +87,7 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
         nix = X_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
     
-    if( ray.direction.y >= 0.0f ) {
+    if(ray.direction.y >= 0.0f) {
         yn = slab.ymin;
         yf = slab.ymax;
         niy = Y_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
@@ -99,7 +98,7 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
         niy = Y_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
 
-    if( ray.direction.z >= 0.0f ) {
+    if(ray.direction.z >= 0.0f) {
         zn = slab.zmin;
         zf = slab.zmax;
         niz = Z_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
@@ -121,49 +120,49 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
     
     // Reject if farthest y is closer than closest x, or
     // if farthest x is closer than closest y
-    if( tfy < tnx || tfx < tny )
+    if(tfy < tnx || tfx < tny)
         return false;
 
     // Find first potential intersection point as the farthest of the t0s, ignoring z
     float tn = tnx;
     nin = nix;
-    if( tny > tn ) {
+    if(tny > tn) {
         tn = tny;
         nin = niy;
     }
     // Find second potential intersection point as the closest of the t1s, ignoring z
     float tf = tfx;
     nif = nix;
-    if( tfy < tf ) {
+    if(tfy < tf) {
         tf = tfy;
         nif = niy;
     }
 
     // Reject if farthest z is closer than closest x,y, or
     // if farthest x,y is closer than closest z
-    if( tfz < tn || tnz > tf )
+    if(tfz < tn || tnz > tf)
         return false;
     
     // Update closest and farthest intersection with z
-    if( tnz > tn ) {
+    if(tnz > tn) {
         tn = tnz;
         nin = niz;
     }
-    if( tfz < tf ) {            // FIXME - is this the right or is it < ?
+    if(tfz < tf) {            // FIXME - is this the right or is it < ?
         tf = tfz;
         nif = niz;
     }
 
-    if( tf < minDistance ) {
+    if(tf < minDistance) {
         return false;
     }
 
-    if( tn > minDistance ) {
-        intersection.normal = boxNormals[ nin ];
+    if(tn > minDistance) {
+        intersection.normal = boxNormals[nin];
         intersection.distance = tn;
     }
     else {
-        intersection.normal = boxNormals[ nif ];
+        intersection.normal = boxNormals[nif];
         intersection.distance = tf;
     }
     intersection.position = add(ray.origin, scale(ray.direction, intersection.distance));

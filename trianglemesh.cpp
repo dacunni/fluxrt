@@ -108,45 +108,54 @@ bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
     uint32_t best_tri = 0;
     bool hit = false;
 
-    auto & vertices = mesh.vertices;
-    auto & normals = mesh.normals;
-    auto & indices = mesh.indices;
+    auto vertex = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleVertex(tri, index); };
+    auto normal = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleNormal(tri, index); };
 
-    const auto num_tri = indices.vertex.size() / 3;
-
-    for(uint32_t tri_index = 0; tri_index < num_tri; ++tri_index) {
-        uint32_t vi0 = indices.vertex[3 * tri_index + 0];
-        uint32_t vi1 = indices.vertex[3 * tri_index + 1];
-        uint32_t vi2 = indices.vertex[3 * tri_index + 2];
-        if(intersectsTriangle(ray, vertices[vi0], vertices[vi1], vertices[vi2],
+    for(uint32_t tri = 0; tri < mesh.numTriangles(); ++tri) {
+        if(intersectsTriangle(ray, vertex(tri, 0), vertex(tri, 1), vertex(tri, 2),
                               minDistance, &t)
            && t < best_t) {
-            best_tri = tri_index;
+            best_tri = tri;
             best_t = t;
             hit = true;
         }
     }
 
-    if(hit) {
-        auto vi0 = indices.vertex[3 * best_tri + 0];
-        auto vi1 = indices.vertex[3 * best_tri + 1];
-        auto vi2 = indices.vertex[3 * best_tri + 2];
-        auto ni0 = indices.normal[3 * best_tri + 0];
-        auto ni1 = indices.normal[3 * best_tri + 1];
-        auto ni2 = indices.normal[3 * best_tri + 2];
+    if(!hit)
+        return false;
 
-        intersection.distance = best_t;
-        intersection.position = ray.origin + ray.direction * best_t;
+    intersection.distance = best_t;
+    intersection.position = ray.origin + ray.direction * best_t;
 
-        auto bary = barycentricForPointInTriangle(intersection.position,
-                                                  vertices[vi0], vertices[vi1], vertices[vi2]);
+    auto bary = barycentricForPointInTriangle(intersection.position,
+                                              vertex(best_tri, 0), vertex(best_tri, 1), vertex(best_tri, 2));
 
-        intersection.normal = interpolate(normals[ni0], normals[ni1], normals[ni2],
-                                          bary);
-        // TODO: Texture coordinates
-    }
+    assert(hasNormals() && "TODO: Implement normal generation");
+    intersection.normal = interpolate(normal(best_tri, 0), normal(best_tri, 1), normal(best_tri, 2),
+                                      bary);
+    // TODO: Texture coordinates
 
-    return hit;
+    return true;
+}
+
+size_t TriangleMesh::numTriangles() const
+{
+    return indices.vertex.size() / 3;
+}
+
+bool TriangleMesh::hasNormals() const
+{
+    return indices.normal.size() > 0;
+}
+
+const Position3 & TriangleMesh::triangleVertex(uint32_t tri, uint32_t index) const
+{
+    return vertices[indices.vertex[3 * tri + index]];
+}
+
+const Direction3 & TriangleMesh::triangleNormal(uint32_t tri, uint32_t index) const
+{
+    return normals[indices.normal[3 * tri + index]];
 }
 
 void TriangleMesh::printMeta() const
