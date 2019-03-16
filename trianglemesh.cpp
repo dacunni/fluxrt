@@ -130,7 +130,7 @@ bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
     auto bary = barycentricForPointInTriangle(intersection.position,
                                               vertex(best_tri, 0), vertex(best_tri, 1), vertex(best_tri, 2));
 
-    assert(hasNormals() && "TODO: Implement normal generation");
+    assert(mesh.hasNormals() && "TODO: Implement normal generation");
     intersection.normal = interpolate(normal(best_tri, 0), normal(best_tri, 1), normal(best_tri, 2),
                                       bary);
     // TODO: Texture coordinates
