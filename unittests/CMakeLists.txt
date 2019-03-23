@@ -17,7 +17,7 @@ add_executable(fresnel fresnel.cpp)
 add_executable(barycentric barycentric.cpp)
 add_executable(raysphere raysphere.cpp)
 
-set(LIBS ${GTEST_BOTH_LIBRARIES} micromath)
+set(LIBS ${GTEST_BOTH_LIBRARIES} micromath pthread)
 
 target_link_libraries(vec3 ${LIBS})
 target_link_libraries(vec4 ${LIBS})

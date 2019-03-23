@@ -23,7 +23,11 @@ set(SRCS
 ADD_LIBRARY(micromath ${SRCS})
 
 add_subdirectory(benchmarks)
-add_subdirectory(python)
+
+option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
+if(BUILD_PYTHON_BINDINGS)
+    add_subdirectory(python)
+endif(BUILD_PYTHON_BINDINGS)
 
 enable_testing()
 add_subdirectory(unittests)
