@@ -1,0 +1,20 @@
+FROM centos_gcc_deps:latest
+#FROM centos:latest
+#FROM gcc:latest
+#FROM ubuntu:latest
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+ADD . /app
+
+# Install any needed packages specified in requirements.txt
+#RUN yum install -y 
+
+# Install projects
+#RUN git clone -b master git@github.com:dacunni/micromath.git
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+

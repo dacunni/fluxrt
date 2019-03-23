@@ -1,0 +1,7 @@
+
+docker build -t centos_gcc -f Dockerfile.centos_gcc .
+docker build -t centos_gcc_deps -f Dockerfile.centos_gcc_deps .
+docker build -t current_checkout -f Dockerfile.current_checkout .
+
+docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro current_checkout
+
