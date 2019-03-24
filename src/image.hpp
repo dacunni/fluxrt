@@ -18,7 +18,46 @@ inline size_t Image<T>::index(size_t x, size_t y, int channel) const
 template<typename T>
 inline T Image<T>::get(size_t x, size_t y, int channel) const
 {
+    if(outOfBoundsBehavior == ZeroValueOutOfBounds) {
+        if(x < 0 || y < 0 || x >= width || y >= height)
+            return T(0);
+    }
+    else if(outOfBoundsBehavior == ClampOutOfBoundsCoordinate) {
+        x = clamp<float>(x, 0, width - 1);
+        y = clamp<float>(y, 0, height - 1);
+    }
     return data[index(x, y, channel)];
+}
+
+template<typename T>
+inline T Image<T>::lerp(float x, float y, int channel) const
+{
+    x -= 0.5f;
+    y -= 0.5f;
+
+    if(outOfBoundsBehavior == ZeroValueOutOfBounds) {
+        if(x < 0 || y < 0 || x >= width || y >= height)
+            return T(0);
+    }
+    else if(outOfBoundsBehavior == ClampOutOfBoundsCoordinate) {
+        x = clamp<float>(x, 0, width - 1);
+        y = clamp<float>(y, 0, height - 1);
+    }
+
+    // Compute blend factors based on distance of each component
+    // from its nearest neighbors.
+    float iX, iY;
+    float bX = std::modf(x, &iX);
+    float bY = std::modf(y, &iY);
+
+    // Get neighbors in 4-connected region
+    T v11 = get(iX    , iY    , channel);
+    T v12 = get(iX    , iY + 1, channel);
+    T v21 = get(iX + 1, iY    , channel);
+    T v22 = get(iX + 1, iY + 1, channel);
+
+    // Bilinearly interpolate
+    return bilerp(bX, bY, v11, v12, v21, v22);
 }
 
 template<typename T>
@@ -41,23 +80,6 @@ inline void Image<T>::set3(size_t x, size_t y,
     set(x, y, 0, v0);
     set(x, y, 1, v1);
     set(x, y, 2, v2);
-}
-
-template<typename T>
-Image<T> applyGamma(const Image<T> & image, float gamma)
-{
-    Image<T> newImage(image.width, image.height, image.numChannels);
-
-    for(int y = 0; y < image.height; ++y) {
-        for(int x = 0; x < image.width; ++x) {
-            for(int c = 0; c < image.numChannels; ++c) {
-                auto v = image.get(x, y, c);
-                newImage.set(x, y, c, std::pow(v, gamma));
-            }
-        }
-    }
-
-    return newImage;
 }
 
 namespace testpattern {

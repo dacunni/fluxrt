@@ -11,6 +11,7 @@ struct Image
     ~Image() = default;
 
     inline T get(size_t x, size_t y, int channel) const;
+    inline T lerp(float x, float y, int channel) const;
 
     inline void set(size_t x, size_t y, int channel, T value);
     inline void set3(size_t x, size_t y, T v0, T v1, T v2);
@@ -18,10 +19,16 @@ struct Image
 
     inline size_t index(size_t x, size_t y, int channel) const;
 
+    enum OutOfBoundsBehavior {
+        ClampOutOfBoundsCoordinate,
+        ZeroValueOutOfBounds
+    };
+
     std::vector<T> data;
     size_t width;
     size_t height;
     int numChannels;
+    OutOfBoundsBehavior outOfBoundsBehavior = ZeroValueOutOfBounds;
 };
 
 template<typename T>
