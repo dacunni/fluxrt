@@ -1,7 +1,17 @@
 
-docker build -t centos_gcc -f Dockerfile.centos_gcc .
-docker build -t centos_gcc_deps -f Dockerfile.centos_gcc_deps .
-docker build -t current_checkout -f Dockerfile.current_checkout .
+# CentOS
+#
+docker build -t centos_compilers -f Dockerfile.centos_compilers .
+docker build -t centos_compilers_deps -f Dockerfile.centos_compilers_deps .
+docker build -t centos_current_checkout -f Dockerfile.centos_current_checkout .
 
-docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro current_checkout
+docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro centos_current_checkout
+
+# Ubuntu
+#
+docker build -t ubuntu_compilers -f Dockerfile.ubuntu_compilers .
+docker build -t ubuntu_compilers_deps -f Dockerfile.ubuntu_compilers_deps .
+docker build -t ubuntu_current_checkout -f Dockerfile.ubuntu_current_checkout .
+
+docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro ubuntu_current_checkout
 

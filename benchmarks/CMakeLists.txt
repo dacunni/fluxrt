@@ -11,7 +11,7 @@ include_directories(..)
 
 link_directories(/usr/local/lib)
 
-set(LIBS benchmark micromath)
+set(LIBS benchmark micromath pthread)
 
 add_executable(vector_bench vector.cpp)
 target_link_libraries(vector_bench ${LIBS})

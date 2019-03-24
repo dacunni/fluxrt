@@ -6,7 +6,8 @@ RUN yum install -y --enablerepo=epel \
     git \
     make cmake3 \
     python34-devel \
-    gcc-c++
+    gcc-c++ \
+    clang
 
 # Update library search path
 RUN echo /usr/local/lib >> /etc/ld.so.conf && ldconfig
