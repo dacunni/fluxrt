@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 
 template<typename T>
 struct Image
@@ -19,9 +20,20 @@ struct Image
 
     inline size_t index(size_t x, size_t y, int channel) const;
 
+    using PixelFunction = std::function<void(Image<T> &,
+                                             size_t /*x*/,
+                                             size_t /*y*/)>;
+    using PixelChannelFunction = std::function<void(Image<T> &,
+                                                    size_t /*x*/,
+                                                    size_t /*y*/,
+                                                    int    /*c*/)>;
+    void forEachPixel(const PixelFunction & fn);
+    void forEachPixelChannel(const PixelChannelFunction & fn);
+
     enum OutOfBoundsBehavior {
         ClampOutOfBoundsCoordinate,
-        ZeroValueOutOfBounds
+        ZeroValueOutOfBounds,
+        Repeat
     };
 
     std::vector<T> data;
@@ -56,6 +68,10 @@ namespace testpattern {
 
 template<typename T>
 Image<T> colorRange();
+
+template<typename T>
+Image<T> checkerBoardBlackAndWhite(size_t w, size_t h,
+                                   size_t checkSize, int numChannels); 
 
 }; // namespace testpattern
 

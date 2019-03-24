@@ -26,6 +26,10 @@ inline T Image<T>::get(size_t x, size_t y, int channel) const
         x = clamp<float>(x, 0, width - 1);
         y = clamp<float>(y, 0, height - 1);
     }
+    else if(outOfBoundsBehavior == Repeat) {
+        x = (x % width + width) % width;
+        y = (y % height + height) % height;
+    }
     return data[index(x, y, channel)];
 }
 
@@ -42,6 +46,10 @@ inline T Image<T>::lerp(float x, float y, int channel) const
     else if(outOfBoundsBehavior == ClampOutOfBoundsCoordinate) {
         x = clamp<float>(x, 0, width - 1);
         y = clamp<float>(y, 0, height - 1);
+    }
+    else if(outOfBoundsBehavior == Repeat) {
+        x = std::fmod(std::fmod(x, width) + width, width);
+        y = std::fmod(std::fmod(y, height) + height, height);
     }
 
     // Compute blend factors based on distance of each component
@@ -80,6 +88,28 @@ inline void Image<T>::set3(size_t x, size_t y,
     set(x, y, 0, v0);
     set(x, y, 1, v1);
     set(x, y, 2, v2);
+}
+
+template<typename T>
+void Image<T>::forEachPixel(const PixelFunction & fn)
+{
+    for(int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+            fn(*this, x, y);
+        }
+    }
+}
+
+template<typename T>
+void Image<T>::forEachPixelChannel(const PixelChannelFunction & fn)
+{
+    for(int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+            for(int c = 0; c < numChannels; c++) {
+                fn(*this, x, y, c);
+            }
+        }
+    }
 }
 
 namespace testpattern {
@@ -157,6 +187,30 @@ Image<T> colorRange()
     setChannelMidOrChecker(0);
     setChannelMidOrChecker(1);
     yband++;
+
+    return image;
+}
+
+template<typename T>
+Image<T> checkerBoardBlackAndWhite(size_t w, size_t h,
+                                   size_t checkSize, int numChannels)
+{
+    const T minValue = color::channel::minValue<T>();
+    const T maxValue = color::channel::maxValue<T>();
+
+    Image<T> image(w, h, numChannels);
+
+    image.setAll(minValue);
+
+    for(int y = 0; y < h; y++) {
+        for(int x = 0; x < w; x++) {
+            if(((x / checkSize) & 0x1) ^ ((y / checkSize) & 0x1)) {
+                for(int c = 0; c < numChannels; c++) {
+                    image.set(x, y, c, maxValue);
+                }
+            }
+        }
+    }
 
     return image;
 }
