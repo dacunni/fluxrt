@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <iostream>
+#include <vector>
 
 #include "slab.h"
 #include "trianglemesh.h"
