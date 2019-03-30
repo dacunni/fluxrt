@@ -1,5 +1,5 @@
 #include <benchmark/benchmark.h>
-#include "micromath.h"
+#include "slab.h"
 
 static void SlabConstructDefault(benchmark::State& state) {
     for (auto _ : state) {

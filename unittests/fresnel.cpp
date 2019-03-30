@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
-#include "micromath.h"
+#include <cmath>
+#include "optics.h"
+#include "fresnel.h"
 
 namespace {
 

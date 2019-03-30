@@ -2,7 +2,6 @@
 #define __BASE_H__
 
 #include <cmath>
-#include <numeric>
 #include <algorithm>
 
 template<typename T> inline T sq(const T & t) { return t * t; }

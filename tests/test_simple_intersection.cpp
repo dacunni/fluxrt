@@ -1,6 +1,11 @@
 #include <stdlib.h>
 #include <iostream>
-#include "micromath.h"
+
+#include "base.h"
+#include "image.h"
+#include "sphere.h"
+#include "triangle.h"
+#include "trianglemesh.h"
 
 template<typename OBJ>
 void make_intersection_images(const OBJ & obj,

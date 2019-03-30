@@ -3,6 +3,7 @@
 
 #include "base.h"
 
+#include "interpolation.h"
 #include "barycentric.h"
 #include "vec3.h"
 #include "vec4.h"

@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(..)
 
 option(RUN_INSPECTION_TESTS "Run tests that generate output files for inspection" OFF)
 
+# ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_image_write test_image_write.cpp)
 TARGET_LINK_LIBRARIES (test_image_write micromath)
 
@@ -14,6 +15,19 @@ if(RUN_INSPECTION_TESTS)
                        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_image_write)
 endif(RUN_INSPECTION_TESTS)
 
+# ------------------------------------------------------------------------------
+ADD_EXECUTABLE (test_interpolation test_interpolation.cpp)
+TARGET_LINK_LIBRARIES (test_interpolation micromath)
+
+if(RUN_INSPECTION_TESTS)
+    ADD_CUSTOM_COMMAND(TARGET test_interpolation POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/interpolation)
+    ADD_CUSTOM_COMMAND(TARGET test_interpolation POST_BUILD
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/interpolation
+                       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_interpolation)
+endif(RUN_INSPECTION_TESTS)
+
+# ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_mesh_load test_mesh_load.cpp)
 TARGET_LINK_LIBRARIES (test_mesh_load micromath)
 
@@ -26,6 +40,7 @@ if(RUN_INSPECTION_TESTS)
                        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_mesh_load)
 endif(RUN_INSPECTION_TESTS)
 
+# ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_simple_intersection test_simple_intersection.cpp)
 TARGET_LINK_LIBRARIES (test_simple_intersection micromath)
 
@@ -38,6 +53,7 @@ if(RUN_INSPECTION_TESTS)
                        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_simple_intersection)
 endif(RUN_INSPECTION_TESTS)
 
+# ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_fresnel test_fresnel.cpp)
 TARGET_LINK_LIBRARIES (test_fresnel micromath)
 

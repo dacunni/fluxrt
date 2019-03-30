@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-#include "micromath.h"
+#include "vectortypes.h"
+#include "barycentric.h"
 
 namespace {
 

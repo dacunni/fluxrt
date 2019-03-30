@@ -18,7 +18,54 @@ inline size_t Image<T>::index(size_t x, size_t y, int channel) const
 template<typename T>
 inline T Image<T>::get(size_t x, size_t y, int channel) const
 {
+    if(outOfBoundsBehavior == ZeroValueOutOfBounds) {
+        if(x < 0 || y < 0 || x >= width || y >= height)
+            return T(0);
+    }
+    else if(outOfBoundsBehavior == ClampOutOfBoundsCoordinate) {
+        x = clamp<float>(x, 0, width - 1);
+        y = clamp<float>(y, 0, height - 1);
+    }
+    else if(outOfBoundsBehavior == Repeat) {
+        x = (x % width + width) % width;
+        y = (y % height + height) % height;
+    }
     return data[index(x, y, channel)];
+}
+
+template<typename T>
+inline T Image<T>::lerp(float x, float y, int channel) const
+{
+    x -= 0.5f;
+    y -= 0.5f;
+
+    if(outOfBoundsBehavior == ZeroValueOutOfBounds) {
+        if(x < 0 || y < 0 || x >= width || y >= height)
+            return T(0);
+    }
+    else if(outOfBoundsBehavior == ClampOutOfBoundsCoordinate) {
+        x = clamp<float>(x, 0, width - 1);
+        y = clamp<float>(y, 0, height - 1);
+    }
+    else if(outOfBoundsBehavior == Repeat) {
+        x = std::fmod(std::fmod(x, width) + width, width);
+        y = std::fmod(std::fmod(y, height) + height, height);
+    }
+
+    // Compute blend factors based on distance of each component
+    // from its nearest neighbors.
+    float iX, iY;
+    float bX = std::modf(x, &iX);
+    float bY = std::modf(y, &iY);
+
+    // Get neighbors in 4-connected region
+    T v11 = get(iX    , iY    , channel);
+    T v12 = get(iX    , iY + 1, channel);
+    T v21 = get(iX + 1, iY    , channel);
+    T v22 = get(iX + 1, iY + 1, channel);
+
+    // Bilinearly interpolate
+    return bilerp(bX, bY, v11, v12, v21, v22);
 }
 
 template<typename T>
@@ -44,20 +91,25 @@ inline void Image<T>::set3(size_t x, size_t y,
 }
 
 template<typename T>
-Image<T> applyGamma(const Image<T> & image, float gamma)
+void Image<T>::forEachPixel(const PixelFunction & fn)
 {
-    Image<T> newImage(image.width, image.height, image.numChannels);
+    for(int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+            fn(*this, x, y);
+        }
+    }
+}
 
-    for(int y = 0; y < image.height; ++y) {
-        for(int x = 0; x < image.width; ++x) {
-            for(int c = 0; c < image.numChannels; ++c) {
-                auto v = image.get(x, y, c);
-                newImage.set(x, y, c, std::pow(v, gamma));
+template<typename T>
+void Image<T>::forEachPixelChannel(const PixelChannelFunction & fn)
+{
+    for(int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+            for(int c = 0; c < numChannels; c++) {
+                fn(*this, x, y, c);
             }
         }
     }
-
-    return newImage;
 }
 
 namespace testpattern {
@@ -135,6 +187,30 @@ Image<T> colorRange()
     setChannelMidOrChecker(0);
     setChannelMidOrChecker(1);
     yband++;
+
+    return image;
+}
+
+template<typename T>
+Image<T> checkerBoardBlackAndWhite(size_t w, size_t h,
+                                   size_t checkSize, int numChannels)
+{
+    const T minValue = color::channel::minValue<T>();
+    const T maxValue = color::channel::maxValue<T>();
+
+    Image<T> image(w, h, numChannels);
+
+    image.setAll(minValue);
+
+    for(int y = 0; y < h; y++) {
+        for(int x = 0; x < w; x++) {
+            if(((x / checkSize) & 0x1) ^ ((y / checkSize) & 0x1)) {
+                for(int c = 0; c < numChannels; c++) {
+                    image.set(x, y, c, maxValue);
+                }
+            }
+        }
+    }
 
     return image;
 }

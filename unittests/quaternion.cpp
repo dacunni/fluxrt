@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "micromath.h"
+#include "quaternion.h"
 
 namespace {
 

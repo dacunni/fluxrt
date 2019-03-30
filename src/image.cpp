@@ -39,3 +39,37 @@ bool writeHDR<float>(const Image<float> & image, const char * filename)
 #endif
 
 
+template<>
+Image<float> applyGamma(const Image<float> & image, float gamma)
+{
+    Image<float> newImage(image.width, image.height, image.numChannels);
+
+    for(int y = 0; y < image.height; ++y) {
+        for(int x = 0; x < image.width; ++x) {
+            for(int c = 0; c < image.numChannels; ++c) {
+                auto v = image.get(x, y, c);
+                newImage.set(x, y, c, std::pow(v, gamma));
+            }
+        }
+    }
+
+    return newImage;
+}
+
+template<>
+Image<uint8_t> applyGamma(const Image<uint8_t> & image, float gamma)
+{
+    Image<uint8_t> newImage(image.width, image.height, image.numChannels);
+
+    for(int y = 0; y < image.height; ++y) {
+        for(int x = 0; x < image.width; ++x) {
+            for(int c = 0; c < image.numChannels; ++c) {
+                auto v = image.get(x, y, c);
+                newImage.set(x, y, c, std::pow(float(v) / 255.0f, gamma) * 255.0f);
+            }
+        }
+    }
+
+    return newImage;
+}
+

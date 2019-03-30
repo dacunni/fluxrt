@@ -6,7 +6,11 @@
 #include <iomanip>
 #include <functional>
 #include <vector>
-#include "micromath.h"
+
+#include "base.h"
+#include "image.h"
+#include "optics.h"
+#include "fresnel.h"
 
 const std::string file_extension = ".txt";
 

@@ -1,6 +1,7 @@
 #include <benchmark/benchmark.h>
 #include <random>
-#include "micromath.h"
+#include "vec3.h"
+#include "vec4.h"
 
 static void Vec4DefaultConstruction(benchmark::State& state) {
     for (auto _ : state) {

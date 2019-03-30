@@ -1,5 +1,5 @@
 #include <benchmark/benchmark.h>
-#include "micromath.h"
+#include "quaternion.h"
 
 static void QuaternionDefaultConstruction(benchmark::State& state) {
     for (auto _ : state) {
