@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <iostream>
-#include "micromath.h"
+
+#include "base.h"
+#include "image.h"
 
 int main(int argc, char ** argv)
 {

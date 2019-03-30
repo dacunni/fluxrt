@@ -1,6 +1,6 @@
 #include <benchmark/benchmark.h>
 #include <random>
-#include "micromath.h"
+#include "slab.h"
 
 static void RaySlabIntersects1(benchmark::State& state) {
     Slab obj(-1.0f, -2.0f, -3.0f, 1.0f, 2.0f, 3.0f);

@@ -1,6 +1,6 @@
 #include <benchmark/benchmark.h>
 #include <random>
-#include "micromath.h"
+#include "matrix.h"
 
 static void AffineMatrixMult(benchmark::State& state) {
     AffineMatrix xf1 = AffineMatrix::rotation(0.3, vec3(0.2, 0.3, 0.4));

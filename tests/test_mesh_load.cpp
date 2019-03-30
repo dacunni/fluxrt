@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <iostream>
-#include "micromath.h"
+
+#include "slab.h"
+#include "trianglemesh.h"
 
 int main(int argc, char ** argv)
 {

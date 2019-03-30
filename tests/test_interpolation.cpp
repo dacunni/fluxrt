@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <iostream>
-#include "micromath.h"
+
+#include "base.h"
+#include "interpolation.h"
+#include "image.h"
 
 template<typename T>
 void test_linear_interpolate(const std::string & label)
