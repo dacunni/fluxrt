@@ -2,8 +2,12 @@ version: 2
 jobs:
     build:
         docker:
-            - image: circleci/ruby:2.4.1
+            - image: dacunni/hobby:ubuntu_compilers_deps
+                auth:
+                    username: $DOCKERHUB_USER
+                    password: $DOCKERHUB_PASSWORD
         steps:
             - checkout
+            - run: ls -lrt
             - run: echo "A first hello"
 
