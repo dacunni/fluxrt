@@ -1,13 +1,13 @@
 version: 2
 jobs:
-    build:
-        docker:
-            - image: dacunni/hobby:ubuntu_compilers_deps
-                auth:
-                    username: $DOCKERHUB_USER
-                    password: $DOCKERHUB_PASSWORD
-        steps:
-            - checkout
-            - run: ls -lrt
-            - run: echo "A first hello"
+  build:
+    docker:
+      - image: dacunni/hobby:ubuntu_compilers_deps
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - run: ls -lrt
+      - run: echo "A first hello"
 
