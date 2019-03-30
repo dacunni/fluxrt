@@ -9,5 +9,8 @@ jobs:
     steps:
       - checkout
       - run: ls -lrt
-      - run: echo "A first hello"
+      - run: echo "Setting up build environment"
+      - run: mkdir build && cd build && cmake -DBUILD_PYTHON_BINDINGS:BOOL=OFF ..
+      - run: echo "Building"
+      - run: cd build && make -j
 
