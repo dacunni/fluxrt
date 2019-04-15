@@ -16,6 +16,7 @@ add_executable(random random.cpp)
 add_executable(fresnel fresnel.cpp)
 add_executable(barycentric barycentric.cpp)
 add_executable(raysphere raysphere.cpp)
+add_executable(integrate integrate.cpp)
 
 set(LIBS ${GTEST_BOTH_LIBRARIES} micromath pthread)
 
@@ -27,6 +28,7 @@ target_link_libraries(random ${LIBS})
 target_link_libraries(fresnel ${LIBS})
 target_link_libraries(barycentric ${LIBS})
 target_link_libraries(raysphere ${LIBS})
+target_link_libraries(integrate ${LIBS})
 
 add_test(AllTestsInVec3 vec3)
 add_test(AllTestsInVec4 vec4)
@@ -36,5 +38,6 @@ add_test(AllTestsInRandom random)
 add_test(AllTestsInFresnel fresnel)
 add_test(AllTestsInBarycentric barycentric)
 add_test(AllTestsInRaySphere raysphere)
+add_test(AllTestsInIntegrate integrate)
 
 

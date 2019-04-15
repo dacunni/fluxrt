@@ -14,6 +14,7 @@ set(SRCS
     src/color.cpp
     src/fresnel.cpp
     src/image.cpp
+    src/integrate.cpp
     src/vec3.cpp
     src/vec4.cpp
     src/optics.cpp
