@@ -23,6 +23,7 @@
 #include "slab.h"
 #include "triangle.h"
 #include "trianglemesh.h"
+#include "trianglemeshoctree.h"
 
 #include "color.h"
 #include "image.h"

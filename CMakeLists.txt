@@ -23,6 +23,7 @@ set(SRCS
     src/slab.cpp
     src/triangle.cpp
     src/trianglemesh.cpp
+    src/trianglemeshoctree.cpp
     )
 ADD_LIBRARY(micromath ${SRCS})
 
