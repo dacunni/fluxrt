@@ -18,152 +18,142 @@ void TriangleMeshOctree::build()
     nodes.clear();
     nodes.reserve(256);
 
-    auto rootIndex = addNode();
-
-    // Create a list of triangles that have not been claimed yet.
-    // Fill with records to help us sort and keep track of which
-    // child node each triangle belongs to.
-    auto numTriangles = mesh.numTriangles();
-    std::vector<NodeSortRecord> records(numTriangles);
-    uint32_t triangleIndex = 0;
-    std::generate(records.begin(), records.end(),
-                  [&triangleIndex]() { return NodeSortRecord{triangleIndex++, 0}; });
+    auto rootIndex = addNode(0);
 
     Slab bounds = boundingBox(mesh.vertices);
 
-    buildNode(rootIndex, records, records.begin(), records.end(), bounds);
+    // Create a list of unique triangle indices
+    std::vector<uint32_t> tris;
+    tris.resize(mesh.numTriangles());
+    std::iota(tris.begin(), tris.end(), 0u);
 
-    // Populate triangle indices using the order established when we built
-    // the Node hierarchy.
-    triangles.resize(numTriangles);
-    std::transform(records.begin(), records.end(), triangles.begin(),
-                   [](const NodeSortRecord & rec) { return rec.triangleIndex; });
+    triangles.reserve(mesh.numTriangles());
+    buildNode(rootIndex, tris, bounds);
 }
 
 void TriangleMeshOctree::buildNode(uint32_t nodeIndex,
-                                   std::vector<NodeSortRecord> & records,
-                                   std::vector<NodeSortRecord>::iterator first,
-                                   std::vector<NodeSortRecord>::iterator last,
+                                   const std::vector<uint32_t> & tris,
                                    const Slab & bounds)
 {
+    auto first = tris.begin();
+    auto last = tris.end();
+
     // Note: We are not using a reference to the node, because
     //       recursive calls may reallocate the array.
     Node node = nodes[nodeIndex];
 
     if(uint32_t(last - first) <= buildCutOffNumTriangles
        || node.level >= buildMaxLevel) {
-        node.firstTriangle = uint32_t(first - records.begin());
+        node.firstTriangle = uint32_t(triangles.size());
         node.numTriangles = uint32_t(last - first);
+        std::copy(first, last, std::back_inserter(triangles));
         nodes[nodeIndex] = node;
         return;
     }
 
+    // Convenience constants
+    const float xmin = bounds.xmin, xmax = bounds.xmax;
+    const float ymin = bounds.ymin, ymax = bounds.ymax;
+    const float zmin = bounds.zmin, zmax = bounds.zmax;
     // Find split planes
-    const float xmid = bounds.xmid();
-    const float ymid = bounds.ymid();
-    const float zmid = bounds.zmid();
+    const float xmid = bounds.xmid(), ymid = bounds.ymid(), zmid = bounds.zmid();
 
     // Helper functions for partitioning
     auto evalForVerts = [&](uint32_t ti, std::function<bool(const Position3 &)> p) {
-        return p(mesh.triangleVertex(ti, 0)) && p(mesh.triangleVertex(ti, 1)) && p(mesh.triangleVertex(ti, 2));
+        return p(mesh.triangleVertex(ti, 0)) ||
+               p(mesh.triangleVertex(ti, 1)) ||
+               p(mesh.triangleVertex(ti, 2));
     };
 
-    auto isInXLow  = [&](const NodeSortRecord & rec) { return evalForVerts(rec.triangleIndex, [&](const Position3 & p) { return p.x < xmid; }); };
-    auto isInXHigh = [&](const NodeSortRecord & rec) { return evalForVerts(rec.triangleIndex, [&](const Position3 & p) { return p.x > xmid; }); };
-    auto isInYLow  = [&](const NodeSortRecord & rec) { return evalForVerts(rec.triangleIndex, [&](const Position3 & p) { return p.y < ymid; }); };
-    auto isInYHigh = [&](const NodeSortRecord & rec) { return evalForVerts(rec.triangleIndex, [&](const Position3 & p) { return p.y > ymid; }); };
-    auto isInZLow  = [&](const NodeSortRecord & rec) { return evalForVerts(rec.triangleIndex, [&](const Position3 & p) { return p.z < zmid; }); };
-    auto isInZHigh = [&](const NodeSortRecord & rec) { return evalForVerts(rec.triangleIndex, [&](const Position3 & p) { return p.z > zmid; }); };
+    auto isInXLow  = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.x < xmid; }); };
+    auto isInXHigh = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.x > xmid; }); };
+    auto isInYLow  = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.y < ymid; }); };
+    auto isInYHigh = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.y > ymid; }); };
+    auto isInZLow  = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.z < zmid; }); };
+    auto isInZHigh = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.z > zmid; }); };
 
-    // Adjust child indices so we can quickly walk them after we've sorted them
-    // along each direction and filtered out those owned by this node.
-    std::transform(first, last, first, [](NodeSortRecord rec) { rec.childNodeIndex = 0; return rec; });
-    std::transform(first, last, first, [&](NodeSortRecord rec) { if(isInXHigh(rec)) { rec.childNodeIndex |= 0x4; } return rec; });
-    std::transform(first, last, first, [&](NodeSortRecord rec) { if(isInYHigh(rec)) { rec.childNodeIndex |= 0x2; } return rec; });
-    std::transform(first, last, first, [&](NodeSortRecord rec) { if(isInZHigh(rec)) { rec.childNodeIndex |= 0x1; } return rec; });
+    // Bin in  X
+    std::vector<uint32_t> L, H;
+    std::copy_if(first, last, std::back_inserter(L), isInXLow);
+    std::copy_if(first, last, std::back_inserter(H), isInXHigh);
 
-    // Range of unclaimed triangles
-    auto unclaimed = last;
-    auto div = first;
+    // Bin in  Y
+    std::vector<uint32_t> LL, LH, HL, HH;
+    std::copy_if(L.begin(), L.end(), std::back_inserter(LL), isInYLow);
+    std::copy_if(L.begin(), L.end(), std::back_inserter(LH), isInYHigh);
+    std::copy_if(H.begin(), H.end(), std::back_inserter(HL), isInYLow);
+    std::copy_if(H.begin(), H.end(), std::back_inserter(HH), isInYHigh);
 
-    // Partition along Z, moving unclaimed nodes to the end
-    div       = std::stable_partition(first, unclaimed, isInZLow);
-    unclaimed = std::stable_partition(div,   unclaimed, isInZHigh);
-
-    // Partition along Y, moving unclaimed nodes to the end
-    div       = std::stable_partition(first, unclaimed, isInYLow);
-    unclaimed = std::stable_partition(div,   unclaimed, isInYHigh);
-
-    // Partition along X, moving unclaimed nodes to the end
-    div       = std::stable_partition(first, unclaimed, isInXLow);
-    unclaimed = std::stable_partition(div,   unclaimed, isInXHigh);
-
-    // This Node will own any triangles not exclusively in a subregion
-    if(unclaimed != last) {
-        node.firstTriangle = uint32_t(unclaimed - records.begin());
-        node.numTriangles = uint32_t(last - unclaimed);
-    }
+    // Bin in  Z
+    std::vector<uint32_t> LLL, LHL, HLL, HHL, LLH, LHH, HLH, HHH;
+    std::copy_if(LL.begin(), LL.end(), std::back_inserter(LLL), isInZLow);
+    std::copy_if(LL.begin(), LL.end(), std::back_inserter(LLH), isInZHigh);
+    std::copy_if(LH.begin(), LH.end(), std::back_inserter(LHL), isInZLow);
+    std::copy_if(LH.begin(), LH.end(), std::back_inserter(LHH), isInZHigh);
+    std::copy_if(HL.begin(), HL.end(), std::back_inserter(HLL), isInZLow);
+    std::copy_if(HL.begin(), HL.end(), std::back_inserter(HLH), isInZHigh);
+    std::copy_if(HH.begin(), HH.end(), std::back_inserter(HHL), isInZLow);
+    std::copy_if(HH.begin(), HH.end(), std::back_inserter(HHH), isInZHigh);
 
     // Create child nodes
-    if(first != unclaimed) {
-        auto childFirst = first;
-
-        while(childFirst != unclaimed) {
-            auto childLast = std::find_if(childFirst, unclaimed, [&](const NodeSortRecord & rec) {
-                                          return rec.childNodeIndex != childFirst->childNodeIndex; });
-            if(childLast - childFirst > 0) {
-                auto childIndex = addNode();
-                auto & childNode = nodes[childIndex];
-                childNode.level = node.level + 1;
-                node.children[childFirst->childNodeIndex] = childIndex;
-                auto childBounds = bounds;
-                if(childFirst->childNodeIndex & 0x4)
-                    childBounds.xmin = xmid;
-                else
-                    childBounds.xmax = xmid;
-                if(childFirst->childNodeIndex & 0x2)
-                    childBounds.ymin = ymid;
-                else
-                    childBounds.ymax = ymid;
-                if(childFirst->childNodeIndex & 0x1)
-                    childBounds.zmin = zmid;
-                else
-                    childBounds.zmax = zmid;
-                buildNode(childIndex, records, childFirst, childLast, childBounds);
-            }
-            childFirst = childLast;
-        }
-    }
+    buildChild(node, 0, LLL, Slab(xmin, ymin, zmin, xmid, ymid, zmid));
+    buildChild(node, 1, LLH, Slab(xmin, ymin, zmid, xmid, ymid, zmax));
+    buildChild(node, 2, LHL, Slab(xmin, ymid, zmin, xmid, ymax, zmid));
+    buildChild(node, 3, LHH, Slab(xmin, ymid, zmid, xmid, ymax, zmax));
+    buildChild(node, 4, HLL, Slab(xmid, ymin, zmin, xmax, ymid, zmid));
+    buildChild(node, 5, HLH, Slab(xmid, ymin, zmid, xmax, ymid, zmax));
+    buildChild(node, 6, HHL, Slab(xmid, ymid, zmin, xmax, ymax, zmid));
+    buildChild(node, 7, HHH, Slab(xmid, ymid, zmid, xmax, ymax, zmax));
 
     // Update the node in the array
     nodes[nodeIndex] = node;
 }
 
-uint32_t TriangleMeshOctree::addNode()
+void TriangleMeshOctree::buildChild(Node & node,
+                                    unsigned int childIndex,
+                                    const std::vector<uint32_t> & childTris,
+                                    const Slab & childBounds)
+{
+    if(childTris.size() < 1)
+        return;
+    auto childNodeIndex = addNode(node.level + 1);
+    node.children[childIndex] = childNodeIndex;
+    buildNode(childNodeIndex, childTris, childBounds);
+}
+
+uint32_t TriangleMeshOctree::addNode(uint8_t level)
 {
     nodes.emplace_back();
+    nodes.back().level = level;
     return nodes.size() - 1;
 }
 
 void TriangleMeshOctree::printNodes() const
 {
+    printf("triangles mesh %u octree %u\n",
+           (unsigned int) mesh.numTriangles(),
+           (unsigned int) triangles.size());
     for(uint32_t i = 0; i < nodes.size(); ++i) {
         auto & node = nodes[i];
-        printf("%3u : level %2u first %u count %u\n", i, node.level, node.firstTriangle, node.numTriangles);
-        printf("      children  ");
-        for(uint32_t c = 0; c < 6; ++c) {
-            printf("%u=%u%s", c, node.children[c], c < 5 ? ", " : "\n");
+        printf("%3u : level %2u first %u count %u\n", i,
+               (unsigned int) node.level, node.firstTriangle, node.numTriangles);
+        if(node.numChildren() > 0) {
+            printf("      children  ");
+            for(uint32_t c = 0; c < 8; ++c) {
+                printf("%u=%u%s", c, node.children[c], c < 7 ? ", " : "\n");
+            }
         }
     }
 }
 
 bool TriangleMeshOctree::nodesCoverAllTriangles() const
 {
-    std::vector<uint8_t> claimed(triangles.size());
+    std::vector<uint8_t> claimed(mesh.numTriangles());
     std::fill(claimed.begin(), claimed.end(), uint8_t(0));
     for(auto & node : nodes) {
-        std::fill(&claimed[node.firstTriangle],
-                  &claimed[node.firstTriangle + node.numTriangles], uint8_t(1));
+        for(uint32_t ti = 0; ti < node.numTriangles; ++ti) {
+            claimed[triangles[node.firstTriangle + ti]] = uint8_t(1);
+        }
     }
     return std::find(claimed.begin(), claimed.end(), uint8_t(0)) == claimed.end();
 }

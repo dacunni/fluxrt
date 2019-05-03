@@ -14,9 +14,13 @@ struct TriangleMeshOctree
 
     void build();
 
-    TriangleMesh & mesh;
+    // Add a new node and return its index
+    uint32_t addNode(uint8_t level);
 
-    std::vector<uint32_t> triangles;
+    void printNodes() const;
+    bool nodesCoverAllTriangles() const;
+
+    TriangleMesh & mesh;
 
     struct Node {
         uint32_t numChildren() const;
@@ -29,33 +33,30 @@ struct TriangleMeshOctree
         uint32_t firstTriangle = 0;
         uint32_t numTriangles = 0;
 
-        uint32_t level = 0;
+        uint8_t level = 0;
     };
 
     // Nodes of the octree. First is the root.
     std::vector<Node> nodes;
 
-    // Build configuration
-    uint32_t buildCutOffNumTriangles = 32;
-    uint32_t buildMaxLevel = 6;
-
-    // Add a new node and return its index
-    uint32_t addNode();
-
-    void printNodes() const;
-    bool nodesCoverAllTriangles() const;
-
-    struct NodeSortRecord {
-        uint32_t triangleIndex;
-        uint32_t childNodeIndex;
-    };
+    // Indices into the triangle mesh. Octree nodes index into this
+    // array instead of directly into the mesh because there may be
+    // triangles duplicated in multiple nodes and we want to keep
+    // nodes small, so we only store a range of indices into this array.
+    std::vector<uint32_t> triangles;
 
     // Build a node by claiming the appropriate triangles from the array
     void buildNode(uint32_t nodeIndex,
-                   std::vector<NodeSortRecord> & records,
-                   std::vector<NodeSortRecord>::iterator first,
-                   std::vector<NodeSortRecord>::iterator last,
+                   const std::vector<uint32_t> & tris,
                    const Slab & bounds);
+    void buildChild(Node & node,
+                    unsigned int childIndex,
+                    const std::vector<uint32_t> & childTris,
+                    const Slab & childBounds);
+
+    // Build configuration
+    uint32_t buildCutOffNumTriangles = 32;
+    uint8_t buildMaxLevel = 8;
 };
 
 #endif
