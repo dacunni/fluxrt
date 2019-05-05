@@ -110,10 +110,10 @@ bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
 
     auto vertex = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleVertex(tri, index); };
     auto normal = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleNormal(tri, index); };
+    const auto numTriangles = mesh.numTriangles();
 
-    for(uint32_t tri = 0; tri < mesh.numTriangles(); ++tri) {
-        if(intersectsTriangle(ray, vertex(tri, 0), vertex(tri, 1), vertex(tri, 2),
-                              minDistance, &t)
+    for(uint32_t tri = 0; tri < numTriangles; ++tri) {
+        if(intersectsTriangle(ray, vertex(tri, 0), vertex(tri, 1), vertex(tri, 2), minDistance, &t)
            && t < best_t) {
             best_tri = tri;
             best_t = t;
@@ -161,8 +161,7 @@ const Direction3 & TriangleMesh::triangleNormal(uint32_t tri, uint32_t index) co
 void TriangleMesh::printMeta() const
 {
     printf("TriangleMesh vertices %lu normals %lu indices v %lu n %lu\n",
-           vertices.size(), normals.size(), indices.vertex.size(),
-           indices.normal.size());
+           vertices.size(), normals.size(), indices.vertex.size(), indices.normal.size());
 }
 
 

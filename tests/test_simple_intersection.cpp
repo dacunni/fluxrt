@@ -6,6 +6,7 @@
 #include "sphere.h"
 #include "triangle.h"
 #include "trianglemesh.h"
+#include "trianglemeshoctree.h"
 
 template<typename OBJ>
 void make_intersection_images(const OBJ & obj,
@@ -95,6 +96,10 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
     make_intersection_images(mesh, "mesh");
+
+    TriangleMeshOctree meshOctree(mesh);
+    meshOctree.build();
+    make_intersection_images(meshOctree, "mesh_octree");
 
     return EXIT_SUCCESS;
 }

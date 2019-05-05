@@ -5,6 +5,7 @@
 
 #include "trianglemeshoctree.h"
 #include "trianglemesh.h"
+#include "vectortypes.h"
 #include "slab.h"
 
 TriangleMeshOctree::TriangleMeshOctree(TriangleMesh & mesh)
@@ -110,7 +111,7 @@ void TriangleMeshOctree::buildNode(uint32_t nodeIndex,
 }
 
 void TriangleMeshOctree::buildChild(Node & node,
-                                    unsigned int childIndex,
+                                    child_index_t childIndex,
                                     const std::vector<uint32_t> & childTris,
                                     const Slab & childBounds)
 {
@@ -139,7 +140,7 @@ void TriangleMeshOctree::printNodes() const
                (unsigned int) node.level, node.firstTriangle, node.numTriangles);
         if(node.numChildren() > 0) {
             printf("      children  ");
-            for(uint32_t c = 0; c < 8; ++c) {
+            for(uint32_t c = 0; c < MAX_CHILDREN; ++c) {
                 printf("%u=%u%s", c, node.children[c], c < 7 ? ", " : "\n");
             }
         }
@@ -161,7 +162,69 @@ bool TriangleMeshOctree::nodesCoverAllTriangles() const
 uint32_t TriangleMeshOctree::Node::numChildren() const
 {
     // count non-zero child indices
-    return std::count_if(children, children + 6,
-                         [](uint32_t index) { return index > 0; });
+    return std::count_if(children, children + 6, [](uint32_t index) { return index > 0; });
+}
+
+void TriangleMeshOctree::childOrderForDirection(const Direction3 & d, child_array_t indices)
+{
+    // Direction sign sense (0: negative, 1: positive)
+    child_index_t xsense = d.x < 0 ? 0u : 1u;
+    child_index_t ysense = d.y < 0 ? 0u : 1u;
+    child_index_t zsense = d.z < 0 ? 0u : 1u;
+
+    // Direction magnitudes
+    float xmag = std::abs(d.x);
+    float ymag = std::abs(d.y);
+    float zmag = std::abs(d.z);
+
+    child_index_t xstep = 1, ystep = 1, zstep = 1;
+
+    if(xmag > ymag) xstep *= 2; else ystep *= 2;
+    if(xmag > zmag) xstep *= 2; else zstep *= 2;
+    if(ymag > zmag) ystep *= 2; else zstep *= 2;
+
+    for(child_index_t ci = 0; ci < MAX_CHILDREN; ++ci) {
+        indices[ci] = 0;
+        if( ((ci / xstep) & 0x1) == xsense )
+            indices[ci] |= XBIT;
+        if( ((ci / ystep) & 0x1) == ysense )
+            indices[ci] |= YBIT;
+        if( ((ci / zstep) & 0x1) == zsense )
+            indices[ci] |= ZBIT;
+    }
+}
+
+// Ray intersection
+
+bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree, float minDistance)
+{
+    using child_index_t = TriangleMeshOctree::child_index_t;
+    TriangleMeshOctree::child_array_t childOrder = {};
+
+    TriangleMeshOctree::childOrderForDirection(ray.direction, childOrder);
+
+#if 0
+    // TEMP >>>
+    std::cout << "Dir: " << ray.direction.string() << " Order: ";
+    for(child_index_t i = 0; i < 8; ++i) {
+        std::cout << childOrder[i] << " ";
+    }
+    std::cout << '\n';
+    // TEMP <<<
+#endif
+
+    for(child_index_t ci = 0; ci < TriangleMeshOctree::MAX_CHILDREN; ++ci) {
+
+    }
+
+
+    // IMPLEMENT ME - Intersect with the octree
+    return intersects(ray, meshOctree.mesh, minDistance);
+}
+
+bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree, float minDistance, RayIntersection & intersection)
+{
+    // IMPLEMENT ME - Intersect with the octree
+    return findIntersection(ray, meshOctree.mesh, minDistance, intersection);
 }
 

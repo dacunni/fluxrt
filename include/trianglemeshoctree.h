@@ -3,12 +3,19 @@
 
 #include <vector>
 #include <cstdint>
+struct Ray;
+struct RayIntersection;
 
 struct TriangleMesh;
 struct Slab;
+struct Direction3;
 
 struct TriangleMeshOctree
 {
+    using child_index_t = unsigned int;
+    static const child_index_t MAX_CHILDREN = 8;
+    using child_array_t = child_index_t[MAX_CHILDREN];
+
     TriangleMeshOctree(TriangleMesh & mesh);
     ~TriangleMeshOctree() = default;
 
@@ -22,12 +29,23 @@ struct TriangleMeshOctree
 
     TriangleMesh & mesh;
 
+    // Traversal helper
+    static void childOrderForDirection(const Direction3 & d,
+                                       child_array_t indices);
+
+    // Bit masks for child indices. Used to determine which half
+    // of the octree a child cell is in along each direction.
+    enum { XBIT = 0x4, YBIT = 0x2, ZBIT = 0x1 };
+
+    // Child indices (XYZ) from low/high
+    enum { LLL=0, LLH, LHL, LHH, HLL, HLH, HHL, HHH };
+
     struct Node {
         uint32_t numChildren() const;
 
         // Indices of child nodes. Index of 0 indicates no children.
         // order (XYZ): LLL,LLH,LHL,LHH,HLL,HLH,HHL,HHH
-        uint32_t children[8];
+        child_array_t children;
 
         // Triangles owned by this node (indices into the mesh)
         uint32_t firstTriangle = 0;
@@ -50,7 +68,7 @@ struct TriangleMeshOctree
                    const std::vector<uint32_t> & tris,
                    const Slab & bounds);
     void buildChild(Node & node,
-                    unsigned int childIndex,
+                    child_index_t childIndex,
                     const std::vector<uint32_t> & childTris,
                     const Slab & childBounds);
 
@@ -58,5 +76,9 @@ struct TriangleMeshOctree
     uint32_t buildCutOffNumTriangles = 32;
     uint8_t buildMaxLevel = 8;
 };
+
+// Ray intersection
+bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree, float minDistance);
+bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree, float minDistance, RayIntersection & intersection);
 
 #endif
