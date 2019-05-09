@@ -10,7 +10,6 @@ docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro centos_current_che
 # Ubuntu
 #
 docker build -t ubuntu_compilers -f Dockerfile.ubuntu_compilers .
-docker build -t ubuntu_compilers_deps -f Dockerfile.ubuntu_compilers_deps .
 docker build -t ubuntu_current_checkout -f Dockerfile.ubuntu_current_checkout .
 
 docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro ubuntu_current_checkout
@@ -18,5 +17,3 @@ docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro ubuntu_current_che
 # Uploading to dockerhub
 docker tag ubuntu_compilers:latest dacunni/hobby:ubuntu_compilers
 docker push dacunni/hobby:ubuntu_compilers
-docker tag ubuntu_compilers_deps:latest dacunni/hobby:ubuntu_compilers_deps
-docker push dacunni/hobby:ubuntu_compilers_deps

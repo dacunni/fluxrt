@@ -1,4 +1,4 @@
-FROM ubuntu_compilers_deps:latest
+FROM ubuntu_compilers:latest
 
 # Set the working directory to /app
 WORKDIR /app
@@ -10,7 +10,7 @@ ADD . /app
 RUN mkdir build && cd build && cmake -DBUILD_PYTHON_BINDINGS:BOOL=OFF ..
 
 # Run build
-RUN cd build && make -j
+#RUN cd build && make -j
 
 # Make port 80 available to the world outside this container
 EXPOSE 80
