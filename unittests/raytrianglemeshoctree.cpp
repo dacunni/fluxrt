@@ -13,7 +13,7 @@ bool bitEqual(child_index_t bit, child_index_t v1, child_index_t v2) {
     return (v1 & bit) == (v2 & bit);
 }
 
-bool bitEqual(child_index_t bit, child_array_t arr1, child_array_t arr2) {
+bool bitEqual(child_index_t bit, const child_array_t & arr1, const child_array_t & arr2) {
     for(child_index_t ci = 0; ci < TriangleMeshOctree::MAX_CHILDREN; ++ci) {
         if(!bitEqual(bit, arr1[ci], arr2[ci]))
            return false;
@@ -63,11 +63,17 @@ TEST(RayTriangleMeshOctreeTraversal, GeneralDirections_ProperChildTraversalOrder
 
     // +X, +Y, +Z
     TriangleMeshOctree::childOrderForDirection(Direction3(1, 0.5, 0.1), children);
-    EXPECT_TRUE(std::equal(children, &children[MAXCH], child_array_t{ LLL, LLH, LHL, LHH, HLL, HLH, HHL, HHH })); 
+    {
+    child_array_t expected{ LLL, LLH, LHL, LHH, HLL, HLH, HHL, HHH };
+    EXPECT_TRUE(std::equal(children, &children[MAXCH], expected));
+    }
 
     // +X, +Z, +Y
     TriangleMeshOctree::childOrderForDirection(Direction3(1, 0.1, 0.5), children);
-    EXPECT_TRUE(std::equal(children, &children[MAXCH], child_array_t{ LLL, LHL, LLH, LHH, HLL, HHL, HLH, HHH })); 
+    {
+    child_array_t expected{ LLL, LHL, LLH, LHH, HLL, HHL, HLH, HHH };
+    EXPECT_TRUE(std::equal(children, &children[MAXCH], expected));
+    }
 
     // TODO - Add other orderings
 
