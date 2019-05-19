@@ -28,6 +28,7 @@ void make_intersection_images(const OBJ & obj,
     Ray ray;
     RayIntersection isect;
 
+    std::cout << "START intersect image " << name << std::endl;
     for(int y = 0; y < h; y++) {
         for(int x = 0; x < w; x++) {
             ray.origin = Position3(-1.0f + 2.0f * (float) x / (w - 1),
@@ -69,6 +70,7 @@ void make_intersection_images(const OBJ & obj,
             }
         }
     }
+    std::cout << "END intersect image " << name << std::endl;
 
     const std::string prefix = std::string("simple_isect_") + name + "_";
 
@@ -92,6 +94,7 @@ int main(int argc, char ** argv)
 
     TriangleMesh mesh;
     if(!loadTriangleMesh(mesh, "models/blender", "sphere.obj")) {
+    //if(!loadTriangleMesh(mesh, "models/blender", "monkey2.obj")) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }

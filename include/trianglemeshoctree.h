@@ -3,11 +3,13 @@
 
 #include <vector>
 #include <cstdint>
+
+#include "slab.h"
+
 struct Ray;
 struct RayIntersection;
 
 struct TriangleMesh;
-struct Slab;
 struct Direction3;
 
 struct TriangleMeshOctree
@@ -41,7 +43,7 @@ struct TriangleMeshOctree
     enum { LLL=0, LLH, LHL, LHH, HLL, HLH, HHL, HHH };
 
     struct Node {
-        uint32_t numChildren() const;
+        Slab bounds;
 
         // Indices of child nodes. Index of 0 indicates no children.
         // order (XYZ): LLL,LLH,LHL,LHH,HLL,HLH,HHL,HHH
@@ -52,6 +54,7 @@ struct TriangleMeshOctree
         uint32_t numTriangles = 0;
 
         uint8_t level = 0;
+        uint8_t numChildren = 0;
     };
 
     // Nodes of the octree. First is the root.
