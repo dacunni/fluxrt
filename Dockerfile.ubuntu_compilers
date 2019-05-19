@@ -1,13 +1,11 @@
 FROM ubuntu:19.04
 
 RUN apt-get update
-RUN apt-get install -y \
-    git \
-    cmake make \
-    python3 \
-    gcc g++ \
-    clang
-
+RUN apt-get install -y git
+RUN apt-get install -y cmake make
+RUN apt-get install -y python3
+RUN apt-get install -y gcc g++
+RUN apt-get install -y clang
 RUN apt-get install -y swig
 
 # Install Google Test

@@ -1,6 +1,5 @@
 
 # CentOS
-#
 docker build -t centos_compilers -f Dockerfile.centos_compilers .
 docker build -t centos_compilers_deps -f Dockerfile.centos_compilers_deps .
 docker build -t centos_current_checkout -f Dockerfile.centos_current_checkout .
@@ -8,11 +7,17 @@ docker build -t centos_current_checkout -f Dockerfile.centos_current_checkout .
 docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro centos_current_checkout
 
 # Ubuntu
-#
 docker build -t ubuntu_compilers -f Dockerfile.ubuntu_compilers .
 docker build -t ubuntu_current_checkout -f Dockerfile.ubuntu_current_checkout .
 
 docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro ubuntu_current_checkout
+
+# Emscripten
+docker build -t emscripten -f Dockerfile.emscripten .
+docker build -t emscripten_current_checkout -f Dockerfile.emscripten_current_checkout .
+
+docker run -it emscripten
+docker run -it emscripten_current_checkout
 
 # Uploading to dockerhub
 docker tag ubuntu_compilers:latest dacunni/hobby:ubuntu_compilers
