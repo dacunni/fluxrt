@@ -220,7 +220,7 @@ bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree,
     if(node.numChildren > 0) {
         for(auto childIndex : childOrder) {
             auto childNode = node.children[childIndex];
-            if(childNode == 0)
+            if(childNode == TriangleMeshOctree::NO_CHILD)
                 continue; // empty child cell
             if(intersects(ray, meshOctree, minDistance, childOrder, childNode)) {
                 return true;
@@ -271,7 +271,7 @@ bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree,
     if(node.numChildren > 0) {
         for(auto childIndex : childOrder) {
             auto childNode = node.children[childIndex];
-            if(childNode == 0)
+            if(childNode == TriangleMeshOctree::NO_CHILD)
                 continue; // empty child cell
             if(findIntersection(ray, meshOctree, minDistance, bestTriangle, bestDistance, childOrder, childNode)) {
                 return true;
@@ -288,30 +288,15 @@ bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree,
     TriangleMeshOctree::child_array_t childOrder = {};
     TriangleMeshOctree::childOrderForDirection(ray.direction, childOrder);
 
-    auto & mesh = meshOctree.mesh;
-
-    auto vertex = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleVertex(tri, index); };
-    auto normal = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleNormal(tri, index); };
-
     uint32_t bestTriangle = 0;
     float bestDistance = FLT_MAX;
+
     bool hit = findIntersection(ray, meshOctree, minDistance, bestTriangle, bestDistance, childOrder, 0);
     
     if(!hit)
         return false;
 
-    intersection.distance = bestDistance;
-    intersection.position = ray.origin + ray.direction * bestDistance;
-
-    auto bary = barycentricForPointInTriangle(intersection.position,
-                                              vertex(bestTriangle, 0), vertex(bestTriangle, 1), vertex(bestTriangle, 2));
-
-    assert(mesh.hasNormals() && "TODO: Implement normal generation");
-    intersection.normal = interpolate(normal(bestTriangle, 0), normal(bestTriangle, 1), normal(bestTriangle, 2),
-                                      bary);
-    // TODO: Texture coordinates
-
-    // TODO - Combine logic with counterpart in trianglemesh.cpp
+    fillTriangleMeshIntersection(ray, meshOctree.mesh, bestTriangle, bestDistance, intersection);
 
     return true;
 }

@@ -104,8 +104,8 @@ bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance)
 bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
                       float minDistance, RayIntersection & intersection)
 {
-    float best_t = FLT_MAX, t = FLT_MAX;
-    uint32_t best_tri = 0;
+    float bestDistance = FLT_MAX, t = FLT_MAX;
+    uint32_t bestTriangle = 0;
     bool hit = false;
 
     auto vertex = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleVertex(tri, index); };
@@ -114,9 +114,9 @@ bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
 
     for(uint32_t tri = 0; tri < numTriangles; ++tri) {
         if(intersectsTriangle(ray, vertex(tri, 0), vertex(tri, 1), vertex(tri, 2), minDistance, &t)
-           && t < best_t) {
-            best_tri = tri;
-            best_t = t;
+           && t < bestDistance) {
+            bestTriangle = tri;
+            bestDistance = t;
             hit = true;
         }
     }
@@ -124,18 +124,28 @@ bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
     if(!hit)
         return false;
 
-    intersection.distance = best_t;
-    intersection.position = ray.origin + ray.direction * best_t;
-
-    auto bary = barycentricForPointInTriangle(intersection.position,
-                                              vertex(best_tri, 0), vertex(best_tri, 1), vertex(best_tri, 2));
-
-    assert(mesh.hasNormals() && "TODO: Implement normal generation");
-    intersection.normal = interpolate(normal(best_tri, 0), normal(best_tri, 1), normal(best_tri, 2),
-                                      bary);
-    // TODO: Texture coordinates
+    fillTriangleMeshIntersection(ray, mesh, bestTriangle, bestDistance, intersection);
 
     return true;
+}
+
+void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
+                                  uint32_t tri, float t, RayIntersection & intersection)
+{
+    auto vertex = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleVertex(tri, index); };
+    auto normal = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleNormal(tri, index); };
+
+    intersection.distance = t;
+    intersection.position = ray.origin + ray.direction * t;
+
+    auto bary = barycentricForPointInTriangle(intersection.position,
+                                              vertex(tri, 0), vertex(tri, 1), vertex(tri, 2));
+
+    assert(mesh.hasNormals() && "TODO: Implement normal generation");
+    intersection.normal = interpolate(normal(tri, 0), normal(tri, 1), normal(tri, 2), bary);
+    // TODO: Texture coordinates
+
+
 }
 
 size_t TriangleMesh::numTriangles() const

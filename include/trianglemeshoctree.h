@@ -16,6 +16,7 @@ struct TriangleMeshOctree
 {
     using child_index_t = unsigned int;
     static const child_index_t MAX_CHILDREN = 8;
+    static const child_index_t NO_CHILD = 0;
     using child_array_t = child_index_t[MAX_CHILDREN];
 
     TriangleMeshOctree(TriangleMesh & mesh);
@@ -47,7 +48,7 @@ struct TriangleMeshOctree
 
         // Indices of child nodes. Index of 0 indicates no children.
         // order (XYZ): LLL,LLH,LHL,LHH,HLL,HLH,HHL,HHH
-        child_array_t children;
+        child_array_t children = {};
 
         // Triangles owned by this node (indices into the mesh)
         uint32_t firstTriangle = 0;
