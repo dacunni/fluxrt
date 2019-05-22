@@ -36,12 +36,27 @@ inline void setPositionColor(Image<float> & isectPos, int x, int y, const RayInt
                   isect.position.z * 0.5f + 0.5f);
 }
 
-inline void setNormalColor(Image<float> & isectNormal, int x, int y, const RayIntersection & isect)
+inline void setDirectionColor(Image<float> & image, int x, int y, const vec3 & v)
 {
-    isectNormal.set3(x, y,
-                     isect.normal.x * 0.5f + 0.5f,
-                     isect.normal.y * 0.5f + 0.5f,
-                     isect.normal.z * 0.5f + 0.5f);
+    image.set3(x, y,
+               v.x * 0.5f + 0.5f,
+               v.y * 0.5f + 0.5f,
+               v.z * 0.5f + 0.5f);
+}
+
+inline void setNormalColor(Image<float> & image, int x, int y, const RayIntersection & isect)
+{
+    setDirectionColor(image, x, y, isect.normal);
+}
+
+inline void setTangentColor(Image<float> & image, int x, int y, const RayIntersection & isect)
+{
+    setDirectionColor(image, x, y, isect.tangent);
+}
+
+inline void setBitangentColor(Image<float> & image, int x, int y, const RayIntersection & isect)
+{
+    setDirectionColor(image, x, y, isect.bitangent);
 }
 
 template<typename OBJ>
@@ -50,16 +65,13 @@ void make_intersection_images(const OBJ & obj,
 {
     int w = 256, h = 256;
     const float minDistance = 0.01f;
-    Image<float> hitMask(w, h, 1);
-    hitMask.setAll(0.0f);
-    Image<float> isectMask(w, h, 1);
-    isectMask.setAll(0.0f);
-    Image<float> isectDist(w, h, 3);
-    isectDist.setAll(0.0f);
-    Image<float> isectNormal(w, h, 3);
-    isectNormal.setAll(0.0f);
-    Image<float> isectPos(w, h, 3);
-    isectPos.setAll(0.0f);
+    Image<float> hitMask(w, h, 1); hitMask.setAll(0.0f);
+    Image<float> isectMask(w, h, 1); isectMask.setAll(0.0f);
+    Image<float> isectDist(w, h, 3); isectDist.setAll(0.0f);
+    Image<float> isectNormal(w, h, 3); isectNormal.setAll(0.0f);
+    Image<float> isectTangent(w, h, 3); isectTangent.setAll(0.0f);
+    Image<float> isectBitangent(w, h, 3); isectBitangent.setAll(0.0f);
+    Image<float> isectPos(w, h, 3); isectPos.setAll(0.0f);
 
     using clock = std::chrono::system_clock;
 
@@ -102,6 +114,8 @@ void make_intersection_images(const OBJ & obj,
                     setDistColor(isectDist, x, y, minDistance, isect);
                     setPositionColor(isectPos, x, y, isect);
                     setNormalColor(isectNormal, x, y, isect);
+                    setTangentColor(isectTangent, x, y, isect);
+                    setBitangentColor(isectBitangent, x, y, isect);
                 }
             });
         });
@@ -112,6 +126,8 @@ void make_intersection_images(const OBJ & obj,
     writePNG(isectMask, prefix + "isect_mask.png");
     writePNG(isectDist, prefix + "isect_distance.png");
     writePNG(isectNormal, prefix + "isect_normal.png");
+    writePNG(isectTangent, prefix + "isect_tangent.png");
+    writePNG(isectBitangent, prefix + "isect_bitangent.png");
     writePNG(isectPos, prefix + "isect_position.png");
 }
 

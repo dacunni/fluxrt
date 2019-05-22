@@ -1,5 +1,6 @@
 #include <cmath>
 #include <sstream>
+#include "coordinate.h"
 
 inline bool intersectHelper(const Ray & ray, const Sphere & sphere, float & dist1, float & dist2)
 {
@@ -49,6 +50,8 @@ inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDi
     intersection.position = add(ray.origin, scale(ray.direction, intersection.distance));
     // compute surface normal
     intersection.normal = subtract(intersection.position, sphere.center).normalized();
+    // generate tangent / bitangent
+    coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
     return true;
 }
 

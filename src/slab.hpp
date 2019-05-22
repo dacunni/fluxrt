@@ -51,6 +51,24 @@ static const Direction3 boxNormals[6] = {
     Direction3( 0.0,  0.0,  1.0)
 };
 
+static const Direction3 boxTangents[6] = {
+    Direction3( 0.0, -1.0,  0.0),
+    Direction3( 0.0,  1.0,  0.0),
+    Direction3( 0.0,  0.0, -1.0),
+    Direction3( 0.0,  0.0,  1.0),
+    Direction3(-1.0,  0.0,  0.0),
+    Direction3( 1.0,  0.0,  0.0)
+};
+
+static const Direction3 boxBitangents[6] = {
+    Direction3( 0.0,  0.0, -1.0),
+    Direction3( 0.0,  0.0,  1.0),
+    Direction3(-1.0,  0.0,  0.0),
+    Direction3( 1.0,  0.0,  0.0),
+    Direction3( 0.0,  1.0,  0.0),
+    Direction3( 0.0, -1.0,  0.0)
+};
+
 const int MINUS_X_NORMAL_INDEX = 0;
 const int PLUS_X_NORMAL_INDEX  = 1;
 const int MINUS_Y_NORMAL_INDEX = 2;
@@ -159,10 +177,14 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
 
     if(tn > minDistance) {
         intersection.normal = boxNormals[nin];
+        intersection.tangent = boxTangents[nin];
+        intersection.bitangent = boxBitangents[nin];
         intersection.distance = tn;
     }
     else {
         intersection.normal = boxNormals[nif];
+        intersection.tangent = boxTangents[nif];
+        intersection.bitangent = boxBitangents[nif];
         intersection.distance = tf;
     }
     intersection.position = add(ray.origin, scale(ray.direction, intersection.distance));

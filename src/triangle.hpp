@@ -1,4 +1,5 @@
 #include "barycentric.h"
+#include "coordinate.h"
 
 inline bool intersects(const Ray & ray, const Triangle & triangle, float minDistance)
 {
@@ -23,6 +24,8 @@ inline bool findIntersection(const Ray & ray, const Triangle & triangle, float m
     intersection.position = ray.origin + ray.direction * t;
     auto bary = barycentricForPointInTriangle(intersection.position, v0, v1, v2);
     intersection.normal = cross(v2 - v0, v1 - v0);
+    // generate tangent / bitangent
+    coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
     return true;
 }
 

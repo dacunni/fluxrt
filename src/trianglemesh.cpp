@@ -8,6 +8,7 @@
 #include "triangle.h"
 #include "ray.h"
 #include "barycentric.h"
+#include "coordinate.h"
 #include "slab.h"
 
 static bool hasExtension(const std::string & filename, const std::string & ending) {
@@ -143,9 +144,13 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
 
     assert(mesh.hasNormals() && "TODO: Implement normal generation");
     intersection.normal = interpolate(normal(tri, 0), normal(tri, 1), normal(tri, 2), bary);
+
     // TODO: Texture coordinates
 
+    // TODO: Generate tangent/bitangent from texture coordinates if available
 
+    // generate tangent / bitangent
+    coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
 }
 
 size_t TriangleMesh::numTriangles() const

@@ -23,6 +23,8 @@ struct RayIntersection {
 
     Position3 position;
     Direction3 normal;
+    Direction3 tangent;
+    Direction3 bitangent;
     float distance = std::numeric_limits<float>::max();
 };
 
