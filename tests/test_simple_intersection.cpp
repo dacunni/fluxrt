@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <iostream>
+#include <chrono>
 
 #include "base.h"
 #include "image.h"
@@ -7,6 +8,41 @@
 #include "triangle.h"
 #include "trianglemesh.h"
 #include "trianglemeshoctree.h"
+
+inline void setDistColor(Image<float> & isectDist, int x, int y, float minDistance, const RayIntersection & isect)
+{
+    if(isect.distance >= std::numeric_limits<float>::max())
+        isectDist.set3(x, y, 1.0f, 1.0f, 0.0f);
+    else if(std::isinf(isect.distance))
+        isectDist.set3(x, y, 1.0f, 0.0f, 0.0f);
+    else if(std::isnan(isect.distance))
+        isectDist.set3(x, y, 1.0f, 0.0f, 1.0f);
+    else if(isect.distance < minDistance)
+        isectDist.set3(x, y, 0.0f, 1.0f, 1.0f);
+    else if(isect.distance == FLT_MAX)
+        isectDist.set3(x, y, 1.0f, 0.5f, 0.0f);
+    else {
+        //float v = isect.distance / 4.0;
+        float v = std::log10(isect.distance);
+        isectDist.set3(x, y, v, v, v);
+    }
+}
+
+inline void setPositionColor(Image<float> & isectPos, int x, int y, const RayIntersection & isect)
+{
+    isectPos.set3(x, y,
+                  isect.position.x * 0.5f + 0.5f,
+                  isect.position.y * 0.5f + 0.5f,
+                  isect.position.z * 0.5f + 0.5f);
+}
+
+inline void setNormalColor(Image<float> & isectNormal, int x, int y, const RayIntersection & isect)
+{
+    isectNormal.set3(x, y,
+                     isect.normal.x * 0.5f + 0.5f,
+                     isect.normal.y * 0.5f + 0.5f,
+                     isect.normal.z * 0.5f + 0.5f);
+}
 
 template<typename OBJ>
 void make_intersection_images(const OBJ & obj,
@@ -25,52 +61,50 @@ void make_intersection_images(const OBJ & obj,
     Image<float> isectPos(w, h, 3);
     isectPos.setAll(0.0f);
 
-    Ray ray;
+    using clock = std::chrono::system_clock;
+
     RayIntersection isect;
 
-    std::cout << "START intersect image " << name << std::endl;
-    for(int y = 0; y < h; y++) {
-        for(int x = 0; x < w; x++) {
-            ray.origin = Position3(-1.0f + 2.0f * (float) x / (w - 1),
-                                   +1.0f - 2.0f * (float) y / (h - 1),
-                                   2.0f);
-            ray.direction = Direction3(0.0f, 0.0f, -1.0f);
+    auto pixelRay = [&](int x, int y) {
+        return Ray(Position3(-1.0f + 2.0f * (float) x / (w - 1),
+                             +1.0f - 2.0f * (float) y / (h - 1),
+                             2.0f),
+                   Direction3(0.0f, 0.0f, -1.0f));
+    };
 
-            // Predicate intersection (hit / no hit)
-            bool hit = intersects(ray, obj, minDistance);
-            hitMask.set(x, y, 0, hit ? 1.0f : 0.0f);
+    auto timeCall = [&](const std::string & testLabel, std::function<void()> fn) {
+        std::cout << testLabel << " : " << name << " ... " << std::flush;
+        auto start = clock::now();
+        fn();
+        auto end = clock::now();
+        std::chrono::duration<double> elapsed = end - start;
+        std::cout << elapsed.count() << " sec "
+                  << (w * h / elapsed.count()) << " obj/sec"
+                  << std::endl;
+    };
 
-            // Full intersection
-            hit = findIntersection(ray, obj, minDistance, isect);
-            isectMask.set(x, y, 0, hit ? 1.0f : 0.0f);
-            if(hit) {
-                if(isect.distance >= std::numeric_limits<float>::max())
-                    isectDist.set3(x, y, 1.0f, 1.0f, 0.0f);
-                else if(std::isinf(isect.distance))
-                    isectDist.set3(x, y, 1.0f, 0.0f, 0.0f);
-                else if(std::isnan(isect.distance))
-                    isectDist.set3(x, y, 1.0f, 0.0f, 1.0f);
-                else if(isect.distance < minDistance)
-                    isectDist.set3(x, y, 0.0f, 1.0f, 1.0f);
-                else if(isect.distance == FLT_MAX)
-                    isectDist.set3(x, y, 1.0f, 0.5f, 0.0f);
-                else {
-                    //float v = isect.distance / 4.0;
-                    float v = std::log10(isect.distance);
-                    isectDist.set3(x, y, v, v, v);
+    timeCall("hit      ", [&]() {
+        hitMask.forEachPixel(
+            [&](Image<float> &, int x, int y) {
+                // Predicate intersection (hit / no hit)
+                bool hit = intersects(pixelRay(x, y), obj, minDistance);
+                hitMask.set(x, y, 0, hit ? 1.0f : 0.0f);
+            });
+        });
+
+    timeCall("intersect", [&]() {
+        isectMask.forEachPixel(
+            [&](Image<float> &, int x, int y) {
+                // Full intersection
+                bool hit = findIntersection(pixelRay(x, y), obj, minDistance, isect);
+                isectMask.set(x, y, 0, hit ? 1.0f : 0.0f);
+                if(hit) {
+                    setDistColor(isectDist, x, y, minDistance, isect);
+                    setPositionColor(isectPos, x, y, isect);
+                    setNormalColor(isectNormal, x, y, isect);
                 }
-                isectNormal.set3(x, y,
-                                 isect.normal.x * 0.5f + 0.5f,
-                                 isect.normal.y * 0.5f + 0.5f,
-                                 isect.normal.z * 0.5f + 0.5f);
-                isectPos.set3(x, y,
-                                 isect.position.x * 0.5f + 0.5f,
-                                 isect.position.y * 0.5f + 0.5f,
-                                 isect.position.z * 0.5f + 0.5f);
-            }
-        }
-    }
-    std::cout << "END intersect image " << name << std::endl;
+            });
+        });
 
     const std::string prefix = std::string("simple_isect_") + name + "_";
 
@@ -93,8 +127,11 @@ int main(int argc, char ** argv)
     make_intersection_images(triangle, "triangle");
 
     TriangleMesh mesh;
-    if(!loadTriangleMesh(mesh, "models/blender", "sphere.obj")) {
+    //if(!loadTriangleMesh(mesh, "models/blender", "sphere.obj")) {
     //if(!loadTriangleMesh(mesh, "models/blender", "monkey2.obj")) {
+    //if(!loadTriangleMesh(mesh, "models/blender", "monkey3.obj")) {
+    //if(!loadTriangleMesh(mesh, "models/blender", "monkey_simple_flat.obj")) {
+    if(!loadTriangleMesh(mesh, "models/blender", "monkey_simple_smooth.obj")) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }
