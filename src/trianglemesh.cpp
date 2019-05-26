@@ -44,12 +44,12 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         return false;
     }
 
-    printf("OBJ Mesh:\n");
-    printf("    vertices  = %d\n", (int)(attrib.vertices.size()) / 3);
-    printf("    normals   = %d\n", (int)(attrib.normals.size()) / 3);
-    printf("    texcoords = %d\n", (int)(attrib.texcoords.size()) / 2);
-    printf("    materials = %d\n", (int)materials.size());
-    printf("    shapes    = %d\n", (int)shapes.size());
+    printf("OBJ Mesh:");
+    printf(" vertices: %d", (int)(attrib.vertices.size()) / 3);
+    printf(" normals: %d", (int)(attrib.normals.size()) / 3);
+    printf(" texcoords: %d", (int)(attrib.texcoords.size()) / 2);
+    printf(" materials: %d", (int)materials.size());
+    printf(" shapes: %d\n", (int)shapes.size());
 
     materials.push_back(tinyobj::material_t()); // default material
 
@@ -179,4 +179,35 @@ void TriangleMesh::printMeta() const
            vertices.size(), normals.size(), indices.vertex.size(), indices.normal.size());
 }
 
+void TriangleMesh::scaleToFit(const Slab & bounds)
+{
+    Slab old = boundingBox(vertices);
+
+    auto s = relativeScale(old, bounds);
+    auto mine = s.minElement();
+    auto maxe = s.maxElement();
+
+    float scaleFactor = 1.0f;
+
+    if(maxe < 1.0f) {
+        // scale down
+        scaleFactor = mine;
+    }
+    else {
+        // scale up
+        scaleFactor = 1.0f / maxe;
+    }
+
+    auto oldCenter = old.midpoint();
+    auto newCenter = bounds.midpoint();
+
+    // Scale to fit and center in the new bounding volume
+    for(auto & v : vertices) {
+        v.x = (v.x - oldCenter.x) * scaleFactor + newCenter.x;
+        v.y = (v.y - oldCenter.y) * scaleFactor + newCenter.y;
+        v.z = (v.z - oldCenter.z) * scaleFactor + newCenter.z;
+    }
+
+    // NOTE: We don't need to adjust normals be cause we are scaling uniformly in all directions
+}
 

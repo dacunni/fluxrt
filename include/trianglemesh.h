@@ -5,6 +5,7 @@
 #include "vectortypes.h"
 struct Ray;
 struct RayIntersection;
+struct Slab;
 
 struct TriangleMesh
 {
@@ -18,6 +19,8 @@ struct TriangleMesh
     const Direction3 & triangleNormal(uint32_t tri, uint32_t index) const;
 
     void printMeta() const;
+
+    void scaleToFit(const Slab & bounds);
 
     std::vector<Position3> vertices;
     std::vector<Direction3> normals;

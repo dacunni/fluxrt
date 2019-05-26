@@ -3,6 +3,17 @@
 #include <cmath>
 #include "slab.h"
 
+Slab Slab::centeredUnitCube()
+{
+    return centeredCube(1.0f);
+}
+
+Slab Slab::centeredCube(float size)
+{
+    float s = size * 0.5f;
+    return { -s, s, -s, s, -s, s };
+}
+
 void Slab::correctMinMax(void)
 {
     if(xmin > xmax) { std::swap(xmin, xmax); }
@@ -55,5 +66,12 @@ Slab boundingBox(const std::vector<Position3> & points)
     }
 
     return bounds;
+}
+
+vec3 relativeScale(const Slab & a, const Slab & b)
+{
+    return { b.xdim() / a.xdim(),
+             b.ydim() / a.ydim(),
+             b.zdim() / a.zdim() };
 }
 

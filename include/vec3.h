@@ -11,6 +11,8 @@ struct vec3
 	inline vec3(float xn, float yn, float zn) : x(xn), y(yn), z(zn) {}
     inline ~vec3() = default;
 
+    static vec3 zero();
+
 	inline void set(float xn, float yn, float zn) { x=xn; y=yn; z=zn; }
 	inline vec3 negated() const { return vec3(-x, -y, -z); }
 
@@ -20,9 +22,10 @@ struct vec3
 	inline vec3 normalized() const;
     inline void normalize() { *this = this->normalized(); }
 
-    std::string string() const;
+    inline float minElement() const { return std::min({x, y, z}); }
+    inline float maxElement() const { return std::max({x, y, z}); }
 
-    static vec3 zero();
+    std::string string() const;
 
     float x = 0.0f;
     float y = 0.0f;
