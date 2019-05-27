@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <limits>
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
@@ -10,6 +11,9 @@
 #include "barycentric.h"
 #include "coordinate.h"
 #include "slab.h"
+
+// Special texcoord index indicating no texture coordinates exist for the vertex
+const uint32_t NoTexCoord = std::numeric_limits<uint32_t>::max();
 
 static bool hasExtension(const std::string & filename, const std::string & ending) {
     if (ending.size() > filename.size()) {
@@ -55,14 +59,22 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
 
     for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
-        Position3 pos = Position3(coord[0], coord[1], coord[2]);
+        auto pos = Position3(coord[0], coord[1], coord[2]);
         mesh.vertices.push_back(pos);
     }
 
     for(int ni = 0; ni < attrib.normals.size() / 3; ++ni) {
         auto coord = &attrib.normals[ni * 3];
-        Direction3 dir = Direction3(coord[0], coord[1], coord[2]);
+        auto dir = Direction3(coord[0], coord[1], coord[2]);
         mesh.normals.push_back(dir);
+    }
+
+    for(int ti = 0; ti < attrib.texcoords.size() / 2; ++ti) {
+        auto coord = &attrib.texcoords[ti * 2];
+        // TODO: The tinyobj example flips v. Need to double check this is right.
+        //auto tc = TextureCoordinate{coord[0], coord[1]};
+        auto tc = TextureCoordinate{coord[0], 1.0f - coord[1]};
+        mesh.texcoords.push_back(tc);
     }
 
     // shapes
@@ -75,11 +87,16 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
             for (int vi = 0; vi < 3; ++vi) {
                 mesh.indices.vertex.push_back(indices[vi].vertex_index);
                 mesh.indices.normal.push_back(indices[vi].normal_index);
+                if(indices[vi].texcoord_index < 0) {
+                    mesh.indices.texcoord.push_back(NoTexCoord);
+                }
+                else {
+                    mesh.indices.texcoord.push_back(indices[vi].texcoord_index);
+                }
             }
         }
     }
 
-    // TODO: Texture coordinates
     // TODO: Materials
     // TODO: Handle missing normals
 
@@ -110,7 +127,6 @@ bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
     bool hit = false;
 
     auto vertex = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleVertex(tri, index); };
-    auto normal = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleNormal(tri, index); };
     const auto numTriangles = mesh.numTriangles();
 
     for(uint32_t tri = 0; tri < numTriangles; ++tri) {
@@ -133,19 +149,34 @@ bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
 void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
                                   uint32_t tri, float t, RayIntersection & intersection)
 {
-    auto vertex = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleVertex(tri, index); };
-    auto normal = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleNormal(tri, index); };
-
     intersection.distance = t;
     intersection.position = ray.origin + ray.direction * t;
 
     auto bary = barycentricForPointInTriangle(intersection.position,
-                                              vertex(tri, 0), vertex(tri, 1), vertex(tri, 2));
+                                              mesh.triangleVertex(tri, 0),
+                                              mesh.triangleVertex(tri, 1),
+                                              mesh.triangleVertex(tri, 2));
 
     assert(mesh.hasNormals() && "TODO: Implement normal generation");
-    intersection.normal = interpolate(normal(tri, 0), normal(tri, 1), normal(tri, 2), bary);
+    intersection.normal = interpolate(mesh.triangleNormal(tri, 0),
+                                      mesh.triangleNormal(tri, 1),
+                                      mesh.triangleNormal(tri, 2), bary);
 
-    // TODO: Texture coordinates
+    // Interpolate texture coordinates, if available
+    auto tci0 = mesh.indices.texcoord[3 * tri + 0];
+    auto tci1 = mesh.indices.texcoord[3 * tri + 1];
+    auto tci2 = mesh.indices.texcoord[3 * tri + 2];
+
+    if(tci0 != NoTexCoord && tci1 != NoTexCoord && tci2 != NoTexCoord) {
+        intersection.texcoord = interpolate(mesh.texcoords[mesh.indices.texcoord[tci0]],
+                                            mesh.texcoords[mesh.indices.texcoord[tci1]],
+                                            mesh.texcoords[mesh.indices.texcoord[tci2]], bary);
+        intersection.hasTexCoord = true;
+    }
+    else {
+        intersection.texcoord = { 0.0f, 0.0f };
+        intersection.hasTexCoord = false;
+    }
 
     // TODO: Generate tangent/bitangent from texture coordinates if available
 
@@ -171,6 +202,11 @@ const Position3 & TriangleMesh::triangleVertex(uint32_t tri, uint32_t index) con
 const Direction3 & TriangleMesh::triangleNormal(uint32_t tri, uint32_t index) const
 {
     return normals[indices.normal[3 * tri + index]];
+}
+
+const TextureCoordinate & TriangleMesh::triangleTextureCoordinate(uint32_t tri, uint32_t index) const
+{
+    return texcoords[indices.texcoord[3 * tri + index]];
 }
 
 void TriangleMesh::printMeta() const

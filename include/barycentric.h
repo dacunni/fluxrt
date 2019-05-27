@@ -3,6 +3,7 @@
 
 struct Position3;
 struct Direction3;
+struct TextureCoordinate;
 
 // Barycentric coordinates using the convension that u + v + w = 1
 struct BarycentricCoordinate
@@ -35,5 +36,17 @@ Direction3 interpolate(const Direction3 & v0,
                        const Direction3 & v1,
                        const Direction3 & v2,
                        const BarycentricCoordinate & bary);
+
+// Calculates the weighted average of three texture coordinates, using the barycentric
+// coordinate as the weights.
+TextureCoordinate interpolate(const TextureCoordinate & tc0,
+                              const TextureCoordinate & tc1,
+                              const TextureCoordinate & tc2,
+                              const BarycentricCoordinate & bary);
+
+// Calculates the weighted average of three values, using the barycentric
+// coordinate as the weights.
+float interpolate(const float v0, const float v1, const float v2,
+                  const BarycentricCoordinate & bary);
 
 #endif

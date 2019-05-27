@@ -59,6 +59,11 @@ inline void setBitangentColor(Image<float> & image, int x, int y, const RayInter
     setDirectionColor(image, x, y, isect.bitangent);
 }
 
+inline void setTexCoordColor(Image<float> & image, int x, int y, const RayIntersection & isect)
+{
+    image.set3(x, y, isect.texcoord.u, isect.texcoord.v, 0.0f);
+}
+
 inline void setBasicLightingColor(Image<float> & image, int x, int y, const RayIntersection & isect)
 {
     vec3 L = vec3(1.0f, 1.0f, 1.0f).normalized();
@@ -79,6 +84,7 @@ void make_intersection_images(const OBJ & obj,
     Image<float> isectNormal(w, h, 3); isectNormal.setAll(0.0f);
     Image<float> isectTangent(w, h, 3); isectTangent.setAll(0.0f);
     Image<float> isectBitangent(w, h, 3); isectBitangent.setAll(0.0f);
+    Image<float> isectTexCoord(w, h, 3); isectTexCoord.setAll(0.0f);
     Image<float> isectPos(w, h, 3); isectPos.setAll(0.0f);
     Image<float> isectBasicLighting(w, h, 3); isectBasicLighting.setAll(0.0f);
 
@@ -125,6 +131,7 @@ void make_intersection_images(const OBJ & obj,
                     setNormalColor(isectNormal, x, y, isect);
                     setTangentColor(isectTangent, x, y, isect);
                     setBitangentColor(isectBitangent, x, y, isect);
+                    setTexCoordColor(isectTexCoord, x, y, isect);
                     setBasicLightingColor(isectBasicLighting, x, y, isect);
                 }
             });
@@ -138,6 +145,7 @@ void make_intersection_images(const OBJ & obj,
     writePNG(isectNormal, prefix + "isect_normal.png");
     writePNG(isectTangent, prefix + "isect_tangent.png");
     writePNG(isectBitangent, prefix + "isect_bitangent.png");
+    writePNG(isectTexCoord, prefix + "isect_texcoord.png");
     writePNG(isectPos, prefix + "isect_position.png");
     writePNG(isectBasicLighting, prefix + "isect_basic_lighting.png");
 }
@@ -161,6 +169,8 @@ int main(int argc, char ** argv)
     //if(!loadTriangleMesh(mesh, "models/blender", "monkey_simple_smooth.obj")) {
     //if(!loadTriangleMesh(mesh, "models/casual-effects.com/sportsCar", "sportsCar.obj")) {
     if(!loadTriangleMesh(mesh, "models/casual-effects.com/bmw", "bmw.obj")) {
+    //if(!loadTriangleMesh(mesh, "models/casual-effects.com/mitsuba", "mitsuba-sphere.obj")) {
+    //if(!loadTriangleMesh(mesh, "models/casual-effects.com/living_room", "living_room.obj")) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }

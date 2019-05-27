@@ -1,5 +1,6 @@
 #include "barycentric.h"
 #include "vectortypes.h"
+#include "material.h"
 
 // Calculate the area of a triangle given its vertices
 float triangleArea(const Position3 & A, const Position3 & B, const Position3 & C)
@@ -38,6 +39,7 @@ Position3 interpolate(const Position3 & v0,
 {
     return Position3(v0 * bary.u + v1 * bary.v + v2 * bary.w);
 }
+
 Direction3 interpolate(const Direction3 & v0,
                        const Direction3 & v1,
                        const Direction3 & v2,
@@ -46,4 +48,18 @@ Direction3 interpolate(const Direction3 & v0,
     return (v0 * bary.u + v1 * bary.v + v2 * bary.w).normalized();
 }
 
+TextureCoordinate interpolate(const TextureCoordinate & tc0,
+                              const TextureCoordinate & tc1,
+                              const TextureCoordinate & tc2,
+                              const BarycentricCoordinate & bary)
+{
+    return { interpolate(tc0.u, tc1.u, tc2.u, bary),
+             interpolate(tc0.v, tc1.v, tc2.v, bary) };
+}
+
+float interpolate(const float v0, const float v1, const float v2,
+                  const BarycentricCoordinate & bary)
+{
+    return v0 * bary.u + v1 * bary.v + v2 * bary.w;
+}
 

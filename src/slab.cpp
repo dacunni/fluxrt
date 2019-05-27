@@ -28,7 +28,7 @@ float Slab::maxdim() const
 
 void Slab::print() const
 {
-    printf("Slab min [%f %f %f] max [%f %f %f] dim [%f %f %f]\n",
+    printf("Slab min [%.2f %.2f %.2f] max [%.2f %.2f %.2f] dim [%.2f %.2f %.2f]\n",
            xmin, ymin, zmin, xmax, ymax, zmax,
            xdim(), ydim(), zdim());
 }

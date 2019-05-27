@@ -6,6 +6,7 @@
 #include <float.h>
 
 #include "vectortypes.h"
+#include "material.h"
 
 struct Ray
 {
@@ -26,6 +27,8 @@ struct RayIntersection {
     Direction3 tangent;
     Direction3 bitangent;
     float distance = std::numeric_limits<float>::max();
+    TextureCoordinate texcoord;
+    bool hasTexCoord = false;
 };
 
 #endif
