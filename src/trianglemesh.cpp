@@ -168,9 +168,9 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
     auto tci2 = mesh.indices.texcoord[3 * tri + 2];
 
     if(tci0 != NoTexCoord && tci1 != NoTexCoord && tci2 != NoTexCoord) {
-        intersection.texcoord = interpolate(mesh.texcoords[mesh.indices.texcoord[tci0]],
-                                            mesh.texcoords[mesh.indices.texcoord[tci1]],
-                                            mesh.texcoords[mesh.indices.texcoord[tci2]], bary);
+        intersection.texcoord = interpolate(mesh.texcoords[tci0],
+                                            mesh.texcoords[tci1],
+                                            mesh.texcoords[tci2], bary);
         intersection.hasTexCoord = true;
     }
     else {
