@@ -3,4 +3,5 @@
 *.swo
 build
 .DS_Store
+models
 

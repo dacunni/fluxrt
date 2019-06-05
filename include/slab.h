@@ -30,6 +30,8 @@ struct Slab
 
     inline float volume() const { return xdim() * ydim() * zdim(); }
 
+    inline bool contains(const Position3 & P) const;
+
     void print() const;
 
     float xmin = 0.0f, ymin = 0.0f, zmin = 0.0f;

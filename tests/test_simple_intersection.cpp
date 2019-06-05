@@ -22,7 +22,6 @@ inline void setDistColor(Image<float> & isectDist, int x, int y, float minDistan
     else if(isect.distance == FLT_MAX)
         isectDist.set3(x, y, 1.0f, 0.5f, 0.0f);
     else {
-        //float v = isect.distance / 4.0;
         float v = std::log10(isect.distance);
         isectDist.set3(x, y, v, v, v);
     }
@@ -75,8 +74,8 @@ template<typename OBJ>
 void make_intersection_images(const OBJ & obj,
                               const std::string & name)
 {
-    int w = 256, h = 256;
-    //int w = 1024, h = 1024;
+    //int w = 256, h = 256;
+    int w = 1024, h = 1024;
     const float minDistance = 0.01f;
     Image<float> hitMask(w, h, 1); hitMask.setAll(0.0f);
     Image<float> isectMask(w, h, 1); isectMask.setAll(0.0f);
@@ -93,9 +92,17 @@ void make_intersection_images(const OBJ & obj,
     RayIntersection isect;
 
     auto pixelRay = [&](int x, int y) {
+#if 0   // zoom in on part of the model
+        float xd = 0.25f, yd = 0.25f;
+        float cx = -0.75f, cy = -0.0f;
+        return Ray(Position3(cx + xd * ((float) x / (w - 1) - 0.5f),
+                             cy - yd * ((float) y / (h - 1) - 0.5f),
+                             2.0f),
+#else
         return Ray(Position3(-1.0f + 2.0f * (float) x / (w - 1),
                              +1.0f - 2.0f * (float) y / (h - 1),
                              2.0f),
+#endif
                    Direction3(0.0f, 0.0f, -1.0f));
     };
 
@@ -168,8 +175,8 @@ int main(int argc, char ** argv)
     //if(!loadTriangleMesh(mesh, "models/blender", "monkey_simple_flat.obj")) {
     //if(!loadTriangleMesh(mesh, "models/blender", "monkey_simple_smooth.obj")) {
     //if(!loadTriangleMesh(mesh, "models/casual-effects.com/sportsCar", "sportsCar.obj")) {
-    if(!loadTriangleMesh(mesh, "models/casual-effects.com/bmw", "bmw.obj")) {
-    //if(!loadTriangleMesh(mesh, "models/casual-effects.com/mitsuba", "mitsuba-sphere.obj")) {
+    //if(!loadTriangleMesh(mesh, "models/casual-effects.com/bmw", "bmw.obj")) {
+    if(!loadTriangleMesh(mesh, "models/casual-effects.com/mitsuba", "mitsuba-sphere.obj")) {
     //if(!loadTriangleMesh(mesh, "models/casual-effects.com/living_room", "living_room.obj")) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
@@ -184,6 +191,7 @@ int main(int argc, char ** argv)
 
     TriangleMeshOctree meshOctree(mesh);
     meshOctree.build();
+    printf("Octree covers all triangles: %d\n", (int) meshOctree.nodesCoverAllTriangles());
     make_intersection_images(meshOctree, "mesh_octree");
 
     return EXIT_SUCCESS;

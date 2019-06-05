@@ -35,6 +35,8 @@ struct TriangleMeshOctree
     // Traversal helper
     static void childOrderForDirection(const Direction3 & d,
                                        child_array_t indices);
+    static const char * octantString(child_index_t childIndex);
+    static void printChildOrder(child_array_t & indices);
 
     // Bit masks for child indices. Used to determine which half
     // of the octree a child cell is in along each direction.

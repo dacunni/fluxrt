@@ -64,17 +64,17 @@ void TriangleMeshOctree::buildNode(uint32_t nodeIndex,
 
     // Helper functions for partitioning
     auto evalForVerts = [&](uint32_t ti, std::function<bool(const Position3 &)> p) {
-        return p(mesh.triangleVertex(ti, 0)) ||
-               p(mesh.triangleVertex(ti, 1)) ||
-               p(mesh.triangleVertex(ti, 2));
+        return p(mesh.triangleVertex(ti, 0)) || p(mesh.triangleVertex(ti, 1)) || p(mesh.triangleVertex(ti, 2));
     };
 
-    auto isInXLow  = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.x < xmid; }); };
-    auto isInXHigh = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.x > xmid; }); };
-    auto isInYLow  = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.y < ymid; }); };
-    auto isInYHigh = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.y > ymid; }); };
-    auto isInZLow  = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.z < zmid; }); };
-    auto isInZHigh = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.z > zmid; }); };
+    // FIXME: This is not sufficient to determine if a triangle intersects a bounding box. There is a WAR in findIntersection(),
+    //        but the proper fix should be here, and the WAR may not catch all cases.
+    auto isInXLow  = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.x <= xmid; }); };
+    auto isInXHigh = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.x >= xmid; }); };
+    auto isInYLow  = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.y <= ymid; }); };
+    auto isInYHigh = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.y >= ymid; }); };
+    auto isInZLow  = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.z <= zmid; }); };
+    auto isInZHigh = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.z >= zmid; }); };
 
     // Bin in  X
     std::vector<uint32_t> L, H;
@@ -100,17 +100,17 @@ void TriangleMeshOctree::buildNode(uint32_t nodeIndex,
     std::copy_if(HH.begin(), HH.end(), std::back_inserter(HHH), isInZHigh);
 
     // Create child nodes
-    buildChild(node, 0, LLL, Slab(xmin, ymin, zmin, xmid, ymid, zmid));
-    buildChild(node, 1, LLH, Slab(xmin, ymin, zmid, xmid, ymid, zmax));
-    buildChild(node, 2, LHL, Slab(xmin, ymid, zmin, xmid, ymax, zmid));
-    buildChild(node, 3, LHH, Slab(xmin, ymid, zmid, xmid, ymax, zmax));
-    buildChild(node, 4, HLL, Slab(xmid, ymin, zmin, xmax, ymid, zmid));
-    buildChild(node, 5, HLH, Slab(xmid, ymin, zmid, xmax, ymid, zmax));
-    buildChild(node, 6, HHL, Slab(xmid, ymid, zmin, xmax, ymax, zmid));
-    buildChild(node, 7, HHH, Slab(xmid, ymid, zmid, xmax, ymax, zmax));
+    buildChild(node, TriangleMeshOctree::LLL, LLL, Slab(xmin, ymin, zmin, xmid, ymid, zmid));
+    buildChild(node, TriangleMeshOctree::LLH, LLH, Slab(xmin, ymin, zmid, xmid, ymid, zmax));
+    buildChild(node, TriangleMeshOctree::LHL, LHL, Slab(xmin, ymid, zmin, xmid, ymax, zmid));
+    buildChild(node, TriangleMeshOctree::LHH, LHH, Slab(xmin, ymid, zmid, xmid, ymax, zmax));
+    buildChild(node, TriangleMeshOctree::HLL, HLL, Slab(xmid, ymin, zmin, xmax, ymid, zmid));
+    buildChild(node, TriangleMeshOctree::HLH, HLH, Slab(xmid, ymin, zmid, xmax, ymid, zmax));
+    buildChild(node, TriangleMeshOctree::HHL, HHL, Slab(xmid, ymid, zmin, xmax, ymax, zmid));
+    buildChild(node, TriangleMeshOctree::HHH, HHH, Slab(xmid, ymid, zmid, xmax, ymax, zmax));
 
     // Count non-zero child indices to determine number of children
-    node.numChildren = std::count_if(node.children, node.children + MAX_CHILDREN, [](uint32_t index) { return index > 0; });
+    node.numChildren = std::count_if(node.children, node.children + MAX_CHILDREN, [](uint32_t index) { return index != NO_CHILD; });
 
     // Update the node in the array
     nodes[nodeIndex] = node;
@@ -121,7 +121,7 @@ void TriangleMeshOctree::buildChild(Node & node,
                                     const std::vector<uint32_t> & childTris,
                                     const Slab & childBounds)
 {
-    if(childTris.size() < 1)
+    if(childTris.empty())
         return;
     auto childNodeIndex = addNode(node.level + 1);
     node.children[childIndex] = childNodeIndex;
@@ -194,6 +194,29 @@ void TriangleMeshOctree::childOrderForDirection(const Direction3 & d, child_arra
     }
 }
 
+const char * TriangleMeshOctree::octantString(child_index_t childIndex)
+{
+    switch(childIndex) {
+        case LLL: return "LLL";
+        case LLH: return "LLH";
+        case LHL: return "LHL";
+        case LHH: return "LHH";
+        case HLL: return "HLL";
+        case HLH: return "HLH";
+        case HHL: return "HHL";
+        case HHH: return "HHH";
+        default:  return "???";
+    }
+}
+
+void TriangleMeshOctree::printChildOrder(child_array_t & indices)
+{
+    for(auto childIndex : indices) {
+        printf("%u (%s)  ", childIndex, octantString(childIndex));
+    }
+    printf("\n");
+}
+
 // Ray intersection
 
 bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree,
@@ -259,7 +282,13 @@ bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree,
             if(intersectsTriangle(ray,
                                   mesh.triangleVertex(tri, 0), mesh.triangleVertex(tri, 1), mesh.triangleVertex(tri, 2),
                                   minDistance, &t)) {
-                if(t < bestDistance) {
+                if(t < bestDistance
+                   // FIXME[WAR]: We have a bug in the octree building logic that includes triangles in cells
+                   //             that do not actually contain them. This leads to incorrectly determining the first
+                   //             hit in the wrong cell sometimes. By checking here, we ignore these. The right fix
+                   //             would be to build the tree correctly in the first place.
+                   && node.bounds.contains(ray.origin + ray.direction * t))
+                {
                     bestTriangle = tri;
                     bestDistance = t;
                     hit = true;
@@ -274,7 +303,10 @@ bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree,
             if(childNode == TriangleMeshOctree::NO_CHILD)
                 continue; // empty child cell
             if(findIntersection(ray, meshOctree, minDistance, bestTriangle, bestDistance, childOrder, childNode)) {
+                // TODO: It seems like we should be able to return immediately if we are
+                //       iterating in the correct child order, but we get gaps in some models.
                 return true;
+                //hit = true; // ???
             }
         }
     }

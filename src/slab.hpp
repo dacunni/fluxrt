@@ -1,3 +1,4 @@
+#include <iostream>
 
 inline Slab::Slab(float xmind, float ymind, float zmind,
                   float xmaxd, float ymaxd, float zmaxd) :
@@ -17,10 +18,18 @@ inline Slab::Slab(const Position3 & minpos, const Position3 & maxpos)
     : Slab(minpos.x, minpos.y, minpos.z, maxpos.x, maxpos.y, maxpos.z)
 { }
 
+inline bool Slab::contains(const Position3 & P) const
+{
+    return
+        xmin <= P.x && xmax >= P.x &&
+        ymin <= P.y && ymax >= P.y &&
+        zmin <= P.z && zmax >= P.z;
+}
+
 inline bool intersects(const Ray & ray, const Slab & slab, float minDistance)
 {
-    // TODO: Handle NaNs
     vec3 dinv(1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z);
+
     float tx1 = (slab.xmin - ray.origin.x) * dinv.x;
     float tx2 = (slab.xmax - ray.origin.x) * dinv.x;
 

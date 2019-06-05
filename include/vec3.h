@@ -2,6 +2,7 @@
 #define __VEC3_H__
 
 #include <string>
+#include <iosfwd>
 #include "base.h"
 
 struct vec3
@@ -15,6 +16,7 @@ struct vec3
 
 	inline void set(float xn, float yn, float zn) { x=xn; y=yn; z=zn; }
 	inline vec3 negated() const { return vec3(-x, -y, -z); }
+    inline void negate() { x = -x; y = -y; z = -z; }
 
 	inline float magnitude_sq() const { return sq(x) + sq(y) + sq(z); }
 	inline float magnitude() const { return std::sqrt(sq(x) + sq(y) + sq(z)); }
@@ -54,6 +56,8 @@ inline vec3 blend(const vec3 & a, float s, const vec3 & b, float t);
 inline vec3 mirror(const vec3 & a, const vec3 & n);
 inline vec3 refract(const vec3 & a, const vec3 & n, float n1, float n2);
 inline vec3 interp(const vec3 & a, const vec3 & b, const float alpha);
+
+std::ostream & operator<<(std::ostream & os, const vec3 & v);
 
 #include "vec3.hpp"
 #endif
