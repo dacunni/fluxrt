@@ -27,6 +27,7 @@ struct RayIntersection {
     Direction3 tangent;
     Direction3 bitangent;
     float distance = std::numeric_limits<float>::max();
+    MaterialID material = NoMaterial;
     TextureCoordinate texcoord;
     bool hasTexCoord = false;
 };

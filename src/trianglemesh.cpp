@@ -26,15 +26,15 @@ static bool hasExtension(const std::string & filename, const std::string & endin
 }
 
 // Wavefront OBJ format
-bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
+bool loadTriangleMeshFromOBJ(TriangleMesh & mesh, std::vector<Material> & materials,
                              const std::string & path, const std::string & filename)
 {
     std::string warn, err;
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
-    std::vector<tinyobj::material_t> materials;
+    std::vector<tinyobj::material_t> objmaterials;
 
-    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err,
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &objmaterials, &warn, &err,
                                 (path + '/' + filename).c_str(), path.c_str());
     if(!warn.empty()) {
         std::cout << "WARN: " << warn << std::endl;
@@ -49,13 +49,25 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     }
 
     printf("OBJ Mesh:");
-    printf(" vertices: %d", (int)(attrib.vertices.size()) / 3);
-    printf(" normals: %d", (int)(attrib.normals.size()) / 3);
-    printf(" texcoords: %d", (int)(attrib.texcoords.size()) / 2);
-    printf(" materials: %d", (int)materials.size());
-    printf(" shapes: %d\n", (int)shapes.size());
+    printf("  vertices: %d", (int) (attrib.vertices.size()) / 3);
+    printf("  normals: %d", (int) (attrib.normals.size()) / 3);
+    printf("  texcoords: %d", (int) (attrib.texcoords.size()) / 2);
+    printf("  materials: %d", (int) objmaterials.size());
+    printf("  shapes: %d\n", (int) shapes.size());
 
-    materials.push_back(tinyobj::material_t()); // default material
+    objmaterials.push_back(tinyobj::material_t()); // default material
+
+    for(int mi = 0; mi < objmaterials.size(); ++mi) {
+        auto & objmaterial = objmaterials[mi];
+        auto & D = objmaterial.diffuse;
+        auto & S = objmaterial.specular;
+        printf("    materials %2d D %.1f %.1f %.1f D_tex '%s' "
+               "S %.1f %.1f %.1f S_tex '%s'\n", mi,
+               D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
+               S[0], S[1], S[2], objmaterial.specular_texname.c_str());
+        auto material = Material::makeDiffuseSpecular(D, S);
+        materials.push_back(material);
+    }
 
     for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
@@ -79,10 +91,17 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
 
     // shapes
     for(size_t si = 0; si < shapes.size(); ++si) {
-        auto num_faces = shapes[si].mesh.indices.size() / 3;
+        auto & shape = shapes[si];
+        auto num_faces = shape.mesh.indices.size() / 3;
+        auto num_materials = shape.mesh.material_ids.size();
+        //printf("    shape %d faces %d materials %d\n", (int) si, (int) num_faces, (int) num_materials);
+
+        assert(num_materials == num_faces); // per-face material
+
         // faces
         for(size_t fi = 0; fi < num_faces; ++fi) {
-            auto indices = &shapes[si].mesh.indices[3 * fi];
+            auto indices = &shape.mesh.indices[3 * fi];
+            mesh.faces.material.push_back(shape.mesh.material_ids[fi]);
             // vertex indices
             for (int vi = 0; vi < 3; ++vi) {
                 mesh.indices.vertex.push_back(indices[vi].vertex_index);
@@ -97,17 +116,16 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         }
     }
 
-    // TODO: Materials
     // TODO: Handle missing normals
 
     return true;
 }
 
-bool loadTriangleMesh(TriangleMesh & mesh,
+bool loadTriangleMesh(TriangleMesh & mesh, std::vector<Material> & materials,
                       const std::string & path, const std::string & filename)
 {
     if(hasExtension(filename, ".obj")) {
-        return loadTriangleMeshFromOBJ(mesh, path, filename);
+        return loadTriangleMeshFromOBJ(mesh, materials, path, filename);
     }
 
     std::cerr << "Unrecognized mesh type " << filename << '\n';
@@ -151,6 +169,8 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
 {
     intersection.distance = t;
     intersection.position = ray.origin + ray.direction * t;
+
+    intersection.material = mesh.faces.material[tri];
 
     auto bary = barycentricForPointInTriangle(intersection.position,
                                               mesh.triangleVertex(tri, 0),

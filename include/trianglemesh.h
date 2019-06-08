@@ -28,14 +28,21 @@ struct TriangleMesh
     std::vector<Position3> vertices;
     std::vector<Direction3> normals;
     std::vector<TextureCoordinate> texcoords;
+
+    // Per-vertex properties
     struct {
         std::vector<uint32_t> vertex;
         std::vector<uint32_t> normal;
         std::vector<uint32_t> texcoord;
     } indices;
+
+    // Per-face properties
+    struct {
+        std::vector<MaterialID> material;
+    } faces;
 };
 
-bool loadTriangleMesh(TriangleMesh & mesh,
+bool loadTriangleMesh(TriangleMesh & mesh, std::vector<Material> & materials,
                       const std::string & path, const std::string & filename);
 
 // Ray intersection

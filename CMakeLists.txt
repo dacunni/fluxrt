@@ -17,6 +17,7 @@ set(SRCS
     src/integrate.cpp
     src/vec3.cpp
     src/vec4.cpp
+    src/material.cpp
     src/optics.cpp
     src/radiometry.cpp
     src/rng.cpp

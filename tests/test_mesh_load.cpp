@@ -11,8 +11,9 @@ int main(int argc, char ** argv)
     printf("Testing mesh loading\n");
 
     TriangleMesh mesh;
-    //if(!loadTriangleMesh(mesh, "models/blender", "sphere.obj")) {
-    if(!loadTriangleMesh(mesh, "models/blender", "monkey2.obj")) {
+    std::vector<Material> materials;
+    //if(!loadTriangleMesh(mesh, materials, "models/blender", "sphere.obj")) {
+    if(!loadTriangleMesh(mesh, materials, "models/blender", "monkey2.obj")) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }

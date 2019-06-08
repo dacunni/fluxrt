@@ -70,12 +70,32 @@ inline void setBasicLightingColor(Image<float> & image, int x, int y, const RayI
     image.set3(x, y, NdL, NdL, NdL);
 }
 
+inline void setMatDiffuseColor(Image<float> & image, int x, int y, const RayIntersection & isect,
+                               const std::vector<Material> & materials)
+{
+    if(isect.material == NoMaterial) { image.set3(x, y, 0.0f, 0.0f, 0.0f); }
+    else {
+        auto & m = materials[isect.material];
+        image.set3(x, y, m.diffuse[0], m.diffuse[1], m.diffuse[2]);
+    }
+}
+
+inline void setMatSpecularColor(Image<float> & image, int x, int y, const RayIntersection & isect,
+                               const std::vector<Material> & materials)
+{
+    if(isect.material == NoMaterial) { image.set3(x, y, 0.0f, 0.0f, 0.0f); }
+    else {
+        auto & m = materials[isect.material];
+        image.set3(x, y, m.specular[0], m.specular[1], m.specular[2]);
+    }
+}
+
 template<typename OBJ>
-void make_intersection_images(const OBJ & obj,
+void make_intersection_images(const OBJ & obj, const std::vector<Material> & materials,
                               const std::string & name)
 {
-    //int w = 256, h = 256;
-    int w = 1024, h = 1024;
+    int w = 256, h = 256;
+    //int w = 1024, h = 1024;
     const float minDistance = 0.01f;
     Image<float> hitMask(w, h, 1); hitMask.setAll(0.0f);
     Image<float> isectMask(w, h, 1); isectMask.setAll(0.0f);
@@ -86,6 +106,8 @@ void make_intersection_images(const OBJ & obj,
     Image<float> isectTexCoord(w, h, 3); isectTexCoord.setAll(0.0f);
     Image<float> isectPos(w, h, 3); isectPos.setAll(0.0f);
     Image<float> isectBasicLighting(w, h, 3); isectBasicLighting.setAll(0.0f);
+    Image<float> isectMatDiffuse(w, h, 3); isectMatDiffuse.setAll(0.0f);
+    Image<float> isectMatSpecular(w, h, 3); isectMatDiffuse.setAll(0.0f);
 
     using clock = std::chrono::system_clock;
 
@@ -140,6 +162,8 @@ void make_intersection_images(const OBJ & obj,
                     setBitangentColor(isectBitangent, x, y, isect);
                     setTexCoordColor(isectTexCoord, x, y, isect);
                     setBasicLightingColor(isectBasicLighting, x, y, isect);
+                    setMatDiffuseColor(isectMatDiffuse, x, y, isect, materials);
+                    setMatSpecularColor(isectMatSpecular, x, y, isect, materials);
                 }
             });
         });
@@ -155,29 +179,34 @@ void make_intersection_images(const OBJ & obj,
     writePNG(isectTexCoord, prefix + "isect_texcoord.png");
     writePNG(isectPos, prefix + "isect_position.png");
     writePNG(isectBasicLighting, prefix + "isect_basic_lighting.png");
+    writePNG(isectMatDiffuse, prefix + "isect_mat_diffuse.png");
+    writePNG(isectMatSpecular, prefix + "isect_mat_specular.png");
 }
 
 int main(int argc, char ** argv)
 {
+    std::vector<Material> materials;
+
     Sphere sphere(Position3(0, 0, 0), 0.5f);
-    make_intersection_images(sphere, "sphere");
+    make_intersection_images(sphere, materials, "sphere");
 
     Triangle triangle;
     triangle.vertices[0] = Position3(-0.4, -0.3,  0.0f);
     triangle.vertices[1] = Position3( 0.1,  0.6,  0.2f);
     triangle.vertices[2] = Position3( 0.5, -0.5, -0.3f);
-    make_intersection_images(triangle, "triangle");
+    make_intersection_images(triangle, materials, "triangle");
 
     TriangleMesh mesh;
-    //if(!loadTriangleMesh(mesh, "models/blender", "sphere.obj")) {
-    //if(!loadTriangleMesh(mesh, "models/blender", "monkey2.obj")) {
-    //if(!loadTriangleMesh(mesh, "models/blender", "monkey3.obj")) {
-    //if(!loadTriangleMesh(mesh, "models/blender", "monkey_simple_flat.obj")) {
-    //if(!loadTriangleMesh(mesh, "models/blender", "monkey_simple_smooth.obj")) {
-    //if(!loadTriangleMesh(mesh, "models/casual-effects.com/sportsCar", "sportsCar.obj")) {
-    //if(!loadTriangleMesh(mesh, "models/casual-effects.com/bmw", "bmw.obj")) {
-    if(!loadTriangleMesh(mesh, "models/casual-effects.com/mitsuba", "mitsuba-sphere.obj")) {
-    //if(!loadTriangleMesh(mesh, "models/casual-effects.com/living_room", "living_room.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, "models/blender", "sphere.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, "models/blender", "monkey2.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, "models/blender", "monkey3.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, "models/blender", "monkey_simple_flat.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, "models/blender", "monkey_simple_smooth.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, "models/casual-effects.com/sportsCar", "sportsCar.obj")) {
+    if(!loadTriangleMesh(mesh, materials, "models/casual-effects.com/bmw", "bmw.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, "models/casual-effects.com/mitsuba", "mitsuba-sphere.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, "models/casual-effects.com/mori_knob", "testObj.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, "models/casual-effects.com/living_room", "living_room.obj")) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }
@@ -187,12 +216,12 @@ int main(int argc, char ** argv)
     mesh.scaleToFit(Slab::centeredCube(2.0f));
     meshBounds = boundingBox(mesh.vertices);
     printf("Mesh bounds: "); meshBounds.print();
-    //make_intersection_images(mesh, "mesh");
+    //make_intersection_images(mesh, materials, "mesh";
 
     TriangleMeshOctree meshOctree(mesh);
     meshOctree.build();
     printf("Octree covers all triangles: %d\n", (int) meshOctree.nodesCoverAllTriangles());
-    make_intersection_images(meshOctree, "mesh_octree");
+    make_intersection_images(meshOctree, materials, "mesh_octree");
 
     return EXIT_SUCCESS;
 }
