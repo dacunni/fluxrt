@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 
 PROJECT (micromath_tests)
 
-SET(CMAKE_CXX_FLAGS "-std=c++11 -O2")
+SET(CMAKE_CXX_FLAGS "-std=c++14 -O2")
 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})

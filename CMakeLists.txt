@@ -7,7 +7,7 @@ include_directories(src)
 include_directories(external/stb)
 include_directories(external/tinyobjloader)
 
-SET(CMAKE_CXX_FLAGS "-std=c++11 -O2")
+set(CMAKE_CXX_FLAGS "-std=c++14 -O2")
 
 set(SRCS
     src/barycentric.cpp

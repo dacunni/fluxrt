@@ -4,7 +4,7 @@ PROJECT (micromath_benchmark)
 
 option(BUILD_BENCHMARKS "Build benchmarks" ON)
 
-SET(CMAKE_CXX_FLAGS "-std=c++11 -O2")
+SET(CMAKE_CXX_FLAGS "-std=c++14 -O2")
 
 include_directories(/usr/local/include)
 include_directories(..)
