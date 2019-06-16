@@ -5,6 +5,8 @@
 #include <string>
 #include <functional>
 
+#include "base.h"
+
 template<typename T>
 struct Image
 {
@@ -13,6 +15,7 @@ struct Image
 
     inline T get(size_t x, size_t y, int channel) const;
     inline T lerp(float x, float y, int channel) const;
+    inline T lerpUV(float u, float v, int channel) const;
 
     inline void set(size_t x, size_t y, int channel, T value);
     inline void set3(size_t x, size_t y, T v0, T v1, T v2);
@@ -42,6 +45,11 @@ struct Image
     int numChannels;
     OutOfBoundsBehavior outOfBoundsBehavior = ZeroValueOutOfBounds;
 };
+
+template<typename T>
+std::shared_ptr<Image<T>> readImage(const char * filename);
+template<typename T>
+std::shared_ptr<Image<T>> readImage(const std::string & filename) { return std::move(readImage<T>(filename.c_str())); }
 
 template<typename T>
 bool writePNG(const Image<T> & image, const char * filename);

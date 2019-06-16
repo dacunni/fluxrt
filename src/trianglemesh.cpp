@@ -26,7 +26,8 @@ static bool hasExtension(const std::string & filename, const std::string & endin
 }
 
 // Wavefront OBJ format
-bool loadTriangleMeshFromOBJ(TriangleMesh & mesh, std::vector<Material> & materials,
+bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
+                             MaterialArray & materials, TextureArray & textures,
                              const std::string & path, const std::string & filename)
 {
     std::string warn, err;
@@ -57,18 +58,39 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh, std::vector<Material> & materi
 
     objmaterials.push_back(tinyobj::material_t()); // default material
 
+    std::map<std::string, TextureID> fileToTextureID;
+
     for(int mi = 0; mi < objmaterials.size(); ++mi) {
         auto & objmaterial = objmaterials[mi];
         auto & D = objmaterial.diffuse;
         auto & S = objmaterial.specular;
-        printf("    materials %2d D %.1f %.1f %.1f D_tex '%s' "
+        printf("    material %2d D %.1f %.1f %.1f D_tex '%s' "
                "S %.1f %.1f %.1f S_tex '%s'\n", mi,
                D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
                S[0], S[1], S[2], objmaterial.specular_texname.c_str());
+
         auto material = Material::makeDiffuseSpecular(D, S);
+
+        if(!objmaterial.diffuse_texname.empty()) {
+            std::string texname = objmaterial.diffuse_texname;
+            std::replace(texname.begin(), texname.end(), '\\', '/');
+            auto ft = fileToTextureID.find(texname);
+            TextureID textureID = NoTexture;
+            if(ft != fileToTextureID.end()) {
+                textureID = ft->second;
+            }
+            else {
+                textureID = textures.size();
+                std::shared_ptr<Texture> texture;
+                texture = readImage<float>(path + '/' + texname);
+                textures.push_back(texture);
+                fileToTextureID[texname] = textureID;
+            }
+            material.diffuseTexture = textureID;
+        }
+
         materials.push_back(material);
     }
-
     for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
         auto pos = Position3(coord[0], coord[1], coord[2]);
@@ -121,11 +143,12 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh, std::vector<Material> & materi
     return true;
 }
 
-bool loadTriangleMesh(TriangleMesh & mesh, std::vector<Material> & materials,
+bool loadTriangleMesh(TriangleMesh & mesh,
+                      MaterialArray & materials, TextureArray & textures,
                       const std::string & path, const std::string & filename)
 {
     if(hasExtension(filename, ".obj")) {
-        return loadTriangleMeshFromOBJ(mesh, materials, path, filename);
+        return loadTriangleMeshFromOBJ(mesh, materials, textures, path, filename);
     }
 
     std::cerr << "Unrecognized mesh type " << filename << '\n';

@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
@@ -12,6 +14,48 @@ Image<uint8_t> convert<uint8_t, float>(const Image<float> & image)
                    newImage.data.begin(),
                    [](float v) { return clamp01(v) * 255.0f; });
     return std::move(newImage);
+}
+
+template<>
+std::shared_ptr<Image<uint8_t>> readImage(const char * filename)
+{
+    int w = 0, h = 0, numComponents = 3;
+    unsigned char * stbiData = stbi_load(filename, &w, &h, &numComponents, 3);
+
+    if(!stbiData) {
+        throw std::runtime_error(std::string("File not found: ") + filename);
+    }
+
+    const unsigned int numElements = w * h * 3;
+    auto image = std::make_shared<Image<uint8_t>>(w, h, 3);
+
+    for(unsigned int pi = 0; pi < numElements; pi++) {
+        image->data[pi] = stbiData[pi];
+    }
+    stbi_image_free(stbiData);
+
+    return image;
+}
+
+template<>
+std::shared_ptr<Image<float>> readImage(const char * filename)
+{
+    int w = 0, h = 0, numComponents = 3;
+    unsigned char * stbiData = stbi_load(filename, &w, &h, &numComponents, 3);
+
+    if(!stbiData) {
+        throw std::runtime_error(std::string("File not found: ") + filename);
+    }
+
+    const unsigned int numElements = w * h * 3;
+    auto image = std::make_shared<Image<float>>(w, h, 3);
+
+    for(unsigned int pi = 0; pi < numElements; pi++) {
+        image->data[pi] = float(stbiData[pi]) / 255.0f;
+    }
+    stbi_image_free(stbiData);
+
+    return std::move(image);
 }
 
 template<>

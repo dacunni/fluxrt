@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cmath>
 #include "color.h"
+#include "interpolation.h"
 
 template<typename T>
 Image<T>::Image(size_t w, size_t h, int channels)
@@ -66,6 +67,12 @@ inline T Image<T>::lerp(float x, float y, int channel) const
 
     // Bilinearly interpolate
     return bilerp(bX, bY, v11, v12, v21, v22);
+}
+
+template<typename T>
+inline T Image<T>::lerpUV(float u, float v, int channel) const
+{
+    return lerp(u * width, v * height, channel);
 }
 
 template<typename T>

@@ -42,7 +42,8 @@ struct TriangleMesh
     } faces;
 };
 
-bool loadTriangleMesh(TriangleMesh & mesh, std::vector<Material> & materials,
+bool loadTriangleMesh(TriangleMesh & mesh,
+                      MaterialArray & materials, TextureArray & textures,
                       const std::string & path, const std::string & filename);
 
 // Ray intersection

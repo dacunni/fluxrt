@@ -71,27 +71,29 @@ inline void setBasicLightingColor(Image<float> & image, int x, int y, const RayI
 }
 
 inline void setMatDiffuseColor(Image<float> & image, int x, int y, const RayIntersection & isect,
-                               const std::vector<Material> & materials)
+                               const MaterialArray & materials, const TextureArray & textures)
 {
     if(isect.material == NoMaterial) { image.set3(x, y, 0.0f, 0.0f, 0.0f); }
     else {
         auto & m = materials[isect.material];
-        image.set3(x, y, m.diffuse[0], m.diffuse[1], m.diffuse[2]);
+        auto D = m.diffuse(textures, isect.texcoord);
+        image.set3(x, y, D.r, D.g, D.b);
     }
 }
 
 inline void setMatSpecularColor(Image<float> & image, int x, int y, const RayIntersection & isect,
-                               const std::vector<Material> & materials)
+                               const MaterialArray & materials, const TextureArray & textures)
 {
     if(isect.material == NoMaterial) { image.set3(x, y, 0.0f, 0.0f, 0.0f); }
     else {
         auto & m = materials[isect.material];
-        image.set3(x, y, m.specular[0], m.specular[1], m.specular[2]);
+        auto S = m.specular(textures, isect.texcoord);
+        image.set3(x, y, S.r, S.g, S.b);
     }
 }
 
 template<typename OBJ>
-void make_intersection_images(const OBJ & obj, const std::vector<Material> & materials,
+void make_intersection_images(const OBJ & obj, const MaterialArray & materials, const TextureArray & textures,
                               const std::string & name)
 {
     int w = 256, h = 256;
@@ -120,6 +122,13 @@ void make_intersection_images(const OBJ & obj, const std::vector<Material> & mat
         return Ray(Position3(cx + xd * ((float) x / (w - 1) - 0.5f),
                              cy - yd * ((float) y / (h - 1) - 0.5f),
                              2.0f),
+#elif 0
+        // living room
+        float xd = 0.25f, yd = 0.25f;
+        float cx = 0.0f, cy = -0.15f;
+        return Ray(Position3(cx + xd * ((float) x / (w - 1) - 0.5f),
+                             cy - yd * ((float) y / (h - 1) - 0.5f),
+                             0.0f),
 #else
         return Ray(Position3(-1.0f + 2.0f * (float) x / (w - 1),
                              +1.0f - 2.0f * (float) y / (h - 1),
@@ -162,8 +171,8 @@ void make_intersection_images(const OBJ & obj, const std::vector<Material> & mat
                     setBitangentColor(isectBitangent, x, y, isect);
                     setTexCoordColor(isectTexCoord, x, y, isect);
                     setBasicLightingColor(isectBasicLighting, x, y, isect);
-                    setMatDiffuseColor(isectMatDiffuse, x, y, isect, materials);
-                    setMatSpecularColor(isectMatSpecular, x, y, isect, materials);
+                    setMatDiffuseColor(isectMatDiffuse, x, y, isect, materials, textures);
+                    setMatSpecularColor(isectMatSpecular, x, y, isect, materials, textures);
                 }
             });
         });
@@ -185,28 +194,29 @@ void make_intersection_images(const OBJ & obj, const std::vector<Material> & mat
 
 int main(int argc, char ** argv)
 {
-    std::vector<Material> materials;
+    MaterialArray materials;
+    TextureArray textures;
 
     Sphere sphere(Position3(0, 0, 0), 0.5f);
-    make_intersection_images(sphere, materials, "sphere");
+    make_intersection_images(sphere, materials, textures, "sphere");
 
     Triangle triangle;
     triangle.vertices[0] = Position3(-0.4, -0.3,  0.0f);
     triangle.vertices[1] = Position3( 0.1,  0.6,  0.2f);
     triangle.vertices[2] = Position3( 0.5, -0.5, -0.3f);
-    make_intersection_images(triangle, materials, "triangle");
+    make_intersection_images(triangle, materials, textures, "triangle");
 
     TriangleMesh mesh;
-    //if(!loadTriangleMesh(mesh, materials, "models/blender", "sphere.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, "models/blender", "monkey2.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, "models/blender", "monkey3.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, "models/blender", "monkey_simple_flat.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, "models/blender", "monkey_simple_smooth.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, "models/casual-effects.com/sportsCar", "sportsCar.obj")) {
-    if(!loadTriangleMesh(mesh, materials, "models/casual-effects.com/bmw", "bmw.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, "models/casual-effects.com/mitsuba", "mitsuba-sphere.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, "models/casual-effects.com/mori_knob", "testObj.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, "models/casual-effects.com/living_room", "living_room.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "sphere.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "monkey2.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "monkey3.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "monkey_simple_flat.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "monkey_simple_smooth.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/sportsCar", "sportsCar.obj")) {
+    if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/bmw", "bmw.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/mitsuba", "mitsuba-sphere.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/mori_knob", "testObj.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/living_room", "living_room.obj")) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }
@@ -216,12 +226,12 @@ int main(int argc, char ** argv)
     mesh.scaleToFit(Slab::centeredCube(2.0f));
     meshBounds = boundingBox(mesh.vertices);
     printf("Mesh bounds: "); meshBounds.print();
-    //make_intersection_images(mesh, materials, "mesh";
+    //make_intersection_images(mesh, materials, textures, "mesh";
 
     TriangleMeshOctree meshOctree(mesh);
     meshOctree.build();
     printf("Octree covers all triangles: %d\n", (int) meshOctree.nodesCoverAllTriangles());
-    make_intersection_images(meshOctree, materials, "mesh_octree");
+    make_intersection_images(meshOctree, materials, textures, "mesh_octree");
 
     return EXIT_SUCCESS;
 }
