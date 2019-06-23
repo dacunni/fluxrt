@@ -35,6 +35,12 @@ if(BUILD_PYTHON_BINDINGS)
     add_subdirectory(python)
 endif(BUILD_PYTHON_BINDINGS)
 
+option(BUILD_CHAISCRIPT_BINDINGS "Build ChaiScript bindings" ON)
+if(BUILD_CHAISCRIPT_BINDINGS)
+    include_directories(external/chaiscript/include)
+    add_subdirectory(chaiscript)
+endif(BUILD_CHAISCRIPT_BINDINGS)
+
 enable_testing()
 add_subdirectory(unittests)
 

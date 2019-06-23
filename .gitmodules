@@ -4,3 +4,7 @@
 [submodule "external/tinyobjloader"]
 	path = external/tinyobjloader
 	url = https://github.com/syoyo/tinyobjloader.git
+[submodule "external/chaiscript"]
+	path = external/chaiscript
+	url = https://github.com/ChaiScript/ChaiScript.git
+    branch = master
