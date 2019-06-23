@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <limits>
+#include <memory>
 
 #include "image.h"
 
