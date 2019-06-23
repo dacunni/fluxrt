@@ -116,45 +116,15 @@ int main(int argc, char ** argv)
 
     // Ray-Object Intersection
 
-    // Sphere
-    auto intersects_Sphere = [](const Ray & ray, const Sphere & obj, float minDistance) {
-        return intersects(ray, obj, minDistance);
-    };
-    auto findIntersection_Sphere = [](const Ray & ray, const Sphere & obj, float minDistance, RayIntersection & intersection) {
-        return findIntersection(ray, obj, minDistance, intersection);
-    };
-    chai.add(fun(intersects_Sphere), "intersects");
-    chai.add(fun(findIntersection_Sphere), "findIntersection");
+    chai.add(fun(static_cast<bool (*)(const Ray &, const Sphere &, float)>(&intersects)), "intersects");
+    chai.add(fun(static_cast<bool (*)(const Ray &, const Slab &, float)>(&intersects)), "intersects");
+    chai.add(fun(static_cast<bool (*)(const Ray &, const TriangleMesh &, float)>(&intersects)), "intersects");
+    chai.add(fun(static_cast<bool (*)(const Ray &, const TriangleMeshOctree &, float)>(&intersects)), "intersects");
 
-    // Slab
-    auto intersects_Slab = [](const Ray & ray, const Slab & obj, float minDistance) {
-        return intersects(ray, obj, minDistance);
-    };
-    auto findIntersection_Slab = [](const Ray & ray, const Slab & obj, float minDistance, RayIntersection & intersection) {
-        return findIntersection(ray, obj, minDistance, intersection);
-    };
-    chai.add(fun(intersects_Slab), "intersects");
-    chai.add(fun(findIntersection_Slab), "findIntersection");
-
-    // TriangleMesh
-    auto intersects_TriangleMesh = [](const Ray & ray, const TriangleMesh & obj, float minDistance) {
-        return intersects(ray, obj, minDistance);
-    };
-    auto findIntersection_TriangleMesh = [](const Ray & ray, const TriangleMesh & obj, float minDistance, RayIntersection & intersection) {
-        return findIntersection(ray, obj, minDistance, intersection);
-    };
-    chai.add(fun(intersects_TriangleMesh), "intersects");
-    chai.add(fun(findIntersection_TriangleMesh), "findIntersection");
-
-    // TriangleMeshOctree
-    auto intersects_TriangleMeshOctree = [](const Ray & ray, const TriangleMeshOctree & obj, float minDistance) {
-        return intersects(ray, obj, minDistance);
-    };
-    auto findIntersection_TriangleMeshOctree = [](const Ray & ray, const TriangleMeshOctree & obj, float minDistance, RayIntersection & intersection) {
-        return findIntersection(ray, obj, minDistance, intersection);
-    };
-    chai.add(fun(intersects_TriangleMeshOctree), "intersects");
-    chai.add(fun(findIntersection_TriangleMeshOctree), "findIntersection");
+    chai.add(fun(static_cast<bool (*)(const Ray &, const Sphere &, float, RayIntersection &)>(&findIntersection)), "findIntersection");
+    chai.add(fun(static_cast<bool (*)(const Ray &, const Slab &, float, RayIntersection &)>(&findIntersection)), "findIntersection");
+    chai.add(fun(static_cast<bool (*)(const Ray &, const TriangleMesh &, float, RayIntersection &)>(&findIntersection)), "findIntersection");
+    chai.add(fun(static_cast<bool (*)(const Ray &, const TriangleMeshOctree &, float, RayIntersection &)>(&findIntersection)), "findIntersection");
 
     if(argc > 1) {
         std::cout << "Running ChaiScript file '" << argv[1] << "'\n";
