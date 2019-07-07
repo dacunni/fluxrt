@@ -12,6 +12,7 @@ set(CMAKE_CXX_FLAGS "-std=c++14 -O2")
 set(SRCS
     src/barycentric.cpp
     src/color.cpp
+    src/filesystem.cpp
     src/fresnel.cpp
     src/image.cpp
     src/integrate.cpp
