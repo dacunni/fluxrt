@@ -11,19 +11,10 @@
 #include "barycentric.h"
 #include "coordinate.h"
 #include "slab.h"
+#include "filesystem.h"
 
 // Special texcoord index indicating no texture coordinates exist for the vertex
 const uint32_t NoTexCoord = std::numeric_limits<uint32_t>::max();
-
-static bool hasExtension(const std::string & filename, const std::string & ending) {
-    if (ending.size() > filename.size()) {
-        return false;
-    }
-    return std::equal(ending.rbegin(), ending.rend(), filename.rbegin(),
-                      [](const char a, const char b) {
-                          return tolower(a) == tolower(b);
-                      });
-}
 
 // Wavefront OBJ format
 bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
@@ -145,9 +136,12 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
 
 bool loadTriangleMesh(TriangleMesh & mesh,
                       MaterialArray & materials, TextureArray & textures,
-                      const std::string & path, const std::string & filename)
+                      const std::string & pathToFile)
 {
-    if(hasExtension(filename, ".obj")) {
+    std::string path, filename;
+    std::tie(path, filename) = filesystem::splitFileDirectory(pathToFile);
+
+    if(filesystem::hasExtension(filename, ".obj")) {
         return loadTriangleMeshFromOBJ(mesh, materials, textures, path, filename);
     }
 

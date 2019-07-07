@@ -6,15 +6,22 @@
 #include "trianglemesh.h"
 #include "trianglemeshoctree.h"
 
+#include "filesystem.h"
+
 int main(int argc, char ** argv)
 {
     printf("Testing mesh loading\n");
 
+    std::string modelFile = "models/blender/sphere.obj";
+
+    if(argc > 1) {
+        modelFile = argv[1];
+    }
+
     TriangleMesh mesh;
     MaterialArray materials;
     TextureArray textures;
-    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "sphere.obj")) {
-    if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "monkey2.obj")) {
+    if(!loadTriangleMesh(mesh, materials, textures, modelFile)) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }

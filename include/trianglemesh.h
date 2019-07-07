@@ -44,7 +44,7 @@ struct TriangleMesh
 
 bool loadTriangleMesh(TriangleMesh & mesh,
                       MaterialArray & materials, TextureArray & textures,
-                      const std::string & path, const std::string & filename);
+                      const std::string & pathToFile);
 
 // Ray intersection
 bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance);

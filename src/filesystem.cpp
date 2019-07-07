@@ -12,4 +12,14 @@ std::tuple<std::string, std::string> splitFileDirectory(const std::string & full
                            fullpath.substr(split_at + 1));
 }
 
+bool hasExtension(const std::string & filename, const std::string & ending) {
+    if (ending.size() > filename.size()) {
+        return false;
+    }
+    return std::equal(ending.rbegin(), ending.rend(), filename.rbegin(),
+                      [](const char a, const char b) {
+                          return tolower(a) == tolower(b);
+                      });
+}
+
 }; // filesystem

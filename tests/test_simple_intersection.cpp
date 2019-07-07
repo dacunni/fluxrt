@@ -207,16 +207,16 @@ int main(int argc, char ** argv)
     make_intersection_images(triangle, materials, textures, "triangle");
 
     TriangleMesh mesh;
-    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "sphere.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "monkey2.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "monkey3.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "monkey_simple_flat.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender", "monkey_simple_smooth.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/sportsCar", "sportsCar.obj")) {
-    if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/bmw", "bmw.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/mitsuba", "mitsuba-sphere.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/mori_knob", "testObj.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/living_room", "living_room.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender/sphere.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender/monkey2.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender/monkey3.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender/monkey_simple_flat.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/blender/monkey_simple_smooth.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/sportsCar/sportsCar.obj")) {
+    if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/bmw/bmw.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/mitsuba/mitsuba-sphere.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/mori_knob/testObj.obj")) {
+    //if(!loadTriangleMesh(mesh, materials, textures, "models/casual-effects.com/living_room/living_room.obj")) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }
