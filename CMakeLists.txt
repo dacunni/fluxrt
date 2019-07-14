@@ -6,6 +6,7 @@ include_directories(include)
 include_directories(src)
 include_directories(external/stb)
 include_directories(external/tinyobjloader)
+include_directories(external/cpptoml/include)
 
 set(CMAKE_CXX_FLAGS "-std=c++14 -O2")
 
