@@ -23,6 +23,7 @@ set(SRCS
     src/radiometry.cpp
     src/rng.cpp
     src/slab.cpp
+    src/scene.cpp
     src/triangle.cpp
     src/trianglemesh.cpp
     src/trianglemeshoctree.cpp

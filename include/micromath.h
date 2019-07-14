@@ -25,6 +25,8 @@
 #include "trianglemesh.h"
 #include "trianglemeshoctree.h"
 
+#include "scene.h"
+
 #include "color.h"
 #include "image.h"
 
