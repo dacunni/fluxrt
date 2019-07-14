@@ -10,6 +10,7 @@ void Scene::print() const
         << " slabs " << slabs.size()
         << " meshes " << meshes.size()
         << std::endl;
+    sensor.print();
 }
 
 static vec3 vectorToVec3(const std::vector<double> & v)
@@ -43,9 +44,7 @@ bool loadSceneFromTOML(Scene & scene, const std::string & filename)
         if(sensorTable) {
             auto pixelwidth = sensorTable->get_as<uint32_t>("pixelwidth").value_or(100);
             auto pixelheight = sensorTable->get_as<uint32_t>("pixelheight").value_or(100);
-
-            printf("Sensor: %u x %u\n", pixelwidth, pixelheight);
-            // TODO - make a sensor
+            scene.sensor = Sensor(pixelwidth, pixelheight);
         }
 
         auto meshTableArray = top->get_table_array("meshes");

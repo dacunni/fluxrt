@@ -23,6 +23,7 @@ set(SRCS
     src/optics.cpp
     src/radiometry.cpp
     src/rng.cpp
+    src/sensor.cpp
     src/slab.cpp
     src/scene.cpp
     src/triangle.cpp

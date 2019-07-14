@@ -6,6 +6,7 @@
 #include "sphere.h"
 #include "slab.h"
 #include "trianglemesh.h"
+#include "sensor.h"
 
 struct Scene
 {
@@ -21,6 +22,8 @@ struct Scene
 
     MaterialArray materials;
     TextureArray textures;
+
+    Sensor sensor;
 };
 
 bool loadSceneFromTOML(Scene & scene, const std::string & filename);
