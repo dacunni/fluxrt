@@ -18,11 +18,9 @@ static vec3 vectorToVec3(const std::vector<double> & v)
     return vec3(v[0], v[1], v[2]);
 }
 
-bool loadSceneFromTOML(Scene & scene, const std::string & filename)
+bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & top)
 {
     try {
-        auto top = cpptoml::parse_file(filename);
-
         auto cameraTable = top->get_table("camera");
         if(cameraTable) {
             auto type = cameraTable->get_as<std::string>("type").value_or("pinhole");
@@ -104,5 +102,47 @@ bool loadSceneFromTOML(Scene & scene, const std::string & filename)
         return false;
     }
     return true;
+}
+
+bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename)
+{
+    try {
+        auto top = cpptoml::parse_file(filename);
+        return loadSceneFromParsedTOML(scene, top);
+    }
+    catch(cpptoml::parse_exception & e) {
+        std::cout << "Caught cpptoml exception: " << e.what() << std::endl;
+        return false;
+    }
+    catch(std::exception & e) {
+        std::cout << "Caught exception: " << e.what() << std::endl;
+        return false;
+    }
+    catch(...) {
+        std::cout << "Caught unknown exception" << std::endl;
+        return false;
+    }
+}
+
+bool loadSceneFromTOMLString(Scene & scene, const std::string & toml)
+{
+    std::istringstream iss(toml);
+    cpptoml::parser parser(iss);
+    try {
+        auto top = parser.parse();
+        return loadSceneFromParsedTOML(scene, top);
+    }
+    catch(cpptoml::parse_exception & e) {
+        std::cout << "Caught cpptoml exception: " << e.what() << std::endl;
+        return false;
+    }
+    catch(std::exception & e) {
+        std::cout << "Caught exception: " << e.what() << std::endl;
+        return false;
+    }
+    catch(...) {
+        std::cout << "Caught unknown exception" << std::endl;
+        return false;
+    }
 }
 

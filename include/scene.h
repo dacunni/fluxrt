@@ -7,6 +7,7 @@
 #include "slab.h"
 #include "trianglemesh.h"
 #include "sensor.h"
+#include "camera.h"
 
 struct Scene
 {
@@ -24,8 +25,10 @@ struct Scene
     TextureArray textures;
 
     Sensor sensor;
+    PinholeCamera camera;
 };
 
-bool loadSceneFromTOML(Scene & scene, const std::string & filename);
+bool loadSceneFromTOMLString(Scene & scene, const std::string & toml);
+bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename);
 
 #endif
