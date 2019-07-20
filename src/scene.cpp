@@ -1,7 +1,9 @@
+#include <exception>
 #include "cpptoml.h"
 
 #include "scene.h"
 #include "vectortypes.h"
+#include "filesystem.h"
 
 void Scene::print() const
 {
@@ -16,6 +18,16 @@ void Scene::print() const
 static vec3 vectorToVec3(const std::vector<double> & v)
 {
     return vec3(v[0], v[1], v[2]);
+}
+
+bool loadSceneFromFile(Scene & scene, const std::string & filename)
+{
+    if(filesystem::hasExtension(filename, ".toml")) {
+        return loadSceneFromTOMLFile(scene, filename);
+    }
+
+    throw std::runtime_error("Unable to deduce scene file type");
+    return false;
 }
 
 bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & top)
@@ -114,14 +126,6 @@ bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename)
         std::cout << "Caught cpptoml exception: " << e.what() << std::endl;
         return false;
     }
-    catch(std::exception & e) {
-        std::cout << "Caught exception: " << e.what() << std::endl;
-        return false;
-    }
-    catch(...) {
-        std::cout << "Caught unknown exception" << std::endl;
-        return false;
-    }
 }
 
 bool loadSceneFromTOMLString(Scene & scene, const std::string & toml)
@@ -134,14 +138,6 @@ bool loadSceneFromTOMLString(Scene & scene, const std::string & toml)
     }
     catch(cpptoml::parse_exception & e) {
         std::cout << "Caught cpptoml exception: " << e.what() << std::endl;
-        return false;
-    }
-    catch(std::exception & e) {
-        std::cout << "Caught exception: " << e.what() << std::endl;
-        return false;
-    }
-    catch(...) {
-        std::cout << "Caught unknown exception" << std::endl;
         return false;
     }
 }

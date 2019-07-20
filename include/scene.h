@@ -28,6 +28,9 @@ struct Scene
     PinholeCamera camera;
 };
 
+// Load scene from a file, deducing the type from the extension
+bool loadSceneFromFile(Scene & scene, const std::string & filename);
+
 bool loadSceneFromTOMLString(Scene & scene, const std::string & toml);
 bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename);
 

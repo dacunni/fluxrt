@@ -41,17 +41,17 @@ if(RUN_INSPECTION_TESTS)
 endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
-ADD_EXECUTABLE (test_toml_scene test_toml_scene.cpp)
-TARGET_LINK_LIBRARIES (test_toml_scene micromath)
+ADD_EXECUTABLE (test_scene_load test_scene_load.cpp)
+TARGET_LINK_LIBRARIES (test_scene_load micromath)
 
 if(RUN_INSPECTION_TESTS)
-    ADD_CUSTOM_COMMAND(TARGET test_toml_scene POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/toml_scene
-                       COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/models ${CMAKE_CURRENT_BINARY_DIR}/toml_scene/models
-                       COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/scenes ${CMAKE_CURRENT_BINARY_DIR}/toml_scene/scenes)
-    ADD_CUSTOM_COMMAND(TARGET test_toml_scene POST_BUILD
-                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/toml_scene
-                       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_toml_scene)
+    ADD_CUSTOM_COMMAND(TARGET test_scene_load POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/scene_load
+                       COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/models ${CMAKE_CURRENT_BINARY_DIR}/scene_load/models
+                       COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/scenes ${CMAKE_CURRENT_BINARY_DIR}/scene_load/scenes)
+    ADD_CUSTOM_COMMAND(TARGET test_scene_load POST_BUILD
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/scene_load
+                       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_scene_load)
 endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------

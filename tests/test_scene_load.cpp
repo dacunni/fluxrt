@@ -44,7 +44,7 @@ max = [ 5.6, 7.6, 9.1 ]
 
 int main(int argc, char ** argv)
 {
-    printf("Testing TOML scene loading\n");
+    printf("Testing scene loading\n");
 
     std::string sceneFile = "scenes/toml/test1.toml";
 
@@ -65,7 +65,7 @@ int main(int argc, char ** argv)
 #else
     printf("Scene file: %s\n", sceneFile.c_str());
 
-    if(!loadSceneFromTOMLFile(scene, sceneFile)) {
+    if(!loadSceneFromFile(scene, sceneFile)) {
         std::cerr << "Error loading scene\n";
         return EXIT_FAILURE;
     }
