@@ -17,6 +17,7 @@ set(SRCS
     src/fresnel.cpp
     src/image.cpp
     src/integrate.cpp
+    src/jacobian.cpp
     src/vec3.cpp
     src/vec4.cpp
     src/material.cpp
