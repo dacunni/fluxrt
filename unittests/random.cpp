@@ -52,6 +52,16 @@ TEST(RandomTest, UniformCircle) {
     }
 }
 
+TEST(RandomTest, UniformUnitSurfaceUnitSphere) {
+    RNG rng;
+    float x, y, z;
+    for(int i = 0; i < 100; ++i) {
+        rng.uniformSurfaceUnitSphere(x, y, z);
+        float len = std::sqrt(x * x + y * y + z * z);
+        EXPECT_FLOAT_EQ(len, 1.0f);
+    }
+}
+
 } // namespace
 
 int main(int argc, char **argv) {
