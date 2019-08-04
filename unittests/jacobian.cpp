@@ -85,6 +85,98 @@ TEST(JacobianAreaWarpTest, JacobianAnalytic3DNonUniform) {
     EXPECT_FLOAT_EQ(95, from3Dto3D(4, 3, 2, 2, 5, 3, 1, 2, 8));
 }
 
+TEST(JacobianAreaWarpTest, JacobianNumerical2DUniform) {
+    using namespace jacobian::numerical;
+    // Parameters: x(), y(), u, v, du, dv
+
+    const float closeness = 1.0e-3;
+    float du = 0.01f;
+    float dv = 0.01f;
+
+    {
+    auto x = [](float u, float v) { return u; };
+    auto y = [](float u, float v) { return v; };
+    EXPECT_NEAR(1, from2Dto2D(x, y, 0, 0, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 1, 1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, -1, 1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 1, -1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, -1, -1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 3, 2, du, dv), closeness);
+    }
+
+    {
+    auto x = [](float u, float v) { return v; };
+    auto y = [](float u, float v) { return u; };
+    EXPECT_NEAR(1, from2Dto2D(x, y, 0, 0, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 1, 1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, -1, 1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 1, -1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, -1, -1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 3, 2, du, dv), closeness);
+    }
+
+    {
+    auto x = [](float u, float v) { return -u; };
+    auto y = [](float u, float v) { return -v; };
+    EXPECT_NEAR(1, from2Dto2D(x, y, 0, 0, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 1, 1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, -1, 1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 1, -1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, -1, -1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 3, 2, du, dv), closeness);
+    }
+
+    {
+    auto x = [](float u, float v) { return u; };
+    auto y = [](float u, float v) { return -v; };
+    EXPECT_NEAR(1, from2Dto2D(x, y, 0, 0, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 1, 1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, -1, 1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 1, -1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, -1, -1, du, dv), closeness);
+    EXPECT_NEAR(1, from2Dto2D(x, y, 3, 2, du, dv), closeness);
+    }
+}
+
+TEST(JacobianAreaWarpTest, JacobianNumerical2DNonUniform) {
+    using namespace jacobian::numerical;
+    // Parameters: x(), y(), u, v, du, dv
+
+    const float closeness = 1.0e-1;
+    float du = 1.0e-3f;
+    float dv = 1.0e-3f;
+
+    {
+    // dx/du = 2u  dx/dv = 0
+    // dy/du = 0   dy/dv = 2v
+    auto x = [](float u, float v) { return u * u; };
+    auto y = [](float u, float v) { return v * v; };
+    EXPECT_NEAR( 0, from2Dto2D(x, y , 0,  0, du, dv), closeness);
+    EXPECT_NEAR( 4, from2Dto2D(x, y , 1,  1, du, dv), closeness);
+    EXPECT_NEAR( 4, from2Dto2D(x, y, -1,  1, du, dv), closeness);
+    EXPECT_NEAR( 4, from2Dto2D(x, y , 1, -1, du, dv), closeness);
+    EXPECT_NEAR( 4, from2Dto2D(x, y, -1, -1, du, dv), closeness);
+    EXPECT_NEAR(24, from2Dto2D(x, y , 3,  2, du, dv), closeness);
+    }
+
+    {
+    // dx/du = 2u  dx/dv = 3
+    // dy/du = 5   dy/dv = 2v
+    auto x = [](float u, float v) { return u * u + 3 * v; };
+    auto y = [](float u, float v) { return v * v + 5 * u; };
+    EXPECT_NEAR(15, from2Dto2D(x, y,  0,  0, du, dv), closeness);
+    EXPECT_NEAR(11, from2Dto2D(x, y,  1,  1, du, dv), closeness);
+    EXPECT_NEAR(19, from2Dto2D(x, y, -1,  1, du, dv), closeness);
+    EXPECT_NEAR(19, from2Dto2D(x, y,  1, -1, du, dv), closeness);
+    EXPECT_NEAR(11, from2Dto2D(x, y, -1, -1, du, dv), closeness);
+    EXPECT_NEAR( 9, from2Dto2D(x, y,  3,  2, du, dv), closeness);
+    }
+
+}
+
+// TODO - 3D Uniform
+// TODO - 3D Non-Uniform
+
 } // namespace
 
 int main(int argc, char **argv) {

@@ -16,6 +16,21 @@ float from3Dto3D(float dxdu, float dxdv, float dxdw,
 
 namespace numerical {
 
+using mappingUVtoScalar = float (*)(float, float);
+using mappingUVWtoScalar = float (*)(float, float, float);
+
+float from2Dto2D(mappingUVtoScalar x,
+                 mappingUVtoScalar y,
+                 float u, float v,
+                 float du, float dv);
+
+float from3Dto3D(mappingUVWtoScalar x,
+                 mappingUVWtoScalar y,
+                 mappingUVWtoScalar z,
+                 float u, float v, float w,
+                 float du, float dv, float dw);
+
+
 }; // numerical
 
 }; // jacobian
