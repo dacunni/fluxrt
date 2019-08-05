@@ -17,4 +17,9 @@ template <typename T> inline T bilerp(float a, float b, T v11, T v12, T v21, T v
     return lerp(a, lerp(b, v11, v12), lerp(b, v21, v22));
 }
 
+template <typename T> inline T lerpFromTo(float from, T fromMin, T fromMax, T toMin, T toMax) {
+    float a = (float(from) - float(fromMin)) / (float(fromMax) - float(fromMin));
+    return lerp(a, toMin, toMax);
+}
+
 #endif
