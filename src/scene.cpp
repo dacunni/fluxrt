@@ -4,6 +4,7 @@
 #include "scene.h"
 #include "vectortypes.h"
 #include "filesystem.h"
+#include "constants.h"
 
 void Scene::print() const
 {
@@ -33,6 +34,16 @@ bool loadSceneFromFile(Scene & scene, const std::string & filename)
 bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & top)
 {
     try {
+        auto sensorTable = top->get_table("sensor");
+        if(sensorTable) {
+            auto pixelwidth = sensorTable->get_as<uint32_t>("pixelwidth").value_or(100);
+            auto pixelheight = sensorTable->get_as<uint32_t>("pixelheight").value_or(100);
+            scene.sensor = Sensor(pixelwidth, pixelheight);
+        }
+        float aspect = scene.sensor.aspectRatio();
+
+        std::cout << "Aspect ratio " <<  aspect << '\n';
+
         auto cameraTable = top->get_table("camera");
         if(cameraTable) {
             auto type = cameraTable->get_as<std::string>("type").value_or("pinhole");
@@ -41,25 +52,36 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
             auto lookat = cameraTable->get_array_of<double>("lookat");
             if(lookat) { /* TODO */ }
             auto up = Direction3(vectorToVec3(cameraTable->get_array_of<double>("up").value_or(std::vector<double>{0.0, 1.0, 0.0})));
-            auto hfov = cameraTable->get_as<double>("hfov").value_or(45.0);
 
-            std::cout << "Camera: type " << type
-                << " position " << position
-                << " direction " << direction
-                << " hfov " << hfov
-                << std::endl;
+            if(type == "pinhole") {
+                auto hfov = cameraTable->get_as<double>("hfov").value_or(45.0);
+                hfov = DegreesToRadians(hfov);
+                auto vfov = std::atan(std::tan(hfov) / aspect);
 
-            scene.camera = PinholeCamera(hfov);
-            scene.camera.position = position;
-            scene.camera.direction = direction;
-            scene.camera.up = up;
-        }
+                std::cout << "Camera: type " << type
+                    << " position " << position
+                    << " direction " << direction
+                    << " hfov " << hfov << " vfov " << vfov
+                    << std::endl;
 
-        auto sensorTable = top->get_table("sensor");
-        if(sensorTable) {
-            auto pixelwidth = sensorTable->get_as<uint32_t>("pixelwidth").value_or(100);
-            auto pixelheight = sensorTable->get_as<uint32_t>("pixelheight").value_or(100);
-            scene.sensor = Sensor(pixelwidth, pixelheight);
+                scene.camera = std::make_unique<PinholeCamera>(hfov, vfov);
+            }
+            else if(type == "ortho") {
+                auto hsize = cameraTable->get_as<double>("hsize").value_or(2.0);
+                auto vsize = hsize / aspect;
+
+                std::cout << "Camera: type " << type
+                    << " position " << position
+                    << " direction " << direction
+                    << " hsize " << hsize << " vsize " << vsize
+                    << std::endl;
+
+                scene.camera = std::make_unique<OrthoCamera>(hsize, vsize);
+            }
+
+            scene.camera->position = position;
+            scene.camera->direction = direction;
+            scene.camera->up = up;
         }
 
         auto meshTableArray = top->get_table_array("meshes");

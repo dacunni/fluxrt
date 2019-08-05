@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <limits>
+#include <iosfwd>
 #include <float.h>
 
 #include "vectortypes.h"
@@ -31,5 +32,7 @@ struct RayIntersection {
     TextureCoordinate texcoord;
     bool hasTexCoord = false;
 };
+
+std::ostream & operator<<(std::ostream & os, const Ray & r);
 
 #endif

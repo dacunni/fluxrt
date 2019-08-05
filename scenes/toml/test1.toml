@@ -1,9 +1,11 @@
 [camera]
 type = "pinhole"
-position = [ 2.3, 4.6, 1.0 ]
-lookat = [ 0.2, 0.3, 0.5 ]
-up = [ 0.0, 0.0, 1.0 ]
+up = [ 0.0, 1.0, 0.0 ]
 hfov = 45
+
+position = [ 2.3, 4.6, 1.0 ]
+direction = [ 0.0, 0.0, -1.0 ]
+lookat = [ 0.2, 0.3, 0.5 ]
 
 [sensor]
 pixelwidth = 512

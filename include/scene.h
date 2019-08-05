@@ -26,7 +26,8 @@ struct Scene
     TextureArray textures;
 
     Sensor sensor;
-    PinholeCamera camera;
+    //PinholeCamera camera;
+    std::unique_ptr<Camera> camera;
 };
 
 // Load scene from a file, deducing the type from the extension
