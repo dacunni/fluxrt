@@ -9,8 +9,8 @@ struct Sphere
 	inline Sphere(const Position3 & c, float r) : center(c), radius(r) {}
 	inline ~Sphere() = default;
 
-	Position3 center;
-	float radius;
+	Position3 center = Position3{ 0.0f, 0.0f, 0.0f };
+	float radius = 1.0f;
 };
 
 // Ray intersection

@@ -11,6 +11,7 @@ struct Camera
     void print() const;
 
     Position3 position;
+    Direction3 direction;
     //Direction3 lookat;
     Direction3 up{ 0.0f, 1.0f, 0.0f };
 };

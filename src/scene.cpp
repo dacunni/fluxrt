@@ -37,6 +37,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
         if(cameraTable) {
             auto type = cameraTable->get_as<std::string>("type").value_or("pinhole");
             auto position = Position3(vectorToVec3(cameraTable->get_array_of<double>("position").value_or(std::vector<double>{0.0, 0.0, 0.0})));
+            auto direction = Direction3(vectorToVec3(cameraTable->get_array_of<double>("direction").value_or(std::vector<double>{0.0, 0.0, -1.0})));
             auto lookat = cameraTable->get_array_of<double>("lookat");
             if(lookat) { /* TODO */ }
             auto up = Direction3(vectorToVec3(cameraTable->get_array_of<double>("up").value_or(std::vector<double>{0.0, 1.0, 0.0})));
@@ -44,10 +45,14 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
             std::cout << "Camera: type " << type
                 << " position " << position
+                << " direction " << direction
                 << " hfov " << hfov
                 << std::endl;
 
-            // TODO - make a camera
+            scene.camera = PinholeCamera(hfov);
+            scene.camera.position = position;
+            scene.camera.direction = direction;
+            scene.camera.up = up;
         }
 
         auto sensorTable = top->get_table("sensor");
@@ -79,7 +84,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
         if(sphereTableArray) {
             for (const auto & sphereTable : *sphereTableArray) {
                 auto radius = sphereTable->get_as<double>("radius").value_or(1.0);
-                auto position = Position3(vectorToVec3(cameraTable->get_array_of<double>("position").value_or(std::vector<double>{0.0, 0.0, 0.0})));
+                auto position = Position3(vectorToVec3(sphereTable->get_array_of<double>("position").value_or(std::vector<double>{0.0, 0.0, 0.0})));
 
                 std::cout << "Sphere: radius " << radius << " position " << position << std::endl;
 

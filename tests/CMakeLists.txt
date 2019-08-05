@@ -86,3 +86,9 @@ if(RUN_INSPECTION_TESTS)
                        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/plot_xy.py images/beers_law.png beers_law_*.txt)
 endif(RUN_INSPECTION_TESTS)
 
+# ------------------------------------------------------------------------------
+
+ADD_EXECUTABLE (trace_scene_ao trace_scene_ao.cpp)
+TARGET_LINK_LIBRARIES (trace_scene_ao micromath)
+
+# ------------------------------------------------------------------------------
