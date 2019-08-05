@@ -8,6 +8,7 @@
 #include "trianglemesh.h"
 #include "sensor.h"
 #include "camera.h"
+#include "ray.h"
 
 struct Scene
 {
@@ -34,4 +35,8 @@ bool loadSceneFromFile(Scene & scene, const std::string & filename);
 bool loadSceneFromTOMLString(Scene & scene, const std::string & toml);
 bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename);
 
+// Ray intersection
+inline bool intersects(const Ray & ray, const Scene & scene, float minDistance);
+
+#include "scene.hpp"
 #endif
