@@ -88,6 +88,12 @@ endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
 
+ADD_EXECUTABLE (trace_scene_hits trace_scene_hits.cpp)
+TARGET_LINK_LIBRARIES (trace_scene_hits micromath)
+
+ADD_EXECUTABLE (trace_scene_depth trace_scene_depth.cpp)
+TARGET_LINK_LIBRARIES (trace_scene_depth micromath)
+
 ADD_EXECUTABLE (trace_scene_ao trace_scene_ao.cpp)
 TARGET_LINK_LIBRARIES (trace_scene_ao micromath)
 

@@ -32,17 +32,13 @@ int main(int argc, char ** argv)
     auto tracePixel = [&](Image<float> & image, size_t x, size_t y) {
         auto standardPixel = scene.sensor.pixelStandardImageLocation(float(x) + 0.5f, float(y) + 0.5f);
         auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel.x, standardPixel.y);
-        RayIntersection intersection;
-        if(findIntersection(ray, scene, minDistance, intersection)) {
-            float value = intersection.distance * 0.1;
-            //float value = std::log10(intersection.distance + 1.0);
-            image.set(x, y, 0, value);
-            // TODO
+        if(intersects(ray, scene, minDistance)) {
+            image.set(x, y, 0, 1.0f);
         }
     };
 
     image.forEachPixel(tracePixel);
-    writePNG(image, "ao.png");
+    writePNG(image, "hits.png");
 
     return EXIT_SUCCESS;
 }

@@ -21,7 +21,7 @@ name = "monkey1"
 file = "models/blender/monkey_simple_smooth.obj"
 
 #[[meshes.transforms]]
-#	translate = [ -3.4, 4.7, 5.2 ]
+#	translate = [ 0.0, 0.0, 5.2 ]
 	
 #	[[meshes.transforms]]
 #	scale = [ 4.2, 4.2, 4.2 ]

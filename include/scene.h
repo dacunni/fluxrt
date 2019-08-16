@@ -38,6 +38,7 @@ bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename);
 
 // Ray intersection
 inline bool intersects(const Ray & ray, const Scene & scene, float minDistance);
+inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDistance, RayIntersection & intersection);
 
 #include "scene.hpp"
 #endif

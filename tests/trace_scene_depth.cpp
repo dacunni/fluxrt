@@ -37,12 +37,11 @@ int main(int argc, char ** argv)
             float value = intersection.distance * 0.1;
             //float value = std::log10(intersection.distance + 1.0);
             image.set(x, y, 0, value);
-            // TODO
         }
     };
 
     image.forEachPixel(tracePixel);
-    writePNG(image, "ao.png");
+    writePNG(image, "depth.png");
 
     return EXIT_SUCCESS;
 }
