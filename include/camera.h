@@ -3,6 +3,7 @@
 
 #include "vectortypes.h"
 #include "ray.h"
+#include "constants.h"
 
 struct Camera
 {
@@ -32,8 +33,8 @@ struct PinholeCamera : public Camera
 
     virtual Ray rayThroughStandardImagePlane(float x, float y) const override;
 
-    float hfov = 45.0f * M_PI / 180.0f;
-    float vfov = 45.0f * M_PI / 180.0f;
+    float hfov = DegreesToRadians(45.0f);
+    float vfov = DegreesToRadians(45.0f);
 
     // Precalculated values
     float hfovOverTwo;

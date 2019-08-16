@@ -1,14 +1,17 @@
 #include <cmath>
 #include <cstdio>
 #include "integrate.h"
+#include "constants.h"
 
 namespace integrate {
+
+using namespace constants;
 
 float overUnitHemisphere(std::function<FunctionOverHemisphere> f,
                          unsigned int thetaSteps, unsigned int phiSteps)
 {
-    const float thetaMax = 0.5 * M_PI;
-    const float phiMax   = 2.0 * M_PI;
+    const float thetaMax = 0.5 * PI;
+    const float phiMax   = 2.0 * PI;
     const float dtheta   = thetaMax / float(thetaSteps);
     const float dphi     = phiMax / float(phiSteps);
 
@@ -27,8 +30,8 @@ float overUnitHemisphere(std::function<FunctionOverHemisphere> f,
 float overUnitSphere(std::function<FunctionOverHemisphere> f,
                      unsigned int thetaSteps, unsigned int phiSteps)
 {
-    const float thetaMax = M_PI;
-    const float phiMax   = 2.0 * M_PI;
+    const float thetaMax = PI;
+    const float phiMax   = 2.0 * PI;
     const float dtheta   = thetaMax / float(thetaSteps);
     const float dphi     = phiMax / float(phiSteps);
 
