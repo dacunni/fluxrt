@@ -6,9 +6,11 @@
 #include "sphere.h"
 #include "slab.h"
 #include "trianglemesh.h"
+#include "trianglemeshoctree.h"
 #include "sensor.h"
 #include "camera.h"
 #include "ray.h"
+#include "heapmanager.h"
 
 struct Scene
 {
@@ -21,6 +23,7 @@ struct Scene
     std::vector<Sphere> spheres;
     std::vector<Slab> slabs;
     std::vector<TriangleMesh> meshes;
+    std::vector<TriangleMeshOctree> meshOctrees;
 
     MaterialArray materials;
     TextureArray textures;
@@ -28,6 +31,8 @@ struct Scene
     Sensor sensor;
     //PinholeCamera camera;
     std::unique_ptr<Camera> camera;
+
+    HeapManager heapManager;
 };
 
 // Load scene from a file, deducing the type from the extension

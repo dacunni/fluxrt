@@ -13,6 +13,11 @@ inline bool intersects(const Ray & ray, const Scene & scene, float minDistance)
         }
     }
 
+    for(const auto & o : scene.meshOctrees) {
+        if(intersects(ray, o, minDistance)) {
+            return true;
+        }
+    }
     for(const auto & o : scene.meshes) {
         if(intersects(ray, o, minDistance)) {
             return true;
@@ -36,6 +41,13 @@ inline bool findIntersection(const Ray & ray, const Scene & scene,
     }
 
     for(const auto & o : scene.slabs) {
+        if(findIntersection(ray, o, minDistance, nextIntersection)) {
+            intersection = nextIntersection;
+            hit = true;
+        }
+    }
+
+    for(const auto & o : scene.meshOctrees) {
         if(findIntersection(ray, o, minDistance, nextIntersection)) {
             intersection = nextIntersection;
             hit = true;

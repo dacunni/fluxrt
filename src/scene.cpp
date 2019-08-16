@@ -93,12 +93,29 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 std::cout << "Mesh: name " << name << " file " << *filename << std::endl;
 
-                TriangleMesh mesh;
+                TriangleMesh * mesh = new TriangleMesh();
 
-                if(!loadTriangleMesh(mesh, scene.materials, scene.textures, *filename)) {
+                if(!loadTriangleMesh(*mesh, scene.materials, scene.textures, *filename)) {
                     throw std::runtime_error("Error loading mesh");
                 }
-                scene.meshes.emplace_back(std::move(mesh));
+
+                auto scaletocube = meshTable->get_as<double>("scaletocube");
+                if(scaletocube) {
+                    mesh->scaleToFit(Slab::centeredCube(*scaletocube));
+                }
+
+                auto accelerator = meshTable->get_as<std::string>("accelerator").value_or("octree");
+
+                if(accelerator == "octree") {
+                    scene.heapManager.add(mesh);
+                    TriangleMeshOctree meshOctree(*mesh);
+                    meshOctree.build();
+                    scene.meshOctrees.emplace_back(std::move(meshOctree));
+                }
+                else {
+                    scene.meshes.emplace_back(*mesh);
+                }
+
             }
         }
 

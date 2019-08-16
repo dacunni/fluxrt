@@ -41,6 +41,7 @@ int main(int argc, char ** argv)
         }
     };
 
+    printf("Tracing scene\n");
     image.forEachPixel(tracePixel);
     writePNG(image, "ao.png");
 

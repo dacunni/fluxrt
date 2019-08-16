@@ -18,7 +18,10 @@ pixelheight = 200
 
 [[meshes]]
 name = "monkey1"
-file = "models/blender/monkey_simple_smooth.obj"
+#file = "models/blender/monkey_simple_smooth.obj"
+file = "models/casual-effects.com/bmw/bmw.obj"
+scaletocube = 5.0
+#accelerator = "none"
 
 #[[meshes.transforms]]
 #	translate = [ 0.0, 0.0, 5.2 ]
