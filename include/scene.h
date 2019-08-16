@@ -29,9 +29,10 @@ struct Scene
     TextureArray textures;
 
     Sensor sensor;
-    //PinholeCamera camera;
     std::unique_ptr<Camera> camera;
 
+    // Heap manager for holding pointers to any objects that must
+    // live for the lifetime of the scene, but are otherwise unowned.
     HeapManager heapManager;
 };
 

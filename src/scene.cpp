@@ -107,6 +107,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 auto accelerator = meshTable->get_as<std::string>("accelerator").value_or("octree");
 
                 if(accelerator == "octree") {
+                    std::cout << "Building octree" << std::endl;
                     scene.heapManager.add(mesh);
                     TriangleMeshOctree meshOctree(*mesh);
                     meshOctree.build();

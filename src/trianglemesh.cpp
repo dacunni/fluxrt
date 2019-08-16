@@ -264,11 +264,11 @@ void TriangleMesh::scaleToFit(const Slab & bounds)
 
     if(maxe < 1.0f) {
         // scale down
-        scaleFactor = mine;
+        scaleFactor = maxe;
     }
     else {
         // scale up
-        scaleFactor = 1.0f / maxe;
+        scaleFactor = mine;
     }
 
     auto oldCenter = old.midpoint();
