@@ -11,6 +11,11 @@ struct Sensor
 	Sensor(uint32_t pixelwidth, uint32_t pixelheight);
 	inline ~Sensor() = default;
 
+    using PixelFunction = std::function<void(size_t /*x*/, size_t /*y*/)>;
+
+    // Call a function for every pixel on the sensor
+    inline void forEachPixel(const PixelFunction & fn);
+
     // Standard image location ranges from x in [-1,+1], y in [-1,+1],
     // regardless of actual aspect ratio.
     inline vec3 pixelStandardImageLocation(float x, float y);
@@ -25,6 +30,15 @@ struct Sensor
 
 
 // Inline Definitions
+
+void Sensor::forEachPixel(const Sensor::PixelFunction & fn)
+{
+    for(int y = 0; y < pixelheight; y++) {
+        for(int x = 0; x < pixelwidth; x++) {
+            fn(x, y);
+        }
+    }
+}
 
 // TODO: Make a vec2 type so we can return that instead
 inline vec3 Sensor::pixelStandardImageLocation(float x, float y)
