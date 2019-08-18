@@ -2,7 +2,6 @@
 #define _COORDINATE_H_
 
 #include <cmath>
-#include <iostream> // TEMP
 #include "vec3.h"
 
 // Conventions

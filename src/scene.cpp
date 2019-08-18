@@ -83,9 +83,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 scene.camera = std::make_unique<OrthoCamera>(hsize, vsize);
             }
 
-            scene.camera->position = position;
-            scene.camera->direction = direction;
-            scene.camera->up = up;
+            scene.camera->setPositionDirectionUp(position, direction, up);
         }
 
         auto meshTableArray = top->get_table_array("meshes");

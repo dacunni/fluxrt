@@ -18,6 +18,8 @@ struct Camera
     // aspect ratio.
     virtual Ray rayThroughStandardImagePlane(float x, float y) const = 0;
 
+    void setPositionDirectionUp(const Position3 & p, const Direction3 & d, const Direction3 & u);
+
     Position3 position;
     Direction3 direction;
     //Direction3 lookat;

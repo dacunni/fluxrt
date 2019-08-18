@@ -4,10 +4,17 @@
 #include "interpolation.h"
 
 Camera::Camera(const Position3 & p, const Direction3 & d, const Direction3 & u)
-    : position(p), direction(d), up(u)
 {
-    direction.normalize();
-    right = cross(direction, up).normalized();
+    setPositionDirectionUp(p, d, u);
+}
+
+void Camera::setPositionDirectionUp(const Position3 & p,
+                                    const Direction3 & d,
+                                    const Direction3 & u)
+{
+    position = p;
+    direction = d.normalized();
+    right = cross(direction, u).normalized();
     up = cross(right, direction).normalized();
 }
 
@@ -29,8 +36,8 @@ PinholeCamera::PinholeCamera(float hfov, float vfov)
 Ray PinholeCamera::rayThroughStandardImagePlane(float x, float y) const
 {
     // Calculate world offsets
-    const float xw = x * std::tan(hfovOverTwo);
-    const float yw = y * std::tan(vfovOverTwo);
+    const float xw = x * tanHfovOverTwo;
+    const float yw = y * tanVfovOverTwo;
 
     auto d = direction + right * xw + up * yw;
     d.normalize();
@@ -42,6 +49,7 @@ Ray OrthoCamera::rayThroughStandardImagePlane(float x, float y) const
 {
     float xw = lerpFromTo(x, -1.0f, +1.0f, -0.5f * hsize, 0.5f * hsize);
     float yw = lerpFromTo(y, -1.0f, +1.0f, -0.5f * vsize, 0.5f * vsize);
-    return Ray(Position3(position + vec3(xw, yw, 0.0f)), direction);
+    auto dpos = right * xw + up * yw;
+    return Ray(Position3(position + dpos), direction);
 }
 
