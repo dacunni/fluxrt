@@ -150,6 +150,120 @@ TEST(CoordinateTransformTest, PolarToEuclidean_ScaledAxes) {
     EXPECT_NEAR(z, -R, closeness);
 }
 
+TEST(CoordinateSystemGenerationTest, CoordinateSystemAxesAreFiniteLength) {
+    const float closeness = 1.0e-6;
+
+    // start with a unit length axis aligned vector
+    {
+        vec3 v1(0, 0, 1), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(0, 0, -1), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(0, 1, 0), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(0, -1, 0), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(1, 0, 0), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(-1, 0, 0), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+
+    // start with a non-unit length axis aligned vector
+    {
+        vec3 v1(0, 0, 25), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(0, 0, -25), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(0, 25, 0), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(0, -25, 0), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(25, 0, 0), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(-25, 0, 0), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+
+    // misc directions
+    {
+        vec3 v1(1, 0, 1), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(0.34, 2.4, -1.1), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(0.003, 0.34, 0.41), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(30, -100, 200), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+    {
+        vec3 v1(0.002, 0.001, -0.003), v2, v3;
+        coordinate::coordinateSystem(v1, v2, v3);
+        EXPECT_TRUE(std::isfinite(v2.magnitude()));
+        EXPECT_TRUE(std::isfinite(v3.magnitude()));
+    }
+}
+
+// TODO: make sure coordinate axes from coordinateSystem() are perpendicular and ordered by right hand rule
+
 } // namespace
 
 int main(int argc, char **argv) {

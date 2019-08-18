@@ -2,6 +2,7 @@
 #define _COORDINATE_H_
 
 #include <cmath>
+#include <iostream> // TEMP
 #include "vec3.h"
 
 // Conventions
@@ -53,12 +54,14 @@ inline void polarToEuclidean(float theta, float phi, float radius,
 // Based on the implementation in pbrt-v3
 inline void coordinateSystem(const vec3 & v1, vec3 & v2, vec3 & v3)
 {
-    auto d = std::sqrt(v1.x * v1.x + v1.z * v1.z);
-
-    if (std::abs(v1.x) > std::abs(v1.y))
+    if (std::abs(v1.x) > std::abs(v1.y)) {
+        auto d = std::sqrt(v1.x * v1.x + v1.z * v1.z);
         v2 = vec3(-v1.z, 0, v1.x) / d;
-    else
+    }
+    else {
+        auto d = std::sqrt(v1.y * v1.y + v1.z * v1.z);
         v2 = vec3(0, v1.z, -v1.y) / d;
+    }
 
     v3 = cross(v1, v2);
 }
