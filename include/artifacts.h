@@ -21,9 +21,9 @@ class Artifacts
             setTangent(x, y, intersection.tangent);
             setBitangent(x, y, intersection.bitangent);
             setTexCoord(x, y, intersection.texcoord);
-            setBasicLighting(x, y, intersection);
             setMatDiffuseColor(x, y, intersection, scene.materials, scene.textures);
             setMatSpecularColor(x, y, intersection, scene.materials, scene.textures);
+            setBasicLighting(x, y, intersection, scene.materials, scene.textures);
         }
 
         inline void setHit(int x, int y, bool hit) { hitMask.set(x, y, 0, 1.0f); }
@@ -42,12 +42,28 @@ class Artifacts
                                         const MaterialArray & materials, const TextureArray & textures)
         { setMatSpecularColor(isectMatSpecular, x, y, isect, materials, textures); }
 
-        inline void setBasicLighting(int x, int y, const RayIntersection & isect)
+        inline void setBasicLighting(int x, int y, const RayIntersection & isect,
+                                     const MaterialArray & materials, const TextureArray & textures)
         {
             vec3 L = vec3(1.0f, 1.0f, 1.0f).normalized();
             float NdL = clampedDot(isect.normal, L);
-            isectBasicLighting.set3(x, y, NdL, NdL, NdL);
+
+            float r, g, b;
+            //r = g = b = NdL; // diffuse
+            r = g = b = NdL + 0.2; // diffuse + some ambient
+
+            // Modulate by diffuse material
+            if(isect.material != NoMaterial) {
+                auto & m = materials[isect.material];
+                auto D = m.diffuse(textures, isect.texcoord);
+                r *= D.r;
+                g *= D.g;
+                b *= D.b;
+            }
+
+            isectBasicLighting.set3(x, y, r, g, b);
         }
+
     protected:
         inline void setDistColor(Image<float> & isectDist, int x, int y, float minDistance, float distance)
         {

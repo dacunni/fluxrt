@@ -74,6 +74,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
                 textureID = textures.size();
                 std::shared_ptr<Texture> texture;
                 texture = readImage<float>(path + '/' + texname);
+                texture->outOfBoundsBehavior = Image<float>::Repeat;
                 textures.push_back(texture);
                 fileToTextureID[texname] = textureID;
             }
@@ -194,10 +195,21 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
                                               mesh.triangleVertex(tri, 1),
                                               mesh.triangleVertex(tri, 2));
 
-    assert(mesh.hasNormals() && "TODO: Implement normal generation");
-    intersection.normal = interpolate(mesh.triangleNormal(tri, 0),
-                                      mesh.triangleNormal(tri, 1),
-                                      mesh.triangleNormal(tri, 2), bary);
+    if(mesh.hasNormals()) {
+        intersection.normal = interpolate(mesh.triangleNormal(tri, 0),
+                                          mesh.triangleNormal(tri, 1),
+                                          mesh.triangleNormal(tri, 2), bary);
+    }
+    else {
+        // Generate normals from triangle vertices
+        // TODO: This will give flat shading. It would be nice to generate
+        //       per vertex normals on mesh load so we can just interpolate
+        //       here as usual.
+        auto v0 = mesh.triangleVertex(tri, 0);
+        auto v1 = mesh.triangleVertex(tri, 1);
+        auto v2 = mesh.triangleVertex(tri, 2);
+        intersection.normal = cross(v2 - v0, v1 - v0).normalized();
+    }
 
     // Interpolate texture coordinates, if available
     auto tci0 = mesh.indices.texcoord[3 * tri + 0];
@@ -226,7 +238,7 @@ size_t TriangleMesh::numTriangles() const
 
 bool TriangleMesh::hasNormals() const
 {
-    return indices.normal.size() > 0;
+    return normals.size() > 0;
 }
 
 const Position3 & TriangleMesh::triangleVertex(uint32_t tri, uint32_t index) const
