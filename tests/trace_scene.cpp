@@ -5,6 +5,7 @@
 #include "scene.h"
 #include "image.h"
 #include "interpolation.h"
+#include "artifacts.h"
 
 int main(int argc, char ** argv)
 {
@@ -24,26 +25,22 @@ int main(int argc, char ** argv)
 
     printf("Scene loaded successfully\n");
 
-    Image<float> image(scene.sensor.pixelwidth, scene.sensor.pixelheight, 1);
-    image.setAll(0.0f);
+    Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
+    const float minDistance = 0.01f;
 
-    float minDistance = 0.01f;
-
-    auto tracePixel = [&](Image<float> & image, size_t x, size_t y) {
+    auto tracePixel = [&](size_t x, size_t y) {
         auto standardPixel = scene.sensor.pixelStandardImageLocation(float(x) + 0.5f, float(y) + 0.5f);
         auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel.x, standardPixel.y);
         RayIntersection intersection;
         if(findIntersection(ray, scene, minDistance, intersection)) {
-            float value = intersection.distance * 0.1;
-            //float value = std::log10(intersection.distance + 1.0);
-            image.set(x, y, 0, value);
-            // TODO
+            artifacts.setIntersection(x, y, minDistance, scene, intersection);
         }
     };
 
     printf("Tracing scene\n");
-    image.forEachPixel(tracePixel);
-    writePNG(image, "ao.png");
+    scene.sensor.forEachPixel(tracePixel);
+    printf("Writing artifacts\n");
+    artifacts.writeAll();
 
     return EXIT_SUCCESS;
 }

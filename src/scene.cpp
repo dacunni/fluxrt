@@ -49,9 +49,13 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
             auto type = cameraTable->get_as<std::string>("type").value_or("pinhole");
             auto position = Position3(vectorToVec3(cameraTable->get_array_of<double>("position").value_or(std::vector<double>{0.0, 0.0, 0.0})));
             auto direction = Direction3(vectorToVec3(cameraTable->get_array_of<double>("direction").value_or(std::vector<double>{0.0, 0.0, -1.0})));
+            direction.normalize();
             auto lookat = cameraTable->get_array_of<double>("lookat");
-            if(lookat) { /* TODO */ }
+            if(lookat) {
+                // TODO
+            }
             auto up = Direction3(vectorToVec3(cameraTable->get_array_of<double>("up").value_or(std::vector<double>{0.0, 1.0, 0.0})));
+            up.normalize();
 
             if(type == "pinhole") {
                 auto hfov = cameraTable->get_as<double>("hfov").value_or(45.0);
