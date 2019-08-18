@@ -1,0 +1,17 @@
+[camera]
+type = "pinhole"
+hfov = 75
+
+position = [ 1.0, 0.0, 0.0 ]
+direction = [ -1.8, 0.0, -0.2 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 600
+pixelheight = 400
+
+
+[[meshes]]
+file = "models/dabrovic-sponza/sponza.obj"
+scaletocube = 1.0
+

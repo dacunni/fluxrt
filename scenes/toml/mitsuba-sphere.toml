@@ -1,0 +1,18 @@
+[camera]
+type = "pinhole"
+hfov = 45
+#type = "ortho"
+#hsize = 20
+
+position = [ 0.0, 2.0, 6.0 ]
+direction = [ 0.0, -0.2, -1.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 300
+
+[[meshes]]
+file = "models/casual-effects.com/mitsuba/mitsuba-sphere.obj"
+#scaletocube = 1.0
+
