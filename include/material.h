@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <map>
 
 #include "image.h"
 
@@ -28,16 +29,27 @@ static const TextureID NoTexture = std::numeric_limits<TextureID>::max();
 using Texture = Image<float>;
 using TextureArray = std::vector<std::shared_ptr<Texture>>;
 
+struct TextureCache
+{
+    TextureID loadTextureFromFile(const std::string & path,
+                                  const std::string & filename);
+
+    std::map<std::string, TextureID> fileToTextureID;
+    TextureArray textures;
+};
+
 struct Material
 {
     ReflectanceRGB diffuseColor =  { 1.0f, 1.0f, 1.0f };
     ReflectanceRGB specularColor = { 0.0f, 0.0f, 0.0f };
 
-    TextureID diffuseTexture = NoTexture;
+    TextureID diffuseTexture  = NoTexture;
     TextureID specularTexture = NoTexture;
+    TextureID alphaTexture    = NoTexture;
 
     inline ReflectanceRGB diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline ReflectanceRGB specular(const TextureArray & tex, const TextureCoordinate & texcoord) const;
+    inline float alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const;
 
     // Factories
     static Material makeDiffuse(float D[3]);
@@ -65,7 +77,30 @@ inline ReflectanceRGB Material::diffuse(const TextureArray & tex, const TextureC
 
 inline ReflectanceRGB Material::specular(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {
-    return specularColor;
+    if(specularTexture != NoTexture) {
+        auto & texture = tex[specularTexture];
+        float u = texcoord.u;
+        float v = texcoord.v;
+        return { texture->lerpUV(u, v, 0),
+                 texture->lerpUV(u, v, 1),
+                 texture->lerpUV(u, v, 2) };
+    }
+    else {
+        return specularColor;
+    }
+}
+
+float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const
+{
+    if(specularTexture != NoTexture) {
+        auto & texture = tex[alphaTexture];
+        float u = texcoord.u;
+        float v = texcoord.v;
+        return texture->lerpUV(u, v, 0);
+    }
+    else {
+        return 1.0f;
+    }
 }
 
 #endif

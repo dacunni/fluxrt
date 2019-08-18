@@ -49,40 +49,42 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
 
     objmaterials.push_back(tinyobj::material_t()); // default material
 
-    std::map<std::string, TextureID> fileToTextureID;
+    // TODO: Move the texture cache up to the scene level so we don't
+    //       get texture IDs out of sync when using multiple models
+    TextureCache textureCache;
 
     for(int mi = 0; mi < objmaterials.size(); ++mi) {
         auto & objmaterial = objmaterials[mi];
         auto & D = objmaterial.diffuse;
         auto & S = objmaterial.specular;
-        printf("    material %2d D %.1f %.1f %.1f D_tex '%s' "
-               "S %.1f %.1f %.1f S_tex '%s'\n", mi,
+        printf("    material %2d "
+               "D %.1f %.1f %.1f D_tex '%s' "
+               "S %.1f %.1f %.1f S_tex '%s' "
+               "alpha_tex '%s' "
+               "\n",
+               mi,
                D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
-               S[0], S[1], S[2], objmaterial.specular_texname.c_str());
+               S[0], S[1], S[2], objmaterial.specular_texname.c_str(),
+               objmaterial.alpha_texname.c_str());
 
         auto material = Material::makeDiffuseSpecular(D, S);
 
         if(!objmaterial.diffuse_texname.empty()) {
-            std::string texname = objmaterial.diffuse_texname;
-            std::replace(texname.begin(), texname.end(), '\\', '/');
-            auto ft = fileToTextureID.find(texname);
-            TextureID textureID = NoTexture;
-            if(ft != fileToTextureID.end()) {
-                textureID = ft->second;
-            }
-            else {
-                textureID = textures.size();
-                std::shared_ptr<Texture> texture;
-                texture = readImage<float>(path + '/' + texname);
-                texture->outOfBoundsBehavior = Image<float>::Repeat;
-                textures.push_back(texture);
-                fileToTextureID[texname] = textureID;
-            }
-            material.diffuseTexture = textureID;
+            material.diffuseTexture = textureCache.loadTextureFromFile(path, objmaterial.diffuse_texname);
+        }
+        if(!objmaterial.specular_texname.empty()) {
+            material.specularTexture = textureCache.loadTextureFromFile(path, objmaterial.specular_texname);
+        }
+        if(!objmaterial.alpha_texname.empty()) {
+            material.alphaTexture = textureCache.loadTextureFromFile(path, objmaterial.alpha_texname);
         }
 
         materials.push_back(material);
     }
+
+    std::copy(textureCache.textures.begin(), textureCache.textures.end(),
+              std::back_inserter(textures));
+
     for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
         auto pos = Position3(coord[0], coord[1], coord[2]);
@@ -129,6 +131,9 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
             }
         }
     }
+
+    Slab bounds = boundingBox(mesh.vertices);
+    printf("Mesh bounds: "); bounds.print();
 
     // TODO: Handle missing normals
 

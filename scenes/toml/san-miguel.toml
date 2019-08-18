@@ -1,0 +1,23 @@
+[camera]
+type = "pinhole"
+hfov = 45
+#type = "ortho"
+#hsize = 8
+
+#position = [ 0.0, -0.4, 0.0 ]
+#position = [ 0.0, -4.0, 0.0 ]
+#direction = [ 1.0, 0.0, -0.5 ]
+
+position = [ 0.0, -0.0, 0.0 ]
+direction = [ 0.5, -0.6, 1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 1000
+pixelheight = 1000
+
+[[meshes]]
+file = "models/san-miguel/san-miguel.obj"
+scaletocube = 10.0
+

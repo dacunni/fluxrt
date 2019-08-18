@@ -1,15 +1,21 @@
 [camera]
 type = "pinhole"
 #hfov = 45
-hfov = 75
+hfov = 60
+#hfov = 75
 
-position = [ 0.3, -0.2, -0.3 ]
-direction = [ -1.0, 0.0, 1.0 ]
+#position = [ 0.3, -0.2, -0.3 ]
+#direction = [ -1.0, 0.0, 1.0 ]
+#position = [ 0.3, -0.2, 0.6 ]
+#direction = [ -1.0, 0.0, -1.0 ]
+position = [ 0.3, -0.2, -1.0 ]
+direction = [ -0.6, 0.0, 1.0 ]
+
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
 pixelwidth = 1000
-pixelheight = 1000
+pixelheight = 800
 
 [[meshes]]
 file = "models/fireplace_room/fireplace_room.obj"

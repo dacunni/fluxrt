@@ -1,12 +1,12 @@
 [camera]
 type = "pinhole"
-hfov = 45
+hfov = 30
 #type = "ortho"
 #hsize = 8
 
 # front
-position = [ 0.0, 2.0, 6.0 ]
-direction = [ 0.0, -0.2, -1.0 ]
+#position = [ 0.0, 2.0, 6.0 ]
+#direction = [ 0.0, -0.2, -1.0 ]
 # side
 #position = [ -6.0, 2.0, 0.0 ]
 #direction = [ 1.0, -0.2, 0.0 ]
@@ -14,8 +14,8 @@ direction = [ 0.0, -0.2, -1.0 ]
 #position = [ 6.0, 2.0, 0.0 ]
 #direction = [ -1.0, -0.2, 0.0 ]
 # quarter
-#position = [ 6.0, 2.0, 6.0 ]
-#direction = [ -1.0, -0.2, -1.0 ]
+position = [ 6.0, 2.0, 6.0 ]
+direction = [ -1.0, -0.2, -1.0 ]
 # back
 #position = [ 0.0, 2.0, -6.0 ]
 #direction = [ 0.0, -0.2, 1.0 ]
@@ -23,9 +23,12 @@ direction = [ 0.0, -0.2, -1.0 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
-pixelwidth = 400
-pixelheight = 300
+pixelwidth = 800
+pixelheight = 600
+#pixelwidth = 2000
+#pixelheight = 1600
 
 [[meshes]]
-file = "models/casual-effects.com/mitsuba/mitsuba-sphere.obj"
+file = "models/clara.io/star-wars-vader-tie-fighter.obj"
+
 
