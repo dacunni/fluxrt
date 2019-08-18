@@ -11,6 +11,7 @@ include_directories(external/cpptoml/include)
 set(CMAKE_CXX_FLAGS "-std=c++14 -O2")
 
 set(SRCS
+    src/artifacts.cpp
     src/barycentric.cpp
     src/camera.cpp
     src/color.cpp
