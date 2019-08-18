@@ -2,6 +2,7 @@
 #define __SENSOR_H__
 
 #include <cstdint>
+#include <functional>
 #include "interpolation.h"
 #include "vectortypes.h"
 

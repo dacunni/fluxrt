@@ -215,8 +215,6 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
         intersection.hasTexCoord = false;
     }
 
-    // TODO: Generate tangent/bitangent from texture coordinates if available
-
     // generate tangent / bitangent
     coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
 }
