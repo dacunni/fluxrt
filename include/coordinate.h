@@ -23,6 +23,7 @@ inline void euclideanToPolar(float x, float y, float z,
                              float & theta, float & phi, float & radius);
 inline void polarToEuclidean(float theta, float phi, float radius,
                              float & x, float & y, float & z);
+inline vec3 polarToEuclidean(float theta, float phi, float radius);
 
 // Build an ad hoc coordiante system about a vector
 inline void coordinateSystem(const vec3 & v1, vec3 & v2, vec3 & v3);
@@ -48,6 +49,13 @@ inline void polarToEuclidean(float theta, float phi, float radius,
     x = radius * sinTheta * cosPhi;
     y = radius * sinTheta * sinPhi;
     z = radius * cosTheta;
+}
+
+inline vec3 polarToEuclidean(float theta, float phi, float radius)
+{
+    vec3 v;
+    polarToEuclidean(theta, phi, radius, v.x, v.y, v.z);
+    return v;
 }
 
 // Based on the implementation in pbrt-v3

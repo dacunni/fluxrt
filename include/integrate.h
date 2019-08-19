@@ -25,6 +25,10 @@ float overUnitHemisphere(std::function<FunctionOverHemisphere> f,
 float overUnitSphere(std::function<FunctionOverHemisphere> f,
                      unsigned int thetaSteps, unsigned int phiSteps);
 
+float timesProjectedSolidAngleOverUnitHemisphere(
+        std::function<FunctionOverHemisphere> f,
+        unsigned int thetaSteps, unsigned int phiSteps);
+
 }; // integrate
 
 #endif

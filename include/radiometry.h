@@ -18,6 +18,9 @@ using Irradiance = float;
 //   Density of flux per unit area leaving a surface
 using RadiantExitance = float;
 
+// Steradian ^ -1
+using InverseSteradians = float;
+
 // Utility functions
 Irradiance irradianceAtDistanceFromPointLight(Power power, float radius);
 
