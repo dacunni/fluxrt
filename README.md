@@ -4,22 +4,22 @@
 
 ## Setup and Build
 Fetch third party dependencies
-<pre>
+```
 git submodule init
 git submodule update --remote
-</pre>
+```
 
 Setup the build
-<pre>
+```
 mkdir build
 cd build
 cmake -DBUILD_PYTHON_BINDINGS:BOOL=OFF ..
-</pre>
+```
 
 Build and unit test the code
-<pre>
+```
 # In the 'build' directory
 make -j
 # Run unit tests
 ctest
-</pre>
+```
