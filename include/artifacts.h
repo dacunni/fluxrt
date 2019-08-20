@@ -3,6 +3,7 @@
 
 #include "scene.h"
 #include "image.h"
+#include "constants.h"
 
 class Artifacts
 {
@@ -46,19 +47,29 @@ class Artifacts
                                      const MaterialArray & materials, const TextureArray & textures)
         {
             vec3 L = vec3(1.0f, 1.0f, 1.0f).normalized();
+            //vec3 L = vec3(1.0f, 1.0f, -1.0f).normalized();
             float NdL = clampedDot(isect.normal, L);
 
+            //float ambient = 0.2;
+            float ambient = 0.0;
             float r, g, b;
-            //r = g = b = NdL; // diffuse
-            r = g = b = NdL + 0.2; // diffuse + some ambient
+            r = g = b = ambient;
 
-            // Modulate by diffuse material
+            // Simple diffuse/specular model
             if(isect.material != NoMaterial) {
                 auto & m = materials[isect.material];
                 auto D = m.diffuse(textures, isect.texcoord);
-                r *= D.r;
-                g *= D.g;
-                b *= D.b;
+                auto S = m.specular(textures, isect.texcoord);
+
+                // Specular exponential response
+                vec3 wo = mirror(isect.ray.direction.negated(), isect.normal);
+                float a = 10.0;
+                float normFactor = 2.0f * constants::PI / (a + 1.0f);
+                float Sin = normFactor * std::pow(clampedDot(wo, L), a);
+
+                r += NdL * ((1.0f - S.r) * D.r + S.r * Sin);
+                g += NdL * ((1.0f - S.g) * D.g + S.g * Sin);
+                b += NdL * ((1.0f - S.b) * D.b + S.b * Sin);
             }
 
             isectBasicLighting.set3(x, y, r, g, b);

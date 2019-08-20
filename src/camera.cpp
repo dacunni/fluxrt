@@ -15,6 +15,11 @@ void Camera::setPositionDirectionUp(const Position3 & p,
     position = p;
     direction = d.normalized();
     right = cross(direction, u).normalized();
+    if(right.magnitude() < 0.99) {
+        // We were given an invalid up direction. Pick another one arbitrarily
+        // by swizzling and negating some of the components of u.
+        right = cross(direction, Direction3(-u.y, -u.z, u.x)).normalized();
+    }
     up = cross(right, direction).normalized();
 }
 

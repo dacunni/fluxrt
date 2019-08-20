@@ -104,6 +104,8 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 auto scaletocube = meshTable->get_as<double>("scaletocube");
                 if(scaletocube) {
                     mesh->scaleToFit(Slab::centeredCube(*scaletocube));
+                    Slab bounds = boundingBox(mesh->vertices);
+                    printf("Scaled mesh bounds: "); bounds.print();
                 }
 
                 auto accelerator = meshTable->get_as<std::string>("accelerator").value_or("octree");
