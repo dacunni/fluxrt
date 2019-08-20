@@ -5,11 +5,11 @@ hfov = 45
 #hsize = 8
 
 #position = [ 0.0, -0.4, 0.0 ]
-#position = [ 0.0, -4.0, 0.0 ]
-#direction = [ 1.0, 0.0, -0.5 ]
+position = [ 0.0, -4.0, 0.0 ]
+direction = [ 1.0, 0.0, -0.5 ]
 
-position = [ 0.0, -0.0, 0.0 ]
-direction = [ 0.5, -0.6, 1.0 ]
+#position = [ 0.0, -0.0, 0.0 ]
+#direction = [ 0.5, -0.6, 1.0 ]
 
 up = [ 0.0, 1.0, 0.0 ]
 
