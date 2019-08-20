@@ -1,0 +1,32 @@
+[camera]
+type = "pinhole"
+hfov = 15
+#type = "ortho"
+#hsize = 8
+
+# front
+#position = [ 0.0, 2.0, 6.0 ]
+#direction = [ 0.0, -0.35, -1.0 ]
+# side
+#position = [ -6.0, 2.0, 0.0 ]
+#direction = [ 1.0, -0.35, 0.0 ]
+# side
+#position = [ 6.0, 2.0, 0.0 ]
+#direction = [ -1.0, -0.35, 0.0 ]
+# quarter
+position = [ -6.0, 2.0, -6.0 ]
+direction = [ 1.0, -0.35, 1.0 ]
+# back
+#position = [ 0.0, 2.0, -6.0 ]
+#direction = [ 0.0, -0.35, 1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 800
+pixelheight = 600
+
+[[meshes]]
+file = "models/casual-effects.com/mori_knob/testObj.obj"
+#accelerator = "none"
+

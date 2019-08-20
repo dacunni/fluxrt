@@ -64,7 +64,9 @@ void TriangleMeshOctree::buildNode(uint32_t nodeIndex,
 
     // Helper functions for partitioning
     auto evalForVerts = [&](uint32_t ti, std::function<bool(const Position3 &)> p) {
-        return p(mesh.triangleVertex(ti, 0)) || p(mesh.triangleVertex(ti, 1)) || p(mesh.triangleVertex(ti, 2));
+        return p(mesh.triangleVertex(ti, 0))
+            || p(mesh.triangleVertex(ti, 1))
+            || p(mesh.triangleVertex(ti, 2));
     };
 
     // FIXME: This is not sufficient to determine if a triangle intersects a bounding box. There is a WAR in findIntersection(),
@@ -76,19 +78,19 @@ void TriangleMeshOctree::buildNode(uint32_t nodeIndex,
     auto isInZLow  = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.z <= zmid; }); };
     auto isInZHigh = [&](uint32_t ti) { return evalForVerts(ti, [&](const Position3 & p) { return p.z >= zmid; }); };
 
-    // Bin in  X
+    // Bin in X
     std::vector<uint32_t> L, H;
     std::copy_if(first, last, std::back_inserter(L), isInXLow);
     std::copy_if(first, last, std::back_inserter(H), isInXHigh);
 
-    // Bin in  Y
+    // Bin in Y
     std::vector<uint32_t> LL, LH, HL, HH;
     std::copy_if(L.begin(), L.end(), std::back_inserter(LL), isInYLow);
     std::copy_if(L.begin(), L.end(), std::back_inserter(LH), isInYHigh);
     std::copy_if(H.begin(), H.end(), std::back_inserter(HL), isInYLow);
     std::copy_if(H.begin(), H.end(), std::back_inserter(HH), isInYHigh);
 
-    // Bin in  Z
+    // Bin in Z
     std::vector<uint32_t> LLL, LHL, HLL, HHL, LLH, LHH, HLH, HHH;
     std::copy_if(LL.begin(), LL.end(), std::back_inserter(LLL), isInZLow);
     std::copy_if(LL.begin(), LL.end(), std::back_inserter(LLH), isInZHigh);
@@ -282,13 +284,7 @@ bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree,
             if(intersectsTriangle(ray,
                                   mesh.triangleVertex(tri, 0), mesh.triangleVertex(tri, 1), mesh.triangleVertex(tri, 2),
                                   minDistance, &t)) {
-                if(t < bestDistance
-                   // FIXME[WAR]: We have a bug in the octree building logic that includes triangles in cells
-                   //             that do not actually contain them. This leads to incorrectly determining the first
-                   //             hit in the wrong cell sometimes. By checking here, we ignore these. The right fix
-                   //             would be to build the tree correctly in the first place.
-                   && node.bounds.contains(ray.origin + ray.direction * t))
-                {
+                if(t < bestDistance) {
                     bestTriangle = tri;
                     bestDistance = t;
                     hit = true;
@@ -303,10 +299,13 @@ bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree,
             if(childNode == TriangleMeshOctree::NO_CHILD)
                 continue; // empty child cell
             if(findIntersection(ray, meshOctree, minDistance, bestTriangle, bestDistance, childOrder, childNode)) {
-                // TODO: It seems like we should be able to return immediately if we are
-                //       iterating in the correct child order, but we get gaps in some models.
-                return true;
-                //hit = true; // ???
+                // FIXME[WAR]: We have a bug in the octree building logic that includes triangles in cells
+                //             that do not actually contain them. This leads to incorrectly determining the first
+                //             hit in the wrong cell sometimes. By iterating over all children, we make sure to
+                //             find the true nearest hit.  The right fix would be to build the tree correctly in
+                //             the first place.
+                hit = true; // WAR
+                //return true;
             }
         }
     }
