@@ -66,6 +66,10 @@ inline bool findIntersection(const Ray & ray, const Scene & scene,
         }
     }
 
+    if(hit) {
+        intersection.ray = ray;
+    }
+
     return hit;
 }
 

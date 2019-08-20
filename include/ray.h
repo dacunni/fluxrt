@@ -23,6 +23,7 @@ struct RayIntersection {
     inline RayIntersection() = default;
     inline ~RayIntersection() = default;
 
+    Ray ray;
     Position3 position;
     Direction3 normal;
     Direction3 tangent;
