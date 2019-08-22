@@ -1,0 +1,30 @@
+[camera]
+type = "pinhole"
+#hfov = 45
+hfov = 60
+
+# Front
+#position = [ 0.0, 0.0, 13.0 ]
+#direction = [ 0.0, 0.0, -1.0 ]
+# Quarter front
+position = [ 9.0, 0.0, 12.0 ]
+direction = [ -1.0, 0.0, -1.0 ]
+# Above
+#position = [ 0.0, 13.2, 0.0 ]
+#direction = [ 0.01, -1.0, 0.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 600
+pixelheight = 300
+#pixelwidth = 2000
+#pixelheight = 1000
+
+[[meshes]]
+file = "models/casual-effects.com/sportsCar/sportsCar.obj"
+scaletocube = 15.0
+
+#[[slabs]]
+#min = [ -8.0, -2.0, -8.0 ]
+#max = [ 8.0, -1.78, 8.0 ]

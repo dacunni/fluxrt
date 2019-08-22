@@ -1,0 +1,42 @@
+[camera]
+type = "pinhole"
+#hfov = 45
+hfov = 60
+
+# Front
+#position = [ -8.0, 0.0, 0.0 ]
+#direction = [ 1.0, 0.0, 0.0 ]
+# Front above
+#position = [ -8.0, 1.6, 0.0 ]
+#direction = [ 1.0, -0.3, 0.0 ]
+# Rear above
+#position = [ 8.0, 1.6, 0.0 ]
+#direction = [ -1.0, -0.3, 0.0 ]
+# Left side
+#position = [ 0.0, 0.0, 10.0 ]
+#direction = [ 0.0, 0.0, -1.0 ]
+# Quarter rear
+#position = [ 7.0, 0.0, 7.0 ]
+#direction = [ -1.0, 0.0, -1.0 ]
+# Quarter front
+position = [ -7.0, 0.0, 7.0 ]
+direction = [ 1.0, 0.0, -1.0 ]
+# Above
+#position = [ 0.0, 10.0, 0.0 ]
+#direction = [ 0.0, -1.0, 0.01 ]
+# Below
+#position = [ 0.0, -10.0, 0.0 ]
+#direction = [ 0.0, 1.0, 0.01 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 300
+#pixelwidth = 2000
+#pixelheight = 1500
+
+[[meshes]]
+file = "models/casual-effects.com/bmw/bmw.obj"
+scaletocube = 3.0
+
