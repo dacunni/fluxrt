@@ -4,6 +4,7 @@
 #include "scene.h"
 #include "image.h"
 #include "constants.h"
+#include "brdf.h"
 
 class Artifacts
 {
@@ -46,10 +47,11 @@ class Artifacts
         inline void setBasicLighting(int x, int y, const RayIntersection & isect,
                                      const MaterialArray & materials, const TextureArray & textures)
         {
-            vec3 L = vec3(1.0f, 1.0f, 1.0f).normalized();
-            //vec3 L = vec3(1.0f, 1.0f, -1.0f).normalized();
+            Direction3 L = Direction3(1.0f, 1.0f, 1.0f).normalized();
             float NdL = clampedDot(isect.normal, L);
 
+            ReflectanceRGB D = { 0.9, 0.9, 0.9 };
+            ReflectanceRGB S = { 0.0, 0.0, 0.0 };
             //float ambient = 0.2;
             float ambient = 0.0;
             float r, g, b;
@@ -58,19 +60,18 @@ class Artifacts
             // Simple diffuse/specular model
             if(isect.material != NoMaterial) {
                 auto & m = materials[isect.material];
-                auto D = m.diffuse(textures, isect.texcoord);
-                auto S = m.specular(textures, isect.texcoord);
-
-                // Specular exponential response
-                vec3 wo = mirror(isect.ray.direction.negated(), isect.normal);
-                float a = 10.0;
-                float normFactor = 2.0f * constants::PI / (a + 1.0f);
-                float Sin = normFactor * std::pow(clampedDot(wo, L), a);
-
-                r += NdL * ((1.0f - S.r) * D.r + S.r * Sin);
-                g += NdL * ((1.0f - S.g) * D.g + S.g * Sin);
-                b += NdL * ((1.0f - S.b) * D.b + S.b * Sin);
+                D = m.diffuse(textures, isect.texcoord);
+                S = m.specular(textures, isect.texcoord);
             }
+
+            // Specular exponential response
+            Direction3 wi(isect.ray.direction.negated());
+            Direction3 wo(mirror(wi, isect.normal));
+            float Sin = brdf::phong(wi, Direction3(L), isect.normal, 10.0);
+
+            r += NdL * ((1.0f - S.r) * D.r + S.r * Sin);
+            g += NdL * ((1.0f - S.g) * D.g + S.g * Sin);
+            b += NdL * ((1.0f - S.b) * D.b + S.b * Sin);
 
             isectBasicLighting.set3(x, y, r, g, b);
         }
