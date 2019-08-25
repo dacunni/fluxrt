@@ -76,6 +76,8 @@ class Artifacts
             isectBasicLighting.set3(x, y, r, g, b);
         }
 
+        inline void setAmbientOcclusion(int x, int y, float ao) { setAmbientOcclusionColor(isectAO, x, y, ao); }
+
     protected:
         inline void setDistColor(Image<float> & isectDist, int x, int y, float minDistance, float distance)
         {
@@ -138,6 +140,12 @@ class Artifacts
             }
         }
 
+        inline void setAmbientOcclusionColor(Image<float> & image, int x, int y, float ao)
+        {
+            image.set3(x, y, ao, ao, ao);
+            hasAO = true;
+        }
+
         Image<float> hitMask;
         Image<float> isectDist;
         Image<float> isectNormal;
@@ -148,6 +156,9 @@ class Artifacts
         Image<float> isectBasicLighting;
         Image<float> isectMatDiffuse;
         Image<float> isectMatSpecular;
+
+        Image<float> isectAO;
+        bool hasAO = false;
 
     protected:
         int w = 0, h = 0;

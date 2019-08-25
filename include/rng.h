@@ -5,6 +5,7 @@
 
 #include <random>
 #include "base.h"
+#include "vectortypes.h"
 
 struct RNG
 {
@@ -21,6 +22,8 @@ struct RNG
 
     // 3D
 	inline void uniformSurfaceUnitSphere(float & x, float & y, float & z);
+	inline void uniformSurfaceUnitSphere(vec3 & v);
+    inline void uniformSurfaceUnitHalfSphere(const Direction3 & half_space, vec3 & v);
 
     std::random_device device;
     std::mt19937 engine;

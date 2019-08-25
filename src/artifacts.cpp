@@ -16,7 +16,8 @@ Artifacts::Artifacts(int w, int h)
     isectPos(w, h, 3),
     isectBasicLighting(w, h, 3),
     isectMatDiffuse(w, h, 3),
-    isectMatSpecular(w, h, 3)
+    isectMatSpecular(w, h, 3),
+    isectAO(w, h, 3)
 {
     hitMask.setAll(0.0f);
     isectDist.setAll(0.0f);
@@ -28,6 +29,7 @@ Artifacts::Artifacts(int w, int h)
     isectBasicLighting.setAll(0.0f);
     isectMatDiffuse.setAll(0.0f);
     isectMatDiffuse.setAll(0.0f);
+    isectAO.setAll(0.0f);
 }
 
 void Artifacts::writeAll()
@@ -42,5 +44,8 @@ void Artifacts::writeAll()
     writePNG(applyStandardGamma(isectBasicLighting), prefix + "isect_basic_lighting.png");
     writePNG(isectMatDiffuse, prefix + "isect_mat_diffuse.png");
     writePNG(isectMatSpecular, prefix + "isect_mat_specular.png");
+    if(hasAO) {
+        writePNG(applyStandardGamma(isectAO), prefix + "ao.png");
+    }
 }
 

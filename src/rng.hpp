@@ -42,4 +42,19 @@ void RNG::uniformSurfaceUnitSphere(float & x, float & y, float & z)
     y = r * std::sin(phi);
 }
 
+void RNG::uniformSurfaceUnitSphere(vec3 & v)
+{
+    return uniformSurfaceUnitSphere(v.x, v.y, v.z);
+}
+
+void RNG::uniformSurfaceUnitHalfSphere(const Direction3 & half_space, vec3 & v)
+{
+    uniformSurfaceUnitSphere(v);
+
+    // If we're on the wrong side, just flip to the right side
+    if(dot(v, half_space) < 0.0f) {
+        v.negate();
+    }
+}
+
 
