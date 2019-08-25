@@ -2,13 +2,23 @@ cmake_minimum_required(VERSION 2.6)
 
 PROJECT (micromath)
 
+option(OPTIMIZE_FOR_NATIVE "Build with -march=native" OFF)
+
+if(OPTIMIZE_FOR_NATIVE)
+    include(CheckCXXCompilerFlag)
+    CHECK_CXX_COMPILER_FLAG("-march=native" COMPILER_SUPPORTS_MARCH_NATIVE)
+    if(COMPILER_SUPPORTS_MARCH_NATIVE)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+    endif()
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O2")
+
 include_directories(include)
 include_directories(src)
 include_directories(external/stb)
 include_directories(external/tinyobjloader)
 include_directories(external/cpptoml/include)
-
-set(CMAKE_CXX_FLAGS "-std=c++14 -O2")
 
 set(SRCS
     src/artifacts.cpp
