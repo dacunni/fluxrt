@@ -23,7 +23,8 @@ struct RNG
     // 3D
 	inline void uniformSurfaceUnitSphere(float & x, float & y, float & z);
 	inline void uniformSurfaceUnitSphere(vec3 & v);
-    inline void uniformSurfaceUnitHalfSphere(const Direction3 & half_space, vec3 & v);
+    inline void uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace, vec3 & v);
+    inline void cosineAboutDirection(const Direction3 & n, vec3 & v);
 
     std::random_device device;
     std::mt19937 engine;

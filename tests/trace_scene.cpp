@@ -18,12 +18,19 @@ float computeAmbientOcclusion(Scene & scene, const RayIntersection & intersectio
     int numSamples = 10;
     float ao = 0.0f;
     for(int i = 0; i < numSamples; ++i) {
+#if 0
+        // Sample hemisphere and scale by cosine of angle to normal
+        rng.cosineAboutDirection(intersection.normal, d);
+        Ray aoShadowRay(intersection.position + intersection.normal * 0.01, d);
+        ao += intersects(aoShadowRay, scene, minDistance) ? 0.0f : 1.0f;
+#else
+        // Sample according to cosine lobe about the normal
         rng.uniformSurfaceUnitHalfSphere(intersection.normal, d);
         Ray aoShadowRay(intersection.position + intersection.normal * 0.01, d);
         ao += intersects(aoShadowRay, scene, minDistance) ? 0.0f : dot(d, intersection.normal);
+#endif
     }
     ao /= numSamples;
-    //ao *= constants::PI;
     return ao;
 }
 
