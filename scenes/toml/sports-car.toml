@@ -26,5 +26,5 @@ file = "models/casual-effects.com/sportsCar/sportsCar.obj"
 scaletocube = 15.0
 
 [[slabs]]
-min = [ -8.0, -2.0, -8.0 ]
-max = [ 8.0, -1.78, 8.0 ]
+min = [ -1000.0, -1000.0, -1000.0 ]
+max = [ 1000.0, -1.78, 1000.0 ]

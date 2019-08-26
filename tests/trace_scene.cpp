@@ -85,7 +85,6 @@ int main(int argc, char ** argv)
 
     printf("Writing artifacts\n");
     auto artifactWriteStart = clock::now();
-    scene.sensor.forEachPixel(tracePixel);
     artifacts.writeAll();
     auto artifactWriteEnd = clock::now();
     std::chrono::duration<double> artifactWriteElapsed = artifactWriteEnd - artifactWriteStart;
