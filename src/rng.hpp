@@ -28,7 +28,7 @@ inline void RNG::uniformCircle(float radius, float & x, float & y)
     y = r * std::sin(theta);
 }
 
-void RNG::uniformSurfaceUnitSphere(float & x, float & y, float & z)
+inline void RNG::uniformSurfaceUnitSphere(float & x, float & y, float & z)
 {
     using namespace constants;
 
@@ -43,12 +43,12 @@ void RNG::uniformSurfaceUnitSphere(float & x, float & y, float & z)
     y = r * std::sin(phi);
 }
 
-void RNG::uniformSurfaceUnitSphere(vec3 & v)
+inline void RNG::uniformSurfaceUnitSphere(vec3 & v)
 {
     return uniformSurfaceUnitSphere(v.x, v.y, v.z);
 }
 
-void RNG::uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace, vec3 & v)
+inline void RNG::uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace, vec3 & v)
 {
     uniformSurfaceUnitSphere(v);
 
@@ -58,14 +58,14 @@ void RNG::uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace, vec3 & v)
     }
 }
 
-void RNG::cosineAboutDirection(const Direction3 & n, vec3 & v)
+inline void RNG::cosineAboutDirection(const Direction3 & n, vec3 & v)
 {
     vec3 t, b;
     float x, y, z;
 
     coordinate::coordinateSystem(n, t, b);
     uniformUnitCircle(x, y);
-    z = std::sqrt(1.0 - (x*x + y*y));
+    z = std::sqrt(1.0f - (x*x + y*y));
 
     v = x * t + y * b + z * n;
 }

@@ -51,5 +51,27 @@ static void RandomSurfaceUnitSphereXYZ(benchmark::State& state) {
 }
 BENCHMARK(RandomSurfaceUnitSphereXYZ);
 
+static void RandomSurfaceUnitHalfSphereXYZ(benchmark::State& state) {
+    RNG rng;
+    Direction3 d, n(0, 1, 0);
+    for (auto _ : state) {
+        rng.uniformSurfaceUnitHalfSphere(n, d);
+        benchmark::DoNotOptimize(n);
+        benchmark::DoNotOptimize(d);
+    }
+}
+BENCHMARK(RandomSurfaceUnitHalfSphereXYZ);
+
+static void RandomSurfaceUnitHalfSphereCosineDistributionXYZ(benchmark::State& state) {
+    RNG rng;
+    Direction3 d, n(0, 1, 0);
+    for (auto _ : state) {
+        rng.cosineAboutDirection(n, d);
+        benchmark::DoNotOptimize(n);
+        benchmark::DoNotOptimize(d);
+    }
+}
+BENCHMARK(RandomSurfaceUnitHalfSphereCosineDistributionXYZ);
+
 BENCHMARK_MAIN();
 
