@@ -46,6 +46,7 @@ void Artifacts::writeAll()
     writePNG(isectMatSpecular, prefix + "isect_mat_specular.png");
     if(hasAO) {
         writePNG(applyStandardGamma(isectAO), prefix + "ao.png");
+        //writePNG(isectAO, prefix + "ao.png");
     }
 }
 

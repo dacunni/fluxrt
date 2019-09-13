@@ -10,38 +10,59 @@
 #include "constants.h"
 #include "rng.h"
 
-float computeAmbientOcclusion(Scene & scene, const RayIntersection & intersection, float minDistance, RNG & rng)
+#include "argparse.h"
+
+float computeAmbientOcclusion(Scene & scene, const RayIntersection & intersection, float minDistance, RNG & rng,
+                              unsigned int numSamples, bool sampleCosineLobe)
 {
     const float standoff = minDistance;
     Position3 p = intersection.position + intersection.normal * standoff;
     Direction3 d;
-    int numSamples = 10;
     float ao = 0.0f;
     for(int i = 0; i < numSamples; ++i) {
-#if 0
-        // Sample hemisphere and scale by cosine of angle to normal
-        rng.cosineAboutDirection(intersection.normal, d);
-        Ray aoShadowRay(intersection.position + intersection.normal * 0.01, d);
-        ao += intersects(aoShadowRay, scene, minDistance) ? 0.0f : 1.0f;
-#else
-        // Sample according to cosine lobe about the normal
-        rng.uniformSurfaceUnitHalfSphere(intersection.normal, d);
-        Ray aoShadowRay(intersection.position + intersection.normal * 0.01, d);
-        ao += intersects(aoShadowRay, scene, minDistance) ? 0.0f : dot(d, intersection.normal);
-#endif
+        if(sampleCosineLobe) {
+            // Sample according to cosine lobe about the normal
+            rng.cosineAboutDirection(intersection.normal, d);
+            Ray aoShadowRay(intersection.position + intersection.normal * 0.02, d);
+            ao += intersects(aoShadowRay, scene, minDistance) ? 0.0f : 1.0f;
+        }
+        else {
+            // Sample hemisphere and scale by cosine of angle to normal
+            rng.uniformSurfaceUnitHalfSphere(intersection.normal, d);
+            Ray aoShadowRay(intersection.position + intersection.normal * 0.02, d);
+            ao += intersects(aoShadowRay, scene, minDistance) ? 0.0f : 2.0f * dot(d, intersection.normal);
+        }
     }
     ao /= numSamples;
+
     return ao;
 }
 
 int main(int argc, char ** argv)
 {
-    if(argc < 2) {
+    CommandLineArgumentParser argParser;
+
+    struct {
+        struct {
+            bool compute = false;
+            bool sampleCosineLobe = false;
+            unsigned int numSamples = 10;
+        } ambientOcclusion;
+    } options;
+
+    argParser.addFlag('a', "ao", options.ambientOcclusion.compute);
+    argParser.addFlag('c', "aocosine", options.ambientOcclusion.sampleCosineLobe);
+    argParser.addArgument('s', "aosamples", options.ambientOcclusion.numSamples);
+    argParser.parse(argc, argv);
+
+    auto arguments = argParser.unnamedArguments();
+
+    if(arguments.size() < 1) {
         std::cerr << "Scene argument required\n";
         return EXIT_FAILURE;
     }
 
-    std::string sceneFile = argv[1];
+    std::string sceneFile = arguments[0];
 
     using clock = std::chrono::system_clock;
 
@@ -59,7 +80,6 @@ int main(int argc, char ** argv)
     Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
     const float minDistance = 0.01f;
 
-    bool option_computeAmbientOcclusion = false;
     RNG rng;
 
     auto tracePixel = [&](size_t x, size_t y) {
@@ -69,8 +89,10 @@ int main(int argc, char ** argv)
         if(findIntersection(ray, scene, minDistance, intersection)) {
             artifacts.setIntersection(x, y, minDistance, scene, intersection);
 
-            if(option_computeAmbientOcclusion) {
-                float ao = computeAmbientOcclusion(scene, intersection, minDistance, rng);
+            if(options.ambientOcclusion.compute) {
+                float ao = computeAmbientOcclusion(scene, intersection, minDistance, rng,
+                                                   options.ambientOcclusion.numSamples,
+                                                   options.ambientOcclusion.sampleCosineLobe);
                 artifacts.setAmbientOcclusion(x, y, ao);
             }
         }
