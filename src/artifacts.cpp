@@ -18,7 +18,7 @@ Artifacts::Artifacts(int w, int h)
     isectMatDiffuse(w, h, 3),
     isectMatSpecular(w, h, 3),
     isectAO(w, h, 3),
-    isectTime(w, h, 1),
+    isectTime(w, h, 3),
     pixelColor(w, h, 3),
     samplesPerPixel(w, h, 1)
 {
