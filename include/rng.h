@@ -28,6 +28,8 @@ struct RNG
 
     std::random_device device;
     std::mt19937 engine;
+    //std::minstd_rand0 engine;
+    //std::default_random_engine engine;
     std::uniform_real_distribution<float> distribution;
 };
 

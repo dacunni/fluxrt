@@ -15,21 +15,21 @@
 float computeAmbientOcclusion(Scene & scene, const RayIntersection & intersection, float minDistance, RNG & rng,
                               unsigned int numSamples, bool sampleCosineLobe)
 {
-    const float standoff = minDistance;
-    Position3 p = intersection.position + intersection.normal * standoff;
+    const float epsilon = 1.0e-4;
+    Position3 p = intersection.position + intersection.normal * epsilon;
     Direction3 d;
     float ao = 0.0f;
     for(int i = 0; i < numSamples; ++i) {
         if(sampleCosineLobe) {
             // Sample according to cosine lobe about the normal
             rng.cosineAboutDirection(intersection.normal, d);
-            Ray aoShadowRay(intersection.position + intersection.normal * 0.02, d);
+            Ray aoShadowRay(p, d);
             ao += intersects(aoShadowRay, scene, minDistance) ? 0.0f : 1.0f;
         }
         else {
             // Sample hemisphere and scale by cosine of angle to normal
             rng.uniformSurfaceUnitHalfSphere(intersection.normal, d);
-            Ray aoShadowRay(intersection.position + intersection.normal * 0.02, d);
+            Ray aoShadowRay(p, d);
             ao += intersects(aoShadowRay, scene, minDistance) ? 0.0f : 2.0f * dot(d, intersection.normal);
         }
     }
@@ -43,6 +43,7 @@ int main(int argc, char ** argv)
     CommandLineArgumentParser argParser;
 
     struct {
+        unsigned int samplesPerPixel = 1;
         struct {
             bool compute = false;
             bool sampleCosineLobe = false;
@@ -50,9 +51,14 @@ int main(int argc, char ** argv)
         } ambientOcclusion;
     } options;
 
+    // General
+    argParser.addArgument('s', "spp", options.samplesPerPixel);
+
+    // Ambient Occlusion
     argParser.addFlag('a', "ao", options.ambientOcclusion.compute);
     argParser.addFlag('c', "aocosine", options.ambientOcclusion.sampleCosineLobe);
-    argParser.addArgument('s', "aosamples", options.ambientOcclusion.numSamples);
+    argParser.addArgument('S', "aosamples", options.ambientOcclusion.numSamples);
+
     argParser.parse(argc, argv);
 
     auto arguments = argParser.unnamedArguments();
@@ -82,20 +88,69 @@ int main(int argc, char ** argv)
 
     RNG rng;
 
-    auto tracePixel = [&](size_t x, size_t y) {
-        auto standardPixel = scene.sensor.pixelStandardImageLocation(float(x) + 0.5f, float(y) + 0.5f);
-        auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel.x, standardPixel.y);
-        RayIntersection intersection;
-        if(findIntersection(ray, scene, minDistance, intersection)) {
-            artifacts.setIntersection(x, y, minDistance, scene, intersection);
+    // Jitter offsets (applied the same to all corresponding pixel samples)
+    std::vector<float> jitterX(options.samplesPerPixel);
+    std::vector<float> jitterY(options.samplesPerPixel);
+    std::generate(begin(jitterX), end(jitterX), [&]() { return rng.uniformRange(-0.5f, 0.5f); });
+    std::generate(begin(jitterY), end(jitterY), [&]() { return rng.uniformRange(-0.5f, 0.5f); });
 
-            if(options.ambientOcclusion.compute) {
+    auto tracePixel = [&](size_t x, size_t y) {
+        auto pixelStart = clock::now();
+        float pixelCenterX = float(x) + 0.5f;
+        float pixelCenterY = float(y) + 0.5f;
+
+        for(unsigned int samplesIndex = 0; samplesIndex < options.samplesPerPixel; ++samplesIndex) {
+            float jitteredPixelX = pixelCenterX + jitterX[samplesIndex];
+            float jitteredPixelY = pixelCenterY + jitterY[samplesIndex];
+            //float jitteredPixelX = pixelCenterX + rng.uniformRange(-0.5f, 0.5f);
+            //float jitteredPixelY = pixelCenterY + rng.uniformRange(-0.5f, 0.5f);
+
+            auto standardPixel = scene.sensor.pixelStandardImageLocation(jitteredPixelX, jitteredPixelY);
+
+            auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel.x, standardPixel.y);
+            RayIntersection intersection;
+
+            if(findIntersection(ray, scene, minDistance, intersection)) {
+                artifacts.setIntersection(x, y, minDistance, scene, intersection);
+
+                if(options.ambientOcclusion.compute) {
+                    float ao = computeAmbientOcclusion(scene, intersection, minDistance, rng,
+                                                       options.ambientOcclusion.numSamples,
+                                                       options.ambientOcclusion.sampleCosineLobe);
+                    artifacts.setAmbientOcclusion(x, y, ao);
+                }
+
+                // TEMP - TODO - implement real shading
                 float ao = computeAmbientOcclusion(scene, intersection, minDistance, rng,
                                                    options.ambientOcclusion.numSamples,
                                                    options.ambientOcclusion.sampleCosineLobe);
-                artifacts.setAmbientOcclusion(x, y, ao);
+                color::ColorRGB pixelColor;
+
+                if(intersection.material != NoMaterial) {
+                    auto & material = scene.materials[intersection.material];
+                    auto D = material.diffuse(scene.textures, intersection.texcoord);
+                    pixelColor.r = D.r * ao;
+                    pixelColor.g = D.g * ao;
+                    pixelColor.b = D.b * ao;
+                }
+                else {
+                    pixelColor = color::ColorRGB(ao, ao, ao);
+                }
+
+                artifacts.accumPixelColor(x, y, pixelColor);
+            }
+            else {
+                artifacts.accumPixelColor(x, y, color::ColorRGB::BLACK());
             }
         }
+        auto pixelEnd = clock::now();
+        std::chrono::duration<double> pixelElapsed = pixelEnd - pixelStart;
+        artifacts.setTime(x, y, pixelElapsed.count());
+        //std::cout << pixelElapsed.count() << '\n';
+
+        //if(x == 0 && (y + 1) % (scene.sensor.pixelheight / 10) == 0) {
+        //    artifacts.writePixelColor();
+        //}
     };
 
     printf("Tracing scene\n");

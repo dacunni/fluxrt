@@ -13,6 +13,13 @@ class Artifacts
         Artifacts(int w, int h);
 
         void writeAll();
+        void writePixelColor();
+
+        inline void accumPixelColor(int x, int y, const color::ColorRGB & color)
+        {
+            pixelColor.accum(x, y, color);
+            samplesPerPixel.accum(x, y, 0, 1);
+        }
 
         inline void setIntersection(int x, int y, float minDistance, const Scene & scene, const RayIntersection & intersection)
         {
@@ -77,6 +84,7 @@ class Artifacts
         }
 
         inline void setAmbientOcclusion(int x, int y, float ao) { setAmbientOcclusionColor(isectAO, x, y, ao); }
+        inline void setTime(int x, int y, float tm) { setTimeColor(isectTime, x, y, tm); }
 
     protected:
         inline void setDistColor(Image<float> & isectDist, int x, int y, float minDistance, float distance)
@@ -97,20 +105,28 @@ class Artifacts
             }
         }
 
-        inline void setPositionColor(Image<float> & isectPos, int x, int y, const Position3 & position)
+        inline color::ColorRGB positionColor(const Position3 & position)
         {
-            isectPos.set3(x, y,
-                          position.x * 0.5f + 0.5f,
-                          position.y * 0.5f + 0.5f,
-                          position.z * 0.5f + 0.5f);
+            return color::ColorRGB(position.x * 0.5f + 0.5f,
+                                   position.y * 0.5f + 0.5f,
+                                   position.z * 0.5f + 0.5f);
         }
 
-        inline void setDirectionColor(Image<float> & image, int x, int y, const Direction3 & v)
+        inline color::ColorRGB directionColor(const Direction3 & direction)
         {
-            image.set3(x, y,
-                       v.x * 0.5f + 0.5f,
-                       v.y * 0.5f + 0.5f,
-                       v.z * 0.5f + 0.5f);
+            return color::ColorRGB(direction.x * 0.5f + 0.5f,
+                                   direction.y * 0.5f + 0.5f,
+                                   direction.z * 0.5f + 0.5f);
+        }
+
+        inline void setPositionColor(Image<float> & image, int x, int y, const Position3 & position)
+        {
+            image.set3(x, y, positionColor(position));
+        }
+
+        inline void setDirectionColor(Image<float> & image, int x, int y, const Direction3 & direction)
+        {
+            image.set3(x, y, directionColor(direction));
         }
 
         inline void setTexCoordColor(Image<float> & image, int x, int y, const TextureCoordinate & texcoord)
@@ -146,6 +162,11 @@ class Artifacts
             hasAO = true;
         }
 
+        inline void setTimeColor(Image<float> & image, int x, int y, float tm)
+        {
+            image.set3(x, y, tm, tm, tm);
+        }
+
         Image<float> hitMask;
         Image<float> isectDist;
         Image<float> isectNormal;
@@ -156,8 +177,12 @@ class Artifacts
         Image<float> isectBasicLighting;
         Image<float> isectMatDiffuse;
         Image<float> isectMatSpecular;
-
         Image<float> isectAO;
+        Image<float> isectTime;
+
+        Image<float> pixelColor;
+        Image<uint32_t> samplesPerPixel;
+
         bool hasAO = false;
 
     protected:

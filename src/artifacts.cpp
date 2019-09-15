@@ -17,7 +17,10 @@ Artifacts::Artifacts(int w, int h)
     isectBasicLighting(w, h, 3),
     isectMatDiffuse(w, h, 3),
     isectMatSpecular(w, h, 3),
-    isectAO(w, h, 3)
+    isectAO(w, h, 3),
+    isectTime(w, h, 1),
+    pixelColor(w, h, 3),
+    samplesPerPixel(w, h, 1)
 {
     hitMask.setAll(0.0f);
     isectDist.setAll(0.0f);
@@ -30,6 +33,9 @@ Artifacts::Artifacts(int w, int h)
     isectMatDiffuse.setAll(0.0f);
     isectMatDiffuse.setAll(0.0f);
     isectAO.setAll(0.0f);
+    isectTime.setAll(0.0f);
+    pixelColor.setAll(0.0f);
+    samplesPerPixel.setAll(0u);
 }
 
 void Artifacts::writeAll()
@@ -47,5 +53,28 @@ void Artifacts::writeAll()
     if(hasAO) {
         writePNG(applyStandardGamma(isectAO), prefix + "ao.png");
     }
+
+    //writePNG(isectTime, prefix + "isect_time.png");
+
+    auto scaledTime = isectTime;
+    float maxTime = *std::max_element(begin(isectTime.data), end(isectTime.data));
+    auto scaleToMax = [&](Image<float> & image, size_t x, size_t y, int c) {
+        image.set(x, y, c, image.get(x, y, c) / maxTime);
+    };
+    scaledTime.forEachPixelChannel(scaleToMax);
+    writePNG(scaledTime, prefix + "isect_time.png");
+
+    writePixelColor();
+}
+
+void Artifacts::writePixelColor()
+{
+    auto finalPixelColor = pixelColor;
+    auto divideByNumSamples = [&](Image<float> & image, size_t x, size_t y, int c) {
+        auto numSamples = samplesPerPixel.get(x, y, 0);
+        image.set(x, y, c, image.get(x, y, c) / float(numSamples));
+    };
+    finalPixelColor.forEachPixelChannel(divideByNumSamples);
+    writePNG(applyStandardGamma(finalPixelColor), prefix + "color.png");
 }
 

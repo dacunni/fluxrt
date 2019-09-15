@@ -7,6 +7,7 @@
 #include <functional>
 
 #include "base.h"
+#include "color.h"
 
 template<typename T>
 struct Image
@@ -18,8 +19,12 @@ struct Image
     inline T lerp(float x, float y, int channel) const;
     inline T lerpUV(float u, float v, int channel) const;
 
+    inline void accum(size_t x, size_t y, int channel, T value);
+    inline void accum(size_t x, size_t y, const color::ColorRGB & c);
+
     inline void set(size_t x, size_t y, int channel, T value);
     inline void set3(size_t x, size_t y, T v0, T v1, T v2);
+    inline void set3(size_t x, size_t y, const color::ColorRGB & c);
     inline void setAll(T value);
 
     inline size_t index(size_t x, size_t y, int channel) const;

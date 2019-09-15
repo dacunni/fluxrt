@@ -102,6 +102,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         // TODO: The tinyobj example flips v. Need to double check this is right.
         //auto tc = TextureCoordinate{coord[0], coord[1]};
         auto tc = TextureCoordinate{coord[0], 1.0f - coord[1]};
+        //printf("tc %5.2f %5.2f\n", tc.u, tc.v); // TEMP
         mesh.texcoords.push_back(tc);
     }
 
