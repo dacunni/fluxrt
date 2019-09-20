@@ -78,6 +78,11 @@ Image<T> applyStandardGamma(const Image<T> & image) {
     return applyGamma(image, gammaCorrectionFactor);
 }
 
+template<typename T>
+Image<T> applyInverseStandardGamma(const Image<T> & image) {
+    return applyGamma(image, 1.0f / gammaCorrectionFactor);
+}
+
 namespace testpattern {
 
 template<typename T>

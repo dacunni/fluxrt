@@ -28,12 +28,14 @@ pixelheight = 300
 
 [envmap]
 type = "cubemap"
+
 #xneg = "envmaps/HornstullsStrand2/negx.jpg"
 #xpos = "envmaps/HornstullsStrand2/posx.jpg"
 #yneg = "envmaps/HornstullsStrand2/negy.jpg"
 #ypos = "envmaps/HornstullsStrand2/posy.jpg"
 #zneg = "envmaps/HornstullsStrand2/negz.jpg"
 #zpos = "envmaps/HornstullsStrand2/posz.jpg"
+
 xneg = "envmaps/SaintPetersBasilica/negx.jpg"
 xpos = "envmaps/SaintPetersBasilica/posx.jpg"
 yneg = "envmaps/SaintPetersBasilica/negy.jpg"

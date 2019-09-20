@@ -1,0 +1,57 @@
+[camera]
+type = "pinhole"
+hfov = 30
+#type = "ortho"
+#hsize = 8
+
+# front
+#position = [ 0.0, 2.0, 6.0 ]
+#direction = [ 0.0, -0.2, -1.0 ]
+# side
+#position = [ -6.0, 2.0, 0.0 ]
+#direction = [ 1.0, -0.2, 0.0 ]
+# side
+#position = [ 6.0, 2.0, 0.0 ]
+#direction = [ -1.0, -0.2, 0.0 ]
+# quarter
+position = [ 6.0, 2.0, 6.0 ]
+direction = [ -1.0, -0.2, -1.0 ]
+# back
+#position = [ 0.0, 2.0, -6.0 ]
+#direction = [ 0.0, -0.2, 1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 800
+pixelheight = 600
+#pixelwidth = 2000
+#pixelheight = 1600
+
+[[meshes]]
+file = "models/clara.io/star-wars-vader-tie-fighter.obj"
+
+[envmap]
+type = "cubemap"
+
+#xneg = "envmaps/HornstullsStrand2/negx.jpg"
+#xpos = "envmaps/HornstullsStrand2/posx.jpg"
+#yneg = "envmaps/HornstullsStrand2/negy.jpg"
+#ypos = "envmaps/HornstullsStrand2/posy.jpg"
+#zneg = "envmaps/HornstullsStrand2/negz.jpg"
+#zpos = "envmaps/HornstullsStrand2/posz.jpg"
+
+#xneg = "envmaps/SaintPetersBasilica/negx.jpg"
+#xpos = "envmaps/SaintPetersBasilica/posx.jpg"
+#yneg = "envmaps/SaintPetersBasilica/negy.jpg"
+#ypos = "envmaps/SaintPetersBasilica/posy.jpg"
+#zneg = "envmaps/SaintPetersBasilica/negz.jpg"
+#zpos = "envmaps/SaintPetersBasilica/posz.jpg"
+
+xneg = "envmaps/ArstaBridge/negx.jpg"
+xpos = "envmaps/ArstaBridge/posx.jpg"
+yneg = "envmaps/ArstaBridge/negy.jpg"
+ypos = "envmaps/ArstaBridge/posy.jpg"
+zneg = "envmaps/ArstaBridge/negz.jpg"
+zpos = "envmaps/ArstaBridge/posz.jpg"
+

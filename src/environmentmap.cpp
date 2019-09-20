@@ -12,10 +12,14 @@ ColorRGB EnvironmentMap::sampleRay(const Ray & ray)
 
 CubeMapEnvironmentMap::TexturePtr CubeMapEnvironmentMap::loadDirectionTile(const std::string & filename)
 {
-    auto texture = readImage<float>(filename);
-    if(!texture) {
+    auto rawTexture = readImage<float>(filename);
+    if(!rawTexture) {
         throw 0;
     }
+
+    // FIXME: This is making excessive copies
+    TexturePtr texture = std::make_shared<Texture>(rawTexture->width, rawTexture->height, rawTexture->numChannels);
+    *texture = applyInverseStandardGamma(*rawTexture);
 
     texture->outOfBoundsBehavior = Texture::Repeat;
 

@@ -25,6 +25,7 @@ pixelheight = 300
 file = "models/casual-effects.com/sportsCar/sportsCar.obj"
 scaletocube = 15.0
 
+# Floor
 [[slabs]]
 min = [ -1000.0, -1000.0, -1000.0 ]
 max = [ 1000.0, -1.78, 1000.0 ]
