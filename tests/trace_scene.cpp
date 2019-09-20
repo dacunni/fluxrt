@@ -10,7 +10,7 @@
 #include "constants.h"
 #include "rng.h"
 #include "ambientocclusion.h"
-
+#include "timer.h"
 #include "argparse.h"
 
 int main(int argc, char ** argv)
@@ -45,18 +45,17 @@ int main(int argc, char ** argv)
 
     std::string sceneFile = arguments[0];
 
-    using clock = std::chrono::system_clock;
+    using wallclock = std::chrono::system_clock;
 
-    auto sceneLoadStart = clock::now();
+    auto sceneLoadTimer = WallClockTimer::makeRunningTimer();
     Scene scene;
     if(!loadSceneFromFile(scene, sceneFile)) {
         std::cerr << "Error loading scene\n";
         return EXIT_FAILURE;
     }
-    auto sceneLoadEnd = clock::now();
-    std::chrono::duration<double> sceneLoadElapsed = sceneLoadEnd - sceneLoadStart;
+    double sceneLoadTime = sceneLoadTimer.elapsed();
 
-    printf("Scene loaded in %f sec\n", sceneLoadElapsed.count());
+    printf("Scene loaded in %f sec\n", sceneLoadTime);
 
     Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
     const float minDistance = 0.01f;
@@ -70,7 +69,8 @@ int main(int argc, char ** argv)
     std::generate(begin(jitterY), end(jitterY), [&]() { return rng.uniformRange(-0.5f, 0.5f); });
 
     auto tracePixel = [&](size_t x, size_t y) {
-        auto pixelStart = clock::now();
+        ProcessorTimer pixelTimer;
+        pixelTimer.start();
         float pixelCenterX = float(x) + 0.5f;
         float pixelCenterY = float(y) + 0.5f;
 
@@ -118,10 +118,8 @@ int main(int argc, char ** argv)
                 artifacts.accumPixelColor(x, y, color::ColorRGB::BLACK());
             }
         }
-        auto pixelEnd = clock::now();
-        std::chrono::duration<double> pixelElapsed = pixelEnd - pixelStart;
-        artifacts.setTime(x, y, pixelElapsed.count());
-        //std::cout << pixelElapsed.count() << '\n';
+        double pixelElapsed = pixelTimer.elapsed();
+        artifacts.setTime(x, y, pixelElapsed);
 
         //if(x == 0 && (y + 1) % (scene.sensor.pixelheight / 10) == 0) {
         //    artifacts.writePixelColor();
@@ -129,18 +127,16 @@ int main(int argc, char ** argv)
     };
 
     printf("Tracing scene\n");
-    auto traceStart = clock::now();
+    auto traceTimer = WallClockTimer::makeRunningTimer();
     scene.sensor.forEachPixel(tracePixel);
-    auto traceEnd = clock::now();
-    std::chrono::duration<double> traceElapsed = traceEnd - traceStart;
-    printf("Scene traced in %f sec\n", traceElapsed.count());
+    double traceTime = traceTimer.elapsed();
+    printf("Scene traced in %f sec\n", traceTime);
 
     printf("Writing artifacts\n");
-    auto artifactWriteStart = clock::now();
+    auto artifactWriteTimer = WallClockTimer::makeRunningTimer();
     artifacts.writeAll();
-    auto artifactWriteEnd = clock::now();
-    std::chrono::duration<double> artifactWriteElapsed = artifactWriteEnd - artifactWriteStart;
-    printf("Artifacts written in %f sec\n", artifactWriteElapsed.count());
+    auto artifactWriteTime = artifactWriteTimer.elapsed();
+    printf("Artifacts written in %f sec\n", artifactWriteTime);
 
     return EXIT_SUCCESS;
 }

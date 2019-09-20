@@ -41,6 +41,7 @@ set(SRCS
     src/sensor.cpp
     src/slab.cpp
     src/scene.cpp
+    src/timer.cpp
     src/triangle.cpp
     src/trianglemesh.cpp
     src/trianglemeshoctree.cpp
