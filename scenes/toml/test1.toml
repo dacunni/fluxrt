@@ -1,15 +1,15 @@
 [camera]
 type = "pinhole"
 up = [ 0.0, 1.0, 0.0 ]
-hfov = 45
+hfov = 90
 
 position = [ 2.3, 4.6, 1.0 ]
 direction = [ 0.0, 0.0, -1.0 ]
-lookat = [ 0.2, 0.3, 0.5 ]
+#lookat = [ 0.2, 0.3, 0.5 ]
 
 [sensor]
 pixelwidth = 512
-pixelheight = 256
+pixelheight = 512
 
 [[meshes]]
 name = "monkey1"
