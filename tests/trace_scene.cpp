@@ -115,7 +115,8 @@ int main(int argc, char ** argv)
                 artifacts.accumPixelColor(x, y, pixelColor);
             }
             else {
-                artifacts.accumPixelColor(x, y, color::ColorRGB::BLACK());
+                //artifacts.accumPixelColor(x, y, color::ColorRGB::BLACK());
+                artifacts.accumPixelColor(x, y, scene.environmentMap->sampleRay(ray));
             }
         }
         double pixelElapsed = pixelTimer.elapsed();

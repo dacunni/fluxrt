@@ -26,6 +26,7 @@ set(SRCS
     src/brdf.cpp
     src/camera.cpp
     src/color.cpp
+    src/environmentmap.cpp
     src/filesystem.cpp
     src/fresnel.cpp
     src/image.cpp
@@ -41,6 +42,7 @@ set(SRCS
     src/sensor.cpp
     src/slab.cpp
     src/scene.cpp
+    src/texture.cpp
     src/timer.cpp
     src/triangle.cpp
     src/trianglemesh.cpp

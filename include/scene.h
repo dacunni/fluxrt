@@ -7,6 +7,7 @@
 #include "slab.h"
 #include "trianglemesh.h"
 #include "trianglemeshoctree.h"
+#include "environmentmap.h"
 #include "sensor.h"
 #include "camera.h"
 #include "ray.h"
@@ -14,8 +15,8 @@
 
 struct Scene
 {
-	inline Scene() = default;
-	inline ~Scene() = default;
+	Scene();
+	~Scene() = default;
 
     void print() const;
 
@@ -24,6 +25,9 @@ struct Scene
     std::vector<Slab> slabs;
     std::vector<TriangleMesh> meshes;
     std::vector<TriangleMeshOctree> meshOctrees;
+
+    // Always points to a valid envionment map
+    std::unique_ptr<EnvironmentMap> environmentMap;
 
     MaterialArray materials;
     TextureArray textures;

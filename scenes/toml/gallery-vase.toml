@@ -1,0 +1,16 @@
+[camera]
+type = "pinhole"
+hfov = 8
+
+position = [ 0.0, 0.0, 3.0 ]
+direction = [ 0.07, -0.27, -1.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 300
+pixelheight = 300
+
+[[meshes]]
+file = "models/gallery/gallery.obj"
+scaletocube = 10.0
+

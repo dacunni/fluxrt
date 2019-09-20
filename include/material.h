@@ -6,12 +6,7 @@
 #include <memory>
 #include <map>
 
-#include "image.h"
-
-struct TextureCoordinate
-{
-    float u, v;
-};
+#include "texture.h"
 
 struct ReflectanceRGB
 {
@@ -21,22 +16,8 @@ struct ReflectanceRGB
 };
 
 using MaterialID = uint32_t;
-using TextureID = uint32_t;
 
 static const MaterialID NoMaterial = std::numeric_limits<MaterialID>::max();
-static const TextureID NoTexture = std::numeric_limits<TextureID>::max();
-
-using Texture = Image<float>;
-using TextureArray = std::vector<std::shared_ptr<Texture>>;
-
-struct TextureCache
-{
-    TextureID loadTextureFromFile(const std::string & path,
-                                  const std::string & filename);
-
-    std::map<std::string, TextureID> fileToTextureID;
-    TextureArray textures;
-};
 
 struct Material
 {

@@ -14,8 +14,8 @@ direction = [ 1.0, 0.0, -0.5 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
-pixelwidth = 1000
-pixelheight = 1000
+pixelwidth = 100
+pixelheight = 100
 
 [[meshes]]
 file = "models/san-miguel/san-miguel.obj"

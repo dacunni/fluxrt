@@ -1,8 +1,6 @@
 [camera]
 type = "pinhole"
-hfov = 45
-#type = "ortho"
-#hsize = 8
+hfov = 35
 
 # front
 position = [ 0.0, 2.0, 6.0 ]
@@ -27,9 +25,5 @@ pixelwidth = 400
 pixelheight = 300
 
 [[meshes]]
-file = "models/casual-effects.com/mitsuba/mitsuba-sphere.obj"
+file = "models/casual-effects.com/mitsuba/mitsuba.obj"
 
-# Floor
-[[slabs]]
-min = [ -1000.0, -1000.0, -1000.0 ]
-max = [ 1000.0, -0.04, 1000.0 ]

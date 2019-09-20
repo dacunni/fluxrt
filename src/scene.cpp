@@ -6,6 +6,11 @@
 #include "filesystem.h"
 #include "constants.h"
 
+Scene::Scene()
+    : environmentMap(std::make_unique<EnvironmentMap>())
+{
+}
+
 void Scene::print() const
 {
     std::cout << "Scene: "
