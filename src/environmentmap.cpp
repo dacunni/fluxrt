@@ -49,6 +49,7 @@ bool CubeMapEnvironmentMap::loadFromDirectionFiles(
     }
 }
 
+// Reference: https://en.wikipedia.org/wiki/Cube_mapping
 void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
                                                  TexturePtr & texture,
                                                  TextureCoordinate & texcoord)
@@ -61,60 +62,60 @@ void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
     bool isYPositive = v.y > 0;
     bool isZPositive = v.z > 0;
 
-    float maxAxis, uc, vc;
+    float maxAxis;
 
     if (!isXPositive && absX >= absY && absX >= absZ) {
         // u (0 to 1) goes from -z to +z
         // v (0 to 1) goes from -y to +y
         maxAxis = absX;
-        uc = v.z;
-        vc = v.y;
+        texcoord.u = v.z;
+        texcoord.v = v.y;
         texture = xn;
     }
     if (isXPositive && absX >= absY && absX >= absZ) {
         // u (0 to 1) goes from +z to -z
         // v (0 to 1) goes from -y to +y
         maxAxis = absX;
-        uc = -v.z;
-        vc = v.y;
+        texcoord.u = -v.z;
+        texcoord.v = v.y;
         texture = xp;
     }
     if (!isYPositive && absY >= absX && absY >= absZ) {
         // u (0 to 1) goes from -x to +x
         // v (0 to 1) goes from -z to +z
         maxAxis = absY;
-        uc = v.x;
-        vc = v.z;
+        texcoord.u = v.x;
+        texcoord.v = v.z;
         texture = yn;
     }
     if (isYPositive && absY >= absX && absY >= absZ) {
         // u (0 to 1) goes from -x to +x
         // v (0 to 1) goes from +z to -z
         maxAxis = absY;
-        uc = v.x;
-        vc = -v.z;
+        texcoord.u = v.x;
+        texcoord.v = -v.z;
         texture = yp;
     }
     if (!isZPositive && absZ >= absX && absZ >= absY) {
         // u (0 to 1) goes from +x to -x
         // v (0 to 1) goes from -y to +y
         maxAxis = absZ;
-        uc = -v.x;
-        vc = v.y;
+        texcoord.u = -v.x;
+        texcoord.v = v.y;
         texture = zn;
     }
     if (isZPositive && absZ >= absX && absZ >= absY) {
         // u (0 to 1) goes from -x to +x
         // v (0 to 1) goes from -y to +y
         maxAxis = absZ;
-        uc = v.x;
-        vc = v.y;
+        texcoord.u = v.x;
+        texcoord.v = v.y;
         texture = zp;
     }
 
     // Convert range from -1 to 1 to 0 to 1
-    texcoord.u = 0.5f * (uc / maxAxis + 1.0f);
-    texcoord.v = 0.5f * (vc / maxAxis + 1.0f);
+    texcoord.u = 0.5f * (texcoord.u / maxAxis + 1.0f);
+    texcoord.v = 0.5f * (texcoord.v / maxAxis + 1.0f);
 
     // V runs bottom up in cube maps
     texcoord.v = -texcoord.v;

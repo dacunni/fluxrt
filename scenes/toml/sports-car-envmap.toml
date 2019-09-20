@@ -1,0 +1,36 @@
+[camera]
+type = "pinhole"
+#hfov = 45
+hfov = 60
+
+# Front
+#position = [ 0.0, 0.0, 13.0 ]
+#direction = [ 0.0, 0.0, -1.0 ]
+# Quarter front
+position = [ 9.0, 0.0, 12.0 ]
+direction = [ -1.0, 0.0, -1.0 ]
+# Above
+#position = [ 0.0, 13.2, 0.0 ]
+#direction = [ 0.01, -1.0, 0.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 600
+pixelheight = 300
+#pixelwidth = 2000
+#pixelheight = 1000
+
+[envmap]
+type = "cubemap"
+xneg = "envmaps/HornstullsStrand2/negx.jpg"
+xpos = "envmaps/HornstullsStrand2/posx.jpg"
+yneg = "envmaps/HornstullsStrand2/negy.jpg"
+ypos = "envmaps/HornstullsStrand2/posy.jpg"
+zneg = "envmaps/HornstullsStrand2/negz.jpg"
+zpos = "envmaps/HornstullsStrand2/posz.jpg"
+
+[[meshes]]
+file = "models/casual-effects.com/sportsCar/sportsCar.obj"
+scaletocube = 15.0
+

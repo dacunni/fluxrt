@@ -92,6 +92,22 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
             scene.camera->setPositionDirectionUp(position, direction, up);
         }
 
+        auto envmapTable = top->get_table("envmap");
+        if(envmapTable) {
+            auto type = envmapTable->get_as<std::string>("type").value_or("none");
+            if(type == "cubemap") {
+                auto xneg = envmapTable->get_as<std::string>("xneg");
+                auto xpos = envmapTable->get_as<std::string>("xpos");
+                auto yneg = envmapTable->get_as<std::string>("yneg");
+                auto ypos = envmapTable->get_as<std::string>("ypos");
+                auto zneg = envmapTable->get_as<std::string>("zneg");
+                auto zpos = envmapTable->get_as<std::string>("zpos");
+                auto envmap = std::make_unique<CubeMapEnvironmentMap>();
+                envmap->loadFromDirectionFiles(*xneg, *xpos, *yneg, *ypos, *zneg, *zpos);
+                scene.environmentMap = std::move(envmap);
+            }
+        }
+
         auto meshTableArray = top->get_table_array("meshes");
         if(meshTableArray) {
             for (const auto & meshTable : *meshTableArray) {

@@ -53,23 +53,6 @@ int main(int argc, char ** argv)
         std::cerr << "Error loading scene\n";
         return EXIT_FAILURE;
     }
-
-#if 0
-    auto envmap = std::make_unique<CubeMapEnvironmentMap>();
-    std::string envmapDir = "envmaps/HornstullsStrand2/";
-    if(!envmap->loadFromDirectionFiles(
-                    envmapDir + "negx.jpg",
-                    envmapDir + "posx.jpg",
-                    envmapDir + "negy.jpg",
-                    envmapDir + "posy.jpg",
-                    envmapDir + "negz.jpg",
-                    envmapDir + "posz.jpg")) {
-        std::cerr << "Error loading environment map\n";
-        return EXIT_FAILURE;
-    }
-    scene.environmentMap = std::move(envmap);
-#endif
-
     double sceneLoadTime = sceneLoadTimer.elapsed();
 
     printf("Scene loaded in %f sec\n", sceneLoadTime);

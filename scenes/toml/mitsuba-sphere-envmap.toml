@@ -1,0 +1,50 @@
+[camera]
+type = "pinhole"
+hfov = 45
+#type = "ortho"
+#hsize = 8
+
+# front
+position = [ 0.0, 2.0, 6.0 ]
+direction = [ 0.0, -0.2, -1.0 ]
+# side
+#position = [ -6.0, 2.0, 0.0 ]
+#direction = [ 1.0, -0.2, 0.0 ]
+# side
+#position = [ 6.0, 2.0, 0.0 ]
+#direction = [ -1.0, -0.2, 0.0 ]
+# quarter
+#position = [ 6.0, 2.0, 6.0 ]
+#direction = [ -1.0, -0.2, -1.0 ]
+# back
+#position = [ 0.0, 2.0, -6.0 ]
+#direction = [ 0.0, -0.2, 1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 300
+
+[envmap]
+type = "cubemap"
+#xneg = "envmaps/HornstullsStrand2/negx.jpg"
+#xpos = "envmaps/HornstullsStrand2/posx.jpg"
+#yneg = "envmaps/HornstullsStrand2/negy.jpg"
+#ypos = "envmaps/HornstullsStrand2/posy.jpg"
+#zneg = "envmaps/HornstullsStrand2/negz.jpg"
+#zpos = "envmaps/HornstullsStrand2/posz.jpg"
+xneg = "envmaps/SaintPetersBasilica/negx.jpg"
+xpos = "envmaps/SaintPetersBasilica/posx.jpg"
+yneg = "envmaps/SaintPetersBasilica/negy.jpg"
+ypos = "envmaps/SaintPetersBasilica/posy.jpg"
+zneg = "envmaps/SaintPetersBasilica/negz.jpg"
+zpos = "envmaps/SaintPetersBasilica/posz.jpg"
+
+[[meshes]]
+file = "models/casual-effects.com/mitsuba/mitsuba-sphere.obj"
+
+# Floor
+#[[slabs]]
+#min = [ -1000.0, -1000.0, -1000.0 ]
+#max = [ 1000.0, -0.04, 1000.0 ]
