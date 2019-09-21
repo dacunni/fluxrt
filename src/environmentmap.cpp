@@ -2,12 +2,29 @@
 #include "environmentmap.h"
 #include "ray.h"
 #include "vectortypes.h"
+#include "interpolation.h"
 
 using namespace color;
 
 ColorRGB EnvironmentMap::sampleRay(const Ray & ray)
 {
     return ColorRGB::BLACK();
+}
+
+GradientEnvironmentMap::GradientEnvironmentMap(const ColorRGB & low,
+                                               const ColorRGB & high)
+    : low(low), high(high)
+{
+
+}
+
+ColorRGB GradientEnvironmentMap::sampleRay(const Ray & ray)
+{
+    return {
+        lerpFromTo(ray.direction.y, -1.0f, 1.0f, low.r, high.r),
+        lerpFromTo(ray.direction.y, -1.0f, 1.0f, low.g, high.g),
+        lerpFromTo(ray.direction.y, -1.0f, 1.0f, low.b, high.b)
+    };
 }
 
 CubeMapEnvironmentMap::TexturePtr CubeMapEnvironmentMap::loadDirectionTile(const std::string & filename)

@@ -16,6 +16,19 @@ class EnvironmentMap
         virtual color::ColorRGB sampleRay(const Ray & ray);
 };
 
+class GradientEnvironmentMap : public EnvironmentMap
+{
+    public:
+        GradientEnvironmentMap(const color::ColorRGB & low,
+                               const color::ColorRGB & high);
+
+        virtual color::ColorRGB sampleRay(const Ray & ray);
+
+    protected:
+        color::ColorRGB low;
+        color::ColorRGB high;
+};
+
 class CubeMapEnvironmentMap : public EnvironmentMap
 {
     public:

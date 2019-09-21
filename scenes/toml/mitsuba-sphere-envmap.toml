@@ -23,30 +23,41 @@ direction = [ 0.0, -0.2, -1.0 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
-pixelwidth = 400
-pixelheight = 300
+#pixelwidth = 400
+#pixelheight = 300
+pixelwidth = 120
+pixelheight = 90
 
 [envmap]
+
+#type = "gradient"
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 0.8, 0.6, 0.6 ]
+
 type = "cubemap"
 
-#xneg = "envmaps/HornstullsStrand2/negx.jpg"
-#xpos = "envmaps/HornstullsStrand2/posx.jpg"
-#yneg = "envmaps/HornstullsStrand2/negy.jpg"
-#ypos = "envmaps/HornstullsStrand2/posy.jpg"
-#zneg = "envmaps/HornstullsStrand2/negz.jpg"
-#zpos = "envmaps/HornstullsStrand2/posz.jpg"
+xneg = "envmaps/HornstullsStrand2/negx.jpg"
+xpos = "envmaps/HornstullsStrand2/posx.jpg"
+yneg = "envmaps/HornstullsStrand2/negy.jpg"
+ypos = "envmaps/HornstullsStrand2/posy.jpg"
+zneg = "envmaps/HornstullsStrand2/negz.jpg"
+zpos = "envmaps/HornstullsStrand2/posz.jpg"
 
-xneg = "envmaps/SaintPetersBasilica/negx.jpg"
-xpos = "envmaps/SaintPetersBasilica/posx.jpg"
-yneg = "envmaps/SaintPetersBasilica/negy.jpg"
-ypos = "envmaps/SaintPetersBasilica/posy.jpg"
-zneg = "envmaps/SaintPetersBasilica/negz.jpg"
-zpos = "envmaps/SaintPetersBasilica/posz.jpg"
+#xneg = "envmaps/SaintPetersBasilica/negx.jpg"
+#xpos = "envmaps/SaintPetersBasilica/posx.jpg"
+#yneg = "envmaps/SaintPetersBasilica/negy.jpg"
+#ypos = "envmaps/SaintPetersBasilica/posy.jpg"
+#zneg = "envmaps/SaintPetersBasilica/negz.jpg"
+#zpos = "envmaps/SaintPetersBasilica/posz.jpg"
 
 [[meshes]]
 file = "models/casual-effects.com/mitsuba/mitsuba-sphere.obj"
 
+[[spheres]]
+radius = 0.5
+position = [ 2.0, 0.5, 0.0 ]
+
 # Floor
-#[[slabs]]
-#min = [ -1000.0, -1000.0, -1000.0 ]
-#max = [ 1000.0, -0.04, 1000.0 ]
+[[slabs]]
+min = [ -1000.0, -1000.0, -1000.0 ]
+max = [ 1000.0, -0.04, 1000.0 ]

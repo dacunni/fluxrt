@@ -21,6 +21,22 @@ using RadiantExitance = float;
 // Steradian ^ -1
 using InverseSteradians = float;
 
+// Radiance
+//   Radiant flush per steradian per unit area
+using Radiance = float;
+
+// Spectral Radiance
+//   Radiance per nanometer wavelength
+using SpectralRadiance = float;
+
+// RGB Radiance Samples
+struct RadianceRGB
+{
+    Radiance r;
+    Radiance g;
+    Radiance b;
+};
+
 // Utility functions
 Irradiance irradianceAtDistanceFromPointLight(Power power, float radius);
 

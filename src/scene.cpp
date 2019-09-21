@@ -27,6 +27,11 @@ static vec3 vectorToVec3(const std::vector<double> & v)
     return vec3(v[0], v[1], v[2]);
 }
 
+static color::ColorRGB vectorToColorRGB(const std::vector<double> & v)
+{
+    return color::ColorRGB(v[0], v[1], v[2]);
+}
+
 bool loadSceneFromFile(Scene & scene, const std::string & filename)
 {
     if(filesystem::hasExtension(filename, ".toml")) {
@@ -104,6 +109,12 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 auto zpos = envmapTable->get_as<std::string>("zpos");
                 auto envmap = std::make_unique<CubeMapEnvironmentMap>();
                 envmap->loadFromDirectionFiles(*xneg, *xpos, *yneg, *ypos, *zneg, *zpos);
+                scene.environmentMap = std::move(envmap);
+            }
+            else if(type == "gradient") {
+                auto low = vectorToColorRGB(envmapTable->get_array_of<double>("low").value_or(std::vector<double>{0.0, 0.0, 0.0}));
+                auto high = vectorToColorRGB(envmapTable->get_array_of<double>("high").value_or(std::vector<double>{1.0, 1.0, 1.0}));
+                auto envmap = std::make_unique<GradientEnvironmentMap>(low, high);
                 scene.environmentMap = std::move(envmap);
             }
         }
