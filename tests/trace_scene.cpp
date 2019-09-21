@@ -62,10 +62,8 @@ int main(int argc, char ** argv)
     RNG rng;
 
     // Jitter offsets (applied the same to all corresponding pixel samples)
-    std::vector<float> jitterX(options.samplesPerPixel);
-    std::vector<float> jitterY(options.samplesPerPixel);
-    std::generate(begin(jitterX), end(jitterX), [&]() { return rng.uniformRange(-0.5f, 0.5f); });
-    std::generate(begin(jitterY), end(jitterY), [&]() { return rng.uniformRange(-0.5f, 0.5f); });
+    std::vector<vec2> jitter(options.samplesPerPixel);
+    std::generate(begin(jitter), end(jitter), [&]() { return rng.uniformRectangle(-0.5f, 0.5f, -0.5f, 0.5f); });
 
     auto traceRay = [&](size_t x, size_t y, const Ray & ray, RayIntersection & intersection) {
         if(findIntersection(ray, scene, minDistance, intersection)) {
@@ -80,55 +78,46 @@ int main(int argc, char ** argv)
 
             // TEMP - TODO - implement real shading
             radiometry::RadianceRGB Lrgb;
-            {
-                // Sample according to cosine lobe about the normal
-                const float epsilon = 1.0e-4;
-                Position3 p = intersection.position + intersection.normal * epsilon;
-                Direction3 d;
-                rng.cosineAboutDirection(intersection.normal, d);
-                Ray shadowRay(p, d);
-                if(intersects(shadowRay, scene, minDistance)) {
-                    // TODO - recurse
-                }
-                else {
-                    Lrgb = scene.environmentMap->sampleRay(shadowRay);
-                }
-            }
 
-            radiometry::RadianceRGB pixelRadiance;
+            // Sample according to cosine lobe about the normal
+            const float epsilon = 1.0e-4;
+            Position3 p = intersection.position + intersection.normal * epsilon;
+            Direction3 d(rng.cosineAboutDirection(intersection.normal));
+            Ray shadowRay(p, d);
+            if(intersects(shadowRay, scene, minDistance)) {
+                // TODO - recurse
+            }
+            else {
+                Lrgb = scene.environmentMap->sampleRay(shadowRay);
+            }
 
             if(intersection.material != NoMaterial) {
                 auto & material = scene.materials[intersection.material];
                 auto D = material.diffuse(scene.textures, intersection.texcoord);
-                pixelRadiance = D * Lrgb;
+                return D * Lrgb;
             }
             else {
-                pixelRadiance = Lrgb;
+                return Lrgb;
             }
-
-            artifacts.accumPixelRadiance(x, y, pixelRadiance);
         }
         else {
-            artifacts.accumPixelRadiance(x, y, scene.environmentMap->sampleRay(ray));
+            return scene.environmentMap->sampleRay(ray);
         }
     };
 
     auto tracePixel = [&](size_t x, size_t y) {
         ProcessorTimer pixelTimer;
         pixelTimer.start();
-        float pixelCenterX = float(x) + 0.5f;
-        float pixelCenterY = float(y) + 0.5f;
+        vec2 pixelCenter = vec2(x, y) + vec2(0.5f, 0.5f);
 
         for(unsigned int samplesIndex = 0; samplesIndex < options.samplesPerPixel; ++samplesIndex) {
-            float jitteredPixelX = pixelCenterX + jitterX[samplesIndex];
-            float jitteredPixelY = pixelCenterY + jitterY[samplesIndex];
-
-            auto standardPixel = scene.sensor.pixelStandardImageLocation(jitteredPixelX, jitteredPixelY);
-
-            auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel.x, standardPixel.y);
+            vec2 jitteredPixel = pixelCenter + jitter[samplesIndex];
+            auto standardPixel = scene.sensor.pixelStandardImageLocation(jitteredPixel);
+            auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel);
             RayIntersection intersection;
-
-            traceRay(x, y, ray, intersection);
+            //traceRay(x, y, ray, intersection);
+            auto pixelRadiance = traceRay(x, y, ray, intersection);
+            artifacts.accumPixelRadiance(x, y, pixelRadiance);
         }
         double pixelElapsed = pixelTimer.elapsed();
         artifacts.setTime(x, y, pixelElapsed);

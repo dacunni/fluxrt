@@ -32,6 +32,7 @@ set(SRCS
     src/image.cpp
     src/integrate.cpp
     src/jacobian.cpp
+    src/vec2.cpp
     src/vec3.cpp
     src/vec4.cpp
     src/material.cpp

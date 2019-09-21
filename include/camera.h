@@ -2,6 +2,7 @@
 #define __CAMERA_H__
 
 #include "vectortypes.h"
+#include "vec2.h"
 #include "ray.h"
 #include "constants.h"
 
@@ -17,6 +18,9 @@ struct Camera
     // ranges from x in [-1,+1], y in [-1,+1], regardless of actual
     // aspect ratio.
     virtual Ray rayThroughStandardImagePlane(float x, float y) const = 0;
+
+    Ray rayThroughStandardImagePlane(const vec2 & v) const
+        { return rayThroughStandardImagePlane(v.x, v.y); }
 
     void setPositionDirectionUp(const Position3 & p, const Direction3 & d, const Direction3 & u);
 

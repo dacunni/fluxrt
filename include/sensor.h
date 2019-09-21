@@ -5,6 +5,7 @@
 #include <functional>
 #include "interpolation.h"
 #include "vectortypes.h"
+#include "vec2.h"
 
 struct Sensor
 {
@@ -19,7 +20,8 @@ struct Sensor
 
     // Standard image location ranges from x in [-1,+1], y in [-1,+1],
     // regardless of actual aspect ratio.
-    inline vec3 pixelStandardImageLocation(float x, float y);
+    inline vec2 pixelStandardImageLocation(float x, float y);
+    inline vec2 pixelStandardImageLocation(const vec2 & v);
 
     inline float aspectRatio() const { return float(pixelwidth) / float(pixelheight); }
 
@@ -41,13 +43,16 @@ void Sensor::forEachPixel(const Sensor::PixelFunction & fn)
     }
 }
 
-// TODO: Make a vec2 type so we can return that instead
-inline vec3 Sensor::pixelStandardImageLocation(float x, float y)
+inline vec2 Sensor::pixelStandardImageLocation(float x, float y)
 {
     // NOTE: We're flipping y so +y is up
-    return vec3(lerpFromTo(x, 0.0f, float(pixelwidth), -1.0f, +1.0f),
-                lerpFromTo(y, 0.0f, float(pixelheight), +1.0f, -1.0f),
-                0.0f);
+    return vec2(lerpFromTo(x, 0.0f, float(pixelwidth), -1.0f, +1.0f),
+                lerpFromTo(y, 0.0f, float(pixelheight), +1.0f, -1.0f));
+}
+
+inline vec2 Sensor::pixelStandardImageLocation(const vec2 & v)
+{
+    return pixelStandardImageLocation(v.x, v.y);
 }
 
 #endif

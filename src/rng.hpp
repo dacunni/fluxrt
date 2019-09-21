@@ -28,6 +28,30 @@ inline void RNG::uniformCircle(float radius, float & x, float & y)
     y = r * std::sin(theta);
 }
 
+inline void RNG::uniformRectangle(float xmin, float xmax,
+                                  float ymin, float ymax,
+                                  float & x, float & y)
+{
+    x = uniformRange(xmin, xmax);
+    y = uniformRange(ymin, ymax);
+}
+
+inline void RNG::uniformRectangle(float xmin, float xmax,
+                                  float ymin, float ymax,
+                                  vec2 & v)
+{
+    uniformRectangle(xmin, xmax, ymin, ymax, v.x, v.y);
+}
+
+inline vec2 RNG::uniformRectangle(float xmin, float xmax,
+                                  float ymin, float ymax)
+{
+    return {
+        uniformRange(xmin, xmax),
+        uniformRange(ymin, ymax)
+    };
+}
+
 inline void RNG::uniformSurfaceUnitSphere(float & x, float & y, float & z)
 {
     using namespace constants;
@@ -70,5 +94,11 @@ inline void RNG::cosineAboutDirection(const Direction3 & n, vec3 & v)
     v = x * t + y * b + z * n;
 }
 
+inline vec3 RNG::cosineAboutDirection(const Direction3 & n)
+{
+    vec3 v;
+    cosineAboutDirection(n, v);
+    return v;
+}
 
 

@@ -6,6 +6,7 @@
 #include <random>
 #include "base.h"
 #include "vectortypes.h"
+#include "vec2.h"
 
 struct RNG
 {
@@ -19,12 +20,21 @@ struct RNG
     // 2D
     inline void uniformUnitCircle(float & x, float & y);
     inline void uniformCircle(float radius, float & x, float & y);
+    inline void uniformRectangle(float xmin, float xmax,
+                                 float ymin, float ymax,
+                                 float & x, float & y);
+    inline void uniformRectangle(float xmin, float xmax,
+                                 float ymin, float ymax,
+                                 vec2 & v);
+    inline vec2 uniformRectangle(float xmin, float xmax,
+                                 float ymin, float ymax);
 
     // 3D
 	inline void uniformSurfaceUnitSphere(float & x, float & y, float & z);
 	inline void uniformSurfaceUnitSphere(vec3 & v);
     inline void uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace, vec3 & v);
     inline void cosineAboutDirection(const Direction3 & n, vec3 & v);
+    inline vec3 cosineAboutDirection(const Direction3 & n);
 
     std::random_device device;
     std::mt19937 engine;
