@@ -7,6 +7,7 @@
 #include <map>
 
 #include "texture.h"
+#include "radiometry.h"
 
 struct ReflectanceRGB
 {
@@ -14,6 +15,9 @@ struct ReflectanceRGB
 
     static const ReflectanceRGB RED() { return { 1.0f, 0.0f, 0.0f }; }
 };
+
+inline radiometry::RadianceRGB operator*(const ReflectanceRGB & ref,
+                                         const radiometry::RadianceRGB & rad);
 
 using MaterialID = uint32_t;
 
@@ -40,6 +44,11 @@ struct Material
 using MaterialArray = std::vector<Material>;
 
 // Inline implementations
+
+inline radiometry::RadianceRGB operator*(const ReflectanceRGB & ref,
+                                         const radiometry::RadianceRGB & rad) {
+    return { ref.r * rad.r, ref.g * rad.g, ref.b * rad.b };
+}
 
 inline ReflectanceRGB Material::diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {

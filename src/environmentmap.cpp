@@ -4,21 +4,21 @@
 #include "vectortypes.h"
 #include "interpolation.h"
 
-using namespace color;
+using namespace radiometry;
 
-ColorRGB EnvironmentMap::sampleRay(const Ray & ray)
+RadianceRGB EnvironmentMap::sampleRay(const Ray & ray)
 {
-    return ColorRGB::BLACK();
+    return RadianceRGB();
 }
 
-GradientEnvironmentMap::GradientEnvironmentMap(const ColorRGB & low,
-                                               const ColorRGB & high)
+GradientEnvironmentMap::GradientEnvironmentMap(const RadianceRGB & low,
+                                               const RadianceRGB & high)
     : low(low), high(high)
 {
 
 }
 
-ColorRGB GradientEnvironmentMap::sampleRay(const Ray & ray)
+RadianceRGB GradientEnvironmentMap::sampleRay(const Ray & ray)
 {
     return {
         lerpFromTo(ray.direction.y, -1.0f, 1.0f, low.r, high.r),
@@ -142,7 +142,7 @@ void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
     texcoord.v = -texcoord.v;
 }
 
-ColorRGB CubeMapEnvironmentMap::sampleRay(const Ray & ray)
+RadianceRGB CubeMapEnvironmentMap::sampleRay(const Ray & ray)
 {
     TexturePtr texture;
     TextureCoordinate texcoord;
@@ -156,7 +156,7 @@ ColorRGB CubeMapEnvironmentMap::sampleRay(const Ray & ray)
              texture->lerpUV(texcoord.u, texcoord.v, 2) };
 
     // TODO
-    //return ColorRGB::RED();
+    //return RadianceRGB::RED();
 }
 
 

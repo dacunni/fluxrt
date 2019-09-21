@@ -1,8 +1,8 @@
 #ifndef __ENVIRONMENT_MAP_H__
 #define __ENVIRONMENT_MAP_H__
 
-#include "color.h"
 #include "texture.h"
+#include "radiometry.h"
 
 class Ray;
 class Direction3;
@@ -13,20 +13,20 @@ class EnvironmentMap
         EnvironmentMap() = default;
         virtual ~EnvironmentMap() = default;
 
-        virtual color::ColorRGB sampleRay(const Ray & ray);
+        virtual radiometry::RadianceRGB sampleRay(const Ray & ray);
 };
 
 class GradientEnvironmentMap : public EnvironmentMap
 {
     public:
-        GradientEnvironmentMap(const color::ColorRGB & low,
-                               const color::ColorRGB & high);
+        GradientEnvironmentMap(const radiometry::RadianceRGB & low,
+                               const radiometry::RadianceRGB & high);
 
-        virtual color::ColorRGB sampleRay(const Ray & ray);
+        virtual radiometry::RadianceRGB sampleRay(const Ray & ray);
 
     protected:
-        color::ColorRGB low;
-        color::ColorRGB high;
+        radiometry::RadianceRGB low;
+        radiometry::RadianceRGB high;
 };
 
 class CubeMapEnvironmentMap : public EnvironmentMap
@@ -43,7 +43,7 @@ class CubeMapEnvironmentMap : public EnvironmentMap
             const std::string & negz,
             const std::string & posz);
 
-        virtual color::ColorRGB sampleRay(const Ray & ray);
+        virtual radiometry::RadianceRGB sampleRay(const Ray & ray);
 
     protected:
         using TexturePtr = std::shared_ptr<Texture>;

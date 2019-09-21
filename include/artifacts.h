@@ -15,6 +15,12 @@ class Artifacts
         void writeAll();
         void writePixelColor();
 
+        inline void accumPixelRadiance(int x, int y, const radiometry::RadianceRGB & rad)
+        {
+            color::ColorRGB color = { rad.r, rad.g, rad.b };
+            pixelColor.accum(x, y, color);
+            samplesPerPixel.accum(x, y, 0, 1);
+        }
         inline void accumPixelColor(int x, int y, const color::ColorRGB & color)
         {
             pixelColor.accum(x, y, color);

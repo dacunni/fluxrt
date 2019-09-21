@@ -46,8 +46,6 @@ int main(int argc, char ** argv)
 
     std::string sceneFile = arguments[0];
 
-    using wallclock = std::chrono::system_clock;
-
     auto sceneLoadTimer = WallClockTimer::makeRunningTimer();
     Scene scene;
     if(!loadSceneFromFile(scene, sceneFile)) {
@@ -81,11 +79,7 @@ int main(int argc, char ** argv)
             }
 
             // TEMP - TODO - implement real shading
-            float LiR = 0.0f;
-            float LiG = 0.0f;
-            float LiB = 0.0f;
             radiometry::RadianceRGB Lrgb;
-#if 1
             {
                 // Sample according to cosine lobe about the normal
                 const float epsilon = 1.0e-4;
@@ -97,37 +91,25 @@ int main(int argc, char ** argv)
                     // TODO - recurse
                 }
                 else {
-                    color::ColorRGB envmapColor = scene.environmentMap->sampleRay(shadowRay);
-                    LiR = envmapColor.r;
-                    LiG = envmapColor.g;
-                    LiB = envmapColor.b;
+                    Lrgb = scene.environmentMap->sampleRay(shadowRay);
                 }
             }
-#else
-            float ao = computeAmbientOcclusion(scene, intersection, minDistance, rng,
-                                               options.ambientOcclusion.numSamples,
-                                               options.ambientOcclusion.sampleCosineLobe);
-            LiR = LiG = LiB = ao;
-#endif
 
-            color::ColorRGB pixelColor;
+            radiometry::RadianceRGB pixelRadiance;
 
             if(intersection.material != NoMaterial) {
                 auto & material = scene.materials[intersection.material];
                 auto D = material.diffuse(scene.textures, intersection.texcoord);
-                pixelColor.r = D.r * LiR;
-                pixelColor.g = D.g * LiG;
-                pixelColor.b = D.b * LiB;
+                pixelRadiance = D * Lrgb;
             }
             else {
-                pixelColor = color::ColorRGB(LiR, LiG, LiB);
+                pixelRadiance = Lrgb;
             }
 
-            artifacts.accumPixelColor(x, y, pixelColor);
+            artifacts.accumPixelRadiance(x, y, pixelRadiance);
         }
         else {
-            //artifacts.accumPixelColor(x, y, color::ColorRGB::BLACK());
-            artifacts.accumPixelColor(x, y, scene.environmentMap->sampleRay(ray));
+            artifacts.accumPixelRadiance(x, y, scene.environmentMap->sampleRay(ray));
         }
     };
 

@@ -32,6 +32,11 @@ static color::ColorRGB vectorToColorRGB(const std::vector<double> & v)
     return color::ColorRGB(v[0], v[1], v[2]);
 }
 
+static radiometry::RadianceRGB vectorToRadianceRGB(const std::vector<double> & v)
+{
+    return radiometry::RadianceRGB(v[0], v[1], v[2]);
+}
+
 bool loadSceneFromFile(Scene & scene, const std::string & filename)
 {
     if(filesystem::hasExtension(filename, ".toml")) {
@@ -112,8 +117,8 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 scene.environmentMap = std::move(envmap);
             }
             else if(type == "gradient") {
-                auto low = vectorToColorRGB(envmapTable->get_array_of<double>("low").value_or(std::vector<double>{0.0, 0.0, 0.0}));
-                auto high = vectorToColorRGB(envmapTable->get_array_of<double>("high").value_or(std::vector<double>{1.0, 1.0, 1.0}));
+                auto low = vectorToRadianceRGB(envmapTable->get_array_of<double>("low").value_or(std::vector<double>{0.0, 0.0, 0.0}));
+                auto high = vectorToRadianceRGB(envmapTable->get_array_of<double>("high").value_or(std::vector<double>{1.0, 1.0, 1.0}));
                 auto envmap = std::make_unique<GradientEnvironmentMap>(low, high);
                 scene.environmentMap = std::move(envmap);
             }

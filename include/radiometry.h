@@ -32,9 +32,13 @@ using SpectralRadiance = float;
 // RGB Radiance Samples
 struct RadianceRGB
 {
-    Radiance r;
-    Radiance g;
-    Radiance b;
+    RadianceRGB(float r, float g, float b) : r(r), g(g), b(b) {}
+    RadianceRGB() = default;
+    ~RadianceRGB() = default;
+
+    Radiance r = 0.0f;
+    Radiance g = 0.0f;
+    Radiance b = 0.0f;
 };
 
 // Utility functions
