@@ -41,6 +41,9 @@ struct RadianceRGB
     Radiance b = 0.0f;
 };
 
+inline RadianceRGB operator+(const RadianceRGB & a, const RadianceRGB & b)
+    { return { a.r + b.r, a.g + b.g, a.b + b.b }; }
+
 // Utility functions
 Irradiance irradianceAtDistanceFromPointLight(Power power, float radius);
 
