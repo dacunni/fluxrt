@@ -41,7 +41,11 @@ struct Material
     static Material makeDiffuseSpecular(float D[3], float S[3]);
 };
 
+static const Material DefaultMaterial = Material();
+
 using MaterialArray = std::vector<Material>;
+
+inline const Material & materialFromID(MaterialID id, MaterialArray & materials);
 
 // Inline implementations
 
@@ -90,6 +94,16 @@ float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoo
     }
     else {
         return 1.0f;
+    }
+}
+
+inline const Material & materialFromID(MaterialID id, const MaterialArray & materials)
+{
+    if(id == NoMaterial) {
+        return DefaultMaterial;
+    }
+    else {
+        return materials[id];
     }
 }
 
