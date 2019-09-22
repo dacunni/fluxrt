@@ -9,6 +9,8 @@ public:
     ProcessorTimer() = default;
     ~ProcessorTimer() = default;
     
+    static ProcessorTimer makeRunningTimer();
+
     inline void start();
     inline void stop();
     inline double elapsed();
@@ -43,6 +45,13 @@ protected:
 };
 
 // Inline implementations
+
+ProcessorTimer ProcessorTimer::makeRunningTimer()
+{
+    ProcessorTimer timer;
+    timer.start();
+    return timer;
+}
 
 inline void ProcessorTimer::start()
 {
