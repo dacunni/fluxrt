@@ -2,13 +2,27 @@
 
 #include "base.h"
 #include "optics.h"
+#include "material.h"
 
 namespace fresnel {
 
-// Schlick approximation for
-float schlick(float F0, float cos_t)
+// Schlick approximation for Fresnel.
+// cos_i = dot(Wi, N) is the cosine of the angle of the incident
+// direction and the normal
+float schlick(float F0, float cos_i)
 {
-    return F0 + (1.0f - F0) * std::pow(1.0f - cos_t, 5.0f);
+    return F0 + (1.0f - F0) * std::pow(1.0f - cos_i, 5.0f);
+}
+
+// Schlick applied to each component of a RGB reflectance
+ReflectanceRGB schlick(const ReflectanceRGB & F0, float cos_i)
+{
+    float p = std::pow(1.0f - cos_i, 5.0f);
+    return {
+        F0.r + (1.0f - F0.r) * p,
+        F0.g + (1.0f - F0.g) * p,
+        F0.b + (1.0f - F0.b) * p,
+    };
 }
 
 namespace dialectric {

@@ -1,9 +1,13 @@
 #ifndef _FRESNEL_H_
 #define _FRESNEL_H_
 
+struct ReflectanceRGB;
+
+
 namespace fresnel {
 
-float schlick(float F0, float cos_t);
+float schlick(float F0, float cos_i);
+ReflectanceRGB schlick(const ReflectanceRGB & F0, float cos_i);
 
 namespace dialectric {
 
