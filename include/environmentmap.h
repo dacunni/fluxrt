@@ -3,9 +3,9 @@
 
 #include "texture.h"
 #include "radiometry.h"
+#include "vectortypes.h"
 
 class Ray;
-class Direction3;
 
 class EnvironmentMap
 {
@@ -21,12 +21,16 @@ class GradientEnvironmentMap : public EnvironmentMap
     public:
         GradientEnvironmentMap(const radiometry::RadianceRGB & low,
                                const radiometry::RadianceRGB & high);
+        GradientEnvironmentMap(const radiometry::RadianceRGB & low,
+                               const radiometry::RadianceRGB & high,
+                               const Direction3 & direction);
 
         virtual radiometry::RadianceRGB sampleRay(const Ray & ray);
 
     protected:
         radiometry::RadianceRGB low;
         radiometry::RadianceRGB high;
+        Direction3 direction{ 0.0f, 1.0f, 0.0f };
 };
 
 class CubeMapEnvironmentMap : public EnvironmentMap

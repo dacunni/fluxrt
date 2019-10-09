@@ -18,12 +18,22 @@ GradientEnvironmentMap::GradientEnvironmentMap(const RadianceRGB & low,
 
 }
 
+GradientEnvironmentMap::GradientEnvironmentMap(const radiometry::RadianceRGB & low,
+                                               const radiometry::RadianceRGB & high,
+                                               const Direction3 & direction)
+    : low(low), high(high), direction(direction.normalized())
+{
+
+}
+
 RadianceRGB GradientEnvironmentMap::sampleRay(const Ray & ray)
 {
+    // [-1, 1] assuming ray.direction is normalized
+    float a = dot(ray.direction, direction);
     return {
-        lerpFromTo(ray.direction.y, -1.0f, 1.0f, low.r, high.r),
-        lerpFromTo(ray.direction.y, -1.0f, 1.0f, low.g, high.g),
-        lerpFromTo(ray.direction.y, -1.0f, 1.0f, low.b, high.b)
+        lerpFromTo(a, -1.0f, 1.0f, low.r, high.r),
+        lerpFromTo(a, -1.0f, 1.0f, low.g, high.g),
+        lerpFromTo(a, -1.0f, 1.0f, low.b, high.b)
     };
 }
 

@@ -119,7 +119,8 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
             else if(type == "gradient") {
                 auto low = vectorToRadianceRGB(envmapTable->get_array_of<double>("low").value_or(std::vector<double>{0.0, 0.0, 0.0}));
                 auto high = vectorToRadianceRGB(envmapTable->get_array_of<double>("high").value_or(std::vector<double>{1.0, 1.0, 1.0}));
-                auto envmap = std::make_unique<GradientEnvironmentMap>(low, high);
+                auto direction = Direction3(vectorToVec3(envmapTable->get_array_of<double>("direction").value_or(std::vector<double>{0.0, 1.0, 0.0})));
+                auto envmap = std::make_unique<GradientEnvironmentMap>(low, high, direction);
                 scene.environmentMap = std::move(envmap);
             }
         }
