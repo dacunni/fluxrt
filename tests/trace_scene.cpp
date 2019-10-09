@@ -13,6 +13,8 @@
 #include "timer.h"
 #include "argparse.h"
 #include "radiometry.h"
+#include "optics.h"
+#include "fresnel.h"
 
 bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance, unsigned int depth, unsigned int maxDepth,
               RayIntersection & intersection, radiometry::RadianceRGB & Lo)
@@ -25,9 +27,11 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance
     const Material & material = materialFromID(intersection.material, scene.materials);
     auto D = material.diffuse(scene.textures, intersection.texcoord);
     auto S = material.specular(scene.textures, intersection.texcoord);
+    bool hasSpecular = material.hasSpecular();
 
     const float epsilon = 1.0e-4;
     Position3 p = intersection.position + intersection.normal * epsilon;
+    const Direction3 Wi = -ray.direction;
 
     radiometry::RadianceRGB Ld, Ls;
 
@@ -50,8 +54,7 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance
     }
 
     // Trace specular bounce
-    {
-        Direction3 Wi = -ray.direction;
+    if(hasSpecular) {
         Direction3 d = mirror(Wi, intersection.normal);
         Ray shadowRay(p, d);
 
@@ -68,7 +71,17 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance
         }
     }
 
-    Lo = D * Ld + S * Ls;
+    if(hasSpecular) {
+        // Fresnel = specular
+        ReflectanceRGB F0rgb = S;
+        float cosIncidentAngle = absDot(Wi, intersection.normal);
+        ReflectanceRGB Frgb = fresnel::schlick(F0rgb, cosIncidentAngle);
+        ReflectanceRGB OmFrgb{1.0f-Frgb.r, 1.0f-Frgb.g, 1.0f-Frgb.b};
+        Lo = OmFrgb * (D * Ld) + Frgb * Ls;
+    }
+    else {
+        Lo = D * Ld;
+    }
 
     return true;
 }

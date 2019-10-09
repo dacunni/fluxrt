@@ -26,6 +26,7 @@ static const MaterialID NoMaterial = std::numeric_limits<MaterialID>::max();
 struct Material
 {
     ReflectanceRGB diffuseColor =  { 1.0f, 1.0f, 1.0f };
+    // Specular of all 0 indicates no specular present
     ReflectanceRGB specularColor = { 0.0f, 0.0f, 0.0f };
 
     TextureID diffuseTexture  = NoTexture;
@@ -34,6 +35,7 @@ struct Material
 
     inline ReflectanceRGB diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline ReflectanceRGB specular(const TextureArray & tex, const TextureCoordinate & texcoord) const;
+    inline bool hasSpecular() const;
     inline float alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const;
 
     // Factories
@@ -82,6 +84,14 @@ inline ReflectanceRGB Material::specular(const TextureArray & tex, const Texture
     else {
         return specularColor;
     }
+}
+
+inline bool Material::hasSpecular() const
+{
+    return specularTexture != NoTexture
+        || specularColor.r > 0.0f
+        || specularColor.g > 0.0f
+        || specularColor.b > 0.0f;
 }
 
 float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const
