@@ -44,6 +44,11 @@ struct RadianceRGB
 inline RadianceRGB operator+(const RadianceRGB & a, const RadianceRGB & b)
     { return { a.r + b.r, a.g + b.g, a.b + b.b }; }
 
+inline RadianceRGB operator*(float s, const RadianceRGB & r)
+    { return { s * r.r, s * r.g, s * r.b }; }
+inline RadianceRGB operator*(const RadianceRGB & r, float s)
+    { return operator*(s, r); }
+
 // Utility functions
 Irradiance irradianceAtDistanceFromPointLight(Power power, float radius);
 
