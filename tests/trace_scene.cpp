@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <signal.h>
 
 #include "scene.h"
 #include "image.h"
@@ -15,6 +16,9 @@
 #include "radiometry.h"
 #include "optics.h"
 #include "fresnel.h"
+
+size_t latestX = 0, latestY = 0;
+std::atomic<bool> flushImmediate(false); // Flush the color output as soon as possible
 
 bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance, unsigned int depth, unsigned int maxDepth,
               RayIntersection & intersection, radiometry::RadianceRGB & Lo)
@@ -86,8 +90,18 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance
     return true;
 }
 
+void signalHandler(int signum)
+{
+    if(signum == SIGINFO) { // Ctrl-T
+        printf("Progress (%5d, %5d)\n", int(latestX), int(latestY));
+        flushImmediate = true;
+    }
+}
+
 int main(int argc, char ** argv)
 {
+    signal(SIGINFO, signalHandler);
+
     CommandLineArgumentParser argParser;
 
     struct {
@@ -157,9 +171,13 @@ int main(int argc, char ** argv)
         }
         artifacts.setTime(x, y, pixelTimer.elapsed());
 
-        //if(x == 0 && (y + 1) % (scene.sensor.pixelheight / 10) == 0) {
-        //    artifacts.writePixelColor();
-        //}
+        latestX = x;
+        latestY = y;
+
+        if(flushImmediate) {
+            artifacts.writePixelColor();
+            flushImmediate = false;
+        }
     };
 
     printf("Tracing scene\n");
