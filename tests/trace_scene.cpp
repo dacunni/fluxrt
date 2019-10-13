@@ -92,15 +92,19 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance
 
 void signalHandler(int signum)
 {
+#if defined(SIGINFO)
     if(signum == SIGINFO) { // Ctrl-T
         printf("Progress (%5d, %5d)\n", int(latestX), int(latestY));
         flushImmediate = true;
     }
+#endif
 }
 
 int main(int argc, char ** argv)
 {
+#if defined(SIGINFO)
     signal(SIGINFO, signalHandler);
+#endif
 
     CommandLineArgumentParser argParser;
 
