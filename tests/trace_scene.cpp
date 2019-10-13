@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <atomic>
 #include <signal.h>
 
 #include "scene.h"
