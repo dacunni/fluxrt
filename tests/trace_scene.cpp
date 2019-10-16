@@ -102,16 +102,20 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance
 
 void signalHandler(int signum)
 {
+    if(signum == SIGUSR1    // User-defined signal (kill -USR1)
 #if defined(SIGINFO)
-    if(signum == SIGINFO) { // Ctrl-T
+       || signum == SIGINFO // Ctrl-T
+#endif
+      ) {
         printf("Progress (%5d, %5d)\n", int(latestX), int(latestY));
         flushImmediate = true;
     }
-#endif
+
 }
 
 int main(int argc, char ** argv)
 {
+    signal(SIGUSR1, signalHandler);
 #if defined(SIGINFO)
     signal(SIGINFO, signalHandler);
 #endif
