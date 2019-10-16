@@ -95,7 +95,7 @@ void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
 
     float maxAxis;
 
-    if (!isXPositive && absX >= absY && absX >= absZ) {
+    if(!isXPositive && absX >= absY && absX >= absZ) {
         // u (0 to 1) goes from -z to +z
         // v (0 to 1) goes from -y to +y
         maxAxis = absX;
@@ -103,7 +103,7 @@ void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
         texcoord.v = v.y;
         texture = xn;
     }
-    if (isXPositive && absX >= absY && absX >= absZ) {
+    else if(isXPositive && absX >= absY && absX >= absZ) {
         // u (0 to 1) goes from +z to -z
         // v (0 to 1) goes from -y to +y
         maxAxis = absX;
@@ -111,7 +111,7 @@ void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
         texcoord.v = v.y;
         texture = xp;
     }
-    if (!isYPositive && absY >= absX && absY >= absZ) {
+    else if(!isYPositive && absY >= absX && absY >= absZ) {
         // u (0 to 1) goes from -x to +x
         // v (0 to 1) goes from -z to +z
         maxAxis = absY;
@@ -119,7 +119,7 @@ void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
         texcoord.v = v.z;
         texture = yn;
     }
-    if (isYPositive && absY >= absX && absY >= absZ) {
+    else if(isYPositive && absY >= absX && absY >= absZ) {
         // u (0 to 1) goes from -x to +x
         // v (0 to 1) goes from +z to -z
         maxAxis = absY;
@@ -127,7 +127,7 @@ void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
         texcoord.v = -v.z;
         texture = yp;
     }
-    if (!isZPositive && absZ >= absX && absZ >= absY) {
+    else if(!isZPositive && absZ >= absX && absZ >= absY) {
         // u (0 to 1) goes from +x to -x
         // v (0 to 1) goes from -y to +y
         maxAxis = absZ;
@@ -135,7 +135,7 @@ void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
         texcoord.v = v.y;
         texture = zn;
     }
-    if (isZPositive && absZ >= absX && absZ >= absY) {
+    else { // default : if(isZPositive && absZ >= absX && absZ >= absY) {
         // u (0 to 1) goes from -x to +x
         // v (0 to 1) goes from -y to +y
         maxAxis = absZ;
