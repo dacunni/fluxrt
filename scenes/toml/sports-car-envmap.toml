@@ -18,12 +18,12 @@ up = [ 0.0, 1.0, 0.0 ]
 [sensor]
 #pixelwidth = 200
 #pixelheight = 100
-pixelwidth = 400
-pixelheight = 200
+#pixelwidth = 400
+#pixelheight = 200
 #pixelwidth = 600
 #pixelheight = 300
-#pixelwidth = 2000
-#pixelheight = 1000
+pixelwidth = 2000
+pixelheight = 1000
 
 [envmap]
 #type = "gradient"
@@ -48,12 +48,19 @@ type = "cubemap"
 #zneg = "envmaps/SaintPetersBasilica/negz.jpg"
 #zpos = "envmaps/SaintPetersBasilica/posz.jpg"
 
-xneg = "envmaps/ArstaBridge/negx.jpg"
-xpos = "envmaps/ArstaBridge/posx.jpg"
-yneg = "envmaps/ArstaBridge/negy.jpg"
-ypos = "envmaps/ArstaBridge/posy.jpg"
-zneg = "envmaps/ArstaBridge/negz.jpg"
-zpos = "envmaps/ArstaBridge/posz.jpg"
+#xneg = "envmaps/ArstaBridge/negx.jpg"
+#xpos = "envmaps/ArstaBridge/posx.jpg"
+#yneg = "envmaps/ArstaBridge/negy.jpg"
+#ypos = "envmaps/ArstaBridge/posy.jpg"
+#zneg = "envmaps/ArstaBridge/negz.jpg"
+#zpos = "envmaps/ArstaBridge/posz.jpg"
+
+xneg = "envmaps/NissiBeach/negx.jpg"
+xpos = "envmaps/NissiBeach/posx.jpg"
+yneg = "envmaps/NissiBeach/negy.jpg"
+ypos = "envmaps/NissiBeach/posy.jpg"
+zneg = "envmaps/NissiBeach/negz.jpg"
+zpos = "envmaps/NissiBeach/posz.jpg"
 
 [[meshes]]
 file = "models/casual-effects.com/sportsCar/sportsCar.obj"

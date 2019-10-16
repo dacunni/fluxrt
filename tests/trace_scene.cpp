@@ -24,17 +24,26 @@ std::atomic<bool> flushImmediate(false); // Flush the color output as soon as po
 bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance, unsigned int depth, unsigned int maxDepth,
               RayIntersection & intersection, radiometry::RadianceRGB & Lo)
 {
+    const float epsilon = 1.0e-4;
+
     if(!findIntersection(ray, scene, minDistance, intersection)) {
         Lo = scene.environmentMap->sampleRay(ray);
         return false;
     }
 
     const Material & material = materialFromID(intersection.material, scene.materials);
+    auto A = material.alpha(scene.textures, intersection.texcoord);
+
+    if(A < 1.0f) { // transparent
+        // Trace a new ray just past the intersection
+        float newMinDistance = intersection.distance + epsilon;
+        return traceRay(scene, rng, ray, newMinDistance, depth, maxDepth, intersection, Lo);
+    }
+
     auto D = material.diffuse(scene.textures, intersection.texcoord);
     auto S = material.specular(scene.textures, intersection.texcoord);
     bool hasSpecular = material.hasSpecular();
 
-    const float epsilon = 1.0e-4;
     Position3 p = intersection.position + intersection.normal * epsilon;
     const Direction3 Wi = -ray.direction;
 

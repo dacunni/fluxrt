@@ -19,15 +19,16 @@ Image<uint8_t> convert<uint8_t, float>(const Image<float> & image)
 template<>
 std::shared_ptr<Image<uint8_t>> readImage(const char * filename)
 {
-    int w = 0, h = 0, numComponents = 3;
-    unsigned char * stbiData = stbi_load(filename, &w, &h, &numComponents, 3);
+    int w = 0, h = 0;
+    int numComponents = 0; // 0 = request actual number of components
+    unsigned char * stbiData = stbi_load(filename, &w, &h, &numComponents, numComponents);
 
     if(!stbiData) {
         throw std::runtime_error(std::string("File not found: ") + filename);
     }
 
-    const unsigned int numElements = w * h * 3;
-    auto image = std::make_shared<Image<uint8_t>>(w, h, 3);
+    const unsigned int numElements = w * h * numComponents;
+    auto image = std::make_shared<Image<uint8_t>>(w, h, numComponents);
 
     for(unsigned int pi = 0; pi < numElements; pi++) {
         image->data[pi] = stbiData[pi];
@@ -40,15 +41,16 @@ std::shared_ptr<Image<uint8_t>> readImage(const char * filename)
 template<>
 std::shared_ptr<Image<float>> readImage(const char * filename)
 {
-    int w = 0, h = 0, numComponents = 3;
-    unsigned char * stbiData = stbi_load(filename, &w, &h, &numComponents, 3);
+    int w = 0, h = 0;
+    int numComponents = 0; // 0 = request actual number of components
+    unsigned char * stbiData = stbi_load(filename, &w, &h, &numComponents, numComponents);
 
     if(!stbiData) {
         throw std::runtime_error(std::string("File not found: ") + filename);
     }
 
-    const unsigned int numElements = w * h * 3;
-    auto image = std::make_shared<Image<float>>(w, h, 3);
+    const unsigned int numElements = w * h * numComponents;
+    auto image = std::make_shared<Image<float>>(w, h, numComponents);
 
     for(unsigned int pi = 0; pi < numElements; pi++) {
         image->data[pi] = float(stbiData[pi]) / 255.0f;

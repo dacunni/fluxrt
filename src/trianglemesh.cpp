@@ -60,12 +60,13 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         printf("    material %2d "
                "D %.1f %.1f %.1f D_tex '%s' "
                "S %.1f %.1f %.1f S_tex '%s' "
-               "alpha_tex '%s' "
+               "alpha_tex '%s' dissolve %.1f"
                "\n",
                mi,
                D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
                S[0], S[1], S[2], objmaterial.specular_texname.c_str(),
-               objmaterial.alpha_texname.c_str());
+               objmaterial.alpha_texname.c_str(),
+               objmaterial.dissolve);
 
         auto material = Material::makeDiffuseSpecular(D, S);
 

@@ -11,9 +11,13 @@
 
 struct ReflectanceRGB
 {
-    float r, g, b;
+    float r = 1.0f;
+    float g = 1.0f;
+    float b = 1.0f;
 
     static const ReflectanceRGB RED() { return { 1.0f, 0.0f, 0.0f }; }
+    static const ReflectanceRGB GREEN() { return { 0.0f, 1.0f, 0.0f }; }
+    static const ReflectanceRGB BLUE() { return { 0.0f, 0.0f, 1.0f }; }
 };
 
 inline radiometry::RadianceRGB operator*(const ReflectanceRGB & ref,
@@ -96,11 +100,12 @@ inline bool Material::hasSpecular() const
 
 float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {
-    if(specularTexture != NoTexture) {
+    if(alphaTexture != NoTexture) {
         auto & texture = tex[alphaTexture];
         float u = texcoord.u;
         float v = texcoord.v;
-        return texture->lerpUV(u, v, 0);
+        // Take the last channel, assuming 1 channel is a mask, 3 is B&W, and 4 has alpha
+        return texture->lerpUV(u, v, texture->numChannels - 1);
     }
     else {
         return 1.0f;

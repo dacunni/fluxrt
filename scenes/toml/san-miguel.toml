@@ -4,8 +4,8 @@ hfov = 45
 #type = "ortho"
 #hsize = 8
 
-#position = [ 0.0, -0.4, 0.0 ]
-position = [ 0.0, -4.0, 0.0 ]
+position = [ 0.0, -0.4, 0.0 ]
+#position = [ 0.0, -4.0, 0.0 ]
 direction = [ 1.0, 0.0, -0.5 ]
 
 #position = [ 0.0, -0.0, 0.0 ]
@@ -14,10 +14,11 @@ direction = [ 1.0, 0.0, -0.5 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
-pixelwidth = 100
-pixelheight = 100
+pixelwidth = 400
+pixelheight = 400
 
 [[meshes]]
 file = "models/san-miguel/san-miguel.obj"
+#file = "models/san-miguel-2/san-miguel.obj"
 scaletocube = 10.0
 

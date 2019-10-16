@@ -39,9 +39,10 @@ pixelheight = 300
 [envmap]
 type = "gradient"
 low = [ 0.0, 0.0, 0.0 ]
-high = [ 0.8, 0.6, 0.6 ]
+high = [ 0.8, 0.8, 0.8 ]
 #low = [ 0.0, 0.0, 0.0 ]
 #high = [ 1.0, 1.0, 1.0 ]
+direction = [ 1.0, 0.0, 0.0 ]
 
 [[meshes]]
 file = "models/casual-effects.com/bmw/bmw.obj"

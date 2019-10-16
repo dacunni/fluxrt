@@ -42,12 +42,12 @@ direction = [ 0.0, 1.0, 1.0 ]
 
 type = "cubemap"
 
-#xneg = "envmaps/HornstullsStrand2/negx.jpg"
-#xpos = "envmaps/HornstullsStrand2/posx.jpg"
-#yneg = "envmaps/HornstullsStrand2/negy.jpg"
-#ypos = "envmaps/HornstullsStrand2/posy.jpg"
-#zneg = "envmaps/HornstullsStrand2/negz.jpg"
-#zpos = "envmaps/HornstullsStrand2/posz.jpg"
+xneg = "envmaps/HornstullsStrand2/negx.jpg"
+xpos = "envmaps/HornstullsStrand2/posx.jpg"
+yneg = "envmaps/HornstullsStrand2/negy.jpg"
+ypos = "envmaps/HornstullsStrand2/posy.jpg"
+zneg = "envmaps/HornstullsStrand2/negz.jpg"
+zpos = "envmaps/HornstullsStrand2/posz.jpg"
 
 #xneg = "envmaps/SaintPetersBasilica/negx.jpg"
 #xpos = "envmaps/SaintPetersBasilica/posx.jpg"
@@ -63,12 +63,12 @@ type = "cubemap"
 #zneg = "envmaps/ArstaBridge/negz.jpg"
 #zpos = "envmaps/ArstaBridge/posz.jpg"
 
-xneg = "envmaps/NissiBeach/negx.jpg"
-xpos = "envmaps/NissiBeach/posx.jpg"
-yneg = "envmaps/NissiBeach/negy.jpg"
-ypos = "envmaps/NissiBeach/posy.jpg"
-zneg = "envmaps/NissiBeach/negz.jpg"
-zpos = "envmaps/NissiBeach/posz.jpg"
+#xneg = "envmaps/NissiBeach/negx.jpg"
+#xpos = "envmaps/NissiBeach/posx.jpg"
+#yneg = "envmaps/NissiBeach/negy.jpg"
+#ypos = "envmaps/NissiBeach/posy.jpg"
+#zneg = "envmaps/NissiBeach/negz.jpg"
+#zpos = "envmaps/NissiBeach/posz.jpg"
 
 [[meshes]]
 file = "models/casual-effects.com/mitsuba/mitsuba-sphere.obj"
