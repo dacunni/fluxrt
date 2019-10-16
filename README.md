@@ -23,3 +23,13 @@ make -j
 # Run unit tests
 ctest
 ```
+### Building With Another Version of GCC
+
+If you have installed a newer version of GCC, export the CC and CXX
+environment variables prior to running cmake so it picks up the new ones.
+```
+export CC=/usr/local/bin/gcc
+export CXX=/usr/local/bin/g++
+# cmake ...
+```
+
