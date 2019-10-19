@@ -46,12 +46,19 @@ pixelheight = 300
 
 type = "cubemap"
 
-xneg = "envmaps/NissiBeach/negx.jpg"
-xpos = "envmaps/NissiBeach/posx.jpg"
-yneg = "envmaps/NissiBeach/negy.jpg"
-ypos = "envmaps/NissiBeach/posy.jpg"
-zneg = "envmaps/NissiBeach/negz.jpg"
-zpos = "envmaps/NissiBeach/posz.jpg"
+#xneg = "envmaps/NissiBeach/negx.jpg"
+#xpos = "envmaps/NissiBeach/posx.jpg"
+#yneg = "envmaps/NissiBeach/negy.jpg"
+#ypos = "envmaps/NissiBeach/posy.jpg"
+#zneg = "envmaps/NissiBeach/negz.jpg"
+#zpos = "envmaps/NissiBeach/posz.jpg"
+
+xneg = "envmaps/SaintPetersBasilica/negx.jpg"
+xpos = "envmaps/SaintPetersBasilica/posx.jpg"
+yneg = "envmaps/SaintPetersBasilica/negy.jpg"
+ypos = "envmaps/SaintPetersBasilica/posy.jpg"
+zneg = "envmaps/SaintPetersBasilica/negz.jpg"
+zpos = "envmaps/SaintPetersBasilica/posz.jpg"
 
 [[meshes]]
 file = "models/casual-effects.com/bmw/bmw.obj"

@@ -8,12 +8,17 @@ position = [ 0.0, -0.4, 0.0 ]
 #position = [ 0.0, -4.0, 0.0 ]
 direction = [ 1.0, 0.0, -0.5 ]
 
+#position = [ -40.0, 0.0, 0.0 ]
+#direction = [ 1.0, 0.0, 0.0 ]
+
 #position = [ 0.0, -0.0, 0.0 ]
 #direction = [ 0.5, -0.6, 1.0 ]
 
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
+#pixelwidth = 200
+#pixelheight = 200
 pixelwidth = 1000
 pixelheight = 1000
 
@@ -36,3 +41,10 @@ yneg = "envmaps/NissiBeach/negy.jpg"
 ypos = "envmaps/NissiBeach/posy.jpg"
 zneg = "envmaps/NissiBeach/negz.jpg"
 zpos = "envmaps/NissiBeach/posz.jpg"
+
+#xneg = "envmaps/SaintPetersBasilica/negx.jpg"
+#xpos = "envmaps/SaintPetersBasilica/posx.jpg"
+#yneg = "envmaps/SaintPetersBasilica/negy.jpg"
+#ypos = "envmaps/SaintPetersBasilica/posy.jpg"
+#zneg = "envmaps/SaintPetersBasilica/negz.jpg"
+#zpos = "envmaps/SaintPetersBasilica/posz.jpg"

@@ -21,7 +21,7 @@
 size_t latestX = 0, latestY = 0;
 std::atomic<bool> flushImmediate(false); // Flush the color output as soon as possible
 
-bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance, unsigned int depth, unsigned int maxDepth,
+bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth, const unsigned int maxDepth,
               RayIntersection & intersection, radiometry::RadianceRGB & Lo)
 {
     const float epsilon = 1.0e-4;
@@ -29,6 +29,11 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance
     if(!findIntersection(ray, scene, minDistance, intersection)) {
         Lo = scene.environmentMap->sampleRay(ray);
         return false;
+    }
+
+    const Direction3 Wi = -ray.direction;
+    if(dot(Wi, intersection.normal) < 0.0f) {
+        intersection.normal.negate();
     }
 
     const Material & material = materialFromID(intersection.material, scene.materials);
@@ -44,21 +49,22 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance
     auto S = material.specular(scene.textures, intersection.texcoord);
     bool hasSpecular = material.hasSpecular();
 
-    Position3 p = intersection.position + intersection.normal * epsilon;
-    const Direction3 Wi = -ray.direction;
+    const Position3 p = intersection.position + intersection.normal * epsilon;
+
+    // FIXME: intersects() does not respect material transparency, so shadow rays will be wrong
 
     radiometry::RadianceRGB Ld, Ls;
 
     // Trace diffuse bounce
     {
         // Sample according to cosine lobe about the normal
-        Direction3 d(rng.cosineAboutDirection(intersection.normal));
+        const Direction3 d(rng.cosineAboutDirection(intersection.normal));
         Ray shadowRay(p, d);
-        if(intersects(shadowRay, scene, minDistance)) {
+        if(intersects(shadowRay, scene, epsilon)) {
             if(depth < maxDepth) {
                 RayIntersection nextIntersection;
                 radiometry::RadianceRGB Li;
-                bool hitNext = traceRay(scene, rng, shadowRay, minDistance, depth + 1, maxDepth, nextIntersection, Li);
+                bool hitNext = traceRay(scene, rng, shadowRay, epsilon, depth + 1, maxDepth, nextIntersection, Li);
                 Ld = Li;
             }
         }
@@ -69,14 +75,14 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, float minDistance
 
     // Trace specular bounce
     if(hasSpecular) {
-        Direction3 d = mirror(Wi, intersection.normal);
+        const Direction3 d = mirror(Wi, intersection.normal);
         Ray shadowRay(p, d);
 
-        if(intersects(shadowRay, scene, minDistance)) {
+        if(intersects(shadowRay, scene, epsilon)) {
             if(depth < maxDepth) {
                 RayIntersection nextIntersection;
                 radiometry::RadianceRGB Li;
-                bool hitNext = traceRay(scene, rng, shadowRay, minDistance, depth + 1, maxDepth, nextIntersection, Li);
+                bool hitNext = traceRay(scene, rng, shadowRay, epsilon, depth + 1, maxDepth, nextIntersection, Li);
                 Ls = Li;
             }
         }
@@ -163,7 +169,7 @@ int main(int argc, char ** argv)
     printf("Scene loaded in %f sec\n", sceneLoadTime);
 
     Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
-    const float minDistance = 0.01f;
+    const float minDistance = 0.0f;
 
     RNG rng;
 
@@ -173,7 +179,7 @@ int main(int argc, char ** argv)
 
     auto tracePixel = [&](size_t x, size_t y) {
         ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
-        vec2 pixelCenter = vec2(x, y) + vec2(0.5f, 0.5f);
+        const vec2 pixelCenter = vec2(x, y) + vec2(0.5f, 0.5f);
 
         for(unsigned int samplesIndex = 0; samplesIndex < options.samplesPerPixel; ++samplesIndex) {
             vec2 jitteredPixel = pixelCenter + jitter[samplesIndex];
@@ -193,7 +199,8 @@ int main(int argc, char ** argv)
         latestY = y;
 
         if(flushImmediate) {
-            artifacts.writePixelColor();
+            //artifacts.writePixelColor();
+            artifacts.writeAll();
             flushImmediate = false;
         }
     };
