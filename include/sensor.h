@@ -17,6 +17,9 @@ struct Sensor
 
     // Call a function for every pixel on the sensor
     inline void forEachPixel(const PixelFunction & fn);
+    inline void forEachPixelInRect(const PixelFunction & fn,
+                                   size_t xmin, size_t ymin,
+                                   size_t xdim, size_t ydim);
 
     // Standard image location ranges from x in [-1,+1], y in [-1,+1],
     // regardless of actual aspect ratio.
@@ -38,6 +41,17 @@ void Sensor::forEachPixel(const Sensor::PixelFunction & fn)
 {
     for(int y = 0; y < pixelheight; y++) {
         for(int x = 0; x < pixelwidth; x++) {
+            fn(x, y);
+        }
+    }
+}
+
+void Sensor::forEachPixelInRect(const PixelFunction & fn,
+                                size_t xmin, size_t ymin,
+                                size_t xdim, size_t ydim)
+{
+    for(int y = ymin; y < ymin + ydim; y++) {
+        for(int x = xmin; x < xmin + xdim; x++) {
             fn(x, y);
         }
     }
