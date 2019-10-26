@@ -95,15 +95,17 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     for(int ni = 0; ni < attrib.normals.size() / 3; ++ni) {
         auto coord = &attrib.normals[ni * 3];
         auto dir = Direction3(coord[0], coord[1], coord[2]);
+        dir.normalize();
+        if(dir.isZeros()) {
+            printf("WARNING: Mesh normal at index %d is all zeros. Replacing with 0,1,0\n", ni);
+            dir = Direction3(0.0f, 1.0f, 0.0f);
+        }
         mesh.normals.push_back(dir);
     }
 
     for(int ti = 0; ti < attrib.texcoords.size() / 2; ++ti) {
         auto coord = &attrib.texcoords[ti * 2];
-        // TODO: The tinyobj example flips v. Need to double check this is right.
-        //auto tc = TextureCoordinate{coord[0], coord[1]};
         auto tc = TextureCoordinate{coord[0], 1.0f - coord[1]};
-        //printf("tc %5.2f %5.2f\n", tc.u, tc.v); // TEMP
         mesh.texcoords.push_back(tc);
     }
 
@@ -203,9 +205,21 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
                                               mesh.triangleVertex(tri, 2));
 
     if(mesh.hasNormals()) {
+#if 1
+        // TODO: Remove this once we condition input normals to be
+        //       pointing consistently in the same direction.
+        Direction3 n0 = mesh.triangleNormal(tri, 0);
+        Direction3 n1 = mesh.triangleNormal(tri, 1);
+        Direction3 n2 = mesh.triangleNormal(tri, 2);
+        if(dot(n0, ray.direction) > 0.0f) { n0.negate(); }
+        if(dot(n1, ray.direction) > 0.0f) { n1.negate(); }
+        if(dot(n2, ray.direction) > 0.0f) { n2.negate(); }
+        intersection.normal = interpolate(n0, n1, n2, bary);
+#else
         intersection.normal = interpolate(mesh.triangleNormal(tri, 0),
                                           mesh.triangleNormal(tri, 1),
                                           mesh.triangleNormal(tri, 2), bary);
+#endif
     }
     else {
         // Generate normals from triangle vertices

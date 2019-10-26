@@ -18,11 +18,20 @@ class Artifacts
         inline void accumPixelRadiance(int x, int y, const radiometry::RadianceRGB & rad)
         {
             color::ColorRGB color = { rad.r, rad.g, rad.b };
-            pixelColor.accum(x, y, color);
-            samplesPerPixel.accum(x, y, 0, 1);
+            accumPixelColor(x, y, color);
         }
         inline void accumPixelColor(int x, int y, const color::ColorRGB & color)
         {
+            // TODO: Put a flag around this
+            if(std::isinf(color.r) || std::isinf(color.g) || std::isinf(color.b)) {
+                std::cerr << "WARNING: Pixel color has Inf value : " << color.string() << '\n';;
+            }
+            if(std::isnan(color.r) || std::isnan(color.g) || std::isnan(color.b)) {
+                std::cerr << "WARNING: Pixel color has NaN value : " << color.string() << '\n';;
+            }
+            if(color.r < 0.0f || color.g < 0.0f || color.b < 0.0f) {
+                std::cerr << "WARNING: Pixel color has Negative value : " << color.string() << '\n';;
+            }
             pixelColor.accum(x, y, color);
             samplesPerPixel.accum(x, y, 0, 1);
         }

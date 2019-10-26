@@ -29,6 +29,10 @@ struct vec3
 
     std::string string() const;
 
+    bool isZeros() const { return x == 0.0f && y == 0.0f && z == 0.0f; }
+    bool hasNaN() const { return std::isnan(x) || std::isnan(y) || std::isnan(z); }
+    bool hasInf() const { return std::isinf(x) || std::isinf(y) || std::isinf(z); }
+
     float x = 0.0f;
     float y = 0.0f;
     float z = 0.0f;

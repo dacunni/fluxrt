@@ -116,7 +116,9 @@ void signalHandler(int signum)
         printf("Progress (%5d, %5d)\n", int(latestX), int(latestY));
         flushImmediate = true;
     }
-
+    else if(signum == SIGFPE) {
+        printf("WARNING: Floating point exception!\n");
+    }
 }
 
 int main(int argc, char ** argv)

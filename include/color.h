@@ -2,6 +2,7 @@
 #define __COLOR__
 
 #include <limits>
+#include <string>
 #include <algorithm>
 
 namespace color {
@@ -39,6 +40,8 @@ struct ColorRGB
     static const ColorRGB CYAN()    { return { 0.0f, 1.0f, 1.0f }; }
     static const ColorRGB MAGENTA() { return { 1.0f, 0.0f, 1.0f }; }
     static const ColorRGB YELLOW()  { return { 1.0f, 1.0f, 0.0f }; }
+
+    std::string string() const;
 
     float r, g, b;
 };

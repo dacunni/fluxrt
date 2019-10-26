@@ -37,14 +37,14 @@ pixelheight = 300
 #pixelheight = 1500
 
 [envmap]
-#type = "gradient"
+type = "gradient"
 #low = [ 0.0, 0.0, 0.0 ]
 #high = [ 0.8, 0.8, 0.8 ]
-#low = [ 0.0, 0.0, 0.0 ]
-#high = [ 1.0, 1.0, 1.0 ]
-#direction = [ 1.0, 0.0, 0.0 ]
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+direction = [ 1.0, 0.0, 0.0 ]
 
-type = "cubemap"
+#type = "cubemap"
 
 #xneg = "envmaps/NissiBeach/negx.jpg"
 #xpos = "envmaps/NissiBeach/posx.jpg"
