@@ -26,6 +26,10 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDi
 {
     const float epsilon = 1.0e-4;
 
+    if(depth > maxDepth) {
+        return false;
+    }
+
     if(!findIntersection(ray, scene, minDistance, intersection)) {
         Lo = scene.environmentMap->sampleRay(ray);
         return false;
@@ -51,44 +55,23 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDi
 
     const Position3 p = intersection.position + intersection.normal * epsilon;
 
-    // FIXME: intersects() does not respect material transparency, so shadow rays will be wrong
-
     radiometry::RadianceRGB Ld, Ls;
 
     // Trace diffuse bounce
     {
         // Sample according to cosine lobe about the normal
         const Direction3 d(rng.cosineAboutDirection(intersection.normal));
-        Ray shadowRay(p, d);
-        if(intersects(shadowRay, scene, epsilon)) {
-            if(depth < maxDepth) {
-                RayIntersection nextIntersection;
-                radiometry::RadianceRGB Li;
-                bool hitNext = traceRay(scene, rng, shadowRay, epsilon, depth + 1, maxDepth, nextIntersection, Li);
-                Ld = Li;
-            }
-        }
-        else {
-            Ld = scene.environmentMap->sampleRay(shadowRay);
-        }
+        Ray nextRay(p, d);
+        RayIntersection nextIntersection;
+        traceRay(scene, rng, nextRay, epsilon, depth + 1, maxDepth, nextIntersection, Ld);
     }
 
     // Trace specular bounce
     if(hasSpecular) {
         const Direction3 d = mirror(Wi, intersection.normal);
-        Ray shadowRay(p, d);
-
-        if(intersects(shadowRay, scene, epsilon)) {
-            if(depth < maxDepth) {
-                RayIntersection nextIntersection;
-                radiometry::RadianceRGB Li;
-                bool hitNext = traceRay(scene, rng, shadowRay, epsilon, depth + 1, maxDepth, nextIntersection, Li);
-                Ls = Li;
-            }
-        }
-        else {
-            Ls = scene.environmentMap->sampleRay(shadowRay);
-        }
+        Ray nextRay(p, d);
+        RayIntersection nextIntersection;
+        traceRay(scene, rng, nextRay, epsilon, depth + 1, maxDepth, nextIntersection, Ls);
     }
 
     if(hasSpecular) {

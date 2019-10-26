@@ -114,6 +114,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 auto zpos = envmapTable->get_as<std::string>("zpos");
                 auto envmap = std::make_unique<CubeMapEnvironmentMap>();
                 envmap->loadFromDirectionFiles(*xneg, *xpos, *yneg, *ypos, *zneg, *zpos);
+                envmap->setScaleFactor(envmapTable->get_as<double>("scalefactor").value_or(1.0));
                 scene.environmentMap = std::move(envmap);
             }
             else if(type == "gradient") {
