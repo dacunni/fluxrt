@@ -49,6 +49,8 @@ class CubeMapEnvironmentMap : public EnvironmentMap
 
         virtual radiometry::RadianceRGB sampleRay(const Ray & ray);
 
+        void setScaleFactor(float f) { scaleFactor = f; }
+
     protected:
         using TexturePtr = std::shared_ptr<Texture>;
 
@@ -64,6 +66,8 @@ class CubeMapEnvironmentMap : public EnvironmentMap
         TexturePtr yp;
         TexturePtr zn;
         TexturePtr zp;
+
+        float scaleFactor = 1.0f;
 };
 
 #endif

@@ -161,9 +161,9 @@ RadianceRGB CubeMapEnvironmentMap::sampleRay(const Ray & ray)
 
     //std::cout << "tex " << texcoord.u << ", " << texcoord.v << '\n'; // TEMP
 
-    return { texture->lerpUV(texcoord.u, texcoord.v, 0),
-             texture->lerpUV(texcoord.u, texcoord.v, 1),
-             texture->lerpUV(texcoord.u, texcoord.v, 2) };
+    return { scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 0),
+             scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 1),
+             scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 2) };
 
     // TODO
     //return RadianceRGB::RED();
