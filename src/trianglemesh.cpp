@@ -16,10 +16,50 @@
 // Special texcoord index indicating no texture coordinates exist for the vertex
 const uint32_t NoTexCoord = std::numeric_limits<uint32_t>::max();
 
+//
 // Wavefront OBJ format
-bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
-                             MaterialArray & materials, TextureArray & textures,
-                             const std::string & path, const std::string & filename)
+//
+static void loadMaterialsFromOBJ(MaterialArray & materials,
+                                 TextureCache & textureCache,
+                                 std::vector<tinyobj::material_t> & objmaterials,
+                                 const std::string & path)
+{
+    objmaterials.push_back(tinyobj::material_t()); // default material
+
+    for(int mi = 0; mi < objmaterials.size(); ++mi) {
+        auto & objmaterial = objmaterials[mi];
+        auto & D = objmaterial.diffuse;
+        auto & S = objmaterial.specular;
+        printf("    material %2d "
+               "D %.1f %.1f %.1f Dt '%s' "
+               "S %.1f %.1f %.1f St '%s' "
+               "At '%s' dissolve %.1f"
+               "\n",
+               mi,
+               D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
+               S[0], S[1], S[2], objmaterial.specular_texname.c_str(),
+               objmaterial.alpha_texname.c_str(), objmaterial.dissolve);
+
+        auto material = Material::makeDiffuseSpecular(D, S);
+
+        if(!objmaterial.diffuse_texname.empty()) {
+            material.diffuseTexture = textureCache.loadTextureFromFile(path, objmaterial.diffuse_texname);
+        }
+        if(!objmaterial.specular_texname.empty()) {
+            material.specularTexture = textureCache.loadTextureFromFile(path, objmaterial.specular_texname);
+        }
+        if(!objmaterial.alpha_texname.empty()) {
+            material.alphaTexture = textureCache.loadTextureFromFile(path, objmaterial.alpha_texname);
+        }
+
+        materials.push_back(material);
+    }
+}
+
+static bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
+                                    MaterialArray & materials,
+                                    TextureCache & textureCache,
+                                    const std::string & path, const std::string & filename)
 {
     std::string warn, err;
     tinyobj::attrib_t attrib;
@@ -47,44 +87,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     printf("  materials: %d", (int) objmaterials.size());
     printf("  shapes: %d\n", (int) shapes.size());
 
-    objmaterials.push_back(tinyobj::material_t()); // default material
-
-    // TODO: Move the texture cache up to the scene level so we don't
-    //       get texture IDs out of sync when using multiple models
-    TextureCache textureCache;
-
-    for(int mi = 0; mi < objmaterials.size(); ++mi) {
-        auto & objmaterial = objmaterials[mi];
-        auto & D = objmaterial.diffuse;
-        auto & S = objmaterial.specular;
-        printf("    material %2d "
-               "D %.1f %.1f %.1f D_tex '%s' "
-               "S %.1f %.1f %.1f S_tex '%s' "
-               "alpha_tex '%s' dissolve %.1f"
-               "\n",
-               mi,
-               D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
-               S[0], S[1], S[2], objmaterial.specular_texname.c_str(),
-               objmaterial.alpha_texname.c_str(),
-               objmaterial.dissolve);
-
-        auto material = Material::makeDiffuseSpecular(D, S);
-
-        if(!objmaterial.diffuse_texname.empty()) {
-            material.diffuseTexture = textureCache.loadTextureFromFile(path, objmaterial.diffuse_texname);
-        }
-        if(!objmaterial.specular_texname.empty()) {
-            material.specularTexture = textureCache.loadTextureFromFile(path, objmaterial.specular_texname);
-        }
-        if(!objmaterial.alpha_texname.empty()) {
-            material.alphaTexture = textureCache.loadTextureFromFile(path, objmaterial.alpha_texname);
-        }
-
-        materials.push_back(material);
-    }
-
-    std::copy(textureCache.textures.begin(), textureCache.textures.end(),
-              std::back_inserter(textures));
+    loadMaterialsFromOBJ(materials, textureCache, objmaterials, path);
 
     for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
@@ -145,14 +148,15 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
 }
 
 bool loadTriangleMesh(TriangleMesh & mesh,
-                      MaterialArray & materials, TextureArray & textures,
+                      MaterialArray & materials,
+                      TextureCache & textureCache,
                       const std::string & pathToFile)
 {
     std::string path, filename;
     std::tie(path, filename) = filesystem::splitFileDirectory(pathToFile);
 
     if(filesystem::hasExtension(filename, ".obj")) {
-        return loadTriangleMeshFromOBJ(mesh, materials, textures, path, filename);
+        return loadTriangleMeshFromOBJ(mesh, materials, textureCache, path, filename);
     }
 
     std::cerr << "Unrecognized mesh type " << filename << '\n';

@@ -30,7 +30,7 @@ struct Scene
     std::unique_ptr<EnvironmentMap> environmentMap;
 
     MaterialArray materials;
-    TextureArray textures;
+    TextureCache textureCache;
 
     Sensor sensor;
     std::unique_ptr<Camera> camera;

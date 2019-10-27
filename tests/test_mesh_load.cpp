@@ -20,8 +20,8 @@ int main(int argc, char ** argv)
 
     TriangleMesh mesh;
     MaterialArray materials;
-    TextureArray textures;
-    if(!loadTriangleMesh(mesh, materials, textures, modelFile)) {
+    TextureCache textureCache;
+    if(!loadTriangleMesh(mesh, materials, textureCache, modelFile)) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }

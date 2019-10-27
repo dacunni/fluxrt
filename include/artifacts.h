@@ -45,9 +45,9 @@ class Artifacts
             setTangent(x, y, intersection.tangent);
             setBitangent(x, y, intersection.bitangent);
             setTexCoord(x, y, intersection.texcoord);
-            setMatDiffuseColor(x, y, intersection, scene.materials, scene.textures);
-            setMatSpecularColor(x, y, intersection, scene.materials, scene.textures);
-            setBasicLighting(x, y, intersection, scene.materials, scene.textures);
+            setMatDiffuseColor(x, y, intersection, scene.materials, scene.textureCache.textures);
+            setMatSpecularColor(x, y, intersection, scene.materials, scene.textureCache.textures);
+            setBasicLighting(x, y, intersection, scene.materials, scene.textureCache.textures);
         }
 
         inline void setHit(int x, int y, bool hit) { hitMask.set(x, y, 0, 1.0f); }

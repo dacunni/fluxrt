@@ -41,7 +41,7 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDi
     }
 
     const Material & material = materialFromID(intersection.material, scene.materials);
-    auto A = material.alpha(scene.textures, intersection.texcoord);
+    auto A = material.alpha(scene.textureCache.textures, intersection.texcoord);
 
     if(A < 1.0f) { // transparent
         // Trace a new ray just past the intersection
@@ -49,8 +49,8 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDi
         return traceRay(scene, rng, ray, newMinDistance, depth, maxDepth, intersection, Lo);
     }
 
-    auto D = material.diffuse(scene.textures, intersection.texcoord);
-    auto S = material.specular(scene.textures, intersection.texcoord);
+    auto D = material.diffuse(scene.textureCache.textures, intersection.texcoord);
+    auto S = material.specular(scene.textureCache.textures, intersection.texcoord);
     bool hasSpecular = material.hasSpecular();
 
     const Position3 p = intersection.position + intersection.normal * epsilon;
