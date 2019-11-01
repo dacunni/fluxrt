@@ -37,7 +37,7 @@ pixelheight = 300
 #pixelheight = 1500
 
 [envmap]
-#type = "gradient"
+type = "gradient"
 low = [ 0.0, 0.0, 0.0 ]
 high = [ 0.8, 0.8, 0.8 ]
 #low = [ 0.0, 0.0, 0.0 ]
@@ -47,7 +47,7 @@ high = [ 0.8, 0.8, 0.8 ]
 direction = [ 1.0, 0.0, 0.0 ]
 #direction = [ 0.0, -0.8, -1.0 ]
 
-type = "cubemap"
+#type = "cubemap"
 
 #xneg = "envmaps/NissiBeach/negx.jpg"
 #xpos = "envmaps/NissiBeach/posx.jpg"
@@ -56,12 +56,12 @@ type = "cubemap"
 #zneg = "envmaps/NissiBeach/negz.jpg"
 #zpos = "envmaps/NissiBeach/posz.jpg"
 
-xneg = "envmaps/SaintPetersBasilica/negx.jpg"
-xpos = "envmaps/SaintPetersBasilica/posx.jpg"
-yneg = "envmaps/SaintPetersBasilica/negy.jpg"
-ypos = "envmaps/SaintPetersBasilica/posy.jpg"
-zneg = "envmaps/SaintPetersBasilica/negz.jpg"
-zpos = "envmaps/SaintPetersBasilica/posz.jpg"
+#xneg = "envmaps/SaintPetersBasilica/negx.jpg"
+#xpos = "envmaps/SaintPetersBasilica/posx.jpg"
+#yneg = "envmaps/SaintPetersBasilica/negy.jpg"
+#ypos = "envmaps/SaintPetersBasilica/posy.jpg"
+#zneg = "envmaps/SaintPetersBasilica/negz.jpg"
+#zpos = "envmaps/SaintPetersBasilica/posz.jpg"
 
 [[meshes]]
 file = "models/casual-effects.com/bmw/bmw.obj"
