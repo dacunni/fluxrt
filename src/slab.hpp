@@ -197,6 +197,8 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
         intersection.distance = tf;
     }
     intersection.position = add(ray.origin, scale(ray.direction, intersection.distance));
+    intersection.texcoord.u = dot(intersection.position, intersection.tangent);
+    intersection.texcoord.v = dot(intersection.position, intersection.bitangent);
 
     return true;
 }
