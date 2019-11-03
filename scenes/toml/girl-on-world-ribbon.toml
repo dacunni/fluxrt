@@ -1,0 +1,38 @@
+[camera]
+type = "pinhole"
+hfov = 30
+#type = "ortho"
+#hsize = 8
+
+position = [ 0.0, 200.0, 200.0 ]
+direction = [ 0.10, -0.55, -1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 600
+
+[envmap]
+
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+direction = [ 1, 0, 0 ]
+
+#type = "cubemap"
+#xneg = "envmaps/SaintPetersBasilica/negx.jpg"
+#xpos = "envmaps/SaintPetersBasilica/posx.jpg"
+#yneg = "envmaps/SaintPetersBasilica/negy.jpg"
+#ypos = "envmaps/SaintPetersBasilica/posy.jpg"
+#zneg = "envmaps/SaintPetersBasilica/negz.jpg"
+#zpos = "envmaps/SaintPetersBasilica/posz.jpg"
+
+[[meshes]]
+file = "models/myminifactory.com/scantheworld/girl-on-world-ribbon-print.stl"
+
+# Floor - included floor is thin and light shines through
+[[slabs]]
+min = [ -1000.0, -1000.0, -1000.0 ]
+max = [ 1000.0, -0.5, 1000.0 ]
+
