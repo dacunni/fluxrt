@@ -34,11 +34,13 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         auto & D = objmaterial.diffuse;
         auto & S = objmaterial.specular;
         printf("    material %2d "
+               "ior %.3f "
                "D %.1f %.1f %.1f Dt '%s' "
                "S %.1f %.1f %.1f St '%s' "
                "At '%s' dissolve %.1f"
                "\n",
                mi,
+               objmaterial.ior,
                D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
                S[0], S[1], S[2], objmaterial.specular_texname.c_str(),
                objmaterial.alpha_texname.c_str(), objmaterial.dissolve);

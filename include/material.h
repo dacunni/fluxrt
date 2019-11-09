@@ -15,6 +15,8 @@ struct ReflectanceRGB
     float g = 1.0f;
     float b = 1.0f;
 
+    ReflectanceRGB residual() const { return { 1.0f - r, 1.0f - g, 1.0f - b }; }
+
     static const ReflectanceRGB RED() { return { 1.0f, 0.0f, 0.0f }; }
     static const ReflectanceRGB GREEN() { return { 0.0f, 1.0f, 0.0f }; }
     static const ReflectanceRGB BLUE() { return { 0.0f, 0.0f, 1.0f }; }
@@ -59,6 +61,7 @@ inline radiometry::RadianceRGB operator*(const ReflectanceRGB & ref,
                                          const radiometry::RadianceRGB & rad) {
     return { ref.r * rad.r, ref.g * rad.g, ref.b * rad.b };
 }
+
 
 inline ReflectanceRGB Material::diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {

@@ -18,14 +18,26 @@
 #include "optics.h"
 #include "fresnel.h"
 
-size_t latestX = 0, latestY = 0;
 std::atomic<bool> flushImmediate(false); // Flush the color output as soon as possible
 
-bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth, const unsigned int maxDepth,
-              RayIntersection & intersection, radiometry::RadianceRGB & Lo)
+class Renderer
 {
-    const float epsilon = 1.0e-4;
+    using RadianceRGB = radiometry::RadianceRGB;
 
+    public:
+        bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+                      RayIntersection & intersection, RadianceRGB & Lo) const;
+
+        radiometry::RadianceRGB shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
+                                      const Direction3 & Wi, RayIntersection & intersection, const Material & material) const;
+
+    const float epsilon = 1.0e-4;
+    unsigned int maxDepth = 2;
+};
+
+bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+                        RayIntersection & intersection, RadianceRGB & Lo) const
+{
     if(depth > maxDepth) {
         return false;
     }
@@ -36,9 +48,6 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDi
     }
 
     const Direction3 Wi = -ray.direction;
-    if(dot(Wi, intersection.normal) < 0.0f) {
-        intersection.normal.negate();
-    }
 
     const Material & material = materialFromID(intersection.material, scene.materials);
     auto A = material.alpha(scene.textureCache.textures, intersection.texcoord);
@@ -46,47 +55,61 @@ bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDi
     if(A < 1.0f) { // transparent
         // Trace a new ray just past the intersection
         float newMinDistance = intersection.distance + epsilon;
-        return traceRay(scene, rng, ray, newMinDistance, depth, maxDepth, intersection, Lo);
+        return traceRay(scene, rng, ray, newMinDistance, depth, intersection, Lo);
     }
 
-    auto D = material.diffuse(scene.textureCache.textures, intersection.texcoord);
-    auto S = material.specular(scene.textureCache.textures, intersection.texcoord);
-    bool hasSpecular = material.hasSpecular();
+    Lo = shade(scene, rng, minDistance, depth, Wi, intersection, material);
+
+    return true;
+}
+
+radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
+                                        const Direction3 & Wi, RayIntersection & intersection, const Material & material) const
+{
+    if(dot(Wi, intersection.normal) < 0.0f) {
+        intersection.normal.negate();
+    }
+
+    const auto D = material.diffuse(scene.textureCache.textures, intersection.texcoord);
+    const auto S = material.specular(scene.textureCache.textures, intersection.texcoord);
+    const bool hasSpecular = material.hasSpecular();
 
     const Position3 p = intersection.position + intersection.normal * epsilon;
 
-    radiometry::RadianceRGB Ld, Ls;
+    RadianceRGB Ld, Ls;
 
     // Trace diffuse bounce
     {
         // Sample according to cosine lobe about the normal
         const Direction3 d(rng.cosineAboutDirection(intersection.normal));
-        Ray nextRay(p, d);
+        const Ray nextRay(p, d);
         RayIntersection nextIntersection;
-        traceRay(scene, rng, nextRay, epsilon, depth + 1, maxDepth, nextIntersection, Ld);
+        traceRay(scene, rng, nextRay, epsilon, depth + 1, nextIntersection, Ld);
     }
 
     // Trace specular bounce
     if(hasSpecular) {
         const Direction3 d = mirror(Wi, intersection.normal);
-        Ray nextRay(p, d);
+        const Ray nextRay(p, d);
         RayIntersection nextIntersection;
-        traceRay(scene, rng, nextRay, epsilon, depth + 1, maxDepth, nextIntersection, Ls);
+        traceRay(scene, rng, nextRay, epsilon, depth + 1, nextIntersection, Ls);
     }
+
+    RadianceRGB Lo;
 
     if(hasSpecular) {
         // Fresnel = specular
         ReflectanceRGB F0rgb = S;
         float cosIncidentAngle = absDot(Wi, intersection.normal);
         ReflectanceRGB Frgb = fresnel::schlick(F0rgb, cosIncidentAngle);
-        ReflectanceRGB OmFrgb{1.0f-Frgb.r, 1.0f-Frgb.g, 1.0f-Frgb.b};
+        ReflectanceRGB OmFrgb = Frgb.residual();
         Lo = OmFrgb * (D * Ld) + Frgb * Ls;
     }
     else {
         Lo = D * Ld;
     }
 
-    return true;
+    return Lo;
 }
 
 void signalHandler(int signum)
@@ -96,7 +119,6 @@ void signalHandler(int signum)
        || signum == SIGINFO // Ctrl-T
 #endif
       ) {
-        printf("Progress (%5d, %5d)\n", int(latestX), int(latestY));
         flushImmediate = true;
     }
     else if(signum == SIGFPE) {
@@ -166,6 +188,9 @@ int main(int argc, char ** argv)
     std::vector<vec2> jitter(options.samplesPerPixel);
     std::generate(begin(jitter), end(jitter), [&]() { return rng[0].uniformRectangle(-0.5f, 0.5f, -0.5f, 0.5f); });
 
+    Renderer renderer;
+    renderer.maxDepth = options.maxDepth;
+
     auto tracePixel = [&](size_t x, size_t y, size_t threadIndex) {
         ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
         const vec2 pixelCenter = vec2(x, y) + vec2(0.5f, 0.5f);
@@ -176,7 +201,7 @@ int main(int argc, char ** argv)
             auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel);
             RayIntersection intersection;
             radiometry::RadianceRGB pixelRadiance;
-            bool hit = traceRay(scene, rng[threadIndex], ray, minDistance, 1, options.maxDepth, intersection, pixelRadiance);
+            bool hit = renderer.traceRay(scene, rng[threadIndex], ray, minDistance, 1, intersection, pixelRadiance);
             artifacts.accumPixelRadiance(x, y, pixelRadiance);
             if(hit) {
                 artifacts.setIntersection(x, y, minDistance, scene, intersection);
@@ -184,11 +209,7 @@ int main(int argc, char ** argv)
         }
         artifacts.setTime(x, y, pixelTimer.elapsed());
 
-        latestX = x;
-        latestY = y;
-
         if(flushImmediate) {
-            //artifacts.writePixelColor();
             artifacts.writeAll();
             flushImmediate = false;
         }
