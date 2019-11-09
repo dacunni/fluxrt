@@ -3,9 +3,14 @@
 
 #include <cstdint>
 #include <functional>
+#include <thread>
+#include <list>
+#include <future>
 #include "interpolation.h"
 #include "vectortypes.h"
 #include "vec2.h"
+
+using ThreadIndex = uint32_t;
 
 struct Sensor
 {
@@ -13,13 +18,15 @@ struct Sensor
 	Sensor(uint32_t pixelwidth, uint32_t pixelheight);
 	inline ~Sensor() = default;
 
-    using PixelFunction = std::function<void(size_t /*x*/, size_t /*y*/)>;
+    using PixelFunction = std::function<void(size_t /*x*/, size_t /*y*/, ThreadIndex)>;
 
     // Call a function for every pixel on the sensor
     inline void forEachPixel(const PixelFunction & fn);
     inline void forEachPixelInRect(const PixelFunction & fn,
                                    size_t xmin, size_t ymin,
                                    size_t xdim, size_t ydim);
+
+    inline void forEachPixelThreaded(const PixelFunction & fn, uint32_t numThreads);
 
     // Standard image location ranges from x in [-1,+1], y in [-1,+1],
     // regardless of actual aspect ratio.
@@ -37,11 +44,11 @@ struct Sensor
 
 // Inline Definitions
 
-void Sensor::forEachPixel(const Sensor::PixelFunction & fn)
+void Sensor::forEachPixel(const PixelFunction & fn)
 {
     for(int y = 0; y < pixelheight; y++) {
         for(int x = 0; x < pixelwidth; x++) {
-            fn(x, y);
+            fn(x, y, 0);
         }
     }
 }
@@ -52,8 +59,34 @@ void Sensor::forEachPixelInRect(const PixelFunction & fn,
 {
     for(int y = ymin; y < ymin + ydim; y++) {
         for(int x = xmin; x < xmin + xdim; x++) {
-            fn(x, y);
+            fn(x, y, 0);
         }
+    }
+}
+
+void Sensor::forEachPixelThreaded(const PixelFunction & fn, uint32_t numThreads)
+{
+    auto rowFn = [&](int y, ThreadIndex tid) {
+        for(int x = 0; x < pixelwidth; x++) {
+            fn(x, y, tid);
+        }
+    };
+
+    auto threadFn = [&](ThreadIndex tid) {
+        for(int y = tid; y < pixelheight; y += numThreads) {
+            rowFn(y, tid);
+        }
+    };
+
+    std::list<std::future<void>> futures;
+
+    for(ThreadIndex tid = 0; tid < numThreads; ++tid) {
+        auto fn = [=]() { threadFn(tid); };
+        futures.push_back(std::async(std::launch::async, fn));
+    }
+
+    for(auto & future : futures) {
+        future.wait();
     }
 }
 

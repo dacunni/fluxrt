@@ -114,6 +114,7 @@ int main(int argc, char ** argv)
     CommandLineArgumentParser argParser;
 
     struct {
+        unsigned int numThreads = 1;
         unsigned int samplesPerPixel = 1;
         unsigned int maxDepth = 1;
         struct {
@@ -124,6 +125,7 @@ int main(int argc, char ** argv)
     } options;
 
     // General
+    argParser.addArgument('t', "threads", options.numThreads);
     argParser.addArgument('s', "spp", options.samplesPerPixel);
     argParser.addArgument('d', "maxdepth", options.maxDepth);
 
@@ -141,6 +143,8 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
+    printf("Number of threads: %d\n", options.numThreads);
+
     std::string sceneFile = arguments[0];
 
     auto sceneLoadTimer = WallClockTimer::makeRunningTimer();
@@ -156,13 +160,13 @@ int main(int argc, char ** argv)
     Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
     const float minDistance = 0.0f;
 
-    RNG rng;
+    std::vector<RNG> rng(options.numThreads);
 
     // Jitter offsets (applied the same to all corresponding pixel samples)
     std::vector<vec2> jitter(options.samplesPerPixel);
-    std::generate(begin(jitter), end(jitter), [&]() { return rng.uniformRectangle(-0.5f, 0.5f, -0.5f, 0.5f); });
+    std::generate(begin(jitter), end(jitter), [&]() { return rng[0].uniformRectangle(-0.5f, 0.5f, -0.5f, 0.5f); });
 
-    auto tracePixel = [&](size_t x, size_t y) {
+    auto tracePixel = [&](size_t x, size_t y, size_t threadIndex) {
         ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
         const vec2 pixelCenter = vec2(x, y) + vec2(0.5f, 0.5f);
 
@@ -172,7 +176,7 @@ int main(int argc, char ** argv)
             auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel);
             RayIntersection intersection;
             radiometry::RadianceRGB pixelRadiance;
-            bool hit = traceRay(scene, rng, ray, minDistance, 1, options.maxDepth, intersection, pixelRadiance);
+            bool hit = traceRay(scene, rng[threadIndex], ray, minDistance, 1, options.maxDepth, intersection, pixelRadiance);
             artifacts.accumPixelRadiance(x, y, pixelRadiance);
             if(hit) {
                 artifacts.setIntersection(x, y, minDistance, scene, intersection);
@@ -192,7 +196,12 @@ int main(int argc, char ** argv)
 
     printf("Tracing scene\n");
     auto traceTimer = WallClockTimer::makeRunningTimer();
-    scene.sensor.forEachPixel(tracePixel);
+    if(options.numThreads == 1) {
+        scene.sensor.forEachPixel(tracePixel);
+    }
+    else {
+        scene.sensor.forEachPixelThreaded(tracePixel, options.numThreads);
+    }
     double traceTime = traceTimer.elapsed();
     printf("Scene traced in %f sec\n", traceTime);
 
