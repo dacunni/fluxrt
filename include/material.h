@@ -8,6 +8,7 @@
 
 #include "texture.h"
 #include "radiometry.h"
+#include "vectortypes.h"
 
 struct ReflectanceRGB
 {
@@ -38,14 +39,19 @@ struct Material
     // Specular of all 0 indicates no specular present
     ReflectanceRGB specularColor = { 0.0f, 0.0f, 0.0f };
 
-    TextureID diffuseTexture  = NoTexture;
-    TextureID specularTexture = NoTexture;
-    TextureID alphaTexture    = NoTexture;
+    TextureID diffuseTexture   = NoTexture;
+    TextureID specularTexture  = NoTexture;
+    TextureID alphaTexture     = NoTexture;
+    TextureID normalMapTexture = NoTexture;
 
     inline ReflectanceRGB diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline ReflectanceRGB specular(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline bool hasSpecular() const;
     inline float alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const;
+
+    // Tangent-space normal map
+    inline bool hasNormalMap() const;
+    inline Direction3 normalMap(const TextureArray & tex, const TextureCoordinate & texcoord) const;
 
     // Factories
     static Material makeDiffuse(float D[3]);
@@ -104,7 +110,7 @@ inline bool Material::hasSpecular() const
         || specularColor.b > 0.0f;
 }
 
-float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const
+inline float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {
     if(alphaTexture != NoTexture) {
         auto & texture = tex[alphaTexture];
@@ -116,6 +122,29 @@ float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoo
     else {
         return 1.0f;
     }
+}
+
+inline Direction3 Material::normalMap(const TextureArray & tex, const TextureCoordinate & texcoord) const
+{
+    if(normalMapTexture != NoTexture) {
+        auto & texture = tex[normalMapTexture];
+        float u = texcoord.u;
+        float v = texcoord.v;
+        color::ColorRGB color = texture->lerpUV3(u, v);
+        return Direction3 {
+            lerpFromTo(color.g, 0.0f, 1.0f, -1.0f, +1.0f),
+            lerpFromTo(color.r, 0.0f, 1.0f, -1.0f, +1.0f),
+            lerpFromTo(color.b, 0.0f, 1.0f, -1.0f, +1.0f)
+        };
+    }
+    else {
+        return Direction3{0.0f, 0.0f, 0.0f};
+    }
+}
+
+inline bool Material::hasNormalMap() const
+{
+    return normalMapTexture != NoTexture;
 }
 
 inline const Material & materialFromID(MaterialID id, const MaterialArray & materials)

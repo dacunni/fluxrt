@@ -37,13 +37,15 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                "ior %.3f "
                "D %.1f %.1f %.1f Dt '%s' "
                "S %.1f %.1f %.1f St '%s' "
-               "At '%s' dissolve %.1f"
+               "At '%s' dissolve %.1f "
+               "N '%s' "
                "\n",
                mi,
                objmaterial.ior,
                D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
                S[0], S[1], S[2], objmaterial.specular_texname.c_str(),
-               objmaterial.alpha_texname.c_str(), objmaterial.dissolve);
+               objmaterial.alpha_texname.c_str(), objmaterial.dissolve,
+               objmaterial.normal_texname.c_str());
 
         auto material = Material::makeDiffuseSpecular(D, S);
 
@@ -55,6 +57,9 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         }
         if(!objmaterial.alpha_texname.empty()) {
             material.alphaTexture = textureCache.loadTextureFromFile(path, objmaterial.alpha_texname);
+        }
+        if(!objmaterial.normal_texname.empty()) {
+            material.normalMapTexture = textureCache.loadTextureFromFile(path, objmaterial.normal_texname);
         }
 
         materials.push_back(material);

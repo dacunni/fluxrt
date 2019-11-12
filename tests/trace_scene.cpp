@@ -74,14 +74,25 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
     const auto S = material.specular(scene.textureCache.textures, intersection.texcoord);
     const bool hasSpecular = material.hasSpecular();
 
-    const Position3 p = intersection.position + intersection.normal * epsilon;
+    const Direction3 Ng = intersection.normal; // Geometry normal
+    Direction3 Ns = intersection.normal; // Shading normal
+
+    if(material.hasNormalMap()) {
+        const auto Nmap = material.normalMap(scene.textureCache.textures, intersection.texcoord);
+        Ns = Nmap.z * intersection.normal
+            + Nmap.x * intersection.tangent
+            + Nmap.y * intersection.bitangent;
+        Ns.normalize();
+    }
+
+    const Position3 p = intersection.position + Ng * epsilon;
 
     RadianceRGB Ld, Ls;
 
     // Trace diffuse bounce
     {
         // Sample according to cosine lobe about the normal
-        const Direction3 d(rng.cosineAboutDirection(intersection.normal));
+        const Direction3 d(rng.cosineAboutDirection(Ns));
         const Ray nextRay(p, d);
         RayIntersection nextIntersection;
         traceRay(scene, rng, nextRay, epsilon, depth + 1, nextIntersection, Ld);
@@ -89,7 +100,7 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
 
     // Trace specular bounce
     if(hasSpecular) {
-        const Direction3 d = mirror(Wi, intersection.normal);
+        const Direction3 d = mirror(Wi, Ns);
         const Ray nextRay(p, d);
         RayIntersection nextIntersection;
         traceRay(scene, rng, nextRay, epsilon, depth + 1, nextIntersection, Ls);
@@ -100,7 +111,7 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
     if(hasSpecular) {
         // Fresnel = specular
         ReflectanceRGB F0rgb = S;
-        float cosIncidentAngle = absDot(Wi, intersection.normal);
+        float cosIncidentAngle = absDot(Wi, Ns);
         ReflectanceRGB Frgb = fresnel::schlick(F0rgb, cosIncidentAngle);
         ReflectanceRGB OmFrgb = Frgb.residual();
         Lo = OmFrgb * (D * Ld) + Frgb * Ls;
