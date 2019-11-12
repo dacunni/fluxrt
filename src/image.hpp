@@ -76,6 +76,16 @@ inline T Image<T>::lerpUV(float u, float v, int channel) const
 }
 
 template<typename T>
+inline color::ColorRGB Image<T>::lerpUV3(float u, float v) const
+{
+    return {
+        lerpUV(u, v, 0),
+        lerpUV(u, v, 1),
+        lerpUV(u, v, 2)
+    };
+}
+
+template<typename T>
 inline void Image<T>::setAll(T value)
 {
     std::fill(data.begin(), data.end(), value);

@@ -18,6 +18,7 @@ struct Image
     inline T get(size_t x, size_t y, int channel) const;
     inline T lerp(float x, float y, int channel) const;
     inline T lerpUV(float u, float v, int channel) const;
+    inline color::ColorRGB lerpUV3(float u, float v) const;
 
     inline void accum(size_t x, size_t y, int channel, T value);
     inline void accum(size_t x, size_t y, const color::ColorRGB & c);
