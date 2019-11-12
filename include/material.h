@@ -11,6 +11,9 @@
 
 struct ReflectanceRGB
 {
+    ReflectanceRGB(float r, float g, float b) : r(r), g(g), b(b) {}
+    ReflectanceRGB(float rgb[3]) : r(rgb[0]), g(rgb[1]), b(rgb[2]) {}
+
     float r = 1.0f;
     float g = 1.0f;
     float b = 1.0f;
