@@ -209,9 +209,9 @@ int main(int argc, char ** argv)
         }
         artifacts.setTime(x, y, pixelTimer.elapsed());
 
-        if(flushImmediate) {
+        if(flushImmediate.exchange(false)) {
+            printf("Flushing artifacts\n");
             artifacts.writeAll();
-            flushImmediate = false;
         }
     };
 
