@@ -31,8 +31,8 @@ class Renderer
         radiometry::RadianceRGB shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
                                       const Direction3 & Wi, RayIntersection & intersection, const Material & material) const;
 
-    const float epsilon = 1.0e-4;
-    unsigned int maxDepth = 2;
+        const float epsilon = 1.0e-4;
+        unsigned int maxDepth = 2;
 };
 
 bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
@@ -139,6 +139,7 @@ int main(int argc, char ** argv)
         unsigned int numThreads = 1;
         unsigned int samplesPerPixel = 1;
         unsigned int maxDepth = 1;
+        float sensorScaleFactor = 1.0f;
         struct {
             bool compute = false;
             bool sampleCosineLobe = false;
@@ -150,6 +151,7 @@ int main(int argc, char ** argv)
     argParser.addArgument('t', "threads", options.numThreads);
     argParser.addArgument('s', "spp", options.samplesPerPixel);
     argParser.addArgument('d', "maxdepth", options.maxDepth);
+    argParser.addArgument('p', "sensorscale", options.sensorScaleFactor);
 
     // Ambient Occlusion
     argParser.addFlag('a', "ao", options.ambientOcclusion.compute);
@@ -178,6 +180,13 @@ int main(int argc, char ** argv)
     double sceneLoadTime = sceneLoadTimer.elapsed();
 
     printf("Scene loaded in %f sec\n", sceneLoadTime);
+
+    if(options.sensorScaleFactor != 1.0f) {
+        printf("Overriding sensor size to %.2f %% of original\n", options.sensorScaleFactor * 100.0f);
+        scene.sensor.pixelwidth *= options.sensorScaleFactor;
+        scene.sensor.pixelheight *= options.sensorScaleFactor;
+        printf("New sensor size %u x %u\n", scene.sensor.pixelwidth, scene.sensor.pixelheight);
+    }
 
     Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
     const float minDistance = 0.0f;
