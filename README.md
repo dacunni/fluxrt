@@ -33,3 +33,16 @@ export CXX=/usr/local/bin/g++
 # cmake ...
 ```
 
+## Tracing a Scene
+
+If a scene description uses relative paths for resource specification,
+you will need to set environment variables pointing to the location
+of those resources. Absolute paths beginning with '/' will be respected,
+even if these environment variables are set.
+
+```
+export MESH_PATH=/Volumes/Extra/data/3dmodels
+export ENV_MAP_PATH=/Volumes/Extra/data/envmaps
+./trace_scene -s 10 -d 5 -t 3 ../../scenes/toml/mitsuba-sphere-envmap.toml
+```
+
