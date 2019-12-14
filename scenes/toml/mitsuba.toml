@@ -25,7 +25,7 @@ pixelwidth = 400
 pixelheight = 300
 
 [[meshes]]
-file = "models/casual-effects.com/mitsuba/mitsuba.obj"
+file = "casual-effects.com/mitsuba/mitsuba.obj"
 
 [envmap]
 

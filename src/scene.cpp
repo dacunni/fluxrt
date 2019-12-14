@@ -50,6 +50,20 @@ bool loadSceneFromFile(Scene & scene, const std::string & filename)
 bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & top)
 {
     try {
+        const char * meshPath = getenv("MESH_PATH");
+        const char * envMapPath = getenv("ENV_MAP_PATH");
+
+        auto applyPathPrefix = [](const char * prefix, const std::string & path) {
+            // If prefix is defined and path is not absolute
+            if(prefix && path.front() != '/') {
+                return std::string(prefix) + '/' + path;
+            }
+            return path;
+        };
+
+        if(meshPath) { std::cout << "Mesh path = " << meshPath << '\n'; }
+        if(envMapPath) { std::cout << "Env map path = " << envMapPath << '\n'; }
+
         auto sensorTable = top->get_table("sensor");
         if(sensorTable) {
             auto pixelwidth = sensorTable->get_as<uint32_t>("pixelwidth").value_or(100);
@@ -106,6 +120,16 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
         if(envmapTable) {
             auto type = envmapTable->get_as<std::string>("type").value_or("none");
             if(type == "cubemap") {
+#if 1
+                std::string xneg = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("xneg"));
+                std::string xpos = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("xpos"));
+                std::string yneg = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("yneg"));
+                std::string ypos = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("ypos"));
+                std::string zneg = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("zneg"));
+                std::string zpos = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("zpos"));
+                auto envmap = std::make_unique<CubeMapEnvironmentMap>();
+                envmap->loadFromDirectionFiles(xneg, xpos, yneg, ypos, zneg, zpos);
+#else
                 auto xneg = envmapTable->get_as<std::string>("xneg");
                 auto xpos = envmapTable->get_as<std::string>("xpos");
                 auto yneg = envmapTable->get_as<std::string>("yneg");
@@ -114,6 +138,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 auto zpos = envmapTable->get_as<std::string>("zpos");
                 auto envmap = std::make_unique<CubeMapEnvironmentMap>();
                 envmap->loadFromDirectionFiles(*xneg, *xpos, *yneg, *ypos, *zneg, *zpos);
+#endif
                 envmap->setScaleFactor(envmapTable->get_as<double>("scalefactor").value_or(1.0));
                 scene.environmentMap = std::move(envmap);
             }
@@ -130,14 +155,14 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
         if(meshTableArray) {
             for (const auto & meshTable : *meshTableArray) {
                 auto name = meshTable->get_as<std::string>("name").value_or("");
-                auto filename = meshTable->get_as<std::string>("file");
-                if(!filename) { throw std::runtime_error("Meshes must supply a file name"); }
-
-                std::cout << "Mesh: name " << name << " file " << *filename << std::endl;
+                auto filePath = meshTable->get_as<std::string>("file");
+                if(!filePath) { throw std::runtime_error("Meshes must supply a file name"); }
+                std::string fullFilePath = applyPathPrefix(meshPath, *filePath);
+                std::cout << "Mesh: name " << name << " file " << fullFilePath << std::endl;
 
                 TriangleMesh * mesh = new TriangleMesh();
 
-                if(!loadTriangleMesh(*mesh, scene.materials, scene.textureCache, *filename)) {
+                if(!loadTriangleMesh(*mesh, scene.materials, scene.textureCache, fullFilePath)) {
                     throw std::runtime_error("Error loading mesh");
                 }
 

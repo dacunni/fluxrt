@@ -12,6 +12,6 @@ pixelheight = 400
 
 
 [[meshes]]
-file = "models/dabrovic-sponza/sponza.obj"
+file = "dabrovic-sponza/sponza.obj"
 scaletocube = 1.0
 

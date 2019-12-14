@@ -19,6 +19,6 @@ pixelheight = 800
 #radius = 1.0
 
 [[meshes]]
-file = "models/hairball.obj"
+file = "hairball.obj"
 scaletocube = 7.0
 

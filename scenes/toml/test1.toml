@@ -13,7 +13,7 @@ pixelheight = 512
 
 [[meshes]]
 name = "monkey1"
-file = "models/blender/monkey_simple_smooth.obj"
+file = "blender/monkey_simple_smooth.obj"
 
 	[[meshes.transforms]]
 	translate = [ -3.4, 4.7, 5.2 ]
@@ -27,7 +27,7 @@ file = "models/blender/monkey_simple_smooth.obj"
 
 [[meshes]]
 name = "sphere_mesh_1"
-file = "models/blender/sphere.obj"
+file = "blender/sphere.obj"
 
 [[spheres]]
 radius = 3.2

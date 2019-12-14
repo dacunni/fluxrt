@@ -18,6 +18,6 @@ pixelwidth = 1000
 pixelheight = 800
 
 [[meshes]]
-file = "models/fireplace_room/fireplace_room.obj"
+file = "fireplace_room/fireplace_room.obj"
 scaletocube = 3.0
 

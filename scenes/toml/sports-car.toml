@@ -22,7 +22,7 @@ pixelheight = 300
 #pixelheight = 1000
 
 [[meshes]]
-file = "models/casual-effects.com/sportsCar/sportsCar.obj"
+file = "casual-effects.com/sportsCar/sportsCar.obj"
 scaletocube = 15.0
 
 # Floor

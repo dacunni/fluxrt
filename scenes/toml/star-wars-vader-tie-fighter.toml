@@ -29,6 +29,6 @@ pixelheight = 600
 #pixelheight = 1600
 
 [[meshes]]
-file = "models/clara.io/star-wars-vader-tie-fighter.obj"
+file = "clara.io/star-wars-vader-tie-fighter.obj"
 
 

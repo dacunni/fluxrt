@@ -14,8 +14,8 @@ hfov = 15
 #position = [ 6.0, 2.0, 0.0 ]
 #direction = [ -1.0, -0.35, 0.0 ]
 # quarter
-position = [ -6.0, 2.0, -6.0 ]
-direction = [ 1.0, -0.35, 1.0 ]
+position = [ 6.0, 2.0, 6.0 ]
+direction = [ -1.0, -0.35, -1.0 ]
 # back
 #position = [ 0.0, 2.0, -6.0 ]
 #direction = [ 0.0, -0.35, 1.0 ]
@@ -23,23 +23,25 @@ direction = [ 1.0, -0.35, 1.0 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
-pixelwidth = 400
-pixelheight = 300
+pixelwidth = 800
+pixelheight = 600
 
 [envmap]
 
 type = "gradient"
-low = [ 0.0, 0.0, 0.0 ]
-high = [ 0.8, 0.6, 0.6 ]
 #low = [ 0.0, 0.0, 0.0 ]
-#high = [ 1.0, 1.0, 1.0 ]
+#high = [ 0.8, 0.6, 0.6 ]
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+direction = [ -1.0, 0.0, -1.0 ]
 
 [[meshes]]
-file = "casual-effects.com/mori_knob/testObj.obj"
+file = "Dachshund_t.stl"
+scaletocube = 0.5
 #accelerator = "none"
 
 # Floor - included floor is thin and light shines through
 [[slabs]]
 min = [ -1000.0, -1000.0, -1000.0 ]
-max = [ 1000.0, -0.5, 1000.0 ]
+max = [ 1000.0, -0.58, 1000.0 ]
 

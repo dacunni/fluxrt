@@ -18,11 +18,11 @@ pixelheight = 200
 
 [[meshes]]
 name = "monkey1"
-#file = "models/blender/monkey_simple_smooth.obj"
-#file = "models/casual-effects.com/bmw/bmw.obj"
-#file = "models/casual-effects.com/sportsCar/sportsCar.obj"
-#file = "models/dabrovic-sponza/sponza.obj"
-file = "models/hairball.obj"
+#file = "blender/monkey_simple_smooth.obj"
+#file = "casual-effects.com/bmw/bmw.obj"
+#file = "casual-effects.com/sportsCar/sportsCar.obj"
+#file = "dabrovic-sponza/sponza.obj"
+file = "hairball.obj"
 #scaletocube = 2.0
 #scaletocube = 9.0
 scaletocube = 2.0

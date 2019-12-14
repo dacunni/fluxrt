@@ -23,7 +23,7 @@ pixelwidth = 1000
 pixelheight = 1000
 
 [[meshes]]
-file = "models/san-miguel/san-miguel.obj"
+file = "san-miguel/san-miguel.obj"
 scaletocube = 10.0
 
 [envmap]
@@ -35,16 +35,16 @@ scaletocube = 10.0
 
 type = "cubemap"
 
-xneg = "envmaps/NissiBeach/negx.jpg"
-xpos = "envmaps/NissiBeach/posx.jpg"
-yneg = "envmaps/NissiBeach/negy.jpg"
-ypos = "envmaps/NissiBeach/posy.jpg"
-zneg = "envmaps/NissiBeach/negz.jpg"
-zpos = "envmaps/NissiBeach/posz.jpg"
+xneg = "NissiBeach/negx.jpg"
+xpos = "NissiBeach/posx.jpg"
+yneg = "NissiBeach/negy.jpg"
+ypos = "NissiBeach/posy.jpg"
+zneg = "NissiBeach/negz.jpg"
+zpos = "NissiBeach/posz.jpg"
 
-#xneg = "envmaps/SaintPetersBasilica/negx.jpg"
-#xpos = "envmaps/SaintPetersBasilica/posx.jpg"
-#yneg = "envmaps/SaintPetersBasilica/negy.jpg"
-#ypos = "envmaps/SaintPetersBasilica/posy.jpg"
-#zneg = "envmaps/SaintPetersBasilica/negz.jpg"
-#zpos = "envmaps/SaintPetersBasilica/posz.jpg"
+#xneg = "SaintPetersBasilica/negx.jpg"
+#xpos = "SaintPetersBasilica/posx.jpg"
+#yneg = "SaintPetersBasilica/negy.jpg"
+#ypos = "SaintPetersBasilica/posy.jpg"
+#zneg = "SaintPetersBasilica/negz.jpg"
+#zpos = "SaintPetersBasilica/posz.jpg"

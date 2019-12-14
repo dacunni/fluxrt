@@ -21,15 +21,15 @@ high = [ 1.0, 1.0, 1.0 ]
 direction = [ 1, 0, 0 ]
 
 #type = "cubemap"
-#xneg = "envmaps/SaintPetersBasilica/negx.jpg"
-#xpos = "envmaps/SaintPetersBasilica/posx.jpg"
-#yneg = "envmaps/SaintPetersBasilica/negy.jpg"
-#ypos = "envmaps/SaintPetersBasilica/posy.jpg"
-#zneg = "envmaps/SaintPetersBasilica/negz.jpg"
-#zpos = "envmaps/SaintPetersBasilica/posz.jpg"
+#xneg = "SaintPetersBasilica/negx.jpg"
+#xpos = "SaintPetersBasilica/posx.jpg"
+#yneg = "SaintPetersBasilica/negy.jpg"
+#ypos = "SaintPetersBasilica/posy.jpg"
+#zneg = "SaintPetersBasilica/negz.jpg"
+#zpos = "SaintPetersBasilica/posz.jpg"
 
 [[meshes]]
-file = "models/myminifactory.com/scantheworld/girl-on-world-ribbon-print.stl"
+file = "myminifactory.com/scantheworld/girl-on-world-ribbon-print.stl"
 
 # Floor - included floor is thin and light shines through
 [[slabs]]
