@@ -19,7 +19,7 @@ cmake -DBUILD_PYTHON_BINDINGS:BOOL=OFF ..
 Build and unit test the code
 ```
 # In the 'build' directory
-make -j
+make -j install
 # Run unit tests
 ctest
 ```

@@ -1,0 +1,30 @@
+[camera]
+type = "pinhole"
+hfov = 60
+
+# Quarter front
+position = [ -7.0, 0.0, 7.0 ]
+direction = [ 1.0, 0.0, -1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 160
+pixelheight = 120
+
+[envmap]
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 0.8, 0.8, 0.8 ]
+direction = [ 1.0, 0.0, 0.0 ]
+
+[[meshes]]
+file = "casual-effects.com/bmw/bmw.obj"
+scaletocube = 3.0
+
+[[spheres]]
+radius = 0.5
+position = [ -2.5, -1.0, 5.0 ]
+
+[[slabs]]
+min = [ -1000.0, -1000.0, -1000.0 ]
+max = [ 1000.0, -1.5, 1000.0 ]
