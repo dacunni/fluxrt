@@ -52,6 +52,7 @@ inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDi
     intersection.normal = subtract(intersection.position, sphere.center).normalized();
     // generate tangent / bitangent
     coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
+    intersection.material = sphere.material;
     return true;
 }
 

@@ -2,6 +2,7 @@
 #define __SPHERE_H__
 
 #include "ray.h"
+#include "material.h"
 
 struct Sphere
 {
@@ -11,6 +12,7 @@ struct Sphere
 
 	Position3 center = Position3{ 0.0f, 0.0f, 0.0f };
 	float radius = 1.0f;
+    MaterialID material = NoMaterial;
 };
 
 // Ray intersection
