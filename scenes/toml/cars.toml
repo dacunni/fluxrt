@@ -67,6 +67,10 @@ direction = [ 1.0, 0.0, 0.0 ]
 file = "casual-effects.com/bmw/bmw.obj"
 scaletocube = 3.0
 
+[[meshes]]
+file = "casual-effects.com/sportsCar/sportsCar.obj"
+scaletocube = 10.0
+
 [[spheres]]
 radius = 0.5
 position = [ -2.5, -1.0, 5.0 ]

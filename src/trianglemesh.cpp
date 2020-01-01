@@ -23,11 +23,14 @@ const uint32_t NoTexCoord = std::numeric_limits<uint32_t>::max();
 // Wavefront OBJ format
 //
 static void loadMaterialsFromOBJ(MaterialArray & materials,
+                                 std::vector<MaterialID> & objMatToMatArrIndex,
                                  TextureCache & textureCache,
                                  std::vector<tinyobj::material_t> & objmaterials,
                                  const std::string & path)
 {
     objmaterials.push_back(tinyobj::material_t()); // default material
+
+    objMatToMatArrIndex.resize(objmaterials.size());
 
     for(int mi = 0; mi < objmaterials.size(); ++mi) {
         auto & objmaterial = objmaterials[mi];
@@ -57,6 +60,7 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
             material.alphaTexture = textureCache.loadTextureFromFile(path, objmaterial.alpha_texname);
         }
 
+        objMatToMatArrIndex[mi] = materials.size();
         materials.push_back(material);
     }
 }
@@ -92,7 +96,11 @@ static bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     printf("  materials: %d", (int) objmaterials.size());
     printf("  shapes: %d\n", (int) shapes.size());
 
-    loadMaterialsFromOBJ(materials, textureCache, objmaterials, path);
+    // Keep a mapping from original material indices to the ones we insert into
+    // the materials array
+    std::vector<MaterialID> objMatToMatArrIndex;
+
+    loadMaterialsFromOBJ(materials, objMatToMatArrIndex, textureCache, objmaterials, path);
 
     for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
@@ -129,7 +137,8 @@ static bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         // faces
         for(size_t fi = 0; fi < num_faces; ++fi) {
             auto indices = &shape.mesh.indices[3 * fi];
-            mesh.faces.material.push_back(shape.mesh.material_ids[fi]);
+            MaterialID materialId = objMatToMatArrIndex[shape.mesh.material_ids[fi]];
+            mesh.faces.material.push_back(materialId);
             // vertex indices
             for (int vi = 0; vi < 3; ++vi) {
                 mesh.indices.vertex.push_back(indices[vi].vertex_index);
