@@ -47,6 +47,7 @@ set(SRCS
     src/sensor.cpp
     src/slab.cpp
     src/scene.cpp
+    src/scene-toml.cpp
     src/texture.cpp
     src/timer.cpp
     src/triangle.cpp
