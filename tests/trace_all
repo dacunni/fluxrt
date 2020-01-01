@@ -3,32 +3,42 @@
 import glob
 import os
 import subprocess
+import argparse
 
-# TODO - command line params for paths and options
-# TODO - command line param for dry run
-# TODO - command line param for verbose
-
-#scene_path = "../../scenes/toml"
-scene_path = "../../scenes/quicklook"
 job_base_path = "jobs"
 base_cmd = "trace_scene"
-#options = "-s 10 -d 3 -t 3 -p 0.1"
-options = "-s 10 -d 3 -t 3"
 
-dry_run = False
-verbose = False
+ap = argparse.ArgumentParser()
 
-scene_path = os.path.abspath(scene_path)
+ap.add_argument('-s', '--scenedir', default="../../scenes/quicklook")
+# This option may require equals syntax to handle dashes (eg: --traceopt="-s 100")
+ap.add_argument('-o', '--traceopt', default="-s 10 -d 3 -t 3")
+ap.add_argument('-n', '--dryrun', action='store_const', const=True, default=False)
+ap.add_argument('-v', '--verbose', action='store_const', const=True, default=False)
+
+options = ap.parse_args()
+
+print(options)
 
 # TODO - param for this
 bin_path = os.path.abspath('.')
 
+options.scenedir = os.path.abspath(options.scenedir)
+
 # Update paths
 os.environ['PATH'] = bin_path + ":" + os.environ['PATH']
 
-print("Scene Path = {}".format(scene_path))
+print("Scene Path = {}".format(options.scenedir))
+print("Trace Options = {}".format(options.traceopt))
+if options.dryrun:
+    print("Dry run enabled")
 
-scenes = glob.glob(scene_path + "/*")
+scenes = glob.glob(options.scenedir + "/*")
+
+print("Found {} scenes".format(len(scenes)))
+
+if len(scenes) < 1:
+    quit()
 
 def run_dir(run_id):
     return "{:06}".format(run_id)
@@ -43,7 +53,7 @@ def make_new_run():
     while os.path.exists(run_path(run_id)):
         run_id += 1
     
-    if not dry_run:
+    if not options.dryrun:
         os.makedirs(run_path(run_id))
 
         latest_link_path = '{}/latest'.format(job_base_path)
@@ -66,19 +76,19 @@ for scene in scenes:
     job_path = "{}/{:04}".format(run_path(run_id), job_id)
     print("Job ID = {} Path = {} Scene = {}".format(job_id, job_path, scene))
 
-    if not dry_run:
+    if not options.dryrun:
         if not os.path.exists(job_path):
             os.makedirs(job_path)
         os.chdir(job_path)
 
-    cmd = "{} {} {}".format(base_cmd, options, scene)
+    cmd = "{} {} {}".format(base_cmd, options.traceopt, scene)
     print("Command = {}".format(cmd))
 
     # Execute command
-    if not dry_run:
+    if not options.dryrun:
         cmd_output = subprocess.check_output(cmd, shell=True,
                                              stderr=subprocess.STDOUT)
-        if verbose:
+        if options.verbose:
             print(cmd_output)
 
         with open("output.txt", "w") as output_file:
