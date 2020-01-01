@@ -13,8 +13,10 @@ pixelwidth = 160
 pixelheight = 120
 
 [envmap]
+type = "gradient"
 low = [ 0.0, 0.0, 0.0 ]
-high = [ 0.8, 0.8, 0.8 ]
+#high = [ 0.8, 0.8, 0.8 ]
+high = [ 1.0, 1.0, 1.0 ]
 direction = [ 1.0, 0.0, 0.0 ]
 
 [[meshes]]
