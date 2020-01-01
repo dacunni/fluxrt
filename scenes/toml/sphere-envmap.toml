@@ -1,0 +1,60 @@
+[camera]
+type = "pinhole"
+hfov = 60
+#type = "ortho"
+#hsize = 20
+
+position = [ 0.0, 0.0, 10.0 ]
+direction = [ 0.0, 0.0, -1.0 ]
+lookat = [ 0.2, 0.3, 0.5 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 200
+
+[envmap]
+#type = "gradient"
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 0.8, 0.6, 0.6 ]
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
+
+type = "cubemap"
+
+xneg = "NissiBeach/negx.jpg"
+xpos = "NissiBeach/posx.jpg"
+yneg = "NissiBeach/negy.jpg"
+ypos = "NissiBeach/posy.jpg"
+zneg = "NissiBeach/negz.jpg"
+zpos = "NissiBeach/posz.jpg"
+
+[[spheres]]
+radius = 1.0
+
+[[spheres]]
+radius = 1.0
+position = [ 2.0, 0.0, 0.0 ]
+
+[spheres.material]
+type = "diffusespecular"
+diffuse = [ 0.8, 0.2, 0.2 ]
+specular = [ 0.2, 0.2, 0.2 ]
+
+[[spheres]]
+radius = 0.5
+position = [ -1.5, 0.0, 0.0 ]
+
+[spheres.material]
+type = "diffuse"
+diffuse = [ 1.0, 0.2, 1.0 ]
+
+[[spheres]]
+radius = 0.5
+position = [ -1.5, 0.0, 6.0 ]
+
+[spheres.material]
+type = "diffusespecular"
+diffuse = [ 0.0, 0.0, 0.0 ]
+specular = [ 1.0, 1.0, 1.0 ]
+

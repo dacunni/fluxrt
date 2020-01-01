@@ -37,6 +37,11 @@ static radiometry::RadianceRGB vectorToRadianceRGB(const std::vector<double> & v
     return radiometry::RadianceRGB(v[0], v[1], v[2]);
 }
 
+static ReflectanceRGB vectorToReflectanceRGB(const std::vector<double> & v)
+{
+    return ReflectanceRGB(v[0], v[1], v[2]);
+}
+
 bool loadSceneFromFile(Scene & scene, const std::string & filename)
 {
     if(filesystem::hasExtension(filename, ".toml")) {
@@ -45,6 +50,33 @@ bool loadSceneFromFile(Scene & scene, const std::string & filename)
 
     throw std::runtime_error("Unable to deduce scene file type");
     return false;
+}
+
+template<typename OBJ>
+void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & obj, Scene & scene)
+{
+    auto materialTable = table->get_table("material");
+    if(materialTable) {
+        auto type = materialTable->get_as<std::string>("type");
+        if(!type) { throw std::runtime_error("Material must supply a type"); }
+
+        if(*type == "diffuse") {
+            auto diffuseRGB = vectorToReflectanceRGB(materialTable->get_array_of<double>("diffuse").value_or(std::vector<double>{0.0, 0.0, 0.0}));
+            Material material = Material::makeDiffuse(diffuseRGB);
+            obj.material = scene.materials.size();
+            scene.materials.push_back(material);
+        }
+        else if(*type == "diffusespecular") {
+            auto diffuseRGB = vectorToReflectanceRGB(materialTable->get_array_of<double>("diffuse").value_or(std::vector<double>{0.0, 0.0, 0.0}));
+            auto specularRGB = vectorToReflectanceRGB(materialTable->get_array_of<double>("specular").value_or(std::vector<double>{0.0, 0.0, 0.0}));
+            Material material = Material::makeDiffuseSpecular(diffuseRGB, specularRGB);
+            obj.material = scene.materials.size();
+            scene.materials.push_back(material);
+        }
+        else {
+            throw std::runtime_error(std::string("Unknown material type : ") + *type);
+        }
+    }
 }
 
 bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & top)
@@ -198,6 +230,8 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 std::cout << "Sphere: radius " << radius << " position " << position << std::endl;
 
                 scene.spheres.emplace_back(position, radius);
+                auto & obj = scene.spheres.back();
+                loadMaterialForObject(sphereTable, obj, scene);
             }
         }
 
@@ -210,6 +244,8 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 std::cout << "Slab:  min " << min << " max " << max << std::endl;
 
                 scene.slabs.emplace_back(min, max);
+                auto & obj = scene.slabs.back();
+                loadMaterialForObject(slabTable, obj, scene);
             }
         }
 
