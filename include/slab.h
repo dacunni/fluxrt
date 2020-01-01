@@ -2,6 +2,7 @@
 #define __Slab__
 
 #include "ray.h"
+#include "material.h"
 
 struct Slab
 {
@@ -36,6 +37,8 @@ struct Slab
 
     float xmin = 0.0f, ymin = 0.0f, zmin = 0.0f;
     float xmax = 0.0f, ymax = 0.0f, zmax = 0.0f;
+
+    MaterialID material = NoMaterial;
 };
 
 Slab merge(const Slab & a, const Slab & b);
