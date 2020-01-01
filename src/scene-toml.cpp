@@ -172,6 +172,8 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                     throw std::runtime_error("Error loading mesh");
                 }
 
+                loadMaterialForObject(meshTable, *mesh, scene);
+
                 auto scaletocube = meshTable->get_as<double>("scaletocube");
                 if(scaletocube) {
                     mesh->scaleToFit(Slab::centeredCube(*scaletocube));

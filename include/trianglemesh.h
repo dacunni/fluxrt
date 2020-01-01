@@ -43,6 +43,9 @@ struct TriangleMesh
     struct {
         std::vector<MaterialID> material;
     } faces;
+
+    // Global material override
+    MaterialID material = NoMaterial;
 };
 
 bool loadTriangleMesh(TriangleMesh & mesh,

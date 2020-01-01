@@ -15,7 +15,7 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O2")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-report")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-report")
 
 include_directories(include)
 include_directories(src)

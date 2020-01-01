@@ -69,7 +69,13 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
     intersection.distance = t;
     intersection.position = ray.origin + ray.direction * t;
 
-    intersection.material = mesh.faces.material[tri];
+    // Use material override if present, otherwise use mesh material
+    if(mesh.material != NoMaterial) {
+        intersection.material = mesh.material;
+    }
+    else {
+        intersection.material = mesh.faces.material[tri];
+    }
 
     auto bary = barycentricForPointInTriangle(intersection.position,
                                               mesh.triangleVertex(tri, 0),
