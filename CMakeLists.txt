@@ -15,6 +15,8 @@ endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O2")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-report")
+
 include_directories(include)
 include_directories(src)
 include_directories(external/stb)
@@ -49,6 +51,8 @@ set(SRCS
     src/timer.cpp
     src/triangle.cpp
     src/trianglemesh.cpp
+    src/trianglemesh-stl.cpp
+    src/trianglemesh-obj.cpp
     src/trianglemeshoctree.cpp
     )
 ADD_LIBRARY(micromath ${SRCS})

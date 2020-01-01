@@ -29,6 +29,9 @@ struct TriangleMesh
     std::vector<Direction3> normals;
     std::vector<TextureCoordinate> texcoords;
 
+    // Special texcoord index indicating no texture coordinates exist for the vertex
+    static const uint32_t NoTexCoord;
+
     // Per-vertex properties
     struct {
         std::vector<uint32_t> vertex;
@@ -46,6 +49,14 @@ bool loadTriangleMesh(TriangleMesh & mesh,
                       MaterialArray & materials,
                       TextureCache & textureCache,
                       const std::string & pathToFile);
+bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
+                             MaterialArray & materials,
+                             TextureCache & textureCache,
+                             const std::string & path, const std::string & filename);
+bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
+                             MaterialArray & materials,
+                             TextureCache & textureCache,
+                             const std::string & path, const std::string & filename);
 
 // Ray intersection
 bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance);
