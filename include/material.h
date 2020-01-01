@@ -49,7 +49,9 @@ struct Material
 
     // Factories
     static Material makeDiffuse(float D[3]);
+    static Material makeDiffuse(const ReflectanceRGB & D);
     static Material makeDiffuseSpecular(float D[3], float S[3]);
+    static Material makeDiffuseSpecular(const ReflectanceRGB & D, const ReflectanceRGB & S);
 };
 
 static const Material DefaultMaterial = Material();
