@@ -71,9 +71,12 @@ run_id = make_new_run()
 
 init_cwd = os.getcwd()
 
+html_summary = ""
+
 job_id = 0
 for scene in scenes:
-    job_path = "{}/{:04}".format(run_path(run_id), job_id)
+    job_dir = "{:04}".format(job_id)
+    job_path = "{}/{}".format(run_path(run_id), job_dir)
     print("Job ID = {} Path = {} Scene = {}".format(job_id, job_path, scene))
 
     if not options.dryrun:
@@ -93,9 +96,21 @@ for scene in scenes:
 
         with open("output.txt", "w") as output_file:
             output_file.write(cmd_output)
+
+    #html_summary += "<div><a href=\"{}/trace_color.png\">{}</a></div>\n".format(job_dir, job_dir)
+    html_summary += "<div><img src=\"{}/trace_color.png\"></img>{}</div>\n".format(job_dir, job_dir)
     
     os.chdir(init_cwd)
     
     job_id += 1
 
+html_summary = """
+    <html><body>
+    """ + html_summary + """
+    </body></html>
+"""
+with open("{}/summary.html".format(run_path(run_id)), "w") as output_file:
+    output_file.write(html_summary)
+
+print(html_summary)
 
