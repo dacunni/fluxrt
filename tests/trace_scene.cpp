@@ -126,7 +126,22 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
             }
             else {
                 float F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
-
+#if 1
+                // Randomly choose a reflected or refracted ray using Fresnel as the
+                // weighting factor
+                if(rng.uniform01() < F) {
+                    // Reflected ray
+                    RayIntersection reflectIntersection;
+                    traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
+                             epsilon, depth + 1, iorStack, reflectIntersection, Ls);
+                }
+                else {
+                    // Refracted ray
+                    RayIntersection refractIntersection;
+                    traceRay(scene, rng, Ray(P - N * epsilon, d),
+                             epsilon, depth + 1, nextIorStack, refractIntersection, Lt);
+                }
+#else
                 // Refracted ray
                 RayIntersection refractIntersection;
                 traceRay(scene, rng, Ray(P - N * epsilon, d),
@@ -138,8 +153,9 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
                          epsilon, depth + 1, iorStack, reflectIntersection, Ls);
 
                 // Apply Fresnel
-                Lt = (1.0f - F) * Lt;
                 Ls = F * Ls;
+                Lt = (1.0f - F) * Lt;
+#endif
             }
         }
     }
