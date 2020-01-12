@@ -1,0 +1,107 @@
+[camera]
+type = "pinhole"
+hfov = 45
+
+position = [ 0.0, 4.0, 10.0 ]
+direction = [ 0.1, -0.3, -1.0 ]
+# Left side
+#position = [ 0.0, 1.0, 10.0 ]
+#direction = [ 0.1, 0.0, -1.0 ]
+# Quarter front
+#position = [ -7.0, 5.0, 7.0 ]
+#direction = [ 1.3, -0.7, -1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 300
+
+[envmap]
+#type = "gradient"
+#low = [ 0.5, 0.5, 0.5 ]
+#high = [ 0.5, 0.5, 0.5 ]
+#low = [ 1.0, 0.0, 0.0 ]
+#high = [ 0.0, 1.0, 0.0 ]
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+#low = [ 0.0, 0.0, 0.1 ]
+#high = [ 0.8, 0.3, 0.0 ]
+direction = [ 1.0, 0.0, 1.0 ]
+#direction = [ 0.0, -0.8, -1.0 ]
+
+type = "cubemap"
+
+#scalefactor = 2
+
+#xneg = "NissiBeach/negx.jpg"
+#xpos = "NissiBeach/posx.jpg"
+#yneg = "NissiBeach/negy.jpg"
+#ypos = "NissiBeach/posy.jpg"
+#zneg = "NissiBeach/negz.jpg"
+#zpos = "NissiBeach/posz.jpg"
+
+xneg = "SaintPetersBasilica/negx.jpg"
+xpos = "SaintPetersBasilica/posx.jpg"
+yneg = "SaintPetersBasilica/negy.jpg"
+ypos = "SaintPetersBasilica/posy.jpg"
+zneg = "SaintPetersBasilica/negz.jpg"
+zpos = "SaintPetersBasilica/posz.jpg"
+
+[[slabs]]
+#min = [ 1.0, 0.1, 1.2 ]
+min = [ 1.5, 0.1, 1.2 ]
+#max = [ 2.0, 2.1, 3.2 ]
+max = [ 2.5, 2.1, 3.2 ]
+#max = [ 3.0, 2.1, 3.2 ]
+[slabs.material]
+type = "refractive"
+
+[[slabs]]
+min = [ -1.0, 0.1, 1.2 ]
+max = [ -0.5, 0.4, 3.2 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+
+[[slabs]]
+min = [ -0.3, 0.1, 1.2 ]
+max = [  0.2, 0.4, 3.2 ]
+[slabs.material]
+type = "refractive"
+ior = 1.52
+
+[[slabs]]
+min = [ 0.4, 0.1, 1.2 ]
+max = [ 0.9, 0.4, 3.2 ]
+[slabs.material]
+type = "refractive"
+ior = 2.42
+
+[[spheres]]
+radius = 1.5
+position = [ -1.0, 2.0, 0.0 ]
+[spheres.material]
+type = "refractive"
+
+[[spheres]]
+radius = 0.4
+position = [ 1.4, 2.5, 0.0 ]
+[spheres.material]
+type = "refractive"
+ior = 1.333
+
+[[spheres]]
+radius = 0.4
+position = [ 2.4, 2.5, 0.0 ]
+[spheres.material]
+type = "refractive"
+ior = 1.52
+
+[[spheres]]
+radius = 0.4
+position = [ 3.4, 2.5, 0.0 ]
+[spheres.material]
+type = "refractive"
+ior = 2.42
+

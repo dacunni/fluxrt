@@ -104,35 +104,29 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
     // Determine which sides of the box to label "near" or "far" depending on the
     // ray direction
     if(ray.direction.x >= 0.0f) {
-        xn = slab.xmin;
-        xf = slab.xmax;
+        xn = slab.xmin; xf = slab.xmax;
         nix = X_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
     }
     else {
-        xn = slab.xmax;
-        xf = slab.xmin;
+        xn = slab.xmax; xf = slab.xmin;
         nix = X_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
     
     if(ray.direction.y >= 0.0f) {
-        yn = slab.ymin;
-        yf = slab.ymax;
+        yn = slab.ymin; yf = slab.ymax;
         niy = Y_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
     }
     else {
-        yn = slab.ymax;
-        yf = slab.ymin;
+        yn = slab.ymax; yf = slab.ymin;
         niy = Y_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
 
     if(ray.direction.z >= 0.0f) {
-        zn = slab.zmin;
-        zf = slab.zmax;
+        zn = slab.zmin; zf = slab.zmax;
         niz = Z_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
     }
     else {
-        zn = slab.zmax;
-        zf = slab.zmin;
+        zn = slab.zmax; zf = slab.zmin;
         niz = Z_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
     
@@ -147,8 +141,9 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
     
     // Reject if farthest y is closer than closest x, or
     // if farthest x is closer than closest y
-    if(tfy < tnx || tfx < tny)
+    if(tfy < tnx || tfx < tny) {
         return false;
+    }
 
     // Find first potential intersection point as the farthest of the t0s, ignoring z
     float tn = tnx;
@@ -167,15 +162,16 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
 
     // Reject if farthest z is closer than closest x,y, or
     // if farthest x,y is closer than closest z
-    if(tfz < tn || tnz > tf)
+    if(tfz < tn || tnz > tf) {
         return false;
+    }
     
     // Update closest and farthest intersection with z
     if(tnz > tn) {
         tn = tnz;
         nin = niz;
     }
-    if(tfz < tf) {            // FIXME - is this the right or is it < ?
+    if(tfz < tf) {
         tf = tfz;
         nif = niz;
     }

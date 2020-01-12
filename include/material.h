@@ -42,6 +42,10 @@ struct Material
     TextureID specularTexture = NoTexture;
     TextureID alphaTexture    = NoTexture;
 
+    // Refractive layer
+    float indexOfRefraction = 1.0f;
+    bool isRefractive = false;
+
     inline ReflectanceRGB diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline ReflectanceRGB specular(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline bool hasSpecular() const;
@@ -52,6 +56,8 @@ struct Material
     static Material makeDiffuse(const ReflectanceRGB & D);
     static Material makeDiffuseSpecular(float D[3], float S[3]);
     static Material makeDiffuseSpecular(const ReflectanceRGB & D, const ReflectanceRGB & S);
+    static Material makeMirror();
+    static Material makeRefractive(float ior);
 };
 
 static const Material DefaultMaterial = Material();

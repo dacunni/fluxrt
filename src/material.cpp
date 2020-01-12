@@ -30,3 +30,19 @@ Material Material::makeDiffuseSpecular(const ReflectanceRGB & D, const Reflectan
     return m;
 }
 
+Material Material::makeMirror()
+{
+    Material m;
+    m.diffuseColor  = ReflectanceRGB(0.0f, 0.0f, 0.0f);
+    m.specularColor = ReflectanceRGB(1.0f, 1.0f, 1.0f);
+    return m;
+}
+
+Material Material::makeRefractive(float ior)
+{
+    Material m;
+    m.indexOfRefraction = ior;
+    m.isRefractive = true;
+    return m;
+}
+

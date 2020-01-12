@@ -75,6 +75,8 @@ zpos = "HornstullsStrand2/posz.jpg"
 [[meshes]]
 #file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
 file = "casual-effects.com/mitsuba-dave/mitsuba-sphere.obj"
+#[meshes.material]
+#type = "refractive"
 
 [[spheres]]
 radius = 0.5

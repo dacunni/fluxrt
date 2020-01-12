@@ -115,7 +115,11 @@ class Artifacts
             else if(distance == FLT_MAX)
                 isectDist.set3(x, y, 1.0f, 0.5f, 0.0f);
             else {
+#if 1
+                float v = lerpFromTo(distance, 1.0f, 20.0f, 0.0f, 1.0f);
+#else
                 float v = std::log10(distance);
+#endif
                 isectDist.set3(x, y, v, v, v);
             }
         }

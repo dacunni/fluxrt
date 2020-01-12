@@ -20,15 +20,25 @@
 
 std::atomic<bool> flushImmediate(false); // Flush the color output as soon as possible
 
+void printDepthPrefix(unsigned int num)
+{
+    for(unsigned int i = 0; i < num; ++i) {
+        printf("  ");
+    }
+}
+
 class Renderer
 {
     using RadianceRGB = radiometry::RadianceRGB;
+    using IndexOfRefractionStack = std::vector<float>;
 
     public:
         bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+                      const IndexOfRefractionStack & iorStack,
                       RayIntersection & intersection, RadianceRGB & Lo) const;
 
         radiometry::RadianceRGB shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
+                                      const IndexOfRefractionStack & iorStack,
                                       const Direction3 & Wi, RayIntersection & intersection, const Material & material) const;
 
         const float epsilon = 1.0e-4;
@@ -36,6 +46,7 @@ class Renderer
 };
 
 bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+                        const IndexOfRefractionStack & iorStack,
                         RayIntersection & intersection, RadianceRGB & Lo) const
 {
     if(depth > maxDepth) {
@@ -55,49 +66,108 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
     if(A < 1.0f) { // transparent
         // Trace a new ray just past the intersection
         float newMinDistance = intersection.distance + epsilon;
-        return traceRay(scene, rng, ray, newMinDistance, depth, intersection, Lo);
+        return traceRay(scene, rng, ray, newMinDistance, depth, iorStack, intersection, Lo);
     }
 
-    Lo = shade(scene, rng, minDistance, depth, Wi, intersection, material);
+    Lo = shade(scene, rng, minDistance, depth, iorStack, Wi, intersection, material);
 
     return true;
 }
 
 radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
+                                        const IndexOfRefractionStack & iorStack,
                                         const Direction3 & Wi, RayIntersection & intersection, const Material & material) const
 {
-    if(dot(Wi, intersection.normal) < 0.0f) {
-        intersection.normal.negate();
+    // Notational convenience
+    const auto P = intersection.position;
+    auto N = intersection.normal;
+
+    if(dot(Wi, N) < 0.0f) {
+        N.negate();
     }
 
     const auto D = material.diffuse(scene.textureCache.textures, intersection.texcoord);
     const auto S = material.specular(scene.textureCache.textures, intersection.texcoord);
     const bool hasSpecular = material.hasSpecular();
+    const bool isRefractive = material.isRefractive;
+    const float nMaterial = material.indexOfRefraction;
 
-    const Position3 p = intersection.position + intersection.normal * epsilon;
+    RadianceRGB Ld, Ls, Lt;
 
-    RadianceRGB Ld, Ls;
+    if(isRefractive) {
+        // TODO: WIP
+        // Refraction
+        {
+            IndexOfRefractionStack nextIorStack = iorStack;
+            float n1, n2;
+            float F = 1.0f;
 
-    // Trace diffuse bounce
-    {
-        // Sample according to cosine lobe about the normal
-        const Direction3 d(rng.cosineAboutDirection(intersection.normal));
-        const Ray nextRay(p, d);
-        RayIntersection nextIntersection;
-        traceRay(scene, rng, nextRay, epsilon, depth + 1, nextIntersection, Ld);
+            bool leaving = nextIorStack.size() % 2 == 0;
+
+            // Update IOR stack for refracted ray
+            if(leaving) {
+                n1 = nMaterial;
+                nextIorStack.pop_back();
+                n2 = nextIorStack.back();
+            }
+            else {
+                n1 = nextIorStack.back();
+                n2 = nMaterial;
+                nextIorStack.push_back(nMaterial);
+            }
+
+            Direction3 d = refract(Wi, N, n1, n2);
+
+            bool totalInternalReflection = d.isZeros();
+
+            if(totalInternalReflection) {
+                assert(leaving);
+                // Not really leaving, put this IOR back on the stack
+                nextIorStack.push_back(nMaterial);
+                //leaving = false;
+            }
+
+            if(!totalInternalReflection) {
+                F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
+                //F = fresnel::dialectric::unpolarizedSnell(dot(Wi, N), n1, n2);
+                // Refracted ray
+                RayIntersection nextIntersection;
+                traceRay(scene, rng, Ray(P - N * epsilon, d),
+                         epsilon, depth + 1, nextIorStack, nextIntersection, Lt);
+            }
+
+            // Reflected ray
+            RayIntersection nextIntersection;
+            traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
+                     epsilon, depth + 1, iorStack, nextIntersection, Ls);
+
+            Lt = (1.0f - F) * Lt;
+            Ls = F * Ls;
+        }
     }
-
-    // Trace specular bounce
-    if(hasSpecular) {
-        const Direction3 d = mirror(Wi, intersection.normal);
-        const Ray nextRay(p, d);
+    else {
+        // Trace diffuse bounce
         RayIntersection nextIntersection;
-        traceRay(scene, rng, nextRay, epsilon, depth + 1, nextIntersection, Ls);
+        traceRay(scene, rng,
+                 // Sample according to cosine lobe about the normal
+                 Ray(P + N * epsilon, Direction3(rng.cosineAboutDirection(N))),
+                 epsilon, depth + 1, iorStack, nextIntersection, Ld);
+
+        // Trace specular bounce
+        if(hasSpecular) {
+            RayIntersection nextIntersection;
+            traceRay(scene, rng,
+                     Ray(P + N * epsilon, mirror(Wi, N)),
+                     epsilon, depth + 1, iorStack, nextIntersection, Ls);
+        }
     }
 
     RadianceRGB Lo;
 
-    if(hasSpecular) {
+    if(isRefractive) {
+        Lo = Lt + Ls;
+    }
+    else if(hasSpecular) {
         // Fresnel = specular
         ReflectanceRGB F0rgb = S;
         float cosIncidentAngle = absDot(Wi, intersection.normal);
@@ -210,7 +280,7 @@ int main(int argc, char ** argv)
             auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel);
             RayIntersection intersection;
             radiometry::RadianceRGB pixelRadiance;
-            bool hit = renderer.traceRay(scene, rng[threadIndex], ray, minDistance, 1, intersection, pixelRadiance);
+            bool hit = renderer.traceRay(scene, rng[threadIndex], ray, minDistance, 1, {1.0f}, intersection, pixelRadiance);
             artifacts.accumPixelRadiance(x, y, pixelRadiance);
             if(hit) {
                 artifacts.setIntersection(x, y, minDistance, scene, intersection);

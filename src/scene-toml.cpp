@@ -47,6 +47,17 @@ void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & 
             obj.material = scene.materials.size();
             scene.materials.push_back(material);
         }
+        else if(*type == "mirror") {
+            Material material = Material::makeMirror();
+            obj.material = scene.materials.size();
+            scene.materials.push_back(material);
+        }
+        else if(*type == "refractive") {
+            auto indexOfRefraction = materialTable->get_as<double>("ior").value_or(1.333);
+            Material material = Material::makeRefractive(indexOfRefraction);
+            obj.material = scene.materials.size();
+            scene.materials.push_back(material);
+        }
         else {
             throw std::runtime_error(std::string("Unknown material type : ") + *type);
         }
