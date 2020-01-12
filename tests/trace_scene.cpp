@@ -95,16 +95,14 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
     RadianceRGB Ld, Ls, Lt;
 
     if(isRefractive) {
-        // TODO: WIP
         // Refraction
         {
-            IndexOfRefractionStack nextIorStack = iorStack;
             float n1, n2;
-            float F = 1.0f;
 
-            bool leaving = nextIorStack.size() % 2 == 0;
+            bool leaving = iorStack.size() % 2 == 0;
 
             // Update IOR stack for refracted ray
+            IndexOfRefractionStack nextIorStack = iorStack;
             if(leaving) {
                 n1 = nMaterial;
                 nextIorStack.pop_back();
@@ -121,28 +119,28 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
             bool totalInternalReflection = d.isZeros();
 
             if(totalInternalReflection) {
-                assert(leaving);
-                // Not really leaving, put this IOR back on the stack
-                nextIorStack.push_back(nMaterial);
-                //leaving = false;
-            }
-
-            if(!totalInternalReflection) {
-                F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
-                //F = fresnel::dialectric::unpolarizedSnell(dot(Wi, N), n1, n2);
-                // Refracted ray
+                // Reflected ray
                 RayIntersection nextIntersection;
-                traceRay(scene, rng, Ray(P - N * epsilon, d),
-                         epsilon, depth + 1, nextIorStack, nextIntersection, Lt);
+                traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
+                         epsilon, depth + 1, iorStack, nextIntersection, Ls);
             }
+            else {
+                float F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
 
-            // Reflected ray
-            RayIntersection nextIntersection;
-            traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
-                     epsilon, depth + 1, iorStack, nextIntersection, Ls);
+                // Refracted ray
+                RayIntersection refractIntersection;
+                traceRay(scene, rng, Ray(P - N * epsilon, d),
+                         epsilon, depth + 1, nextIorStack, refractIntersection, Lt);
 
-            Lt = (1.0f - F) * Lt;
-            Ls = F * Ls;
+                // Reflected ray
+                RayIntersection reflectIntersection;
+                traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
+                         epsilon, depth + 1, iorStack, reflectIntersection, Ls);
+
+                // Apply Fresnel
+                Lt = (1.0f - F) * Lt;
+                Ls = F * Ls;
+            }
         }
     }
     else {
