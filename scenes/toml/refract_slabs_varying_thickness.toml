@@ -1,0 +1,92 @@
+[camera]
+type = "pinhole"
+hfov = 60
+
+position = [ 0.0, 2.0, 10.0 ]
+direction = [ 0.0, -0.3, -1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 600
+pixelheight = 200
+
+[envmap]
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+direction = [ 1.0, 1.0, 1.0 ]
+
+[[slabs]] # Floor
+min = [ -5.0, -5.0, -5.0 ]
+max = [ 5.0, -1.5, 5.0 ]
+
+[[slabs]] # Green block
+min = [ -3.0, -1.3, -1.0 ]
+max = [  3.0, -1.1,  0.0 ]
+[slabs.material]
+type = "diffuse"
+diffuse = [ 0.2, 0.8, 0.2 ]
+
+[[slabs]] # Red block
+min = [ -3.0, -0.9, -1.0 ]
+max = [  3.0, -0.7,  0.0 ]
+[slabs.material]
+type = "diffuse"
+diffuse = [ 0.8, 0.0, 0.0 ]
+
+[[slabs]] # Blue block
+min = [ -3.0, -0.5, -1.0 ]
+max = [  3.0, -0.3,  0.0 ]
+[slabs.material]
+type = "diffuse"
+diffuse = [ 0.0, 0.0, 0.8 ]
+
+[[slabs]] # Magenta block
+min = [ -3.0, -0.1, -1.0 ]
+max = [  3.0,  0.1,  0.0 ]
+[slabs.material]
+type = "diffuse"
+diffuse = [ 0.8, 0.0, 0.8 ]
+
+[[slabs]]
+min = [ -3.4, -1.0, 1.0 ]
+max = [ -2.6, 0.3, 1.1 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+
+[[slabs]]
+min = [ -2.2, -1.0, 1.0 ]
+max = [ -1.4, 0.3, 1.5 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+
+[[slabs]]
+min = [ -1.0, -1.0, 1.0 ]
+max = [ -0.2, 0.3, 2.0 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+
+[[slabs]]
+min = [ 0.2, -1.0, 1.0 ]
+max = [ 1.0, 0.3, 2.5 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+
+[[slabs]]
+min = [ 1.4, -1.0, 1.0 ]
+max = [ 2.2, 0.3, 3.0 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+
+[[slabs]]
+min = [ 2.6, -1.0, 1.0 ]
+max = [ 3.4, 0.3, 3.5 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333

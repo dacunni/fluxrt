@@ -1,0 +1,47 @@
+[camera]
+type = "pinhole"
+hfov = 30
+
+#position = [ 0.0, 0.0, 10.0 ]
+#direction = [ 0.0, 0.0, -1.0 ]
+#position = [ 0.0, 0.0, -10.0 ]
+#direction = [ 0.0, 0.0, 1.0 ]
+position = [ -10.0, -5.0, -10.0 ]
+direction = [ 1.0, 0.6, 1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 600
+pixelheight = 600
+
+[envmap]
+type = "cubemap"
+xneg = "SaintPetersBasilica/negx.jpg"
+xpos = "SaintPetersBasilica/posx.jpg"
+yneg = "SaintPetersBasilica/negy.jpg"
+ypos = "SaintPetersBasilica/posy.jpg"
+zneg = "SaintPetersBasilica/negz.jpg"
+zpos = "SaintPetersBasilica/posz.jpg"
+
+[[slabs]]
+min = [ -1.0, -1.0, -1.0 ]
+max = [  1.0,  1.0,  1.0 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+
+[[slabs]]
+min = [ -4.0, -1.0, -1.0 ]
+max = [ -2.0,  1.0,  1.0 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+
+[[slabs]]
+min = [ -1.0,  2.0, -1.0 ]
+max = [  1.0,  4.0,  1.0 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+

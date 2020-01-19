@@ -43,6 +43,7 @@ class Renderer
 
         const float epsilon = 1.0e-4;
         unsigned int maxDepth = 2;
+        bool monteCarloRefraction = true;
 };
 
 bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
@@ -126,36 +127,36 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
             }
             else {
                 float F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
-#if 1
-                // Randomly choose a reflected or refracted ray using Fresnel as the
-                // weighting factor
-                if(rng.uniform01() < F) {
-                    // Reflected ray
+
+                auto traceReflect = [&]() {
                     RayIntersection reflectIntersection;
                     traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
                              epsilon, depth + 1, iorStack, reflectIntersection, Ls);
-                }
-                else {
-                    // Refracted ray
+                };
+
+                auto traceRefract = [&]() {
                     RayIntersection refractIntersection;
                     traceRay(scene, rng, Ray(P - N * epsilon, d),
                              epsilon, depth + 1, nextIorStack, refractIntersection, Lt);
+                };
+
+                if(monteCarloRefraction) {
+                    // Randomly choose a reflected or refracted ray using Fresnel as the
+                    // weighting factor
+                    if(F == 1.0f || rng.uniform01() < F) {
+                        traceReflect();
+                    }
+                    else {
+                        traceRefract();
+                    }
                 }
-#else
-                // Refracted ray
-                RayIntersection refractIntersection;
-                traceRay(scene, rng, Ray(P - N * epsilon, d),
-                         epsilon, depth + 1, nextIorStack, refractIntersection, Lt);
-
-                // Reflected ray
-                RayIntersection reflectIntersection;
-                traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
-                         epsilon, depth + 1, iorStack, reflectIntersection, Ls);
-
-                // Apply Fresnel
-                Ls = F * Ls;
-                Lt = (1.0f - F) * Lt;
-#endif
+                else {
+                    traceReflect();
+                    traceRefract();
+                    // Apply Fresnel
+                    Ls = F * Ls;
+                    Lt = (1.0f - F) * Lt;
+                }
             }
         }
     }
@@ -224,6 +225,7 @@ int main(int argc, char ** argv)
         unsigned int samplesPerPixel = 1;
         unsigned int maxDepth = 1;
         float sensorScaleFactor = 1.0f;
+        bool noMonteCarloRefraction = false;
         struct {
             bool compute = false;
             bool sampleCosineLobe = false;
@@ -236,6 +238,7 @@ int main(int argc, char ** argv)
     argParser.addArgument('s', "spp", options.samplesPerPixel);
     argParser.addArgument('d', "maxdepth", options.maxDepth);
     argParser.addArgument('p', "sensorscale", options.sensorScaleFactor);
+    argParser.addFlag('R', "nomontecarlorefraction", options.noMonteCarloRefraction);
 
     // Ambient Occlusion
     argParser.addFlag('a', "ao", options.ambientOcclusion.compute);
@@ -283,6 +286,7 @@ int main(int argc, char ** argv)
 
     Renderer renderer;
     renderer.maxDepth = options.maxDepth;
+    renderer.monteCarloRefraction = !options.noMonteCarloRefraction;
 
     auto tracePixel = [&](size_t x, size_t y, size_t threadIndex) {
         ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
@@ -308,6 +312,8 @@ int main(int argc, char ** argv)
         }
     };
 
+    printf("Monte Carlo refraction = %s\n", renderer.monteCarloRefraction ? "ON" : "OFF");
+    printf("Max depth = %u\n", renderer.maxDepth);
     printf("Tracing scene\n");
     auto traceTimer = WallClockTimer::makeRunningTimer();
     if(options.numThreads == 1) {

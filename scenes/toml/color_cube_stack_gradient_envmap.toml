@@ -2,9 +2,12 @@
 type = "pinhole"
 hfov = 45
 
-# Quarter front
-position = [ -7.0, 5.0, 7.0 ]
-direction = [ 1.3, -0.7, -1.0 ]
+#position = [ -7.0, 5.0, 7.0 ]
+#direction = [ 1.3, -0.7, -1.0 ]
+#position = [ 0.0, 5.0, 10.0 ]
+#direction = [ 0.0, -0.7, -1.0 ]
+position = [ 0.0, 2.0, 10.0 ]
+direction = [ 0.0, -0.3, -1.0 ]
 
 up = [ 0.0, 1.0, 0.0 ]
 
@@ -22,10 +25,16 @@ direction = [ 1.0, 0.0, 1.0 ]
 min = [ -5.0, -5.0, -5.0 ]
 max = [ 5.0, -1.5, 5.0 ]
 
-[[slabs]]
-min = [ -1.0, 0.5, -1.0 ]
-max = [ 1.0, -1.5, 1.0 ]
+[[slabs]] # Green block
+min = [ -1.0,  2.5, -1.0 ]
+max = [  1.0, -1.5,  1.0 ]
+[slabs.material]
+type = "diffuse"
+diffuse = [ 0.2, 0.8, 0.2 ]
 
+[[slabs]] # Red block
+min = [ -3.2, 0.5, -1.0 ]
+max = [ -1.2, -1.5, 1.0 ]
 [slabs.material]
 type = "diffuse"
 diffuse = [ 0.8, 0.0, 0.0 ]
@@ -33,17 +42,19 @@ diffuse = [ 0.8, 0.0, 0.0 ]
 [[slabs]]
 min = [ 1.0, 0.5, 1.2 ]
 max = [ 3.0, -1.5, 3.2 ]
-
 [slabs.material]
+#type = "mirror"
 type = "diffusespecular"
 diffuse = [ 0.5, 0.5, 1.0 ]
 specular = [ 0.6, 0.6, 0.6 ]
 
 [[slabs]]
-min = [ 1.2, 2.5, -1.0 ]
-max = [ 3.2, -1.5, 1.0 ]
-
+min = [ -2.0, -1.3, 1.2 ]
+#max = [ -0.0, 0.3, 3.2 ]
+max = [ -0.0, 0.3, 2.5 ]
 [slabs.material]
-type = "diffuse"
-diffuse = [ 0.2, 0.8, 0.2 ]
+type = "refractive"
+ior = 1.333
+#ior = 1.0
+
 
