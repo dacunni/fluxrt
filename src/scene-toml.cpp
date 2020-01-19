@@ -137,7 +137,6 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
         if(envmapTable) {
             auto type = envmapTable->get_as<std::string>("type").value_or("none");
             if(type == "cubemap") {
-#if 1
                 std::string xneg = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("xneg"));
                 std::string xpos = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("xpos"));
                 std::string yneg = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("yneg"));
@@ -146,16 +145,6 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 std::string zpos = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("zpos"));
                 auto envmap = std::make_unique<CubeMapEnvironmentMap>();
                 envmap->loadFromDirectionFiles(xneg, xpos, yneg, ypos, zneg, zpos);
-#else
-                auto xneg = envmapTable->get_as<std::string>("xneg");
-                auto xpos = envmapTable->get_as<std::string>("xpos");
-                auto yneg = envmapTable->get_as<std::string>("yneg");
-                auto ypos = envmapTable->get_as<std::string>("ypos");
-                auto zneg = envmapTable->get_as<std::string>("zneg");
-                auto zpos = envmapTable->get_as<std::string>("zpos");
-                auto envmap = std::make_unique<CubeMapEnvironmentMap>();
-                envmap->loadFromDirectionFiles(*xneg, *xpos, *yneg, *ypos, *zneg, *zpos);
-#endif
                 envmap->setScaleFactor(envmapTable->get_as<double>("scalefactor").value_or(1.0));
                 scene.environmentMap = std::move(envmap);
             }

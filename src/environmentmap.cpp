@@ -53,7 +53,7 @@ CubeMapEnvironmentMap::TexturePtr CubeMapEnvironmentMap::loadDirectionTile(const
     return texture;
 }
 
-bool CubeMapEnvironmentMap::loadFromDirectionFiles(
+void CubeMapEnvironmentMap::loadFromDirectionFiles(
     const std::string & xnFile,
     const std::string & xpFile,
     const std::string & ynFile,
@@ -61,23 +61,12 @@ bool CubeMapEnvironmentMap::loadFromDirectionFiles(
     const std::string & znFile,
     const std::string & zpFile)
 {
-    try {
-        xn = loadDirectionTile(xnFile);
-        xp = loadDirectionTile(xpFile);
-        yn = loadDirectionTile(ynFile);
-        yp = loadDirectionTile(ypFile);
-        zn = loadDirectionTile(znFile);
-        zp = loadDirectionTile(zpFile);
-        return true;
-    }
-    catch(std::exception & e) {
-        std::cout << "Caught exception: " << e.what() << std::endl;
-        return false;
-    }
-    catch(...) {
-        std::cout << "Caught unknown exception" << std::endl;
-        return false;
-    }
+    xn = loadDirectionTile(xnFile);
+    xp = loadDirectionTile(xpFile);
+    yn = loadDirectionTile(ynFile);
+    yp = loadDirectionTile(ypFile);
+    zn = loadDirectionTile(znFile);
+    zp = loadDirectionTile(zpFile);
 }
 
 // Reference: https://en.wikipedia.org/wiki/Cube_mapping
