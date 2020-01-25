@@ -15,6 +15,9 @@ struct Ray
     inline Ray(const Position3 & o, const Direction3 & d) : origin(o), direction(d) {}
     inline ~Ray() = default;
 
+    // Get a point at signed distance t from the origin along the ray
+    Position3 pointAt(float t) const { return origin + direction * t; }
+
     Position3 origin;
     Direction3 direction;
 };

@@ -31,12 +31,12 @@ public:
 };
 
 // Composes multiple Transforms into one. Last transform is applied first.
-Transform compose(const Transform & t1);
-Transform compose(const Transform & t1, const Transform & t2);
+inline Transform compose(const Transform & t1);
+inline Transform compose(const Transform & t1, const Transform & t2);
 
 // Variadic expansion of compose() to N transforms
 template<typename... Args>
-Transform compose(const Transform & t1, Args... args) {
+inline Transform compose(const Transform & t1, Args... args) {
     return compose(t1, compose(args...));
 }
 

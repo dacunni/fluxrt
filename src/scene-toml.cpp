@@ -5,6 +5,7 @@
 #include "vectortypes.h"
 #include "filesystem.h"
 #include "constants.h"
+#include "transform.h"
 
 static vec3 vectorToVec3(const std::vector<double> & v)
 {
@@ -61,6 +62,54 @@ void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & 
         else {
             throw std::runtime_error(std::string("Unknown material type : ") + *type);
         }
+    }
+}
+
+template<typename OBJ>
+void loadTransformsForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & obj, Scene & scene)
+{
+    auto transformTableArray = table->get_table_array("transform");
+
+    if(transformTableArray) {
+        Transform transform;
+
+        // Transforms are composed such that they are applied in order of appearance
+        for(const auto & transformTable : *transformTableArray) {
+            int numTypesOfTransform = 0;
+
+            auto translate = transformTable->get_array_of<double>("translate");
+            if(translate) {
+                auto value = vectorToVec3(*translate);
+                transform = compose(Transform::translation(value), transform);
+                ++numTypesOfTransform;
+            }
+
+            auto rotateAxis = transformTable->get_array_of<double>("rotate_axis");
+            auto rotateAngle = transformTable->get_as<double>("rotate_angle");
+
+            if(rotateAxis && rotateAngle) {
+                vec3 axis = vectorToVec3(*rotateAxis);
+                float angle = *rotateAngle;
+                transform = compose(Transform::rotation(axis, angle), transform);
+                ++numTypesOfTransform;
+            }
+
+            auto scale = transformTable->get_array_of<double>("scale");
+            if(scale) {
+                auto value = vectorToVec3(*scale);
+                transform = compose(Transform::scale(value.x, value.y, value.z), transform);
+                ++numTypesOfTransform;
+            }
+
+            // Limit to one transform per transform block so composition is well defined
+            if(numTypesOfTransform != 1) {
+                throw std::runtime_error("Transform should be exactly 1 of: scale, rotate, translate");
+            }
+        }
+
+        std::cout << "Transform: " << transform.fwd.string() << '\n';
+
+        obj.transform = transform;
     }
 }
 
@@ -189,11 +238,15 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                     TriangleMeshOctree meshOctree(*mesh);
                     meshOctree.build();
                     scene.meshOctrees.emplace_back(std::move(meshOctree));
+                    auto & obj = scene.meshOctrees.back();
+                    loadTransformsForObject(meshTable, obj, scene);
                 }
                 else {
-                    scene.meshes.emplace_back(*mesh);
+                    scene.meshes.emplace_back(std::move(*mesh));
+                    auto & obj = scene.meshes.back();
+                    loadTransformsForObject(meshTable, obj, scene);
+                    delete(mesh);
                 }
-
             }
         }
 
@@ -205,9 +258,10 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 std::cout << "Sphere: radius " << radius << " position " << position << std::endl;
 
-                scene.spheres.emplace_back(position, radius);
+                scene.spheres.emplace_back(Sphere(position, radius));
                 auto & obj = scene.spheres.back();
-                loadMaterialForObject(sphereTable, obj, scene);
+                loadMaterialForObject(sphereTable, obj.shape, scene);
+                loadTransformsForObject(sphereTable, obj, scene);
             }
         }
 
@@ -219,9 +273,10 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 std::cout << "Slab:  min " << min << " max " << max << std::endl;
 
-                scene.slabs.emplace_back(min, max);
+                scene.slabs.emplace_back(Slab(min, max));
                 auto & obj = scene.slabs.back();
-                loadMaterialForObject(slabTable, obj, scene);
+                loadMaterialForObject(slabTable, obj.shape, scene);
+                loadTransformsForObject(slabTable, obj, scene);
             }
         }
 

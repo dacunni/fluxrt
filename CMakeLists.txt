@@ -40,6 +40,7 @@ set(SRCS
     src/vec3.cpp
     src/vec4.cpp
     src/material.cpp
+    src/matrix.cpp
     src/optics.cpp
     src/radiometry.cpp
     src/ray.cpp

@@ -1,0 +1,98 @@
+[camera]
+type = "pinhole"
+hfov = 30
+
+position = [ 0.0, 8.0, 50.0 ]
+direction = [ 0.0, -0.3, -2.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 600
+pixelheight = 200
+
+[envmap]
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+direction = [ 1.0, 0.0, 1.0 ]
+
+[[slabs]] # Floor
+min = [ -1000.0, -1000.0, -1000.0 ]
+max = [ 1000.0, -2.0, 1000.0 ]
+
+    [slabs.material]
+    type = "diffusespecular"
+    diffuse = [ 1.0, 1.0, 1.0 ]
+    specular = [ 0.3, 0.3, 0.3 ]
+
+[[slabs]]
+min = [ -1.0, -1.0, -1.0 ]
+max = [ 1.0, 1.0, 1.0 ]
+
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.2, 1.0, 0.2 ]
+
+    [[slabs.transform]]
+    translate = [ -8.0, 0.0, 0.0 ]
+
+[[slabs]]
+min = [ -1.0, -1.0, -1.0 ]
+max = [ 1.0, 1.0, 1.0 ]
+
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.2, 1.0, 0.2 ]
+
+    [[slabs.transform]]
+    rotate_axis = [ 1.0, 1.0, 1.0 ]
+    rotate_angle = 0.3
+    [[slabs.transform]]
+    translate = [ -4.0, 0.0, 0.0 ]
+
+[[slabs]]
+min = [ -1.0, -1.0, -1.0 ]
+max = [ 1.0, 1.0, 1.0 ]
+
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.2, 1.0, 0.2 ]
+
+    [[slabs.transform]]
+    rotate_axis = [ 1.0, 1.0, 1.0 ]
+    rotate_angle = 0.6
+    [[slabs.transform]]
+    translate = [ 0.0, 0.0, 0.0 ]
+
+
+[[slabs]]
+min = [ -1.0, -1.0, -1.0 ]
+max = [ 1.0, 1.0, 1.0 ]
+
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.2, 1.0, 0.2 ]
+
+    [[slabs.transform]]
+    rotate_axis = [ 1.0, 1.0, 1.0 ]
+    rotate_angle = 0.9
+    [[slabs.transform]]
+    translate = [ 4.0, 0.0, 0.0 ]
+
+
+[[slabs]]
+min = [ -1.0, -1.0, -1.0 ]
+max = [ 1.0, 1.0, 1.0 ]
+
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.2, 1.0, 0.2 ]
+
+    [[slabs.transform]]
+    rotate_axis = [ 1.0, 1.0, 1.0 ]
+    rotate_angle = 1.2
+    [[slabs.transform]]
+    translate = [ 8.0, 0.0, 0.0 ]
+
+

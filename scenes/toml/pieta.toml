@@ -20,16 +20,12 @@ low = [ 0.0, 0.0, 0.0 ]
 high = [ 1.0, 1.0, 1.0 ]
 direction = [ 1, 0, 0 ]
 
-#type = "cubemap"
-#xneg = "SaintPetersBasilica/negx.jpg"
-#xpos = "SaintPetersBasilica/posx.jpg"
-#yneg = "SaintPetersBasilica/negy.jpg"
-#ypos = "SaintPetersBasilica/posy.jpg"
-#zneg = "SaintPetersBasilica/negz.jpg"
-#zpos = "SaintPetersBasilica/posz.jpg"
-
 [[meshes]]
 file = "myminifactory.com/scantheworld/smk16-kas115-pieta-michelangelo.stl"
+
+    [[meshes.transform]]
+    rotate_axis = [ 1.0, 0.0, 0.0 ]
+    rotate_angle = 1.5708
 
 # Floor - included floor is thin and light shines through
 [[slabs]]

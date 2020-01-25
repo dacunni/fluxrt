@@ -118,6 +118,15 @@ inline Direction3 mult(const AffineMatrix & A, const Direction3 & d)
     return r;
 }
 
+inline Direction3 multTranspose(const AffineMatrix & A, const Direction3 & d)
+{
+    Direction3 r; // implicit w=0
+    r.x = A.at(0, 0) * d.x + A.at(1, 0) * d.y + A.at(2, 0) * d.z;
+    r.y = A.at(0, 1) * d.x + A.at(1, 1) * d.y + A.at(2, 1) * d.z;
+    r.z = A.at(0, 2) * d.x + A.at(1, 2) * d.y + A.at(2, 2) * d.z;
+    return r;
+}
+
 inline void mult(const AffineMatrix & A, const vec4 & v, vec4 & r)
 {
     r.x = A.at(0, 0) * v.x + A.at(0, 1) * v.y + A.at(0, 2) * v.z + A.at(0, 3) * v.w;

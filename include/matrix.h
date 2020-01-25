@@ -29,6 +29,8 @@ struct AffineMatrix
     static inline AffineMatrix rotation(float angle, const vec3 & axis);
 	
 	void identity();
+
+    std::string string() const;
 	
 	inline float & at(int r, int c) { return data[r * 4 + c]; }
 	inline float at(int r, int c) const { return data[r * 4 + c]; }
@@ -43,8 +45,15 @@ inline AffineMatrix mult(const AffineMatrix & A, const AffineMatrix & B);
 // Multiplies a matrix by a vector. Assumes that matrices multiply on the left of vectors.
 // r = A * v
 inline vec4 mult(const AffineMatrix & A, const vec4 & v);
+
 inline Position3 mult(const AffineMatrix & A, const Position3 & p);
+inline Position3 operator*(const AffineMatrix & A, const Position3 & p) { return mult(A, p); }
+
 inline Direction3 mult(const AffineMatrix & A, const Direction3 & d);
+inline Direction3 operator*(const AffineMatrix & A, const Direction3 & d) { return mult(A, d); }
+
+// Multiplies the transpose of the matrix by the direction
+inline Direction3 multTranspose(const AffineMatrix & A, const Direction3 & d);
 
 inline void mult(const AffineMatrix & A, const vec4 & v, vec4 & r);
 inline void mult(const AffineMatrix & A, const Position3 & p, Position3 & r);

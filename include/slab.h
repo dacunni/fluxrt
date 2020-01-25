@@ -1,6 +1,7 @@
 #ifndef __Slab__
 #define __Slab__
 
+#include "traceable.h"
 #include "ray.h"
 #include "material.h"
 

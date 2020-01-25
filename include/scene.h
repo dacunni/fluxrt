@@ -12,6 +12,7 @@
 #include "camera.h"
 #include "ray.h"
 #include "heapmanager.h"
+#include "traceable.h"
 
 struct Scene
 {
@@ -21,10 +22,10 @@ struct Scene
     void print() const;
 
     // Objects
-    std::vector<Sphere> spheres;
-    std::vector<Slab> slabs;
-    std::vector<TriangleMesh> meshes;
-    std::vector<TriangleMeshOctree> meshOctrees;
+    std::vector<Traceable<Sphere>> spheres;
+    std::vector<Traceable<Slab>> slabs;
+    std::vector<Traceable<TriangleMesh>> meshes;
+    std::vector<Traceable<TriangleMeshOctree>> meshOctrees;
 
     // Always points to a valid envionment map
     std::unique_ptr<EnvironmentMap> environmentMap;
