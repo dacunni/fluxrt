@@ -3,35 +3,13 @@ type = "pinhole"
 #hfov = 45
 hfov = 60
 
-# Front
-#position = [ -8.0, 0.0, 0.0 ]
-#direction = [ 1.0, 0.0, 0.0 ]
-# Front above
-#position = [ -8.0, 1.6, 0.0 ]
-#direction = [ 1.0, -0.3, 0.0 ]
-# Rear above
-#position = [ 8.0, 1.6, 0.0 ]
-#direction = [ -1.0, -0.3, 0.0 ]
-# Left side
-#position = [ 0.0, 0.0, 10.0 ]
-#direction = [ 0.0, 0.0, -1.0 ]
-# Quarter rear
-#position = [ 7.0, 0.0, 7.0 ]
-#direction = [ -1.0, 0.0, -1.0 ]
-# Quarter front
-position = [ -7.0, 0.0, 7.0 ]
-direction = [ 1.0, 0.0, -1.0 ]
-# Above
-#position = [ 0.0, 10.0, 0.0 ]
-#direction = [ 0.0, -1.0, 0.01 ]
-# Below
-#position = [ 0.0, -10.0, 0.0 ]
-#direction = [ 0.0, 1.0, 0.01 ]
+position = [ 0.0, 2.0, 15.0 ]
+direction = [ 0.0, -0.1, -1.0 ]
 
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
-pixelwidth = 400
+pixelwidth = 600
 pixelheight = 300
 #pixelwidth = 2000
 #pixelheight = 1500
@@ -65,24 +43,37 @@ direction = [ 1.0, 0.0, 0.0 ]
 
 [[meshes]]
 file = "casual-effects.com/bmw/bmw.obj"
-scaletocube = 3.0
+#scaletocube = 3.0
+
+    [[meshes.transform]]
+    scale = [ 0.012, 0.012, 0.012 ]
+    [[meshes.transform]]
+    translate = [ -4.0, 0.0, 0.0 ]
+    [[meshes.transform]]
+    rotate_axis = [ 0.0, 1.0, 0.0 ]
+    rotate_angle = 1.5708
 
 [[meshes]]
 file = "casual-effects.com/sportsCar/sportsCar.obj"
-scaletocube = 10.0
+#scaletocube = 10.0
+
+    [[meshes.transform]]
+    scale = [ 2.0, 2.0, 2.0 ]
+    [[meshes.transform]]
+    translate = [ 4.0, 0.0, 3.0 ]
 
 [[spheres]]
 radius = 0.5
-position = [ -2.5, -1.0, 5.0 ]
+position = [ -2.5, 0.5, 8.0 ]
 
 [[spheres]]
-radius = 0.25
-position = [ -5.0, -1.25, 4.0 ]
-[spheres.material]
-type = "diffusespecular"
-diffuse = [ 0.0, 0.0, 0.0 ]
-specular = [ 1.0, 1.0, 1.0 ]
+radius = 0.5
+position = [ -4.0, 0.5, 8.0 ]
+
+    [spheres.material]
+    type = "mirror"
 
 [[slabs]]
 min = [ -1000.0, -1000.0, -1000.0 ]
-max = [ 1000.0, -1.5, 1000.0 ]
+max = [ 1000.0, 0.0, 1000.0 ]
+
