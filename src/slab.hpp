@@ -101,9 +101,13 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
     float xn, xf, yn, yf, zn, zf;       // near and far planes for the box
     int nin, nif, nix, niy, niz;        // indices into normal table (near plane, far plane, x, y, z)
     
+    // Using the inverse direction in our tests below ensure we handle negative
+    // zeros properly. See reference above for details.
+    vec3 dinv = ray.direction.invertedComponents();
+    
     // Determine which sides of the box to label "near" or "far" depending on the
     // ray direction
-    if(ray.direction.x >= 0.0f) {
+    if(dinv.x >= 0.0f) {
         xn = slab.xmin; xf = slab.xmax;
         nix = X_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
     }
@@ -112,7 +116,7 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
         nix = X_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
     
-    if(ray.direction.y >= 0.0f) {
+    if(dinv.y >= 0.0f) {
         yn = slab.ymin; yf = slab.ymax;
         niy = Y_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
     }
@@ -121,7 +125,7 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
         niy = Y_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
 
-    if(ray.direction.z >= 0.0f) {
+    if(dinv.z >= 0.0f) {
         zn = slab.zmin; zf = slab.zmax;
         niz = Z_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
     }
@@ -129,15 +133,15 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
         zn = slab.zmax; zf = slab.zmin;
         niz = Z_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
-    
+
     // Find t values for intersection into each of the planes that
     // define the sides of the axis-aligned slab
-    float tnx = (xn - ray.origin.x) / ray.direction.x;
-    float tfx = (xf - ray.origin.x) / ray.direction.x;
-    float tny = (yn - ray.origin.y) / ray.direction.y;
-    float tfy = (yf - ray.origin.y) / ray.direction.y;
-    float tnz = (zn - ray.origin.z) / ray.direction.z;
-    float tfz = (zf - ray.origin.z) / ray.direction.z;
+    float tnx = (xn - ray.origin.x) * dinv.x;
+    float tfx = (xf - ray.origin.x) * dinv.x;
+    float tny = (yn - ray.origin.y) * dinv.y;
+    float tfy = (yf - ray.origin.y) * dinv.y;
+    float tnz = (zn - ray.origin.z) * dinv.z;
+    float tfz = (zf - ray.origin.z) * dinv.z;
     
     // Reject if farthest y is closer than closest x, or
     // if farthest x is closer than closest y

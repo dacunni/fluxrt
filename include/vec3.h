@@ -24,6 +24,8 @@ struct vec3
 	inline vec3 normalized() const;
     inline void normalize() { *this = this->normalized(); }
 
+    inline vec3 invertedComponents() const { return { 1.0f / x, 1.0f / y, 1.0f / z }; }
+
     inline float minElement() const { return std::min({x, y, z}); }
     inline float maxElement() const { return std::max({x, y, z}); }
 

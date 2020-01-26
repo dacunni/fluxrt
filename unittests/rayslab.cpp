@@ -116,6 +116,32 @@ TEST(RaySlabFindIntersectionTest, OnAxisRay_CenteredSlab_FindsFirstIntersection)
     EXPECT_FLOAT_EQ(isect.distance, std::abs(rayOffset - obj.zmax));
 }
 
+TEST(RaySlabFindIntersectionTest, OnAxisRayWithNegativeZeros_CenteredSlab_FindsFirstIntersection) {
+    const float minDistance = 0.01f;
+    const Slab obj(-0.6f, -0.6f, -0.6f, 0.6f, 0.6f, 0.6f);
+    RayIntersection isect;
+    const float rayOffset = 10.0f;
+
+    // Looking down +x
+    EXPECT_TRUE(findIntersection(Ray(Position3(-rayOffset, 0, 0), Direction3(1, -0.0f, -0.0f)), obj, minDistance, isect));
+    EXPECT_FLOAT_EQ(isect.distance, std::abs(-rayOffset - obj.xmin));
+    // Looking down -x
+    EXPECT_TRUE(findIntersection(Ray(Position3(rayOffset, 0, 0), Direction3(-1, -0.0f, -0.0f)), obj, minDistance, isect));
+    EXPECT_FLOAT_EQ(isect.distance, std::abs(rayOffset - obj.xmax));
+    // Looking down +y
+    EXPECT_TRUE(findIntersection(Ray(Position3(0, -rayOffset, 0), Direction3(-0.0f, 1, -0.0f)), obj, minDistance, isect));
+    EXPECT_FLOAT_EQ(isect.distance, std::abs(-rayOffset - obj.ymin));
+    // Looking down -y
+    EXPECT_TRUE(findIntersection(Ray(Position3(0, rayOffset, 0), Direction3(-0.0f, -1, -0.0f)), obj, minDistance, isect));
+    EXPECT_FLOAT_EQ(isect.distance, std::abs(rayOffset - obj.ymax));
+    // Looking down +z
+    EXPECT_TRUE(findIntersection(Ray(Position3(0, 0, -rayOffset), Direction3(-0.0f, -0.0f, 1)), obj, minDistance, isect));
+    EXPECT_FLOAT_EQ(isect.distance, std::abs(-rayOffset - obj.zmin));
+    // Looking down -z
+    EXPECT_TRUE(findIntersection(Ray(Position3(0, 0, rayOffset), Direction3(-0.0f, -0.0f, -1)), obj, minDistance, isect));
+    EXPECT_FLOAT_EQ(isect.distance, std::abs(rayOffset - obj.zmax));
+}
+
 } // namespace
 
 int main(int argc, char **argv) {

@@ -53,7 +53,9 @@ inline vec3 refract(const vec3 & a, const vec3 & n, float n1, float n2)
         return vec3::zero();
     }
 
-    return blend(a.negated(), eta, n, eta * c1 - std::sqrt(c2sq)).normalized();
+    return blend(a.negated(), eta,
+                 n, eta * c1 - std::sqrt(c2sq)
+                 ).normalized();
 }
 
 inline vec3 interp(const vec3 & a, const vec3 & b, const float alpha)
