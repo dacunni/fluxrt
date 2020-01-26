@@ -104,7 +104,9 @@ void plot_snell(float n_i, float n_t)
         << file_extension;
     std::string filename = ss.str();
 
-    plot_data(filename, values_0_to_halfpi(100), [&](float x) { return optics::snellsLawAngle(n_i, x, n_t); });
+    plot_data(filename, values_0_to_halfpi(100), [&](float x) {
+                  return optics::snellsLawAngle(n_i, x, n_t);
+              });
 }
 
 void plot_beers_law(float att, float max_dist)

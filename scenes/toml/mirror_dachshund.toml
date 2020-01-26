@@ -41,10 +41,15 @@ scaletocube = 0.5
 [meshes.material]
 type = "mirror"
 
-# Floor - included floor is thin and light shines through
+# Floor
 [[slabs]]
 min = [ -2.0, -2.0, -2.0 ]
 max = [ 2.0, -0.58, 2.0 ]
-[slabs.material]
-type = "mirror"
+#    [slabs.material]
+#    type = "mirror"
+
+    [slabs.material]
+    type = "diffusespecular"
+    diffuse = [ 1.0, 1.0, 1.0 ]
+    specular = [ 0.3, 0.3, 0.3 ]
 
