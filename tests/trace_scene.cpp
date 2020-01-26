@@ -89,6 +89,7 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
 
     const auto D = material.diffuse(scene.textureCache.textures, intersection.texcoord);
     const auto S = material.specular(scene.textureCache.textures, intersection.texcoord);
+    const bool hasDiffuse = material.hasDiffuse();
     const bool hasSpecular = material.hasSpecular();
     const bool isRefractive = material.isRefractive;
     const float nMaterial = material.indexOfRefraction;
@@ -162,11 +163,13 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
     }
     else {
         // Trace diffuse bounce
-        RayIntersection nextIntersection;
-        traceRay(scene, rng,
-                 // Sample according to cosine lobe about the normal
-                 Ray(P + N * epsilon, Direction3(rng.cosineAboutDirection(N))),
-                 epsilon, depth + 1, iorStack, nextIntersection, Ld);
+        if(hasDiffuse) {
+            RayIntersection nextIntersection;
+            traceRay(scene, rng,
+                     // Sample according to cosine lobe about the normal
+                     Ray(P + N * epsilon, Direction3(rng.cosineAboutDirection(N))),
+                     epsilon, depth + 1, iorStack, nextIntersection, Ld);
+        }
 
         // Trace specular bounce
         if(hasSpecular) {
