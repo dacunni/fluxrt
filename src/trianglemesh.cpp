@@ -108,6 +108,9 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
         auto v1 = mesh.triangleVertex(tri, 1);
         auto v2 = mesh.triangleVertex(tri, 2);
         intersection.normal = cross(v2 - v0, v1 - v0).normalized();
+        if(dot(ray.direction, intersection.normal) > 0.0f) {
+            intersection.normal.negate();
+        }
     }
 
     // Interpolate texture coordinates, if available
