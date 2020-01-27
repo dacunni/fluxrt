@@ -122,7 +122,11 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         // faces
         for(size_t fi = 0; fi < num_faces; ++fi) {
             auto indices = &shape.mesh.indices[3 * fi];
-            MaterialID materialId = objMatToMatArrIndex[shape.mesh.material_ids[fi]];
+            auto matIndex = shape.mesh.material_ids[fi];
+            MaterialID materialId = 0;
+            if(matIndex >= 0 && matIndex < objMatToMatArrIndex.size()) {
+                materialId = objMatToMatArrIndex[matIndex];
+            }
             mesh.faces.material.push_back(materialId);
             // vertex indices
             for (int vi = 0; vi < 3; ++vi) {
