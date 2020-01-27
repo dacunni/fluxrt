@@ -82,6 +82,13 @@ inline void RNG::uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace, vec3
     }
 }
 
+inline vec3 RNG::uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace)
+{
+    vec3 v;
+    uniformSurfaceUnitHalfSphere(halfSpace, v);
+    return v;
+}
+
 inline void RNG::cosineAboutDirection(const Direction3 & n, vec3 & v)
 {
     vec3 t, b;

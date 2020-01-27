@@ -33,6 +33,7 @@ struct RNG
 	inline void uniformSurfaceUnitSphere(float & x, float & y, float & z);
 	inline void uniformSurfaceUnitSphere(vec3 & v);
     inline void uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace, vec3 & v);
+    inline vec3 uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace);
     inline void cosineAboutDirection(const Direction3 & n, vec3 & v);
     inline vec3 cosineAboutDirection(const Direction3 & n);
 
