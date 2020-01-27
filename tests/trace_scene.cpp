@@ -96,6 +96,12 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
 
     RadianceRGB Ld, Ls, Lt;
 
+    auto traceReflect = [&]() {
+        RayIntersection reflectIntersection;
+        traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
+                 epsilon, depth + 1, iorStack, reflectIntersection, Ls);
+    };
+
     if(isRefractive) {
         // Refraction
         {
@@ -128,12 +134,6 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
             }
             else {
                 float F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
-
-                auto traceReflect = [&]() {
-                    RayIntersection reflectIntersection;
-                    traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
-                             epsilon, depth + 1, iorStack, reflectIntersection, Ls);
-                };
 
                 auto traceRefract = [&]() {
                     RayIntersection refractIntersection;
@@ -173,10 +173,7 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
 
         // Trace specular bounce
         if(hasSpecular) {
-            RayIntersection nextIntersection;
-            traceRay(scene, rng,
-                     Ray(P + N * epsilon, mirror(Wi, N)),
-                     epsilon, depth + 1, iorStack, nextIntersection, Ls);
+            traceReflect();
         }
     }
 
