@@ -1,0 +1,25 @@
+[camera]
+type = "pinhole"
+hfov = 45
+
+position = [ 0.0, 0.0, 10.0 ]
+direction = [ 0.0, 0.0, -1.0 ]
+lookat = [ 0.2, 0.3, 0.5 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[envmap]
+
+type = "gradient"
+low = [ 0.8, 0.8, 0.8 ]
+high = [ 0.8, 0.8, 0.8 ]
+
+[sensor]
+pixelwidth = 200
+pixelheight = 200
+
+[[spheres]]
+radius = 1.0
+    [spheres.material]
+    type = "refractive"
+    ior = 1.333
+

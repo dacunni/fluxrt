@@ -33,7 +33,12 @@ print("Trace Options = {}".format(options.traceopt))
 if options.dryrun:
     print("Dry run enabled")
 
-scenes = glob.glob(options.scenedir + "/*")
+# Find all scene files, traversing subdirectories
+scenes = []
+for root, dirs, files in os.walk(options.scenedir):
+    for file in files:
+        if file.endswith(".toml"):
+            scenes.append(os.path.join(root, file))
 
 print("Found {} scenes".format(len(scenes)))
 
