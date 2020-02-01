@@ -1,0 +1,62 @@
+[camera]
+type = "pinhole"
+#hfov = 45
+hfov = 60
+
+position = [ 0.0, 2.0, 10.0 ]
+direction = [ 0.0, -0.1, -1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 600
+pixelheight = 300
+#pixelwidth = 2000
+#pixelheight = 1500
+
+[envmap]
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 0.8, 0.8, 0.8 ]
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
+#low = [ 0.0, 0.0, 0.1 ]
+#high = [ 0.8, 0.3, 0.0 ]
+direction = [ 1.0, 0.0, 0.0 ]
+#direction = [ 0.0, -0.8, -1.0 ]
+
+[[meshes]]
+file = "turbosquid/furniture/Sofa.obj"
+
+    [[meshes.transform]]
+    scale = [ 0.004, 0.004, 0.004 ]
+
+    [meshes.material]
+#    type = "diffuse"
+    type = "diffusespecular"
+    diffuse =  [ 0.2, 0.1, 0.05 ]
+    specular = [ 0.05, 0.05, 0.05 ]
+
+[[meshes]]
+file = "casual-effects.com/bmw/bmw.obj"
+
+    [[meshes.transform]]
+    scale = [ 0.003, 0.003, 0.003 ]
+    [[meshes.transform]]
+    translate = [ 0.0, 0.0, 4.0 ]
+
+#[[spheres]]
+#radius = 0.5
+#position = [ -2.5, 0.5, 8.0 ]
+#
+#[[spheres]]
+#radius = 0.5
+#position = [ -4.0, 0.5, 8.0 ]
+#
+#    [spheres.material]
+#    type = "mirror"
+
+[[slabs]]
+min = [ -1000.0, -1000.0, -1000.0 ]
+max = [ 1000.0, 0.0, 1000.0 ]
+

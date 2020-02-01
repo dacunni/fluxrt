@@ -30,19 +30,17 @@ pixelheight = 300
 
 [envmap]
 
-type = "gradient"
+#type = "gradient"
 #low = [ 0.0, 0.0, 0.0 ]
 #high = [ 0.8, 0.6, 0.6 ]
-#low = [ 0.0, 0.0, 0.0 ]
-#high = [ 1.0, 1.0, 1.0 ]
-low = [ 1.0, 1.0, 1.0 ]
+low = [ 0.0, 0.0, 0.0 ]
 high = [ 1.0, 1.0, 1.0 ]
 #low = [ 0.1, 0.1, 0.1 ]
 #high = [ 0.0, 1.0, 0.0 ]
 
 direction = [ 0.0, 1.0, 1.0 ]
 
-#type = "cubemap"
+type = "cubemap"
 
 scalefactor = 2.0
 
@@ -75,14 +73,19 @@ zpos = "HornstullsStrand2/posz.jpg"
 #zpos = "NissiBeach/posz.jpg"
 
 [[meshes]]
-#file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
-file = "casual-effects.com/mitsuba-dave/mitsuba-sphere.obj"
-#[meshes.material]
-#type = "refractive"
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "mirror"
 
 [[spheres]]
 radius = 0.5
 position = [ 2.0, 0.5, 0.0 ]
+
+[[spheres]]
+radius = 0.5
+position = [ -2.0, 0.5, 0.0 ]
+    [spheres.material]
+    type = "mirror"
 
 # Floor
 [[slabs]]

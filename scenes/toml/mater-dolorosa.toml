@@ -16,9 +16,10 @@ pixelheight = 600
 [envmap]
 
 type = "gradient"
-#low = [ 0.0, 0.0, 0.0 ]
-low = [ 1.0, 1.0, 1.0 ]
+low = [ 0.0, 0.0, 0.0 ]
+#low = [ 1.0, 1.0, 1.0 ]
 high = [ 1.0, 1.0, 1.0 ]
+direction = [ 1, 0, 0 ]
 
 #type = "cubemap"
 #xneg = "SaintPetersBasilica/negx.jpg"
@@ -30,6 +31,9 @@ high = [ 1.0, 1.0, 1.0 ]
 
 [[meshes]]
 file = "myminifactory.com/scantheworld/41-smk-mater-dolorosa-germain-pilon-louvre-hollowback.stl"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 1.0, 1.0, 1.0 ]
 
 # Floor - included floor is thin and light shines through
 [[slabs]]

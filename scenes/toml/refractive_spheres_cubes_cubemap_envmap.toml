@@ -85,22 +85,22 @@ position = [ -1.0, 2.0, 0.0 ]
 type = "refractive"
 
 [[spheres]]
-radius = 0.4
-position = [ 1.4, 2.5, 0.0 ]
+radius = 0.8
+position = [ 1.2, 2.5, 0.0 ]
 [spheres.material]
 type = "refractive"
 ior = 1.333
 
 [[spheres]]
-radius = 0.4
-position = [ 2.4, 2.5, 0.0 ]
+radius = 0.8
+position = [ 3.0, 2.5, 0.0 ]
 [spheres.material]
 type = "refractive"
 ior = 1.52
 
 [[spheres]]
-radius = 0.4
-position = [ 3.4, 2.5, 0.0 ]
+radius = 0.8
+position = [ 4.8, 2.5, 0.0 ]
 [spheres.material]
 type = "refractive"
 ior = 2.42

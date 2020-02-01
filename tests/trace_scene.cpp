@@ -144,12 +144,8 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
                 if(monteCarloRefraction) {
                     // Randomly choose a reflected or refracted ray using Fresnel as the
                     // weighting factor
-                    if(F == 1.0f || rng.uniform01() < F) {
-                        traceReflect();
-                    }
-                    else {
-                        traceRefract();
-                    }
+                    if(F == 1.0f || rng.uniform01() < F) { traceReflect(); }
+                    else                                 { traceRefract(); }
                 }
                 else {
                     traceReflect();
@@ -164,10 +160,11 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
     else {
         // Trace diffuse bounce
         if(hasDiffuse) {
+            Direction3 diffuseDir(rng.cosineAboutDirection(N));
             RayIntersection nextIntersection;
             traceRay(scene, rng,
                      // Sample according to cosine lobe about the normal
-                     Ray(P + N * epsilon, Direction3(rng.cosineAboutDirection(N))),
+                     Ray(P + N * epsilon, diffuseDir),
                      epsilon, depth + 1, iorStack, nextIntersection, Ld);
         }
 

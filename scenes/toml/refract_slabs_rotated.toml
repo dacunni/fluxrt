@@ -1,0 +1,122 @@
+[camera]
+type = "pinhole"
+hfov = 50
+
+position = [ 0.0, 2.0, 6.0 ]
+direction = [ 0.0, -0.3, -1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 600
+pixelheight = 200
+
+[envmap]
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+direction = [ 1.0, 1.0, 1.0 ]
+
+#type = "cubemap"
+#scalefactor = 2.0
+#xneg = "HornstullsStrand2/negx.jpg"
+#xpos = "HornstullsStrand2/posx.jpg"
+#yneg = "HornstullsStrand2/negy.jpg"
+#ypos = "HornstullsStrand2/posy.jpg"
+#zneg = "HornstullsStrand2/negz.jpg"
+#zpos = "HornstullsStrand2/posz.jpg"
+
+[[slabs]] # Floor
+min = [ -5.0, -5.0, -5.0 ]
+max = [ 5.0, -1.5, 5.0 ]
+
+[[slabs]] # Green block
+min = [ -3.0, -1.3, -4.0 ]
+max = [  3.0, -1.1, -3.0 ]
+[slabs.material]
+type = "diffuse"
+diffuse = [ 0.2, 0.8, 0.2 ]
+
+[[slabs]] # Red block
+min = [ -3.0, -0.9, -4.0 ]
+max = [  3.0, -0.7, -3.0 ]
+[slabs.material]
+type = "diffuse"
+diffuse = [ 0.8, 0.0, 0.0 ]
+
+[[slabs]] # Blue block
+min = [ -3.0, -0.5, -4.0 ]
+max = [  3.0, -0.3, -3.0 ]
+[slabs.material]
+type = "diffuse"
+diffuse = [ 0.0, 0.0, 0.8 ]
+
+[[slabs]] # Magenta block
+min = [ -3.0, -0.1, -4.0 ]
+max = [  3.0,  0.1, -3.0 ]
+[slabs.material]
+type = "diffuse"
+diffuse = [ 0.8, 0.0, 0.8 ]
+
+# Refractive blocks
+
+[[slabs]]
+min = [ -0.3, -0.6, -0.2 ]
+max = [  0.3,  0.6,  0.2 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+    [[slabs.transform]]
+    rotate_axis = [ 0.0, 1.0, 0.0 ]
+    rotate_angle = 1.2
+    [[slabs.transform]]
+    translate = [ -2.0, 0.0, 0.0 ]
+
+[[slabs]]
+min = [ -0.3, -0.6, -0.2 ]
+max = [  0.3,  0.6,  0.2 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+    [[slabs.transform]]
+    rotate_axis = [ 0.0, 1.0, 0.0 ]
+    rotate_angle = 0.9
+    [[slabs.transform]]
+    translate = [ -1.0, 0.0, 0.0 ]
+
+[[slabs]]
+min = [ -0.3, -0.6, -0.2 ]
+max = [  0.3,  0.6,  0.2 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+    [[slabs.transform]]
+    rotate_axis = [ 0.0, 1.0, 0.0 ]
+    rotate_angle = 0.6
+    [[slabs.transform]]
+    translate = [ 0.0, 0.0, 0.0 ]
+
+[[slabs]]
+min = [ -0.3, -0.6, -0.2 ]
+max = [  0.3,  0.6,  0.2 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+    [[slabs.transform]]
+    rotate_axis = [ 0.0, 1.0, 0.0 ]
+    rotate_angle = 0.3
+    [[slabs.transform]]
+    translate = [ 1.0, 0.0, 0.0 ]
+
+[[slabs]]
+min = [ -0.3, -0.6, -0.2 ]
+max = [  0.3,  0.6,  0.2 ]
+[slabs.material]
+type = "refractive"
+ior = 1.333
+    [[slabs.transform]]
+    rotate_axis = [ 0.0, 1.0, 0.0 ]
+    rotate_angle = 0.0
+    [[slabs.transform]]
+    translate = [ 2.0, 0.0, 0.0 ]
+

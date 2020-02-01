@@ -98,7 +98,13 @@ for scene in scenes:
             output_file.write(cmd_output)
 
     #html_summary += "<div><a href=\"{}/trace_color.png\">{}</a></div>\n".format(job_dir, job_dir)
-    html_summary += "<div><img src=\"{}/trace_color.png\"></img>{}</div>\n".format(job_dir, job_dir)
+    html_summary += """
+        <div>
+            <img src=\"{}/trace_color.png\"></img>
+            <div class=\"jobid\">{}</div>
+            <div class=\"scenefile\">{}</div>
+        </div>\n
+        """.format(job_dir, job_dir, scene)
     
     os.chdir(init_cwd)
     
