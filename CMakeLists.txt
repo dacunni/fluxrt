@@ -59,6 +59,8 @@ set(SRCS
     )
 ADD_LIBRARY(micromath ${SRCS})
 
+add_subdirectory(app)
+
 add_subdirectory(benchmarks)
 
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
