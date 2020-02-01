@@ -115,8 +115,10 @@ html_summary = """
     """ + html_summary + """
     </body></html>
 """
-with open("{}/summary.html".format(run_path(run_id)), "w") as output_file:
-    output_file.write(html_summary)
+
+if not options.dryrun:
+    with open("{}/summary.html".format(run_path(run_id)), "w") as output_file:
+        output_file.write(html_summary)
 
 print(html_summary)
 
