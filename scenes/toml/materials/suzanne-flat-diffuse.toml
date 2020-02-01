@@ -1,0 +1,81 @@
+[camera]
+type = "pinhole"
+hfov = 45
+
+# front
+position = [ 0.0, 2.0, 6.0 ]
+direction = [ 0.0, -0.2, -1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 300
+
+[envmap]
+
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+
+direction = [ 1.0, 1.0, 1.0 ]
+
+#type = "cubemap"
+
+scalefactor = 2.0
+
+xneg = "HornstullsStrand2/negx.jpg"
+xpos = "HornstullsStrand2/posx.jpg"
+yneg = "HornstullsStrand2/negy.jpg"
+ypos = "HornstullsStrand2/posy.jpg"
+zneg = "HornstullsStrand2/negz.jpg"
+zpos = "HornstullsStrand2/posz.jpg"
+
+#xneg = "SaintPetersBasilica/negx.jpg"
+#xpos = "SaintPetersBasilica/posx.jpg"
+#yneg = "SaintPetersBasilica/negy.jpg"
+#ypos = "SaintPetersBasilica/posy.jpg"
+#zneg = "SaintPetersBasilica/negz.jpg"
+#zpos = "SaintPetersBasilica/posz.jpg"
+
+#xneg = "ArstaBridge/negx.jpg"
+#xpos = "ArstaBridge/posx.jpg"
+#yneg = "ArstaBridge/negy.jpg"
+#ypos = "ArstaBridge/posy.jpg"
+#zneg = "ArstaBridge/negz.jpg"
+#zpos = "ArstaBridge/posz.jpg"
+
+#xneg = "NissiBeach/negx.jpg"
+#xpos = "NissiBeach/posx.jpg"
+#yneg = "NissiBeach/negy.jpg"
+#ypos = "NissiBeach/posy.jpg"
+#zneg = "NissiBeach/negz.jpg"
+#zpos = "NissiBeach/posz.jpg"
+
+[[meshes]]
+file = "blender/monkey_simple_flat.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 1.0, 1.0, 1.0 ]
+#    [[meshes.transform]]
+#    scale = [ 0.012, 0.012, 0.012 ]
+    [[meshes.transform]]
+    translate = [ 0.0, 1.0, 0.0 ]
+#    [[meshes.transform]]
+#    rotate_axis = [ 0.0, 1.0, 0.0 ]
+#    rotate_angle = 1.5708
+
+[[spheres]]
+radius = 0.5
+position = [ 2.0, 0.5, 0.0 ]
+
+[[spheres]]
+radius = 0.5
+position = [ -2.0, 0.5, 0.0 ]
+    [spheres.material]
+    type = "mirror"
+
+# Floor
+[[slabs]]
+min = [ -2.5, -0.5, -1.5 ]
+max = [ 2.5, -0.04, 1.5 ]
