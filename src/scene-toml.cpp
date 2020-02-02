@@ -157,14 +157,30 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 auto hfov = cameraTable->get_as<double>("hfov").value_or(45.0);
                 hfov = DegreesToRadians(hfov);
                 auto vfov = std::atan(std::tan(hfov) / aspect);
+                auto focusDistance = cameraTable->get_as<double>("focus_distance");
+                auto focusDivergence = cameraTable->get_as<double>("focus_divergence");
+                bool applyLensBlur = bool(focusDistance || focusDivergence);
 
                 std::cout << "Camera: type " << type
                     << " position " << position
                     << " direction " << direction
                     << " hfov " << hfov << " vfov " << vfov
-                    << std::endl;
+                    << " applyLensBlur " << (applyLensBlur ? "YES" : "NO");
+                if(applyLensBlur) {
+                    std::cout << " focus_distance ";
+                    if(focusDistance) std::cout << *focusDistance; else std::cout << "default";
+                    std::cout << " focus_divergence ";
+                    if(focusDivergence) std::cout << *focusDivergence; else std::cout << "default";
+                }
+                std::cout << std::endl;
 
-                scene.camera = std::make_unique<PinholeCamera>(hfov, vfov);
+                auto pinholeCamera = std::make_unique<PinholeCamera>(hfov, vfov);
+                if(applyLensBlur) {
+                    pinholeCamera->applyLensBlur = true;
+                    if(focusDistance) pinholeCamera->focusDistance = *focusDistance;
+                    if(focusDivergence) pinholeCamera->focusDivergence = *focusDivergence;
+                }
+                scene.camera = std::move(pinholeCamera);
             }
             else if(type == "ortho") {
                 auto hsize = cameraTable->get_as<double>("hsize").value_or(2.0);

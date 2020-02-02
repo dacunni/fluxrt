@@ -19,7 +19,9 @@ struct RNG
 
     // 2D
     inline void uniformUnitCircle(float & x, float & y);
+    inline vec2 uniformUnitCircle();
     inline void uniformCircle(float radius, float & x, float & y);
+    inline vec2 uniformCircle(float radius);
     inline void uniformRectangle(float xmin, float xmax,
                                  float ymin, float ymax,
                                  float & x, float & y);

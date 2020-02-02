@@ -38,7 +38,7 @@ PinholeCamera::PinholeCamera(float hfov, float vfov)
 {
 }
 
-Ray PinholeCamera::rayThroughStandardImagePlane(float x, float y) const
+Ray PinholeCamera::rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const
 {
     // Calculate world offsets
     const float xw = x * tanHfovOverTwo;
@@ -47,10 +47,33 @@ Ray PinholeCamera::rayThroughStandardImagePlane(float x, float y) const
     auto d = direction + right * xw + up * yw;
     d.normalize();
 
-    return Ray(position, d);
+    Ray ray(position, d);
+
+    // Apply focus blur
+    // We offset the ray origin according to a random direction on a plane
+    // parallel to the image plane, scaled by the distance to the focal plane
+    // and a divergence parameter that describes how much a ray diverges from
+    // its origin per unit distance. The result is that points at the focal
+    // distance are in focus.
+    if(applyLensBlur) {
+        // Find the point where the unblurred ray hits the focal plane
+        Position3 pointOnFocalPlane = ray.pointAt(focusDistance);
+
+        // Scale the blur coordinate by the focus distance and divergence parameter
+        vec2 focusOffset = vec2(blurx, blury) * (focusDistance * focusDivergence);
+
+        // Apply the offset along the plane through the origin parallel to the image plane
+        ray.origin += focusOffset.x * right + focusOffset.y * up;
+
+        // Compute the new ray direction as the vector from offset origin point
+        // through the original image plane point
+        ray.direction = (pointOnFocalPlane - ray.origin).normalized();
+    }
+
+    return ray;
 }
 
-Ray OrthoCamera::rayThroughStandardImagePlane(float x, float y) const
+Ray OrthoCamera::rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const
 {
     float xw = lerpFromTo(x, -1.0f, +1.0f, -0.5f * hsize, 0.5f * hsize);
     float yw = lerpFromTo(y, -1.0f, +1.0f, -0.5f * vsize, 0.5f * vsize);

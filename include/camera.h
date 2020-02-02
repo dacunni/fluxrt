@@ -16,11 +16,12 @@ struct Camera
 
     // Ray passing through a standardized image plane that always
     // ranges from x in [-1,+1], y in [-1,+1], regardless of actual
-    // aspect ratio.
-    virtual Ray rayThroughStandardImagePlane(float x, float y) const = 0;
+    // aspect ratio. Blur coordinates should be random points within
+    // a unit circle.
+    virtual Ray rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const = 0;
 
-    Ray rayThroughStandardImagePlane(const vec2 & v) const
-        { return rayThroughStandardImagePlane(v.x, v.y); }
+    Ray rayThroughStandardImagePlane(const vec2 & v, const vec2 & blur) const
+        { return rayThroughStandardImagePlane(v.x, v.y, blur.x, blur.y); }
 
     void setPositionDirectionUp(const Position3 & p, const Direction3 & d, const Direction3 & u);
 
@@ -37,10 +38,14 @@ struct PinholeCamera : public Camera
     PinholeCamera(float hfov, float vfov);
 	virtual ~PinholeCamera() = default;
 
-    virtual Ray rayThroughStandardImagePlane(float x, float y) const override;
+    virtual Ray rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const override;
 
     float hfov = DegreesToRadians(45.0f);
     float vfov = DegreesToRadians(45.0f);
+
+    bool applyLensBlur = false;
+    float focusDistance = 10.0f;
+    float focusDivergence = 0.01f;
 
     // Precalculated values
     float hfovOverTwo;
@@ -56,7 +61,7 @@ struct OrthoCamera : public Camera
     OrthoCamera(float hsize, float vsize) : hsize(hsize), vsize(vsize) {}
     virtual ~OrthoCamera() = default;
 
-    virtual Ray rayThroughStandardImagePlane(float x, float y) const override;
+    virtual Ray rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const override;
 
     float hsize = 2.0f;
     float vsize = 2.0f;

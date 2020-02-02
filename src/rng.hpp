@@ -17,6 +17,13 @@ inline void RNG::uniformUnitCircle(float & x, float & y)
     uniformCircle(1.0f, x, y);
 }
 
+inline vec2 RNG::uniformUnitCircle()
+{
+    vec2 p;
+    uniformCircle(1.0f, p.x, p.y);
+    return p;
+}
+
 inline void RNG::uniformCircle(float radius, float & x, float & y)
 {
     using namespace constants;
@@ -26,6 +33,13 @@ inline void RNG::uniformCircle(float radius, float & x, float & y)
 
     x = r * std::cos(theta);
     y = r * std::sin(theta);
+}
+
+inline vec2 RNG::uniformCircle(float radius)
+{
+    vec2 point;
+    uniformCircle(radius, point.x, point.y);
+    return point;
 }
 
 inline void RNG::uniformRectangle(float xmin, float xmax,

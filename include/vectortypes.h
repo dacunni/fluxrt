@@ -20,6 +20,7 @@ struct Direction3 : public vec3
 
 inline Position3 add(const Position3 & a, const Direction3 & b) { return Position3(add((vec3) a, (vec3) b)); }
 inline Position3 operator+(const Position3 & a, const Direction3 & b) { return add(a, b); }
+inline void operator+=(Position3 & a, const Direction3 & b) { a = add(a, b); }
 
 inline Direction3 add(const Direction3 & a, const Direction3 & b) { return Direction3(add((vec3) a, (vec3) b)); }
 inline Direction3 operator+(const Direction3 & a, const Direction3 & b) { return add(a, b); }

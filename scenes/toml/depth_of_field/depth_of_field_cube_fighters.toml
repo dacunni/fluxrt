@@ -1,0 +1,61 @@
+[camera]
+type = "pinhole"
+hfov = 45
+
+position = [ 0.0, 1.0, 20.0 ]
+direction = [ 0.0, 0.0, -1.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+focus_distance = 20.0
+focus_divergence = 0.02
+
+[envmap]
+
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+direction = [ 0.3, 0.0, 1.0 ]
+
+[sensor]
+pixelwidth = 800
+pixelheight = 400
+
+[[slabs]]
+min = [ -1.0, -1.0, -1.0 ]
+max = [  1.0,  1.0,  1.0 ]
+    [[slabs.transform]]
+    rotate_axis = [ 0.0, 0.0, 1.0 ]
+    rotate_angle = -0.2
+
+# left front
+[[slabs]]
+min = [ -1.0, -1.0, -1.0 ]
+max = [  1.0,  1.0,  1.0 ]
+    [[slabs.transform]]
+    rotate_axis = [ 0.0, 0.0, 1.0 ]
+    rotate_angle = -0.2
+    [[slabs.transform]]
+    translate = [ -4.0, 0.0, 3.0 ]
+
+# left above behind
+[[slabs]]
+min = [ -1.0, -1.0, -1.0 ]
+max = [  1.0,  1.0,  1.0 ]
+    [[slabs.transform]]
+    rotate_axis = [ 0.0, 0.0, 1.0 ]
+    rotate_angle = -0.2
+    [[slabs.transform]]
+    translate = [ -4.0, 5.0, -15.0 ]
+
+# right front
+[[slabs]]
+min = [ -1.0, -1.0, -1.0 ]
+max = [  1.0,  1.0,  1.0 ]
+    [[slabs.transform]]
+    rotate_axis = [ 0.0, 0.0, 1.0 ]
+    rotate_angle = -0.2
+    [[slabs.transform]]
+    translate = [ 4.0, 0.0, 8.0 ]
+
+
+
