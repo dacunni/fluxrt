@@ -11,7 +11,7 @@ static void RaySlabIntersects1(benchmark::State& state) {
     benchmark::DoNotOptimize(minDistance);
     int numTests = 0;
     for (auto _ : state) {
-        benchmark::DoNotOptimize(intersects(ray, obj, minDistance));
+        benchmark::DoNotOptimize(intersects(ray, obj, minDistance, 1000.0f));
         numTests++;
     }
     state.counters["tests"] = benchmark::Counter(numTests, benchmark::Counter::kAvgThreadsRate);
@@ -27,7 +27,7 @@ static void RaySlabIntersectsFirstHit(benchmark::State& state) {
     benchmark::DoNotOptimize(minDistance);
     int numTests = 0;
     for (auto _ : state) {
-        benchmark::DoNotOptimize(intersects(ray, obj, minDistance));
+        benchmark::DoNotOptimize(intersects(ray, obj, minDistance, 1000.0f));
         numTests++;
     }
     state.counters["tests"] = benchmark::Counter(numTests, benchmark::Counter::kAvgThreadsRate);
@@ -43,7 +43,7 @@ static void RaySlabIntersectsSecondHit(benchmark::State& state) {
     benchmark::DoNotOptimize(minDistance);
     int numTests = 0;
     for (auto _ : state) {
-        benchmark::DoNotOptimize(intersects(ray, obj, minDistance));
+        benchmark::DoNotOptimize(intersects(ray, obj, minDistance, 1000.0f));
         numTests++;
     }
     state.counters["tests"] = benchmark::Counter(numTests, benchmark::Counter::kAvgThreadsRate);

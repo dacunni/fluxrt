@@ -14,7 +14,7 @@ static void RayTriangleIntersectsAnySingleHit(benchmark::State& state) {
     benchmark::DoNotOptimize(v2);
 
     for (auto _ : state) {
-        bool hit = intersectsTriangle(ray, v0, v1, v2, 0.01);
+        bool hit = intersectsTriangle(ray, v0, v1, v2, 0.01, 100.0);
         benchmark::DoNotOptimize(hit);
     }
     state.SetItemsProcessed(state.iterations());
@@ -32,7 +32,7 @@ static void RayTriangleIntersectsAnySingleHitMinDistFail(benchmark::State& state
     benchmark::DoNotOptimize(v2);
 
     for (auto _ : state) {
-        bool hit = intersectsTriangle(ray, v0, v1, v2, 20);
+        bool hit = intersectsTriangle(ray, v0, v1, v2, 20, 100.0);
         benchmark::DoNotOptimize(hit);
     }
     state.SetItemsProcessed(state.iterations());
@@ -50,7 +50,7 @@ static void RayTriangleIntersectsAnyMiss(benchmark::State& state) {
     benchmark::DoNotOptimize(v2);
 
     for (auto _ : state) {
-        bool hit = intersectsTriangle(ray, v0, v1, v2, 0.01);
+        bool hit = intersectsTriangle(ray, v0, v1, v2, 0.01, 100.0);
         benchmark::DoNotOptimize(hit);
     }
     state.SetItemsProcessed(state.iterations());
@@ -73,7 +73,7 @@ static void RayTriangleArrayIntersectsAnyHitAll(benchmark::State& state) {
     benchmark::DoNotOptimize(vertices);
 
     for (auto _ : state) {
-        bool hit = intersectsTriangles(ray, &vertices[0], vertices.size(), 0.01);
+        bool hit = intersectsTriangles(ray, &vertices[0], vertices.size(), 0.01, 100.0);
         benchmark::DoNotOptimize(hit);
     }
     state.SetItemsProcessed(state.iterations() * nTri);
@@ -97,7 +97,7 @@ static void RayTriangleArrayIntersectsAnyMissAll(benchmark::State& state) {
     benchmark::DoNotOptimize(vertices);
 
     for (auto _ : state) {
-        bool hit = intersectsTriangles(ray, &vertices[0], vertices.size(), 0.01);
+        bool hit = intersectsTriangles(ray, &vertices[0], vertices.size(), 0.01, 100.0);
         benchmark::DoNotOptimize(hit);
     }
     state.SetItemsProcessed(state.iterations() * nTri);
@@ -125,7 +125,7 @@ static void RayTriangleIndexedArrayIntersectsAnyMissAll(benchmark::State& state)
     benchmark::DoNotOptimize(vertices);
 
     for (auto _ : state) {
-        bool hit = intersectsTrianglesIndexed(ray, &vertices[0], &indices[0], indices.size(), 0.01);
+        bool hit = intersectsTrianglesIndexed(ray, &vertices[0], &indices[0], indices.size(), 0.01, 100.0);
         benchmark::DoNotOptimize(hit);
     }
     state.SetItemsProcessed(state.iterations() * nTri);
@@ -152,7 +152,7 @@ static void RayTriangleStripIntersectsAnyMissAll(benchmark::State& state) {
     benchmark::DoNotOptimize(vertices);
 
     for (auto _ : state) {
-        bool hit = intersectsTriangleStrip(ray, &vertices[0], vertices.size(), 0.01);
+        bool hit = intersectsTriangleStrip(ray, &vertices[0], vertices.size(), 0.01, 100.0);
         benchmark::DoNotOptimize(hit);
     }
     state.SetItemsProcessed(state.iterations() * nTri);
@@ -182,7 +182,7 @@ static void RayBundleTriangleArrayIntersectsAnyMissAll(benchmark::State& state) 
     benchmark::DoNotOptimize(hits);
 
     for (auto _ : state) {
-        bool hit = intersectsTriangles(&rays[0], rays.size(), hits, &vertices[0], vertices.size(), 0.01);
+        bool hit = intersectsTriangles(&rays[0], rays.size(), hits, &vertices[0], vertices.size(), 0.01, 100.0);
         benchmark::DoNotOptimize(hit);
     }
     state.SetItemsProcessed(state.iterations() * nTri * nRays);

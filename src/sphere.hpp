@@ -27,8 +27,8 @@ inline bool intersects(const Ray & ray, const Sphere & sphere, float minDistance
 
     auto minmax = std::minmax(dist1, dist2);
 
-    return minmax.first >= minDistance
-        && minmax.second <= maxDistance;
+    return (minmax.first >= minDistance && minmax.first <= maxDistance)
+        || (minmax.second >= minDistance && minmax.second <= maxDistance);
 }
 
 inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDistance, RayIntersection & intersection)

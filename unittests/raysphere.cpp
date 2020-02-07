@@ -6,61 +6,61 @@ namespace {
 // ---------------------- Intersection Predicate Tests ------------------------
 
 TEST(RaySphereIntersectTest, OnAxisRay_CenteredSphere_IntersectsTrue) {
-    const float minDistance = 0.01f;
+    const float minDistance = 0.01f, maxDistance = 1000.0f;
     const Sphere obj(Position3(0, 0, 0), 0.6);
     // Looking down +x
-    EXPECT_TRUE(intersects(Ray(Position3(-10, 0, 0), Direction3(1, 0, 0)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(-10, 0, 0), Direction3(1, 0, 0)), obj, minDistance, maxDistance));
     // Looking down -x
-    EXPECT_TRUE(intersects(Ray(Position3(10, 0, 0), Direction3(-1, 0, 0)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(10, 0, 0), Direction3(-1, 0, 0)), obj, minDistance, maxDistance));
     // Looking down +y
-    EXPECT_TRUE(intersects(Ray(Position3(0, -10, 0), Direction3(0, 1, 0)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(0, -10, 0), Direction3(0, 1, 0)), obj, minDistance, maxDistance));
     // Looking down -y
-    EXPECT_TRUE(intersects(Ray(Position3(0, 10, 0), Direction3(0, -1, 0)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(0, 10, 0), Direction3(0, -1, 0)), obj, minDistance, maxDistance));
     // Looking down +z
-    EXPECT_TRUE(intersects(Ray(Position3(0, 0, -10), Direction3(0, 0, 1)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(0, 0, -10), Direction3(0, 0, 1)), obj, minDistance, maxDistance));
     // Looking down -z
-    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 10), Direction3(0, 0, -1)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 10), Direction3(0, 0, -1)), obj, minDistance, maxDistance));
 }
 
 TEST(RaySphereIntersectTest, OnAxisCenteredRay_CenteredSphere_IntersectsTrue) {
-    const float minDistance = 0.01f;
+    const float minDistance = 0.01f, maxDistance = 1000.0f;
     const Sphere obj(Position3(0, 0, 0), 0.6);
     // Looking down +x
-    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(1, 0, 0)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(1, 0, 0)), obj, minDistance, maxDistance));
     // Looking down -x
-    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(-1, 0, 0)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(-1, 0, 0)), obj, minDistance, maxDistance));
     // Looking down +y
-    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(0, 1, 0)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(0, 1, 0)), obj, minDistance, maxDistance));
     // Looking down -y
-    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(0, -1, 0)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(0, -1, 0)), obj, minDistance, maxDistance));
     // Looking down +z
-    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(0, 0, 1)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(0, 0, 1)), obj, minDistance, maxDistance));
     // Looking down -z
-    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(0, 0, -1)), obj, minDistance));
+    EXPECT_TRUE(intersects(Ray(Position3(0, 0, 0), Direction3(0, 0, -1)), obj, minDistance, maxDistance));
 }
 
 TEST(RaySphereIntersectTest, FarAxisParallelRay_CenteredSphere_IntersectsFalse) {
-    const float minDistance = 0.01f;
+    const float minDistance = 0.01f, maxDistance = 1000.0f;
     const Sphere obj(Position3(0, 0, 0), 0.6);
     // Looking down +x
-    EXPECT_FALSE(intersects(Ray(Position3(-10, 2, 0), Direction3(1, 0, 0)), obj, minDistance));
+    EXPECT_FALSE(intersects(Ray(Position3(-10, 2, 0), Direction3(1, 0, 0)), obj, minDistance, maxDistance));
     // Looking down -x
-    EXPECT_FALSE(intersects(Ray(Position3(10, 2, 0), Direction3(-1, 0, 0)), obj, minDistance));
+    EXPECT_FALSE(intersects(Ray(Position3(10, 2, 0), Direction3(-1, 0, 0)), obj, minDistance, maxDistance));
     // Looking down +y
-    EXPECT_FALSE(intersects(Ray(Position3(2, -10, 0), Direction3(0, 1, 0)), obj, minDistance));
+    EXPECT_FALSE(intersects(Ray(Position3(2, -10, 0), Direction3(0, 1, 0)), obj, minDistance, maxDistance));
     // Looking down -y
-    EXPECT_FALSE(intersects(Ray(Position3(2, 10, 0), Direction3(0, -1, 0)), obj, minDistance));
+    EXPECT_FALSE(intersects(Ray(Position3(2, 10, 0), Direction3(0, -1, 0)), obj, minDistance, maxDistance));
     // Looking down +z
-    EXPECT_FALSE(intersects(Ray(Position3(2, 0, -10), Direction3(0, 0, 1)), obj, minDistance));
+    EXPECT_FALSE(intersects(Ray(Position3(2, 0, -10), Direction3(0, 0, 1)), obj, minDistance, maxDistance));
     // Looking down -z
-    EXPECT_FALSE(intersects(Ray(Position3(2, 0, 10), Direction3(0, 0, -1)), obj, minDistance));
+    EXPECT_FALSE(intersects(Ray(Position3(2, 0, 10), Direction3(0, 0, -1)), obj, minDistance, maxDistance));
 }
 
 TEST(RaySphereIntersectTest, OffCenterDiagonalRay_OffCenterSphere_IntersectsTrue) {
-    const float minDistance = 0.01f;
+    const float minDistance = 0.01f, maxDistance = 1000.0f;
     EXPECT_TRUE(intersects(Ray(Position3(0, 0, 2), Direction3(1, 1, 1).normalized()),
                            Sphere(Position3(5, 5, 7), 0.6),
-                           minDistance));
+                           minDistance, maxDistance));
 }
 
 // ---------------------- Find Intersection Tests ------------------------

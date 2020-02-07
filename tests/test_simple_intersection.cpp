@@ -99,6 +99,7 @@ void make_intersection_images(const OBJ & obj, const MaterialArray & materials, 
     int w = 256, h = 256;
     //int w = 1024, h = 1024;
     const float minDistance = 0.01f;
+    const float maxDistance = std::numeric_limits<float>::max();
     Image<float> hitMask(w, h, 1); hitMask.setAll(0.0f);
     Image<float> isectMask(w, h, 1); isectMask.setAll(0.0f);
     Image<float> isectDist(w, h, 3); isectDist.setAll(0.0f);
@@ -152,7 +153,7 @@ void make_intersection_images(const OBJ & obj, const MaterialArray & materials, 
         hitMask.forEachPixel(
             [&](Image<float> &, int x, int y) {
                 // Predicate intersection (hit / no hit)
-                bool hit = intersects(pixelRay(x, y), obj, minDistance);
+                bool hit = intersects(pixelRay(x, y), obj, minDistance, maxDistance);
                 hitMask.set(x, y, 0, hit ? 1.0f : 0.0f);
             });
         });
