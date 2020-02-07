@@ -7,6 +7,7 @@
 #include "slab.h"
 #include "trianglemesh.h"
 #include "trianglemeshoctree.h"
+#include "light.h"
 #include "environmentmap.h"
 #include "sensor.h"
 #include "camera.h"
@@ -26,6 +27,9 @@ struct Scene
     std::vector<Traceable<Slab>> slabs;
     std::vector<Traceable<TriangleMesh>> meshes;
     std::vector<Traceable<TriangleMeshOctree>> meshOctrees;
+
+    // Lights
+    std::vector<PointLight> pointLights;
 
     // Always points to a valid envionment map
     std::unique_ptr<EnvironmentMap> environmentMap;
@@ -48,7 +52,7 @@ bool loadSceneFromTOMLString(Scene & scene, const std::string & toml);
 bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename);
 
 // Ray intersection
-inline bool intersects(const Ray & ray, const Scene & scene, float minDistance);
+inline bool intersects(const Ray & ray, const Scene & scene, float minDistance, float maxDistance = std::numeric_limits<float>::max());
 inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDistance, RayIntersection & intersection);
 
 #include "scene.hpp"

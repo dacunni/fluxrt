@@ -17,6 +17,7 @@
 #include "radiometry.h"
 #include "optics.h"
 #include "fresnel.h"
+#include "light.h"
 
 std::atomic<bool> flushImmediate(false); // Flush the color output as soon as possible
 
@@ -166,6 +167,22 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
                      // Sample according to cosine lobe about the normal
                      Ray(P + N * epsilon, diffuseDir),
                      epsilon, depth + 1, iorStack, nextIntersection, Ld);
+
+            // Sample point lights
+            for(const auto & light: scene.pointLights) {
+                Direction3 toLight = (light.position - P);
+                if(dot(toLight, intersection.normal) < 0.0f)
+                    continue;
+                Direction3 lightDir = toLight.normalized();
+                float lightDist = toLight.magnitude();
+
+                if(!intersects(Ray{P, lightDir}, scene, epsilon, lightDist)) {
+                    float lightDistSq = toLight.magnitude_sq();
+                    float c = clampedDot(lightDir, intersection.normal);
+                    RadianceRGB Ld_point = light.intensity * c / lightDistSq;
+                    Ld += Ld_point;
+                }
+            }
         }
 
         // Trace specular bounce

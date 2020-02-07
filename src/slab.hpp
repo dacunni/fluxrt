@@ -26,7 +26,7 @@ inline bool Slab::contains(const Position3 & P) const
         zmin <= P.z && zmax >= P.z;
 }
 
-inline bool intersects(const Ray & ray, const Slab & slab, float minDistance)
+inline bool intersects(const Ray & ray, const Slab & slab, float minDistance, float maxDistance)
 {
     vec3 dinv(1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z);
 
@@ -48,7 +48,9 @@ inline bool intersects(const Ray & ray, const Slab & slab, float minDistance)
     tmin = std::max(tmin, std::min(tz1, tz2));
     tmax = std::min(tmax, std::max(tz1, tz2));
 
-    return tmax >= tmin && (tmin > minDistance || tmax > minDistance);
+    return tmax >= tmin
+        && (tmin >= minDistance || tmax >= minDistance)
+        && (tmin <= maxDistance || tmax <= maxDistance);
 }
 
 static const Direction3 boxNormals[6] = {

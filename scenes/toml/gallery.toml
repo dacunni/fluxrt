@@ -11,6 +11,6 @@ pixelwidth = 1000
 pixelheight = 1000
 
 [[meshes]]
-file = "gallery/gallery.obj"
+file = "casual-effects.com/gallery/gallery.obj"
 scaletocube = 10.0
 

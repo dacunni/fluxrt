@@ -222,13 +222,13 @@ void TriangleMeshOctree::printChildOrder(child_array_t & indices)
 // Ray intersection
 
 bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree,
-                float minDistance, const TriangleMeshOctree::child_array_t & childOrder,
+                float minDistance, float maxDistance, const TriangleMeshOctree::child_array_t & childOrder,
                 uint32_t nodeIndex)
 {
     auto & mesh = meshOctree.mesh;
     auto & node = meshOctree.nodes[nodeIndex];
 
-    if(!intersects(ray, node.bounds, minDistance))
+    if(!intersects(ray, node.bounds, minDistance, maxDistance))
        return false;
 
     if(node.numTriangles > 0) {
@@ -236,7 +236,7 @@ bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree,
             auto tri = meshOctree.triangles[node.firstTriangle + ti];
             if(intersectsTriangle(ray,
                                   mesh.triangleVertex(tri, 0), mesh.triangleVertex(tri, 1), mesh.triangleVertex(tri, 2),
-                                  minDistance)) {
+                                  minDistance, maxDistance)) {
                 return true;
             }
         }
@@ -247,7 +247,7 @@ bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree,
             auto childNode = node.children[childIndex];
             if(childNode == TriangleMeshOctree::NO_CHILD)
                 continue; // empty child cell
-            if(intersects(ray, meshOctree, minDistance, childOrder, childNode)) {
+            if(intersects(ray, meshOctree, minDistance, maxDistance, childOrder, childNode)) {
                 return true;
             }
         }
@@ -257,12 +257,12 @@ bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree,
 }
 
 bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree,
-                float minDistance)
+                float minDistance, float maxDistance)
 {
     TriangleMeshOctree::child_array_t childOrder = {};
     TriangleMeshOctree::childOrderForDirection(ray.direction, childOrder);
 
-    return intersects(ray, meshOctree, minDistance, childOrder, 0);
+    return intersects(ray, meshOctree, minDistance, maxDistance, childOrder, 0);
 }
 
 bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree,
@@ -274,7 +274,7 @@ bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree,
     auto & node = meshOctree.nodes[nodeIndex];
     bool hit = false;
 
-    if(!intersects(ray, node.bounds, minDistance))
+    if(!intersects(ray, node.bounds, minDistance, std::numeric_limits<float>::max()))
        return false;
 
     if(node.numTriangles > 0) {
@@ -283,7 +283,7 @@ bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree,
             auto tri = meshOctree.triangles[node.firstTriangle + ti];
             if(intersectsTriangle(ray,
                                   mesh.triangleVertex(tri, 0), mesh.triangleVertex(tri, 1), mesh.triangleVertex(tri, 2),
-                                  minDistance, &t)) {
+                                  minDistance, std::numeric_limits<float>::max(), &t)) {
                 if(t < bestDistance) {
                     bestTriangle = tri;
                     bestDistance = t;

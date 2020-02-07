@@ -19,13 +19,16 @@ inline bool intersectHelper(const Ray & ray, const Sphere & sphere, float & dist
     return true;
 }
 
-inline bool intersects(const Ray & ray, const Sphere & sphere, float minDistance)
+inline bool intersects(const Ray & ray, const Sphere & sphere, float minDistance, float maxDistance)
 {
     float dist1, dist2;
     if(!intersectHelper(ray, sphere, dist1, dist2))
         return false;
 
-    return dist1 >= minDistance || dist2 >= minDistance;
+    auto minmax = std::minmax(dist1, dist2);
+
+    return minmax.first >= minDistance
+        && minmax.second <= maxDistance;
 }
 
 inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDistance, RayIntersection & intersection)

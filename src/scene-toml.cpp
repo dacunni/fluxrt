@@ -296,6 +296,16 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
             }
         }
 
+        auto pointLightTableArray = top->get_table_array("pointlights");
+        if(pointLightTableArray) {
+            for (const auto & pointLightTable : *pointLightTableArray) {
+                auto position = Position3(vectorToVec3(pointLightTable->get_array_of<double>("position").value_or(std::vector<double>{0.0, 0.0, 0.0})));
+                auto intensity = vectorToRadianceRGB(pointLightTable->get_array_of<double>("intensity").value_or(std::vector<double>{1.0, 1.0, 1.0}));
+
+                scene.pointLights.emplace_back(position, intensity);
+            }
+        }
+
         scene.print();
     }
     catch(cpptoml::parse_exception & e) {

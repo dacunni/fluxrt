@@ -1,13 +1,13 @@
 #include "barycentric.h"
 #include "coordinate.h"
 
-inline bool intersects(const Ray & ray, const Triangle & triangle, float minDistance)
+inline bool intersects(const Ray & ray, const Triangle & triangle, float minDistance, float maxDistance)
 {
     return intersectsTriangle(ray,
                               triangle.vertices[0],
                               triangle.vertices[1],
                               triangle.vertices[2],
-                              minDistance);
+                              minDistance, maxDistance);
 }
 
 inline bool findIntersection(const Ray & ray, const Triangle & triangle, float minDistance, RayIntersection & intersection)
@@ -16,7 +16,9 @@ inline bool findIntersection(const Ray & ray, const Triangle & triangle, float m
     const auto & v0 = triangle.vertices[0];
     const auto & v1 = triangle.vertices[1];
     const auto & v2 = triangle.vertices[2];
-    if(!intersectsTriangle(ray, v0, v1, v2, minDistance, &t)) {
+    if(!intersectsTriangle(ray, v0, v1, v2,
+                           minDistance, std::numeric_limits<float>::max(),
+                           &t)) {
         return false;
     }
 
@@ -31,7 +33,7 @@ inline bool findIntersection(const Ray & ray, const Triangle & triangle, float m
 
 inline bool intersectsTriangle(const Ray & ray,
                                const vec3 & v0, const vec3 & v1, const vec3 & v2,
-                               float minDistance,
+                               float minDistance, float maxDistance,
                                float * distance)
 {
     const float epsilon = 1.0e-6;
@@ -67,6 +69,6 @@ inline bool intersectsTriangle(const Ray & ray,
     float t = inv_det * dot(e2, Q);
     if(distance)
         *distance = t;
-    return t > minDistance;
+    return t >= minDistance && t <= maxDistance;
 }
 

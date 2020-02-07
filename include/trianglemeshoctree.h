@@ -84,7 +84,7 @@ struct TriangleMeshOctree
 };
 
 // Ray intersection
-bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree, float minDistance);
+bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree, float minDistance, float maxDistance);
 bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree, float minDistance, RayIntersection & intersection);
 
 #endif

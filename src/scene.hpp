@@ -1,25 +1,26 @@
 
-inline bool intersects(const Ray & ray, const Scene & scene, float minDistance)
+inline bool intersects(const Ray & ray, const Scene & scene,
+                       float minDistance, float maxDistance)
 {
     for(const auto & o : scene.spheres) {
-        if(intersects(ray, o, minDistance)) {
+        if(intersects(ray, o, minDistance, maxDistance)) {
             return true;
         }
     }
 
     for(const auto & o : scene.slabs) {
-        if(intersects(ray, o, minDistance)) {
+        if(intersects(ray, o, minDistance, maxDistance)) {
             return true;
         }
     }
 
     for(const auto & o : scene.meshOctrees) {
-        if(intersects(ray, o, minDistance)) {
+        if(intersects(ray, o, minDistance, maxDistance)) {
             return true;
         }
     }
     for(const auto & o : scene.meshes) {
-        if(intersects(ray, o, minDistance)) {
+        if(intersects(ray, o, minDistance, maxDistance)) {
             return true;
         }
     }

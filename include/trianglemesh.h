@@ -62,7 +62,7 @@ bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
                              const std::string & path, const std::string & filename);
 
 // Ray intersection
-bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance);
+bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance, float maxDistance);
 bool findIntersection(const Ray & ray, const TriangleMesh & mesh, float minDistance, RayIntersection & intersection);
 void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh, uint32_t tri, float t, RayIntersection & intersection);
 

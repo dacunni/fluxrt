@@ -31,9 +31,10 @@ bool loadTriangleMesh(TriangleMesh & mesh,
     return false;
 }
 
-bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance)
+bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance, float maxDistance)
 {
-    return intersectsTrianglesIndexed(ray, &mesh.vertices[0], &mesh.indices.vertex[0], mesh.indices.vertex.size(), minDistance);
+    return intersectsTrianglesIndexed(ray, &mesh.vertices[0], &mesh.indices.vertex[0], mesh.indices.vertex.size(),
+                                      minDistance, maxDistance);
 }
 
 bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
@@ -47,7 +48,8 @@ bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
     const auto numTriangles = mesh.numTriangles();
 
     for(uint32_t tri = 0; tri < numTriangles; ++tri) {
-        if(intersectsTriangle(ray, vertex(tri, 0), vertex(tri, 1), vertex(tri, 2), minDistance, &t)
+        if(intersectsTriangle(ray, vertex(tri, 0), vertex(tri, 1), vertex(tri, 2),
+                              minDistance, std::numeric_limits<float>::max(), &t)
            && t < bestDistance) {
             bestTriangle = tri;
             bestDistance = t;

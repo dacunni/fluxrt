@@ -23,13 +23,13 @@ struct Traceable
 
 // Ray intersection
 template<typename SHAPE>
-inline bool intersects(const Ray & rayWorld, const Traceable<SHAPE> & obj, float minDistanceWorld);
+inline bool intersects(const Ray & rayWorld, const Traceable<SHAPE> & obj, float minDistanceWorld, float maxDistanceWorld);
 template<typename SHAPE>
 inline bool findIntersection(const Ray & rayWorld, const Traceable<SHAPE> & obj, float minDistanceWorld, RayIntersection & intersection);
 
 // Inline implementations
 template<typename SHAPE>
-inline bool intersects(const Ray & rayWorld, const Traceable<SHAPE> & obj, float minDistanceWorld)
+inline bool intersects(const Ray & rayWorld, const Traceable<SHAPE> & obj, float minDistanceWorld, float maxDistanceWorld)
 {
     // Transform the ray into object space
     Ray rayObj = Ray{
@@ -42,7 +42,12 @@ inline bool intersects(const Ray & rayWorld, const Traceable<SHAPE> & obj, float
     Position3 minPositionObj = obj.transform.rev * minPositionWorld;
     float minDistanceObj = (minPositionObj - rayObj.origin).magnitude();
 
-    return intersects(rayObj, obj.shape, minDistanceObj);
+    // Calculate the maximum distance along the ray in object space
+    Position3 maxPositionWorld = rayWorld.pointAt(maxDistanceWorld);
+    Position3 maxPositionObj = obj.transform.rev * maxPositionWorld;
+    float maxDistanceObj = (maxPositionObj - rayObj.origin).magnitude();
+
+    return intersects(rayObj, obj.shape, minDistanceObj, maxDistanceObj);
 }
 
 template<typename SHAPE>

@@ -50,7 +50,7 @@ Slab boundingBox(const std::vector<Position3> & points);
 vec3 relativeScale(const Slab & a, const Slab & b);
 
 // Ray intersection
-inline bool intersects(const Ray & ray, const Slab & slab, float minDistance);
+inline bool intersects(const Ray & ray, const Slab & slab, float minDistance, float maxDistance);
 inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistance, RayIntersection & intersection);
 
 #include "slab.hpp"
