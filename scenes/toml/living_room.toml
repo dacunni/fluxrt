@@ -14,3 +14,7 @@ pixelheight = 1000
 file = "casual-effects.com/living_room/living_room.obj"
 scaletocube = 10.0
 
+[[pointlights]]
+position = [ 0.0, 0.0, 0.0 ]
+intensity = [ 3.0, 3.0, 3.0 ]
+

@@ -1,0 +1,25 @@
+[camera]
+type = "pinhole"
+hfov = 15
+
+#position = [ 0.3, -0.2, -0.3 ]
+#direction = [ -1.0, 0.0, 1.0 ]
+#position = [ 0.3, -0.2, 0.6 ]
+#direction = [ -1.0, 0.0, -1.0 ]
+position = [ 0.3, -0.2, -1.0 ]
+direction = [ -0.6, -0.16, 1.1 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 400
+
+[[meshes]]
+file = "casual-effects.com/fireplace_room/fireplace_room.obj"
+scaletocube = 3.0
+
+[[pointlights]]
+position = [ -0.5, 0.0, 0.0 ]
+intensity = [ 1.0, 1.0, 1.0 ]
+
