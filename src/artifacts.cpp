@@ -1,4 +1,5 @@
 #include "artifacts.h"
+#include "tonemapping.h"
 
 Artifacts::Artifacts()
     : Artifacts(256, 256)
@@ -72,7 +73,9 @@ void Artifacts::writePixelColor()
     auto finalPixelColor = pixelColor;
     auto divideByNumSamples = [&](Image<float> & image, size_t x, size_t y, int c) {
         auto numSamples = samplesPerPixel.get(x, y, 0);
-        image.set(x, y, c, image.get(x, y, c) / float(numSamples));
+        float value = image.get(x, y, c) / float(numSamples);
+        //value = tonemapping::reinhard(value);
+        image.set(x, y, c, value);
     };
     finalPixelColor.forEachPixelChannel(divideByNumSamples);
     writePNG(applyStandardGamma(finalPixelColor), prefix + "color.png");

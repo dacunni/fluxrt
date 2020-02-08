@@ -1,0 +1,16 @@
+[camera]
+type = "pinhole"
+hfov = 45
+
+position = [ 0.2, -0.5, 0.0 ]
+direction = [ 0.1, -1.2, -1.5 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 1000
+pixelheight = 600
+
+[[meshes]]
+file = "casual-effects.com/living_room/living_room.obj"
+scaletocube = 10.0
+
