@@ -29,7 +29,10 @@ bool loadSceneFromFile(Scene & scene, const std::string & filename)
         return loadSceneFromTOMLFile(scene, filename);
     }
 
-    throw std::runtime_error("Unable to deduce scene file type");
+    std::stringstream ss;
+    ss << "Unable to deduce scene file type (" << filename <<")";
+
+    throw std::runtime_error(ss.str());
     return false;
 }
 
