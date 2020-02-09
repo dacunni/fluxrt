@@ -22,18 +22,30 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         auto & D = objmaterial.diffuse;
         auto & S = objmaterial.specular;
         printf("    material %2d "
+               "illum %d "
                "ior %.3f "
                "D %.1f %.1f %.1f Dt '%s' "
                "S %.1f %.1f %.1f St '%s' "
                "At '%s' dissolve %.1f"
                "\n",
                mi,
+               objmaterial.illum,
                objmaterial.ior,
                D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
                S[0], S[1], S[2], objmaterial.specular_texname.c_str(),
                objmaterial.alpha_texname.c_str(), objmaterial.dissolve);
 
-        auto material = Material::makeDiffuseSpecular(D, S);
+        Material material;
+       
+        switch(objmaterial.illum) {
+            // TODO - handle other cases
+            case 7:
+                // TODO - incomplete
+                material = Material::makeRefractive(objmaterial.ior);
+                break;
+            default:
+                material = Material::makeDiffuseSpecular(D, S);
+        }
 
         if(!objmaterial.diffuse_texname.empty()) {
             material.diffuseTexture = textureCache.loadTextureFromFile(path, objmaterial.diffuse_texname);
@@ -130,6 +142,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
             mesh.faces.material.push_back(materialId);
             // vertex indices
             for (int vi = 0; vi < 3; ++vi) {
+                // FIXME - Handle -1 for missing vertex_index, normal_index, texcoord_index
                 mesh.indices.vertex.push_back(indices[vi].vertex_index);
                 mesh.indices.normal.push_back(indices[vi].normal_index);
                 if(indices[vi].texcoord_index < 0) {

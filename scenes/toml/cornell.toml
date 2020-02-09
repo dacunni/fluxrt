@@ -1,0 +1,31 @@
+[camera]
+type = "pinhole"
+#hfov = 45
+hfov = 60
+
+position = [ 0.0, 1.0, 3.0 ]
+direction = [ 0.0, 0.0, -1.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 1000
+pixelheight = 1000
+
+[[meshes]]
+#file = "casual-effects.com/CornellBox/CornellBox-Empty-CO.obj"
+file = "casual-effects.com/CornellBox/CornellBox-Empty-RG.obj"
+#file = "casual-effects.com/CornellBox/CornellBox-Empty-Squashed.obj" # FIXME - handle missing normal indices
+#file = "casual-effects.com/CornellBox/CornellBox-Empty-White.obj"
+#file = "casual-effects.com/CornellBox/CornellBox-Glossy-Floor.obj"
+#file = "casual-effects.com/CornellBox/CornellBox-Glossy.obj"
+#file = "casual-effects.com/CornellBox/CornellBox-Mirror.obj"
+#file = "casual-effects.com/CornellBox/CornellBox-Original.obj"
+#file = "casual-effects.com/CornellBox/CornellBox-Sphere.obj"
+#file = "casual-effects.com/CornellBox/CornellBox-Water.obj"
+#file = "casual-effects.com/CornellBox/water.obj"
+
+# TEMP - remove when we have emissive meshes
+[[pointlights]]
+position = [ 0.0, 1.25, -0.5 ]
+intensity = [ 0.3, 0.3, 0.3 ]
+
