@@ -61,12 +61,6 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
 
     RadianceRGB Ld, Ls, Lt;
 
-    auto traceReflect = [&]() {
-        RayIntersection reflectIntersection;
-        traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
-                 epsilon, depth + 1, iorStack, reflectIntersection, Ls);
-    };
-
     if(isRefractive) {
         // Refraction
         {
@@ -100,21 +94,19 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
             else {
                 float F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
 
-                auto traceRefract = [&]() {
-                    RayIntersection refractIntersection;
-                    traceRay(scene, rng, Ray(P - N * epsilon, d),
-                             epsilon, depth + 1, nextIorStack, refractIntersection, Lt);
-                };
-
                 if(monteCarloRefraction) {
                     // Randomly choose a reflected or refracted ray using Fresnel as the
                     // weighting factor
-                    if(F == 1.0f || rng.uniform01() < F) { traceReflect(); }
-                    else                                 { traceRefract(); }
+                    if(F == 1.0f || rng.uniform01() < F) {
+                        Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
+                    }
+                    else {
+                        Lt = shadeRefract(scene, rng, minDistance, depth, nextIorStack, d, P, N);
+                    }
                 }
                 else {
-                    traceReflect();
-                    traceRefract();
+                    Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
+                    Lt = shadeRefract(scene, rng, minDistance, depth, nextIorStack, d, P, N);
                     // Apply Fresnel
                     Ls = F * Ls;
                     Lt = (1.0f - F) * Lt;
@@ -151,7 +143,7 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
 
         // Trace specular bounce
         if(hasSpecular) {
-            traceReflect();
+            Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
         }
     }
 
@@ -175,3 +167,29 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
     return Lo;
 }
 
+radiometry::RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
+                                               const float minDistance, const unsigned int depth,
+                                               const IndexOfRefractionStack & iorStack,
+                                               const Direction3 & Wi,
+                                               const Position3 & P, const Direction3 & N) const
+{
+    RayIntersection intersection;
+    radiometry::RadianceRGB L;
+    traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
+             epsilon, depth + 1, iorStack, intersection, L);
+    return L;
+}
+
+
+radiometry::RadianceRGB Renderer::shadeRefract(const Scene & scene, RNG & rng,
+                                               const float minDistance, const unsigned int depth,
+                                               const IndexOfRefractionStack & iorStack,
+                                               const Direction3 & Dt,
+                                               const Position3 & P, const Direction3 & N) const
+{
+    RayIntersection intersection;
+    radiometry::RadianceRGB L;
+    traceRay(scene, rng, Ray(P - N * epsilon, Dt),
+             epsilon, depth + 1, iorStack, intersection, L);
+    return L;
+}
