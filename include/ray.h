@@ -22,7 +22,8 @@ struct Ray
     Direction3 direction;
 };
 
-struct RayIntersection {
+struct RayIntersection
+{
     inline RayIntersection() = default;
     inline ~RayIntersection() = default;
 

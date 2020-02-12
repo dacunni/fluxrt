@@ -44,6 +44,7 @@ set(SRCS
     src/optics.cpp
     src/radiometry.cpp
     src/ray.cpp
+    src/renderer.cpp
     src/rng.cpp
     src/sensor.cpp
     src/slab.cpp
