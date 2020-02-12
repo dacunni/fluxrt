@@ -19,36 +19,39 @@ class Renderer
                       const IndexOfRefractionStack & iorStack,
                       RayIntersection & intersection, RadianceRGB & Lo) const;
 
+        RadianceRGB traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+                      const IndexOfRefractionStack & iorStack) const;
+
     protected:
 
-        radiometry::RadianceRGB shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
-                                      const IndexOfRefractionStack & iorStack,
-                                      const Direction3 & Wi, RayIntersection & intersection, const Material & material) const;
+        inline RadianceRGB shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
+                                 const IndexOfRefractionStack & iorStack,
+                                 const Direction3 & Wi, RayIntersection & intersection, const Material & material) const;
 
-        radiometry::RadianceRGB shadeReflect(const Scene & scene, RNG & rng,
-                                             const float minDistance, const unsigned int depth,
-                                             const IndexOfRefractionStack & iorStack,
-                                             const Direction3 & Wi,
-                                             const Position3 & P, const Direction3 & N) const;
+        inline RadianceRGB shadeReflect(const Scene & scene, RNG & rng,
+                                        const float minDistance, const unsigned int depth,
+                                        const IndexOfRefractionStack & iorStack,
+                                        const Direction3 & Wi,
+                                        const Position3 & P, const Direction3 & N) const;
 
-        radiometry::RadianceRGB shadeRefract(const Scene & scene, RNG & rng,
-                                             const float minDistance, const unsigned int depth,
-                                             const IndexOfRefractionStack & iorStack,
-                                             const Direction3 & Dt,
-                                             const Position3 & P, const Direction3 & N) const;
+        inline RadianceRGB shadeRefract(const Scene & scene, RNG & rng,
+                                        const float minDistance, const unsigned int depth,
+                                        const IndexOfRefractionStack & iorStack,
+                                        const Direction3 & Dt,
+                                        const Position3 & P, const Direction3 & N) const;
 
-        radiometry::RadianceRGB shadeRefractiveInterface(const Scene & scene, RNG & rng,
-                                                         const float minDistance, const unsigned int depth,
-                                                         const IndexOfRefractionStack & iorStack,
-                                                         const float nMaterial,
-                                                         const Direction3 & Wi,
-                                                         const Position3 & P, const Direction3 & N) const;
+        inline RadianceRGB shadeRefractiveInterface(const Scene & scene, RNG & rng,
+                                                    const float minDistance, const unsigned int depth,
+                                                    const IndexOfRefractionStack & iorStack,
+                                                    const float nMaterial,
+                                                    const Direction3 & Wi,
+                                                    const Position3 & P, const Direction3 & N) const;
 
-        radiometry::RadianceRGB shadeDiffuse(const Scene & scene, RNG & rng,
-                                             const float minDistance, const unsigned int depth,
-                                             const IndexOfRefractionStack & iorStack,
-                                             const Direction3 & Wi,
-                                             const Position3 & P, const Direction3 & N) const;
+        inline RadianceRGB shadeDiffuse(const Scene & scene, RNG & rng,
+                                        const float minDistance, const unsigned int depth,
+                                        const IndexOfRefractionStack & iorStack,
+                                        const Direction3 & Wi,
+                                        const Position3 & P, const Direction3 & N) const;
 
     public:
 

@@ -4,6 +4,8 @@
 #include "rng.h"
 #include "scene.h"
 
+using RadianceRGB = radiometry::RadianceRGB;
+
 void printDepthPrefix(unsigned int num)
 {
     for(unsigned int i = 0; i < num; ++i) {
@@ -40,9 +42,20 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
     return true;
 }
 
-radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
-                                        const IndexOfRefractionStack & iorStack,
-                                        const Direction3 & Wi, RayIntersection & intersection, const Material & material) const
+RadianceRGB Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+                               const IndexOfRefractionStack & iorStack) const
+{
+    RayIntersection intersection;
+    RadianceRGB L;
+    
+    traceRay(scene, rng, ray, minDistance, depth, iorStack, intersection, L);
+
+    return L;
+}
+
+inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
+                                   const IndexOfRefractionStack & iorStack,
+                                   const Direction3 & Wi, RayIntersection & intersection, const Material & material) const
 {
     // Notational convenience
     const auto P = intersection.position;
@@ -85,7 +98,7 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
     else if(hasSpecular) {
         // Fresnel = specular
         ReflectanceRGB F0rgb = S;
-        float cosIncidentAngle = absDot(Wi, intersection.normal);
+        float cosIncidentAngle = absDot(Wi, N);
         ReflectanceRGB Frgb = fresnel::schlick(F0rgb, cosIncidentAngle);
         ReflectanceRGB OmFrgb = Frgb.residual();
         Lo = OmFrgb * (D * Ld) + Frgb * Ls;
@@ -97,41 +110,34 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
     return Lo;
 }
 
-radiometry::RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
-                                               const float minDistance, const unsigned int depth,
-                                               const IndexOfRefractionStack & iorStack,
-                                               const Direction3 & Wi,
-                                               const Position3 & P, const Direction3 & N) const
+inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
+                                          const float minDistance, const unsigned int depth,
+                                          const IndexOfRefractionStack & iorStack,
+                                          const Direction3 & Wi,
+                                          const Position3 & P, const Direction3 & N) const
 {
-    RayIntersection intersection;
-    radiometry::RadianceRGB L;
-    traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
-             epsilon, depth + 1, iorStack, intersection, L);
-    return L;
+    return traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
+                    epsilon, depth + 1, iorStack);
 }
 
 
-radiometry::RadianceRGB Renderer::shadeRefract(const Scene & scene, RNG & rng,
-                                               const float minDistance, const unsigned int depth,
-                                               const IndexOfRefractionStack & iorStack,
-                                               const Direction3 & Dt,
-                                               const Position3 & P, const Direction3 & N) const
+inline RadianceRGB Renderer::shadeRefract(const Scene & scene, RNG & rng,
+                                          const float minDistance, const unsigned int depth,
+                                          const IndexOfRefractionStack & iorStack,
+                                          const Direction3 & Dt,
+                                          const Position3 & P, const Direction3 & N) const
 {
-    RayIntersection intersection;
-    radiometry::RadianceRGB L;
-    traceRay(scene, rng, Ray(P - N * epsilon, Dt),
-             epsilon, depth + 1, iorStack, intersection, L);
-    return L;
+    return traceRay(scene, rng, Ray(P - N * epsilon, Dt),
+                    epsilon, depth + 1, iorStack);
 }
 
-radiometry::RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG & rng,
-                                                           const float minDistance, const unsigned int depth,
-                                                           const IndexOfRefractionStack & iorStack,
-                                                           const float nMaterial,
-                                                           const Direction3 & Wi,
-                                                           const Position3 & P, const Direction3 & N) const
+inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG & rng,
+                                                      const float minDistance, const unsigned int depth,
+                                                      const IndexOfRefractionStack & iorStack,
+                                                      const float nMaterial,
+                                                      const Direction3 & Wi,
+                                                      const Position3 & P, const Direction3 & N) const
 {
-    RayIntersection intersection;
     RadianceRGB Ls, Lt;
 
     float n1, n2;
@@ -184,20 +190,18 @@ radiometry::RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, 
     return Ls + Lt;
 }
 
-radiometry::RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
-                                               const float minDistance, const unsigned int depth,
-                                               const IndexOfRefractionStack & iorStack,
-                                               const Direction3 & Wi,
-                                               const Position3 & P, const Direction3 & N) const
+inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
+                                          const float minDistance, const unsigned int depth,
+                                          const IndexOfRefractionStack & iorStack,
+                                          const Direction3 & Wi,
+                                          const Position3 & P, const Direction3 & N) const
 {
-    RayIntersection intersection;
-    radiometry::RadianceRGB L;
+    RadianceRGB L;
 
     // Sample according to cosine lobe about the normal
     Direction3 diffuseDir(rng.cosineAboutDirection(N));
-    traceRay(scene, rng,
-             Ray(P + N * epsilon, diffuseDir),
-             epsilon, depth + 1, iorStack, intersection, L);
+    L += traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
+                  epsilon, depth + 1, iorStack);
 
     // Sample point lights
     for(const auto & light: scene.pointLights) {
