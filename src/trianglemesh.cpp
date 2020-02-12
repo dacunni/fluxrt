@@ -12,6 +12,33 @@
 
 const uint32_t TriangleMesh::NoTexCoord = std::numeric_limits<uint32_t>::max();
 
+bool loadTriangleMeshes(std::vector<TriangleMesh*> & meshes,
+                        MaterialArray & materials,
+                        TextureCache & textureCache,
+                        const std::string & pathToFile)
+{
+    std::string path, filename;
+    std::tie(path, filename) = filesystem::splitFileDirectory(pathToFile);
+
+    if(filesystem::hasExtension(filename, ".obj")) {
+        return loadTriangleMeshesFromOBJ(meshes, materials, textureCache, path, filename);
+    }
+    else if(filesystem::hasExtension(filename, ".stl")) {
+        // STL files only contain a single object
+        TriangleMesh * mesh = new TriangleMesh();
+        if(!loadTriangleMeshFromSTL(*mesh, materials, textureCache, path, filename)) {
+            delete mesh;
+            return false;
+        }
+        meshes.push_back(mesh);
+        return true;
+    }
+
+    std::cerr << "Unrecognized mesh type " << filename << '\n';
+    return false;
+}
+
+#if 0
 bool loadTriangleMesh(TriangleMesh & mesh,
                       MaterialArray & materials,
                       TextureCache & textureCache,
@@ -30,10 +57,11 @@ bool loadTriangleMesh(TriangleMesh & mesh,
     std::cerr << "Unrecognized mesh type " << filename << '\n';
     return false;
 }
+#endif
 
 bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance, float maxDistance)
 {
-    return intersectsTrianglesIndexed(ray, &mesh.vertices[0], &mesh.indices.vertex[0], mesh.indices.vertex.size(),
+    return intersectsTrianglesIndexed(ray, &mesh.sharedData->vertices[0], &mesh.indices.vertex[0], mesh.indices.vertex.size(),
                                       minDistance, maxDistance);
 }
 
@@ -121,9 +149,9 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
     auto tci2 = mesh.indices.texcoord[3 * tri + 2];
 
     if(tci0 != TriangleMesh::NoTexCoord && tci1 != TriangleMesh::NoTexCoord && tci2 != TriangleMesh::NoTexCoord) {
-        intersection.texcoord = interpolate(mesh.texcoords[tci0],
-                                            mesh.texcoords[tci1],
-                                            mesh.texcoords[tci2], bary);
+        intersection.texcoord = interpolate(mesh.sharedData->texcoords[tci0],
+                                            mesh.sharedData->texcoords[tci1],
+                                            mesh.sharedData->texcoords[tci2], bary);
         intersection.hasTexCoord = true;
     }
     else {
@@ -142,33 +170,34 @@ size_t TriangleMesh::numTriangles() const
 
 bool TriangleMesh::hasNormals() const
 {
-    return normals.size() > 0;
+    return sharedData->normals.size() > 0;
 }
 
 const Position3 & TriangleMesh::triangleVertex(uint32_t tri, uint32_t index) const
 {
-    return vertices[indices.vertex[3 * tri + index]];
+    return sharedData->vertices[indices.vertex[3 * tri + index]];
 }
 
 const Direction3 & TriangleMesh::triangleNormal(uint32_t tri, uint32_t index) const
 {
-    return normals[indices.normal[3 * tri + index]];
+    return sharedData->normals[indices.normal[3 * tri + index]];
 }
 
 const TextureCoordinate & TriangleMesh::triangleTextureCoordinate(uint32_t tri, uint32_t index) const
 {
-    return texcoords[indices.texcoord[3 * tri + index]];
+    return sharedData->texcoords[indices.texcoord[3 * tri + index]];
 }
 
 void TriangleMesh::printMeta() const
 {
-    printf("TriangleMesh vertices %lu normals %lu indices v %lu n %lu\n",
-           vertices.size(), normals.size(), indices.vertex.size(), indices.normal.size());
+    printf("TriangleMesh materials %lu vertices %lu normals %lu indices v %lu n %lu\n",
+           faces.material.size(), sharedData->vertices.size(), sharedData->normals.size(), indices.vertex.size(), indices.normal.size());
 }
 
+// TODO: remove this because it mucks with shared data. replace with transform
 void TriangleMesh::scaleToFit(const Slab & bounds)
 {
-    Slab old = boundingBox(vertices);
+    Slab old = boundingBox(sharedData->vertices);
 
     auto s = relativeScale(old, bounds);
     auto mine = s.minElement();
@@ -189,7 +218,7 @@ void TriangleMesh::scaleToFit(const Slab & bounds)
     auto newCenter = bounds.midpoint();
 
     // Scale to fit and center in the new bounding volume
-    for(auto & v : vertices) {
+    for(auto & v : sharedData->vertices) {
         v.x = (v.x - oldCenter.x) * scaleFactor + newCenter.x;
         v.y = (v.y - oldCenter.y) * scaleFactor + newCenter.y;
         v.z = (v.z - oldCenter.z) * scaleFactor + newCenter.z;

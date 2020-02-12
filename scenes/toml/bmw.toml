@@ -65,7 +65,10 @@ direction = [ 1.0, 0.0, 0.0 ]
 
 [[meshes]]
 file = "casual-effects.com/bmw/bmw.obj"
-scaletocube = 3.0
+    [[meshes.transform]]
+    scale = [ 0.015, 0.015, 0.015 ]
+    [[meshes.transform]]
+    translate = [ 0.0, -1.35, 0.0 ]
 
 [[spheres]]
 radius = 0.5

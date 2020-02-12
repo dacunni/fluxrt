@@ -61,7 +61,115 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         materials.push_back(material);
     }
 }
+bool loadTriangleMeshesFromOBJ(std::vector<TriangleMesh*> & meshes,
+                               MaterialArray & materials,
+                               TextureCache & textureCache,
+                               const std::string & path, const std::string & filename)
+{
+    std::string warn, err;
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> objmaterials;
 
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &objmaterials, &warn, &err,
+                                (path + '/' + filename).c_str(), path.c_str());
+    if(!warn.empty()) {
+        std::cout << "WARN: " << warn << std::endl;
+    }
+    if(!err.empty()) {
+        std::cerr << err << std::endl;
+    }
+
+    if(!ret) {
+        std::cerr << "Failed to load " << filename << std::endl;
+        return false;
+    }
+
+    printf("OBJ Mesh:");
+    printf("  vertices: %d", (int) (attrib.vertices.size()) / 3);
+    printf("  normals: %d", (int) (attrib.normals.size()) / 3);
+    printf("  texcoords: %d", (int) (attrib.texcoords.size()) / 2);
+    printf("  materials: %d", (int) objmaterials.size());
+    printf("  shapes: %d\n", (int) shapes.size());
+
+    // Keep a mapping from original material indices to the ones we insert into
+    // the materials array
+    std::vector<MaterialID> objMatToMatArrIndex;
+
+    loadMaterialsFromOBJ(materials, objMatToMatArrIndex, textureCache, objmaterials, path);
+
+    TriangleMesh::SharedMeshData * sharedData = new TriangleMesh::SharedMeshData();
+
+    for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
+        auto coord = &attrib.vertices[vi * 3];
+        auto pos = Position3(coord[0], coord[1], coord[2]);
+        sharedData->vertices.push_back(pos);
+    }
+
+    for(int ni = 0; ni < attrib.normals.size() / 3; ++ni) {
+        auto coord = &attrib.normals[ni * 3];
+        auto dir = Direction3(coord[0], coord[1], coord[2]);
+        dir.normalize();
+        if(dir.isZeros()) {
+            printf("WARNING: Mesh normal at index %d is all zeros. Replacing with 0,1,0\n", ni);
+            dir = Direction3(0.0f, 1.0f, 0.0f);
+        }
+        sharedData->normals.push_back(dir);
+    }
+
+    for(int ti = 0; ti < attrib.texcoords.size() / 2; ++ti) {
+        auto coord = &attrib.texcoords[ti * 2];
+        auto tc = TextureCoordinate{coord[0], 1.0f - coord[1]};
+        sharedData->texcoords.push_back(tc);
+    }
+
+    // shapes
+    for(size_t si = 0; si < shapes.size(); ++si) {
+        const auto & shape = shapes[si];
+        const auto num_faces = shape.mesh.indices.size() / 3;
+        const auto num_materials = shape.mesh.material_ids.size();
+        //printf("    shape %d faces %d materials %d\n", (int) si, (int) num_faces, (int) num_materials);
+
+        assert(num_materials == num_faces); // per-face material
+
+        TriangleMesh * mesh = new TriangleMesh();
+        mesh->sharedData = sharedData;
+
+        // faces
+        for(size_t fi = 0; fi < num_faces; ++fi) {
+            auto indices = &shape.mesh.indices[3 * fi];
+            auto matIndex = shape.mesh.material_ids[fi];
+            MaterialID materialId = 0;
+            if(matIndex >= 0 && matIndex < objMatToMatArrIndex.size()) {
+                materialId = objMatToMatArrIndex[matIndex];
+            }
+            mesh->faces.material.push_back(materialId);
+            // vertex indices
+            for (int vi = 0; vi < 3; ++vi) {
+                // FIXME - Handle -1 for missing vertex_index, normal_index, texcoord_index
+                mesh->indices.vertex.push_back(indices[vi].vertex_index);
+                mesh->indices.normal.push_back(indices[vi].normal_index);
+                if(indices[vi].texcoord_index < 0) {
+                    mesh->indices.texcoord.push_back(TriangleMesh::NoTexCoord);
+                }
+                else {
+                    mesh->indices.texcoord.push_back(indices[vi].texcoord_index);
+                }
+            }
+        }
+
+        mesh->printMeta(); // TEMP
+
+        meshes.push_back(mesh);
+    }
+
+    Slab bounds = boundingBox(sharedData->vertices);
+    printf("Mesh bounds: "); bounds.print();
+
+    return true;
+}
+
+#if 0
 bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
                              MaterialArray & materials,
                              TextureCache & textureCache,
@@ -99,7 +207,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
 
     loadMaterialsFromOBJ(materials, objMatToMatArrIndex, textureCache, objmaterials, path);
 
-    for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
+   for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
         auto pos = Position3(coord[0], coord[1], coord[2]);
         mesh.vertices.push_back(pos);
@@ -162,4 +270,5 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
 
     return true;
 }
+#endif
 

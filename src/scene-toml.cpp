@@ -231,37 +231,49 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 std::string fullFilePath = applyPathPrefix(meshPath, *filePath);
                 std::cout << "Mesh: name " << name << " file " << fullFilePath << std::endl;
 
-                TriangleMesh * mesh = new TriangleMesh();
+                auto scaletocube = meshTable->get_as<double>("scaletocube");
+                auto accelerator = meshTable->get_as<std::string>("accelerator").value_or("octree");
 
-                if(!loadTriangleMesh(*mesh, scene.materials, scene.textureCache, fullFilePath)) {
+                auto loadMeshAux = [&](TriangleMesh * mesh) {
+                    loadMaterialForObject(meshTable, *mesh, scene);
+
+                    if(scaletocube) {
+#if 1
+                        printf("**** WARNING - encountered deprecated 'scaletocube'\n");
+#else
+                        mesh->scaleToFit(Slab::centeredCube(*scaletocube));
+                        Slab bounds = boundingBox(mesh->sharedData->vertices);
+                        printf("Scaled mesh bounds: "); bounds.print();
+#endif
+                    }
+
+                    if(accelerator == "octree") {
+                        std::cout << "Building octree" << std::endl;
+                        scene.heapManager.add(mesh);
+                        TriangleMeshOctree meshOctree(*mesh);
+                        meshOctree.build();
+                        scene.meshOctrees.emplace_back(std::move(meshOctree));
+                        auto & obj = scene.meshOctrees.back();
+                        loadTransformsForObject(meshTable, obj, scene);
+                    }
+                    else {
+                        scene.meshes.emplace_back(std::move(*mesh));
+                        auto & obj = scene.meshes.back();
+                        loadTransformsForObject(meshTable, obj, scene);
+                        delete(mesh);
+                    }
+                };
+
+                std::vector<TriangleMesh*> meshes;
+
+                if(!loadTriangleMeshes(meshes, scene.materials, scene.textureCache, fullFilePath)) {
                     throw std::runtime_error("Error loading mesh");
                 }
 
-                loadMaterialForObject(meshTable, *mesh, scene);
+                std::cout << "Loaded " << meshes.size() << " meshes from " << fullFilePath << '\n';
 
-                auto scaletocube = meshTable->get_as<double>("scaletocube");
-                if(scaletocube) {
-                    mesh->scaleToFit(Slab::centeredCube(*scaletocube));
-                    Slab bounds = boundingBox(mesh->vertices);
-                    printf("Scaled mesh bounds: "); bounds.print();
-                }
-
-                auto accelerator = meshTable->get_as<std::string>("accelerator").value_or("octree");
-
-                if(accelerator == "octree") {
-                    std::cout << "Building octree" << std::endl;
-                    scene.heapManager.add(mesh);
-                    TriangleMeshOctree meshOctree(*mesh);
-                    meshOctree.build();
-                    scene.meshOctrees.emplace_back(std::move(meshOctree));
-                    auto & obj = scene.meshOctrees.back();
-                    loadTransformsForObject(meshTable, obj, scene);
-                }
-                else {
-                    scene.meshes.emplace_back(std::move(*mesh));
-                    auto & obj = scene.meshes.back();
-                    loadTransformsForObject(meshTable, obj, scene);
-                    delete(mesh);
+                for(auto & mesh : meshes) {
+                    loadMeshAux(mesh);
                 }
             }
         }

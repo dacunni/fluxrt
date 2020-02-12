@@ -16,6 +16,8 @@ bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
     printf("STL Mesh:");
     printf("  facets: %d\n", (int) (stlmesh.facets.size()) / 3);
 
+    mesh.sharedData = new TriangleMesh::SharedMeshData();
+
     // We use +Y as up in most scenes, but most STL files use +Z as up
     // for 3D printing applications. Rotate about X to remap +Z to +Y.
     auto remapOrientation = [](const vec3 & v) {
@@ -30,8 +32,8 @@ bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
         for(int vi = 0; vi < 3; ++vi) {
             auto & coord = facet.vertices[vi];
             auto pos = Position3(remapOrientation(vec3(coord.x, coord.y, coord.z)));
-            mesh.vertices.push_back(pos);
-            mesh.normals.push_back(normal);
+            mesh.sharedData->vertices.push_back(pos);
+            mesh.sharedData->normals.push_back(normal);
             mesh.indices.vertex.push_back(vertex_index);
             mesh.indices.normal.push_back(vertex_index);
             mesh.indices.texcoord.push_back(TriangleMesh::NoTexCoord);
@@ -39,7 +41,7 @@ bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
         }
     }
 
-    Slab bounds = boundingBox(mesh.vertices);
+    Slab bounds = boundingBox(mesh.sharedData->vertices);
     printf("Mesh bounds: "); bounds.print();
 
     return true;

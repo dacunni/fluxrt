@@ -28,17 +28,17 @@ if(RUN_INSPECTION_TESTS)
 endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
-ADD_EXECUTABLE (test_mesh_load test_mesh_load.cpp)
-TARGET_LINK_LIBRARIES (test_mesh_load micromath)
-
-if(RUN_INSPECTION_TESTS)
-    ADD_CUSTOM_COMMAND(TARGET test_mesh_load POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/mesh_load
-                       COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/models ${CMAKE_CURRENT_BINARY_DIR}/mesh_load/models)
-    ADD_CUSTOM_COMMAND(TARGET test_mesh_load POST_BUILD
-                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/mesh_load
-                       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_mesh_load)
-endif(RUN_INSPECTION_TESTS)
+#ADD_EXECUTABLE (test_mesh_load test_mesh_load.cpp)
+#TARGET_LINK_LIBRARIES (test_mesh_load micromath)
+#
+#if(RUN_INSPECTION_TESTS)
+#    ADD_CUSTOM_COMMAND(TARGET test_mesh_load POST_BUILD
+#                       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/mesh_load
+#                       COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/models ${CMAKE_CURRENT_BINARY_DIR}/mesh_load/models)
+#    ADD_CUSTOM_COMMAND(TARGET test_mesh_load POST_BUILD
+#                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/mesh_load
+#                       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_mesh_load)
+#endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_scene_load test_scene_load.cpp)
@@ -55,17 +55,17 @@ if(RUN_INSPECTION_TESTS)
 endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
-ADD_EXECUTABLE (test_simple_intersection test_simple_intersection.cpp)
-TARGET_LINK_LIBRARIES (test_simple_intersection micromath)
-
-if(RUN_INSPECTION_TESTS)
-    ADD_CUSTOM_COMMAND(TARGET test_simple_intersection POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/simple_intersection
-                       COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/models ${CMAKE_CURRENT_BINARY_DIR}/simple_intersection/models)
-    ADD_CUSTOM_COMMAND(TARGET test_simple_intersection POST_BUILD
-                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/simple_intersection
-                       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_simple_intersection)
-endif(RUN_INSPECTION_TESTS)
+#ADD_EXECUTABLE (test_simple_intersection test_simple_intersection.cpp)
+#TARGET_LINK_LIBRARIES (test_simple_intersection micromath)
+#
+#if(RUN_INSPECTION_TESTS)
+#    ADD_CUSTOM_COMMAND(TARGET test_simple_intersection POST_BUILD
+#                       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/simple_intersection
+#                       COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/models ${CMAKE_CURRENT_BINARY_DIR}/simple_intersection/models)
+#    ADD_CUSTOM_COMMAND(TARGET test_simple_intersection POST_BUILD
+#                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/simple_intersection
+#                       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_simple_intersection)
+#endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_fresnel test_fresnel.cpp)

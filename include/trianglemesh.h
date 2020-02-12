@@ -25,9 +25,13 @@ struct TriangleMesh
 
     void scaleToFit(const Slab & bounds);
 
-    std::vector<Position3> vertices;
-    std::vector<Direction3> normals;
-    std::vector<TextureCoordinate> texcoords;
+    struct SharedMeshData {
+        std::vector<Position3> vertices;
+        std::vector<Direction3> normals;
+        std::vector<TextureCoordinate> texcoords;
+    };
+
+    SharedMeshData * sharedData = nullptr;
 
     // Special texcoord index indicating no texture coordinates exist for the vertex
     static const uint32_t NoTexCoord;
@@ -48,14 +52,26 @@ struct TriangleMesh
     MaterialID material = NoMaterial;
 };
 
-bool loadTriangleMesh(TriangleMesh & mesh,
-                      MaterialArray & materials,
-                      TextureCache & textureCache,
-                      const std::string & pathToFile);
-bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
-                             MaterialArray & materials,
-                             TextureCache & textureCache,
-                             const std::string & path, const std::string & filename);
+// NEW
+
+bool loadTriangleMeshes(std::vector<TriangleMesh*> & meshes,
+                        MaterialArray & materials,
+                        TextureCache & textureCache,
+                        const std::string & pathToFile);
+bool loadTriangleMeshesFromOBJ(std::vector<TriangleMesh*> & meshes,
+                               MaterialArray & materials,
+                               TextureCache & textureCache,
+                               const std::string & path, const std::string & filename);
+
+
+//bool loadTriangleMesh(TriangleMesh & mesh,
+//                      MaterialArray & materials,
+//                      TextureCache & textureCache,
+//                      const std::string & pathToFile);
+//bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
+//                             MaterialArray & materials,
+//                             TextureCache & textureCache,
+//                             const std::string & path, const std::string & filename);
 bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
                              MaterialArray & materials,
                              TextureCache & textureCache,
