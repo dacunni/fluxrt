@@ -37,6 +37,19 @@ class Renderer
                                              const Direction3 & Dt,
                                              const Position3 & P, const Direction3 & N) const;
 
+        radiometry::RadianceRGB shadeRefractiveInterface(const Scene & scene, RNG & rng,
+                                                         const float minDistance, const unsigned int depth,
+                                                         const IndexOfRefractionStack & iorStack,
+                                                         const float nMaterial,
+                                                         const Direction3 & Wi,
+                                                         const Position3 & P, const Direction3 & N) const;
+
+        radiometry::RadianceRGB shadeDiffuse(const Scene & scene, RNG & rng,
+                                             const float minDistance, const unsigned int depth,
+                                             const IndexOfRefractionStack & iorStack,
+                                             const Direction3 & Wi,
+                                             const Position3 & P, const Direction3 & N) const;
+
     public:
 
         const float epsilon = 1.0e-4;

@@ -59,86 +59,16 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
     const bool isRefractive = material.isRefractive;
     const float nMaterial = material.indexOfRefraction;
 
-    RadianceRGB Ld, Ls, Lt;
+    RadianceRGB Ld, Ls, Lr;
 
     if(isRefractive) {
         // Refraction
-        {
-            float n1, n2;
-
-            bool leaving = iorStack.size() % 2 == 0;
-
-            // Update IOR stack for refracted ray
-            IndexOfRefractionStack nextIorStack = iorStack;
-            if(leaving) {
-                n1 = nMaterial;
-                nextIorStack.pop_back();
-                n2 = nextIorStack.back();
-            }
-            else {
-                n1 = nextIorStack.back();
-                n2 = nMaterial;
-                nextIorStack.push_back(nMaterial);
-            }
-
-            Direction3 d = refract(Wi, N, n1, n2);
-
-            bool totalInternalReflection = d.isZeros();
-
-            if(totalInternalReflection) {
-                // Reflected ray
-                RayIntersection nextIntersection;
-                traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
-                         epsilon, depth + 1, iorStack, nextIntersection, Ls);
-            }
-            else {
-                float F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
-
-                if(monteCarloRefraction) {
-                    // Randomly choose a reflected or refracted ray using Fresnel as the
-                    // weighting factor
-                    if(F == 1.0f || rng.uniform01() < F) {
-                        Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
-                    }
-                    else {
-                        Lt = shadeRefract(scene, rng, minDistance, depth, nextIorStack, d, P, N);
-                    }
-                }
-                else {
-                    Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
-                    Lt = shadeRefract(scene, rng, minDistance, depth, nextIorStack, d, P, N);
-                    // Apply Fresnel
-                    Ls = F * Ls;
-                    Lt = (1.0f - F) * Lt;
-                }
-            }
-        }
+        Lr = shadeRefractiveInterface(scene, rng, minDistance, depth, iorStack, nMaterial, Wi, P, N);
     }
     else {
         // Trace diffuse bounce
         if(hasDiffuse) {
-            Direction3 diffuseDir(rng.cosineAboutDirection(N));
-            RayIntersection nextIntersection;
-            traceRay(scene, rng,
-                     // Sample according to cosine lobe about the normal
-                     Ray(P + N * epsilon, diffuseDir),
-                     epsilon, depth + 1, iorStack, nextIntersection, Ld);
-
-            // Sample point lights
-            for(const auto & light: scene.pointLights) {
-                Direction3 toLight = (light.position - P);
-                if(dot(toLight, intersection.normal) < 0.0f)
-                    continue;
-                Direction3 lightDir = toLight.normalized();
-                float lightDist = toLight.magnitude();
-
-                if(!intersects(Ray{P, lightDir}, scene, epsilon, lightDist)) {
-                    float lightDistSq = toLight.magnitude_sq();
-                    float c = clampedDot(lightDir, intersection.normal);
-                    RadianceRGB Ld_point = light.intensity * c / lightDistSq;
-                    Ld += Ld_point;
-                }
-            }
+            Ld = shadeDiffuse(scene, rng, minDistance, depth, iorStack, Wi, P, N);
         }
 
         // Trace specular bounce
@@ -150,7 +80,7 @@ radiometry::RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const fl
     RadianceRGB Lo;
 
     if(isRefractive) {
-        Lo = Lt + Ls;
+        Lo = Lr;
     }
     else if(hasSpecular) {
         // Fresnel = specular
@@ -193,3 +123,98 @@ radiometry::RadianceRGB Renderer::shadeRefract(const Scene & scene, RNG & rng,
              epsilon, depth + 1, iorStack, intersection, L);
     return L;
 }
+
+radiometry::RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG & rng,
+                                                           const float minDistance, const unsigned int depth,
+                                                           const IndexOfRefractionStack & iorStack,
+                                                           const float nMaterial,
+                                                           const Direction3 & Wi,
+                                                           const Position3 & P, const Direction3 & N) const
+{
+    RayIntersection intersection;
+    RadianceRGB Ls, Lt;
+
+    float n1, n2;
+
+    bool leaving = iorStack.size() % 2 == 0;
+
+    // Update IOR stack for refracted ray
+    IndexOfRefractionStack nextIorStack = iorStack;
+    if(leaving) {
+        n1 = nMaterial;
+        nextIorStack.pop_back();
+        n2 = nextIorStack.back();
+    }
+    else {
+        n1 = nextIorStack.back();
+        n2 = nMaterial;
+        nextIorStack.push_back(nMaterial);
+    }
+
+    Direction3 d = refract(Wi, N, n1, n2);
+
+    bool totalInternalReflection = d.isZeros();
+
+    if(totalInternalReflection) {
+        // Reflected ray
+        Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
+    }
+    else {
+        float F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
+
+        if(monteCarloRefraction) {
+            // Randomly choose a reflected or refracted ray using Fresnel as the
+            // weighting factor
+            if(F == 1.0f || rng.uniform01() < F) {
+                Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
+            }
+            else {
+                Lt = shadeRefract(scene, rng, minDistance, depth, nextIorStack, d, P, N);
+            }
+        }
+        else {
+            Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
+            Lt = shadeRefract(scene, rng, minDistance, depth, nextIorStack, d, P, N);
+            // Apply Fresnel
+            Ls = F * Ls;
+            Lt = (1.0f - F) * Lt;
+        }
+    }
+
+    return Ls + Lt;
+}
+
+radiometry::RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
+                                               const float minDistance, const unsigned int depth,
+                                               const IndexOfRefractionStack & iorStack,
+                                               const Direction3 & Wi,
+                                               const Position3 & P, const Direction3 & N) const
+{
+    RayIntersection intersection;
+    radiometry::RadianceRGB L;
+
+    // Sample according to cosine lobe about the normal
+    Direction3 diffuseDir(rng.cosineAboutDirection(N));
+    traceRay(scene, rng,
+             Ray(P + N * epsilon, diffuseDir),
+             epsilon, depth + 1, iorStack, intersection, L);
+
+    // Sample point lights
+    for(const auto & light: scene.pointLights) {
+        Direction3 toLight = (light.position - P);
+        if(dot(toLight, N) < 0.0f)
+            continue;
+        Direction3 lightDir = toLight.normalized();
+        float lightDist = toLight.magnitude();
+
+        if(!intersects(Ray{P, lightDir}, scene, epsilon, lightDist)) {
+            float lightDistSq = toLight.magnitude_sq();
+            float c = clampedDot(lightDir, N);
+            RadianceRGB Ld_point = light.intensity * c / lightDistSq;
+            L += Ld_point;
+        }
+    }
+
+    return L;
+}
+
