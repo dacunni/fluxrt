@@ -37,12 +37,36 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
 
         Material material;
        
+        // Note: We ignore the ambient term, as it is non-physical
         switch(objmaterial.illum) {
-            // TODO - handle other cases
-            case 7:
+            case 1: // Lambertian diffuse
+                material = Material::makeDiffuse(D);
+                break;
+            //case 2: // diffuse + specular (Blinn-Phong)
+            // TODO
+            //    break;
+            //case 3: // diffuse + specular (Blinn-Phong) + Whitted
+            // TODO
+            //    break;
+            //case 4: // glassy ???
+            // TODO
+            //    break;
+            //case 5: // diffuse + specular (Blinn-Phong) + Fresnel
+            // TODO
+            //    break;
+            //case 6: // diffuse + specular (Blinn-Phong) + refraction (optical density)
+            // TODO
+            //    break;
+            case 7: // diffuse + specular (Blinn-Phong) + refraction (Fresnel)
                 // TODO - incomplete
                 material = Material::makeRefractive(objmaterial.ior);
                 break;
+            //case 8: // TODO
+            //    break;
+            //case 9: // TODO
+            //    break;
+            //case 10: // TODO
+            //    break;
             default:
                 material = Material::makeDiffuseSpecular(D, S);
         }
