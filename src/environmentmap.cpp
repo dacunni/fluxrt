@@ -1,4 +1,5 @@
 #include <iostream>
+#include "constants.h"
 #include "environmentmap.h"
 #include "ray.h"
 #include "vectortypes.h"
@@ -148,14 +149,41 @@ RadianceRGB CubeMapEnvironmentMap::sampleRay(const Ray & ray)
 
     directionToTileCoord(ray.direction, texture, texcoord);
 
-    //std::cout << "tex " << texcoord.u << ", " << texcoord.v << '\n'; // TEMP
-
     return { scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 0),
              scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 1),
              scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 2) };
+}
 
-    // TODO
-    //return RadianceRGB::RED();
+void LatLonEnvironmentMap::loadFromFile(const std::string & filename)
+{
+    auto rawTexture = readImage<float>(filename);
+    if(!rawTexture) {
+        throw 0;
+    }
+
+    // FIXME: This is making excessive copies
+    texture = std::make_shared<Texture>(rawTexture->width, rawTexture->height, rawTexture->numChannels);
+    *texture = *rawTexture;
+
+    texture->outOfBoundsBehavior = Texture::Repeat;
+}
+
+radiometry::RadianceRGB LatLonEnvironmentMap::sampleRay(const Ray & ray)
+{
+    auto & D = ray.direction;
+
+    TextureCoordinate texcoord;
+
+    float PI = float(constants::PI);
+
+    texcoord.u = 0.5f * (1.0f + std::atan2(D.x, -D.z) / PI);
+    texcoord.v = std::acos(D.y) / PI;
+
+    auto radiance = radiometry::RadianceRGB{ scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 0),
+             scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 1),
+             scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 2) };
+
+    return radiance;
 }
 
 

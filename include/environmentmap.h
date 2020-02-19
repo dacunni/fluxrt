@@ -70,4 +70,25 @@ class CubeMapEnvironmentMap : public EnvironmentMap
         float scaleFactor = 1.0f;
 };
 
+class LatLonEnvironmentMap : public EnvironmentMap
+{
+    public:
+        LatLonEnvironmentMap() = default;
+        virtual ~LatLonEnvironmentMap() = default;
+
+        void loadFromFile(const std::string & filename);
+
+        virtual radiometry::RadianceRGB sampleRay(const Ray & ray);
+
+        void setScaleFactor(float f) { scaleFactor = f; }
+
+    protected:
+        using TexturePtr = std::shared_ptr<Texture>;
+
+        TexturePtr texture;
+
+        float scaleFactor = 1.0f;
+};
+
+
 #endif

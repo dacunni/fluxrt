@@ -1,0 +1,56 @@
+[camera]
+type = "pinhole"
+hfov = 45
+#type = "ortho"
+#hsize = 8
+
+# front
+position = [ 0.0, 2.0, 6.0 ]
+direction = [ 0.0, -0.2, -1.0 ]
+# side
+#position = [ -6.0, 2.0, 0.0 ]
+#direction = [ 1.0, -0.2, 0.0 ]
+# side
+#position = [ 6.0, 2.0, 0.0 ]
+#direction = [ -1.0, -0.2, 0.0 ]
+# quarter
+#position = [ 6.0, 2.0, 6.0 ]
+#direction = [ -1.0, -0.2, -1.0 ]
+# back
+#position = [ 0.0, 2.0, -6.0 ]
+#direction = [ 0.0, -0.2, 1.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 300
+#pixelwidth = 120
+#pixelheight = 90
+
+[envmap]
+
+type = "latlon"
+file = "hdrihaven/adams_place_bridge_1k.hdr"
+#file = "hdrihaven/kloppenheim_02_1k.hdr"
+#file = "hdrihaven/spruit_sunrise_1k.hdr"
+
+#scalefactor = 2.0
+
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+
+[[spheres]]
+radius = 0.5
+position = [ 2.0, 0.5, 0.0 ]
+
+[[spheres]]
+radius = 0.5
+position = [ -2.0, 0.5, 0.0 ]
+    [spheres.material]
+    type = "mirror"
+
+# Floor
+[[slabs]]
+min = [ -2.5, -0.5, -1.5 ]
+max = [ 2.5, -0.04, 1.5 ]

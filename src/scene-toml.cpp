@@ -220,6 +220,13 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 auto envmap = std::make_unique<GradientEnvironmentMap>(low, high, direction);
                 scene.environmentMap = std::move(envmap);
             }
+            else if(type == "latlon") {
+                std::string file = applyPathPrefix(envMapPath, *envmapTable->get_as<std::string>("file"));
+                auto envmap = std::make_unique<LatLonEnvironmentMap>();
+                envmap->loadFromFile(file);
+                envmap->setScaleFactor(envmapTable->get_as<double>("scalefactor").value_or(1.0));
+                scene.environmentMap = std::move(envmap);
+            }
         }
 
         auto meshTableArray = top->get_table_array("meshes");

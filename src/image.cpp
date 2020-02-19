@@ -43,21 +43,45 @@ std::shared_ptr<Image<float>> readImage(const char * filename)
 {
     int w = 0, h = 0;
     int numComponents = 0; // 0 = request actual number of components
-    unsigned char * stbiData = stbi_load(filename, &w, &h, &numComponents, numComponents);
 
-    if(!stbiData) {
-        throw std::runtime_error(std::string("File not found: ") + filename);
+    if(stbi_is_hdr(filename)) {
+        // Load float data with full dynamic range of the source image
+        float * stbiData = stbi_loadf(filename, &w, &h, &numComponents, numComponents);
+
+        if(!stbiData) {
+            throw std::runtime_error(std::string("File not found: ") + filename);
+        }
+
+        const unsigned int numElements = w * h * numComponents;
+        auto image = std::make_shared<Image<float>>(w, h, numComponents);
+
+        for(unsigned int pi = 0; pi < numElements; pi++) {
+            image->data[pi] = stbiData[pi];
+        }
+
+        stbi_image_free(stbiData);
+
+        return std::move(image);
     }
+    else {
+        // Load float data, adjusting dynamic range if necessary
+        unsigned char * stbiData = stbi_load(filename, &w, &h, &numComponents, numComponents);
 
-    const unsigned int numElements = w * h * numComponents;
-    auto image = std::make_shared<Image<float>>(w, h, numComponents);
+        if(!stbiData) {
+            throw std::runtime_error(std::string("File not found: ") + filename);
+        }
 
-    for(unsigned int pi = 0; pi < numElements; pi++) {
-        image->data[pi] = float(stbiData[pi]) / 255.0f;
+        const unsigned int numElements = w * h * numComponents;
+        auto image = std::make_shared<Image<float>>(w, h, numComponents);
+
+        for(unsigned int pi = 0; pi < numElements; pi++) {
+            image->data[pi] = float(stbiData[pi]) / 255.0f;
+        }
+
+        stbi_image_free(stbiData);
+
+        return std::move(image);
     }
-    stbi_image_free(stbiData);
-
-    return std::move(image);
 }
 
 template<>
