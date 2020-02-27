@@ -14,7 +14,7 @@ void printDepthPrefix(unsigned int num)
 }
 
 bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
-                        const IndexOfRefractionStack & iorStack,
+                        const MediumStack & mediumStack,
                         RayIntersection & intersection, RadianceRGB & Lo) const
 {
     if(depth > maxDepth) {
@@ -34,15 +34,19 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
     if(A < 1.0f) { // transparent
         // Trace a new ray just past the intersection
         float newMinDistance = intersection.distance + epsilon;
-        return traceRay(scene, rng, ray, newMinDistance, depth, iorStack, intersection, Lo);
+        return traceRay(scene, rng, ray, newMinDistance, depth, mediumStack, intersection, Lo);
     }
 
-    Lo = shade(scene, rng, minDistance, depth, iorStack, Wi, intersection, material);
+    Lo = shade(scene, rng, minDistance, depth, mediumStack, Wi, intersection, material);
 
 // TEMP >>>
 #if 1
-    if(iorStack.size() > 1) {
+    if(mediumStack.size() > 1) {
+#if 1
+        ParameterRGB att = mediumStack.back().beersLawAttenuation;
+#else
         ParameterRGB att = { 2.0f, 1.0f, 2.0f };
+#endif
         
         ParameterRGB beer {
             optics::beersLawAttenuation(att.r, intersection.distance),
@@ -59,18 +63,18 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
 }
 
 RadianceRGB Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
-                               const IndexOfRefractionStack & iorStack) const
+                               const MediumStack & mediumStack) const
 {
     RayIntersection intersection;
     RadianceRGB L;
     
-    bool hit = traceRay(scene, rng, ray, minDistance, depth, iorStack, intersection, L);
+    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, intersection, L);
 
     return L;
 }
 
 inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
-                                   const IndexOfRefractionStack & iorStack,
+                                   const MediumStack & mediumStack,
                                    const Direction3 & Wi, RayIntersection & intersection, const Material & material) const
 {
     // Notational convenience
@@ -86,23 +90,23 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float m
     const bool hasDiffuse = material.hasDiffuse();
     const bool hasSpecular = material.hasSpecular();
     const bool isRefractive = material.isRefractive;
-    const float nMaterial = material.indexOfRefraction;
+    const Medium & medium = material.innerMedium;
 
     RadianceRGB Ld, Ls, Lr;
 
     if(isRefractive) {
         // Refraction
-        Lr = shadeRefractiveInterface(scene, rng, minDistance, depth, iorStack, nMaterial, Wi, P, N);
+        Lr = shadeRefractiveInterface(scene, rng, minDistance, depth, mediumStack, medium, Wi, P, N);
     }
     else {
         // Trace diffuse bounce
         if(hasDiffuse) {
-            Ld = shadeDiffuse(scene, rng, minDistance, depth, iorStack, Wi, P, N);
+            Ld = shadeDiffuse(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
         }
 
         // Trace specular bounce
         if(hasSpecular) {
-            Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
+            Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
         }
     }
 
@@ -128,29 +132,29 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float m
 
 inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
                                           const float minDistance, const unsigned int depth,
-                                          const IndexOfRefractionStack & iorStack,
+                                          const MediumStack & mediumStack,
                                           const Direction3 & Wi,
                                           const Position3 & P, const Direction3 & N) const
 {
     return traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
-                    epsilon, depth + 1, iorStack);
+                    epsilon, depth + 1, mediumStack);
 }
 
 
 inline RadianceRGB Renderer::shadeRefract(const Scene & scene, RNG & rng,
                                           const float minDistance, const unsigned int depth,
-                                          const IndexOfRefractionStack & iorStack,
+                                          const MediumStack & mediumStack,
                                           const Direction3 & Dt,
                                           const Position3 & P, const Direction3 & N) const
 {
     return traceRay(scene, rng, Ray(P - N * epsilon, Dt),
-                    epsilon, depth + 1, iorStack);
+                    epsilon, depth + 1, mediumStack);
 }
 
 inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG & rng,
                                                       const float minDistance, const unsigned int depth,
-                                                      const IndexOfRefractionStack & iorStack,
-                                                      const float nMaterial,
+                                                      const MediumStack & mediumStack,
+                                                      const Medium & medium,
                                                       const Direction3 & Wi,
                                                       const Position3 & P, const Direction3 & N) const
 {
@@ -158,19 +162,19 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
 
     float n1, n2;
 
-    bool leaving = iorStack.size() % 2 == 0;
+    bool leaving = mediumStack.size() % 2 == 0;
 
-    // Update IOR stack for refracted ray
-    IndexOfRefractionStack nextIorStack = iorStack;
+    // Update medium stack for refracted ray
+    MediumStack nextMediumStack = mediumStack;
     if(leaving) {
-        n1 = nMaterial;
-        nextIorStack.pop_back();
-        n2 = nextIorStack.back();
+        n1 = medium.indexOfRefraction;
+        nextMediumStack.pop_back();
+        n2 = nextMediumStack.back().indexOfRefraction;
     }
     else {
-        n1 = nextIorStack.back();
-        n2 = nMaterial;
-        nextIorStack.push_back(nMaterial);
+        n1 = nextMediumStack.back().indexOfRefraction;
+        n2 = medium.indexOfRefraction;
+        nextMediumStack.push_back(medium);
     }
 
     Direction3 d = refract(Wi, N, n1, n2);
@@ -179,7 +183,7 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
 
     if(totalInternalReflection) {
         // Reflected ray
-        Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
+        Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
     }
     else {
         float F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
@@ -188,15 +192,15 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
             // Randomly choose a reflected or refracted ray using Fresnel as the
             // weighting factor
             if(F == 1.0f || rng.uniform01() < F) {
-                Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
+                Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
             }
             else {
-                Lt = shadeRefract(scene, rng, minDistance, depth, nextIorStack, d, P, N);
+                Lt = shadeRefract(scene, rng, minDistance, depth, nextMediumStack, d, P, N);
             }
         }
         else {
-            Ls = shadeReflect(scene, rng, minDistance, depth, iorStack, Wi, P, N);
-            Lt = shadeRefract(scene, rng, minDistance, depth, nextIorStack, d, P, N);
+            Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+            Lt = shadeRefract(scene, rng, minDistance, depth, nextMediumStack, d, P, N);
             // Apply Fresnel
             Ls = F * Ls;
             Lt = (1.0f - F) * Lt;
@@ -208,7 +212,7 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
 
 inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
                                           const float minDistance, const unsigned int depth,
-                                          const IndexOfRefractionStack & iorStack,
+                                          const MediumStack & mediumStack,
                                           const Direction3 & Wi,
                                           const Position3 & P, const Direction3 & N) const
 {
@@ -217,7 +221,7 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
     // Sample according to cosine lobe about the normal
     Direction3 diffuseDir(rng.cosineAboutDirection(N));
     L += traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
-                  epsilon, depth + 1, iorStack);
+                  epsilon, depth + 1, mediumStack);
 
     // Sample point lights
     for(const auto & light: scene.pointLights) {

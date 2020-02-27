@@ -43,6 +43,12 @@ inline radiometry::RadianceRGB operator*(const ParameterRGB & param,
 inline radiometry::RadianceRGB operator*(const radiometry::RadianceRGB & rad,
                                          const ParameterRGB & param);
 
+struct Medium {
+    float indexOfRefraction = 1.0f;
+    ParameterRGB beersLawAttenuation = { 0.0f, 0.0f, 0.0f };
+};
+
+const Medium VaccuumMedium = { 1.0f, { 0.0f, 0.0f, 0.0f } };
 
 using MaterialID = uint32_t;
 
@@ -59,8 +65,7 @@ struct Material
     TextureID alphaTexture    = NoTexture;
 
     // Refractive layer
-    ParameterRGB beersLawExponent = { 0.0f, 0.0f, 0.0f };
-    float indexOfRefraction = 1.0f;
+    Medium innerMedium;
     bool isRefractive = false;
 
     inline ReflectanceRGB diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const;

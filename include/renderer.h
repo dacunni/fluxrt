@@ -12,50 +12,44 @@ struct Scene;
 class Renderer
 {
     using RadianceRGB = radiometry::RadianceRGB;
-
-    struct Medium {
-        float indexOfRefraction = 1.0f;
-        float beersLawAttenuation = 0.0f;
-    };
-
-    using IndexOfRefractionStack = std::vector<float>;
+    using MediumStack = std::vector<Medium>;
 
     public:
         bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
-                      const IndexOfRefractionStack & iorStack,
+                      const MediumStack & mediumStack,
                       RayIntersection & intersection, RadianceRGB & Lo) const;
 
         RadianceRGB traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
-                      const IndexOfRefractionStack & iorStack) const;
+                      const MediumStack & mediumStack) const;
 
     protected:
 
         inline RadianceRGB shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
-                                 const IndexOfRefractionStack & iorStack,
+                                 const MediumStack & mediumStack,
                                  const Direction3 & Wi, RayIntersection & intersection, const Material & material) const;
 
         inline RadianceRGB shadeReflect(const Scene & scene, RNG & rng,
                                         const float minDistance, const unsigned int depth,
-                                        const IndexOfRefractionStack & iorStack,
+                                        const MediumStack & mediumStack,
                                         const Direction3 & Wi,
                                         const Position3 & P, const Direction3 & N) const;
 
         inline RadianceRGB shadeRefract(const Scene & scene, RNG & rng,
                                         const float minDistance, const unsigned int depth,
-                                        const IndexOfRefractionStack & iorStack,
+                                        const MediumStack & mediumStack,
                                         const Direction3 & Dt,
                                         const Position3 & P, const Direction3 & N) const;
 
         inline RadianceRGB shadeRefractiveInterface(const Scene & scene, RNG & rng,
                                                     const float minDistance, const unsigned int depth,
-                                                    const IndexOfRefractionStack & iorStack,
-                                                    const float nMaterial,
+                                                    const MediumStack & mediumStack,
+                                                    const Medium & medium,
                                                     const Direction3 & Wi,
                                                     const Position3 & P, const Direction3 & N) const;
 
         inline RadianceRGB shadeDiffuse(const Scene & scene, RNG & rng,
                                         const float minDistance, const unsigned int depth,
-                                        const IndexOfRefractionStack & iorStack,
+                                        const MediumStack & mediumStack,
                                         const Direction3 & Wi,
                                         const Position3 & P, const Direction3 & N) const;
 

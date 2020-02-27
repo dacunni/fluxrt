@@ -41,7 +41,7 @@ Material Material::makeMirror()
 Material Material::makeRefractive(float ior)
 {
     Material m;
-    m.indexOfRefraction = ior;
+    m.innerMedium.indexOfRefraction = ior;
     m.isRefractive = true;
     return m;
 }

@@ -125,7 +125,7 @@ int main(int argc, char ** argv)
 
             RayIntersection intersection;
             radiometry::RadianceRGB pixelRadiance;
-            bool hit = renderer.traceRay(scene, rng[threadIndex], ray, minDistance, 1, {1.0f}, intersection, pixelRadiance);
+            bool hit = renderer.traceRay(scene, rng[threadIndex], ray, minDistance, 1, { VaccuumMedium }, intersection, pixelRadiance);
             artifacts.accumPixelRadiance(x, y, pixelRadiance);
             if(hit) {
                 artifacts.setIntersection(x, y, minDistance, scene, intersection);

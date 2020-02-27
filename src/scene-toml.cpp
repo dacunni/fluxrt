@@ -27,6 +27,11 @@ static ReflectanceRGB vectorToReflectanceRGB(const std::vector<double> & v)
     return ReflectanceRGB(v[0], v[1], v[2]);
 }
 
+static ParameterRGB vectorToParameterRGB(const std::vector<double> & v)
+{
+    return ParameterRGB(v[0], v[1], v[2]);
+}
+
 template<typename OBJ>
 void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & obj, Scene & scene)
 {
@@ -56,6 +61,8 @@ void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & 
         else if(*type == "refractive") {
             auto indexOfRefraction = materialTable->get_as<double>("ior").value_or(1.333);
             Material material = Material::makeRefractive(indexOfRefraction);
+            auto beersLawAtt = vectorToParameterRGB(materialTable->get_array_of<double>("beer").value_or(std::vector<double>{0.0, 0.0, 0.0}));
+            material.innerMedium.beersLawAttenuation = beersLawAtt;
             obj.material = scene.materials.size();
             scene.materials.push_back(material);
         }
