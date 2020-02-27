@@ -39,6 +39,22 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
 
     Lo = shade(scene, rng, minDistance, depth, iorStack, Wi, intersection, material);
 
+// TEMP >>>
+#if 1
+    if(iorStack.size() > 1) {
+        ParameterRGB att = { 2.0f, 1.0f, 2.0f };
+        
+        ParameterRGB beer {
+            optics::beersLawAttenuation(att.r, intersection.distance),
+            optics::beersLawAttenuation(att.g, intersection.distance),
+            optics::beersLawAttenuation(att.b, intersection.distance)
+        };
+
+        Lo = Lo * beer;
+    }
+#endif
+// TEMP <<<
+
     return true;
 }
 
@@ -48,7 +64,7 @@ RadianceRGB Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, 
     RayIntersection intersection;
     RadianceRGB L;
     
-    traceRay(scene, rng, ray, minDistance, depth, iorStack, intersection, L);
+    bool hit = traceRay(scene, rng, ray, minDistance, depth, iorStack, intersection, L);
 
     return L;
 }

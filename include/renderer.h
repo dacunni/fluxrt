@@ -12,6 +12,12 @@ struct Scene;
 class Renderer
 {
     using RadianceRGB = radiometry::RadianceRGB;
+
+    struct Medium {
+        float indexOfRefraction = 1.0f;
+        float beersLawAttenuation = 0.0f;
+    };
+
     using IndexOfRefractionStack = std::vector<float>;
 
     public:

@@ -28,6 +28,22 @@ struct ReflectanceRGB
 inline radiometry::RadianceRGB operator*(const ReflectanceRGB & ref,
                                          const radiometry::RadianceRGB & rad);
 
+struct ParameterRGB
+{
+    ParameterRGB(float r, float g, float b) : r(r), g(g), b(b) {}
+    ParameterRGB(float rgb[3]) : r(rgb[0]), g(rgb[1]), b(rgb[2]) {}
+
+    float r = 0.0f;
+    float g = 0.0f;
+    float b = 0.0f;
+};
+
+inline radiometry::RadianceRGB operator*(const ParameterRGB & param,
+                                         const radiometry::RadianceRGB & rad);
+inline radiometry::RadianceRGB operator*(const radiometry::RadianceRGB & rad,
+                                         const ParameterRGB & param);
+
+
 using MaterialID = uint32_t;
 
 static const MaterialID NoMaterial = std::numeric_limits<MaterialID>::max();
@@ -43,6 +59,7 @@ struct Material
     TextureID alphaTexture    = NoTexture;
 
     // Refractive layer
+    ParameterRGB beersLawExponent = { 0.0f, 0.0f, 0.0f };
     float indexOfRefraction = 1.0f;
     bool isRefractive = false;
 
@@ -74,6 +91,15 @@ inline radiometry::RadianceRGB operator*(const ReflectanceRGB & ref,
     return { ref.r * rad.r, ref.g * rad.g, ref.b * rad.b };
 }
 
+inline radiometry::RadianceRGB operator*(const ParameterRGB & param,
+                                         const radiometry::RadianceRGB & rad) {
+    return { param.r * rad.r, param.g * rad.g, param.b * rad.b };
+}
+
+inline radiometry::RadianceRGB operator*(const radiometry::RadianceRGB & rad,
+                                         const ParameterRGB & param) {
+    return operator*(param, rad);
+}
 
 inline ReflectanceRGB Material::diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {
