@@ -39,25 +39,14 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
 
     Lo = shade(scene, rng, minDistance, depth, mediumStack, Wi, intersection, material);
 
-// TEMP >>>
-#if 1
-    if(mediumStack.size() > 1) {
-#if 1
-        ParameterRGB att = mediumStack.back().beersLawAttenuation;
-#else
-        ParameterRGB att = { 2.0f, 1.0f, 2.0f };
-#endif
-        
-        ParameterRGB beer {
-            optics::beersLawAttenuation(att.r, intersection.distance),
-            optics::beersLawAttenuation(att.g, intersection.distance),
-            optics::beersLawAttenuation(att.b, intersection.distance)
-        };
-
-        Lo = Lo * beer;
-    }
-#endif
-// TEMP <<<
+    // Apply Beer's Law attenuation
+    ParameterRGB att = mediumStack.back().beersLawAttenuation;
+    ParameterRGB beer {
+        optics::beersLawAttenuation(att.r, intersection.distance),
+        optics::beersLawAttenuation(att.g, intersection.distance),
+        optics::beersLawAttenuation(att.b, intersection.distance)
+    };
+    Lo = Lo * beer;
 
     return true;
 }
