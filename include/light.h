@@ -7,11 +7,11 @@
 struct PointLight
 {
 	inline PointLight() = default;
-	inline PointLight(const Position3 & p, const radiometry::RadianceRGB & i) : position(p), intensity(i) {}
+	inline PointLight(const Position3 & p, const RadianceRGB & i) : position(p), intensity(i) {}
 	inline ~PointLight() = default;
 
 	Position3 position = Position3{ 0.0f, 0.0f, 0.0f };
-    radiometry::RadianceRGB intensity = { 1.0f, 1.0f, 1.0f };
+    RadianceRGB intensity = { 1.0f, 1.0f, 1.0f };
 };
 
 #endif

@@ -1,8 +1,6 @@
 #ifndef _RADIOMETRY_H_
 #define _RADIOMETRY_H_
 
-namespace radiometry {
-
 // Radiometric units
 
 // Radiant Flux (Phi) or Power (units: Joules/sec, J/s)
@@ -60,7 +58,5 @@ inline RadianceRGB operator/=(RadianceRGB & r, float s)
 
 // Utility functions
 Irradiance irradianceAtDistanceFromPointLight(Power power, float radius);
-
-}; // radiometry
 
 #endif

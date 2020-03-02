@@ -5,8 +5,6 @@
 #include "vectortypes.h"
 #include "interpolation.h"
 
-using namespace radiometry;
-
 RadianceRGB EnvironmentMap::sampleRay(const Ray & ray)
 {
     return RadianceRGB();
@@ -19,8 +17,8 @@ GradientEnvironmentMap::GradientEnvironmentMap(const RadianceRGB & low,
 
 }
 
-GradientEnvironmentMap::GradientEnvironmentMap(const radiometry::RadianceRGB & low,
-                                               const radiometry::RadianceRGB & high,
+GradientEnvironmentMap::GradientEnvironmentMap(const RadianceRGB & low,
+                                               const RadianceRGB & high,
                                                const Direction3 & direction)
     : low(low), high(high), direction(direction.normalized())
 {
@@ -168,7 +166,7 @@ void LatLonEnvironmentMap::loadFromFile(const std::string & filename)
     texture->outOfBoundsBehavior = Texture::Repeat;
 }
 
-radiometry::RadianceRGB LatLonEnvironmentMap::sampleRay(const Ray & ray)
+RadianceRGB LatLonEnvironmentMap::sampleRay(const Ray & ray)
 {
     auto & D = ray.direction;
 
@@ -179,9 +177,9 @@ radiometry::RadianceRGB LatLonEnvironmentMap::sampleRay(const Ray & ray)
     texcoord.u = 0.5f * (1.0f + std::atan2(D.x, -D.z) / PI);
     texcoord.v = std::acos(D.y) / PI;
 
-    auto radiance = radiometry::RadianceRGB{ scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 0),
-             scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 1),
-             scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 2) };
+    auto radiance = RadianceRGB{ scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 0),
+                                 scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 1),
+                                 scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 2) };
 
     return radiance;
 }

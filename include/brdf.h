@@ -7,14 +7,14 @@ struct Direction3;
 
 namespace brdf {
 
-radiometry::InverseSteradians lambertian(const Direction3 & wi,
-                                         const Direction3 & wo,
-                                         const Direction3 & N);
+InverseSteradians lambertian(const Direction3 & wi,
+                             const Direction3 & wo,
+                             const Direction3 & N);
 
-radiometry::InverseSteradians phong(const Direction3 & wi,
-                                    const Direction3 & wo,
-                                    const Direction3 & N,
-                                    const float a); // exponent
+InverseSteradians phong(const Direction3 & wi,
+                        const Direction3 & wo,
+                        const Direction3 & N,
+                        const float a); // exponent
 
 }; // brdf
 

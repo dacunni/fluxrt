@@ -15,7 +15,7 @@ class Artifacts
         void writeAll();
         void writePixelColor();
 
-        inline void accumPixelRadiance(int x, int y, const radiometry::RadianceRGB & rad)
+        inline void accumPixelRadiance(int x, int y, const RadianceRGB & rad)
         {
             color::ColorRGB color = { rad.r, rad.g, rad.b };
             accumPixelColor(x, y, color);

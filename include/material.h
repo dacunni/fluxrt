@@ -25,8 +25,8 @@ struct ReflectanceRGB
     static const ReflectanceRGB BLUE() { return { 0.0f, 0.0f, 1.0f }; }
 };
 
-inline radiometry::RadianceRGB operator*(const ReflectanceRGB & ref,
-                                         const radiometry::RadianceRGB & rad);
+inline RadianceRGB operator*(const ReflectanceRGB & ref,
+                             const RadianceRGB & rad);
 
 struct ParameterRGB
 {
@@ -38,10 +38,10 @@ struct ParameterRGB
     float b = 0.0f;
 };
 
-inline radiometry::RadianceRGB operator*(const ParameterRGB & param,
-                                         const radiometry::RadianceRGB & rad);
-inline radiometry::RadianceRGB operator*(const radiometry::RadianceRGB & rad,
-                                         const ParameterRGB & param);
+inline RadianceRGB operator*(const ParameterRGB & param,
+                             const RadianceRGB & rad);
+inline RadianceRGB operator*(const RadianceRGB & rad,
+                             const ParameterRGB & param);
 
 struct Medium {
     float indexOfRefraction = 1.0f;
@@ -91,18 +91,18 @@ inline const Material & materialFromID(MaterialID id, MaterialArray & materials)
 
 // Inline implementations
 
-inline radiometry::RadianceRGB operator*(const ReflectanceRGB & ref,
-                                         const radiometry::RadianceRGB & rad) {
+inline RadianceRGB operator*(const ReflectanceRGB & ref,
+                             const RadianceRGB & rad) {
     return { ref.r * rad.r, ref.g * rad.g, ref.b * rad.b };
 }
 
-inline radiometry::RadianceRGB operator*(const ParameterRGB & param,
-                                         const radiometry::RadianceRGB & rad) {
+inline RadianceRGB operator*(const ParameterRGB & param,
+                             const RadianceRGB & rad) {
     return { param.r * rad.r, param.g * rad.g, param.b * rad.b };
 }
 
-inline radiometry::RadianceRGB operator*(const radiometry::RadianceRGB & rad,
-                                         const ParameterRGB & param) {
+inline RadianceRGB operator*(const RadianceRGB & rad,
+                             const ParameterRGB & param) {
     return operator*(param, rad);
 }
 

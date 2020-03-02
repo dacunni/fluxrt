@@ -13,23 +13,23 @@ class EnvironmentMap
         EnvironmentMap() = default;
         virtual ~EnvironmentMap() = default;
 
-        virtual radiometry::RadianceRGB sampleRay(const Ray & ray);
+        virtual RadianceRGB sampleRay(const Ray & ray);
 };
 
 class GradientEnvironmentMap : public EnvironmentMap
 {
     public:
-        GradientEnvironmentMap(const radiometry::RadianceRGB & low,
-                               const radiometry::RadianceRGB & high);
-        GradientEnvironmentMap(const radiometry::RadianceRGB & low,
-                               const radiometry::RadianceRGB & high,
+        GradientEnvironmentMap(const RadianceRGB & low,
+                               const RadianceRGB & high);
+        GradientEnvironmentMap(const RadianceRGB & low,
+                               const RadianceRGB & high,
                                const Direction3 & direction);
 
-        virtual radiometry::RadianceRGB sampleRay(const Ray & ray);
+        virtual RadianceRGB sampleRay(const Ray & ray);
 
     protected:
-        radiometry::RadianceRGB low;
-        radiometry::RadianceRGB high;
+        RadianceRGB low;
+        RadianceRGB high;
         Direction3 direction{ 0.0f, 1.0f, 0.0f };
 };
 
@@ -40,14 +40,14 @@ class CubeMapEnvironmentMap : public EnvironmentMap
         virtual ~CubeMapEnvironmentMap() = default;
 
         void loadFromDirectionFiles(
-            const std::string & negx,
-            const std::string & posx,
-            const std::string & negy,
-            const std::string & posy,
-            const std::string & negz,
-            const std::string & posz);
+                                    const std::string & negx,
+                                    const std::string & posx,
+                                    const std::string & negy,
+                                    const std::string & posy,
+                                    const std::string & negz,
+                                    const std::string & posz);
 
-        virtual radiometry::RadianceRGB sampleRay(const Ray & ray);
+        virtual RadianceRGB sampleRay(const Ray & ray);
 
         void setScaleFactor(float f) { scaleFactor = f; }
 
@@ -78,7 +78,7 @@ class LatLonEnvironmentMap : public EnvironmentMap
 
         void loadFromFile(const std::string & filename);
 
-        virtual radiometry::RadianceRGB sampleRay(const Ray & ray);
+        virtual RadianceRGB sampleRay(const Ray & ray);
 
         void setScaleFactor(float f) { scaleFactor = f; }
 

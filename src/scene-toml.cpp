@@ -17,9 +17,9 @@ static color::ColorRGB vectorToColorRGB(const std::vector<double> & v)
     return color::ColorRGB(v[0], v[1], v[2]);
 }
 
-static radiometry::RadianceRGB vectorToRadianceRGB(const std::vector<double> & v)
+static RadianceRGB vectorToRadianceRGB(const std::vector<double> & v)
 {
-    return radiometry::RadianceRGB(v[0], v[1], v[2]);
+    return RadianceRGB(v[0], v[1], v[2]);
 }
 
 static ReflectanceRGB vectorToReflectanceRGB(const std::vector<double> & v)

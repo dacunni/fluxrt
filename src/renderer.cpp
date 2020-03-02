@@ -4,8 +4,6 @@
 #include "rng.h"
 #include "scene.h"
 
-using RadianceRGB = radiometry::RadianceRGB;
-
 void printDepthPrefix(unsigned int num)
 {
     for(unsigned int i = 0; i < num; ++i) {

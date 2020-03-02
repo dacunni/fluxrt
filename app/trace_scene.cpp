@@ -124,7 +124,7 @@ int main(int argc, char ** argv)
             auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel, randomBlurCoord);
 
             RayIntersection intersection;
-            radiometry::RadianceRGB pixelRadiance;
+            RadianceRGB pixelRadiance;
             bool hit = renderer.traceRay(scene, rng[threadIndex], ray, minDistance, 1, { VaccuumMedium }, intersection, pixelRadiance);
             artifacts.accumPixelRadiance(x, y, pixelRadiance);
             if(hit) {

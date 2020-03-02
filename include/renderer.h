@@ -11,7 +11,7 @@ struct Scene;
 
 class Renderer
 {
-    using RadianceRGB = radiometry::RadianceRGB;
+    using RadianceRGB = RadianceRGB;
     using MediumStack = std::vector<Medium>;
 
     public:

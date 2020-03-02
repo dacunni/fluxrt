@@ -12,7 +12,14 @@ pixelheight = 1000
 
 [[meshes]]
 file = "casual-effects.com/living_room/living_room.obj"
+# DAC removed black window blockers to let envmap through
+#file = "casual-effects.com/living_room/living_room_no_window_blockers.obj"
 scaletocube = 10.0
+
+[envmap]
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 10.0, 10.0, 10.0 ]
 
 [[pointlights]]
 position = [ 0.0, 0.0, 0.0 ]
