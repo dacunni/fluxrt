@@ -143,11 +143,14 @@ int main(int argc, char ** argv)
     printf("Max depth = %u\n", renderer.maxDepth);
     printf("Tracing scene\n");
     auto traceTimer = WallClockTimer::makeRunningTimer();
+    uint32_t tileSize = 8;
     if(options.numThreads == 1) {
-        scene.sensor.forEachPixel(tracePixel);
+        //scene.sensor.forEachPixel(tracePixel);
+        scene.sensor.forEachPixelTiled(tracePixel, tileSize);
     }
     else {
-        scene.sensor.forEachPixelThreaded(tracePixel, options.numThreads);
+        //scene.sensor.forEachPixelThreaded(tracePixel, options.numThreads);
+        scene.sensor.forEachPixelTiledThreaded(tracePixel, tileSize, options.numThreads);
     }
     double traceTime = traceTimer.elapsed();
     printf("Scene traced in %f sec\n", traceTime);

@@ -23,6 +23,7 @@ include_directories(external/stb)
 include_directories(external/tinyobjloader)
 include_directories(external/stlloader)
 include_directories(external/cpptoml/include)
+include_directories(external/generator)
 
 set(SRCS
     src/artifacts.cpp
