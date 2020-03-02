@@ -11,7 +11,6 @@ struct Scene;
 
 class Renderer
 {
-    using RadianceRGB = RadianceRGB;
     using MediumStack = std::vector<Medium>;
 
     public:
