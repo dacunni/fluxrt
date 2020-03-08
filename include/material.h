@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
-#include <map>
 
 #include "texture.h"
 #include "radiometry.h"

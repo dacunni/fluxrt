@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <iostream>
-#include <vector>
 #include <chrono>
 #include <atomic>
 #include <signal.h>
@@ -99,11 +98,11 @@ int main(int argc, char ** argv)
     Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
     const float minDistance = 0.0f;
 
-    std::vector<RNG> rng(options.numThreads);
+    RNG rng[options.numThreads];
 
     // Jitter offsets (applied the same to all corresponding pixel samples)
-    std::vector<vec2> jitter(options.samplesPerPixel);
-    std::generate(begin(jitter), end(jitter), [&]() { return rng[0].uniformRectangle(-0.5f, 0.5f, -0.5f, 0.5f); });
+    vec2 jitter[options.samplesPerPixel];
+    std::generate(jitter, jitter + options.samplesPerPixel, [&]() { return rng[0].uniformRectangle(-0.5f, 0.5f, -0.5f, 0.5f); });
 
     Renderer renderer;
     renderer.maxDepth = options.maxDepth;

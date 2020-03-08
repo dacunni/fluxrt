@@ -39,8 +39,7 @@ class CubeMapEnvironmentMap : public EnvironmentMap
         CubeMapEnvironmentMap() = default;
         virtual ~CubeMapEnvironmentMap() = default;
 
-        void loadFromDirectionFiles(
-                                    const std::string & negx,
+        void loadFromDirectionFiles(const std::string & negx,
                                     const std::string & posx,
                                     const std::string & negy,
                                     const std::string & posy,
