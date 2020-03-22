@@ -32,6 +32,39 @@ static ParameterRGB vectorToParameterRGB(const std::vector<double> & v)
     return ParameterRGB(v[0], v[1], v[2]);
 }
 
+void loadMaterialDiffuseComponent(const std::shared_ptr<cpptoml::table> & table, Scene & scene, Material & material)
+{
+    // Try to load as either a single color or a texture
+    auto rgb = table->get_array_of<double>("diffuse");
+    auto tex = table->get_as<std::string>("diffuse");
+
+    if(rgb) {
+        material.diffuseColor = vectorToReflectanceRGB(*rgb);
+    }
+    else if(tex) {
+        material.diffuseTexture = scene.textureCache.loadTextureFromFile("", *tex);
+    }
+    else {
+        material.diffuseColor = {0.0f, 0.0f, 0.0};
+    }
+}
+
+void loadMaterialSpecularComponent(const std::shared_ptr<cpptoml::table> & table, Scene & scene, Material & material)
+{
+    auto rgb = table->get_array_of<double>("specular");
+    auto tex = table->get_as<std::string>("specular");
+
+    if(rgb) {
+        material.specularColor = vectorToReflectanceRGB(*rgb);
+    }
+    else if(tex) {
+        material.specularTexture = scene.textureCache.loadTextureFromFile("", *tex);
+    }
+    else {
+        material.specularColor = {0.0f, 0.0f, 0.0};
+    }
+}
+
 template<typename OBJ>
 void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & obj, Scene & scene)
 {
@@ -41,15 +74,15 @@ void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & 
         if(!type) { throw std::runtime_error("Material must supply a type"); }
 
         if(*type == "diffuse") {
-            auto diffuseRGB = vectorToReflectanceRGB(materialTable->get_array_of<double>("diffuse").value_or(std::vector<double>{0.0, 0.0, 0.0}));
-            Material material = Material::makeDiffuse(diffuseRGB);
+            Material material;
+            loadMaterialDiffuseComponent(materialTable, scene, material);
             obj.material = scene.materials.size();
             scene.materials.push_back(material);
         }
         else if(*type == "diffusespecular") {
-            auto diffuseRGB = vectorToReflectanceRGB(materialTable->get_array_of<double>("diffuse").value_or(std::vector<double>{0.0, 0.0, 0.0}));
-            auto specularRGB = vectorToReflectanceRGB(materialTable->get_array_of<double>("specular").value_or(std::vector<double>{0.0, 0.0, 0.0}));
-            Material material = Material::makeDiffuseSpecular(diffuseRGB, specularRGB);
+            Material material;
+            loadMaterialDiffuseComponent(materialTable, scene, material);
+            loadMaterialSpecularComponent(materialTable, scene, material);
             obj.material = scene.materials.size();
             scene.materials.push_back(material);
         }
