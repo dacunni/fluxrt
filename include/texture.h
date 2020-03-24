@@ -13,6 +13,8 @@ struct TextureCoordinate
     float u, v;
 };
 
+std::ostream & operator<<(std::ostream & os, const TextureCoordinate & texcoord);
+
 using TextureID = uint32_t;
 
 static const TextureID NoTexture = std::numeric_limits<TextureID>::max();

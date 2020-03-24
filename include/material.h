@@ -5,6 +5,7 @@
 #include <limits>
 #include <memory>
 
+#include "vectortypes.h"
 #include "texture.h"
 #include "radiometry.h"
 
@@ -62,6 +63,7 @@ struct Material
     TextureID diffuseTexture  = NoTexture;
     TextureID specularTexture = NoTexture;
     TextureID alphaTexture    = NoTexture;
+    TextureID normalMapTexture = NoTexture;
 
     // Refractive layer
     Medium innerMedium;
@@ -72,6 +74,8 @@ struct Material
     inline bool hasDiffuse() const;
     inline bool hasSpecular() const;
     inline float alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const;
+    inline bool hasNormalMap() const;
+    inline Direction3 normalMap(const TextureArray & tex, const TextureCoordinate & texcoord) const;
 
     // Factories
     static Material makeDiffuse(float D[3]);
@@ -162,6 +166,26 @@ float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoo
     }
     else {
         return 1.0f;
+    }
+}
+
+bool Material::hasNormalMap() const
+{
+    return normalMapTexture != NoTexture;
+}
+
+Direction3 Material::normalMap(const TextureArray & tex, const TextureCoordinate & texcoord) const
+{
+    if(normalMapTexture != NoTexture) {
+        auto & texture = tex[normalMapTexture];
+        float u = texcoord.u;
+        float v = texcoord.v;
+        return Direction3{ texture->lerpUV(u, v, 0),
+                           texture->lerpUV(u, v, 1),
+                           texture->lerpUV(u, v, 2) };
+    }
+    else {
+        return Direction3{ 0.0f, 0.0f, 1.0f };
     }
 }
 

@@ -73,35 +73,41 @@ void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & 
         auto type = materialTable->get_as<std::string>("type");
         if(!type) { throw std::runtime_error("Material must supply a type"); }
 
+        Material material;
+
         if(*type == "diffuse") {
-            Material material;
             loadMaterialDiffuseComponent(materialTable, scene, material);
-            obj.material = scene.materials.size();
-            scene.materials.push_back(material);
         }
         else if(*type == "diffusespecular") {
-            Material material;
             loadMaterialDiffuseComponent(materialTable, scene, material);
             loadMaterialSpecularComponent(materialTable, scene, material);
-            obj.material = scene.materials.size();
-            scene.materials.push_back(material);
         }
         else if(*type == "mirror") {
-            Material material = Material::makeMirror();
-            obj.material = scene.materials.size();
-            scene.materials.push_back(material);
+            material = Material::makeMirror();
         }
         else if(*type == "refractive") {
             auto indexOfRefraction = materialTable->get_as<double>("ior").value_or(1.333);
-            Material material = Material::makeRefractive(indexOfRefraction);
+            material = Material::makeRefractive(indexOfRefraction);
             auto beersLawAtt = vectorToParameterRGB(materialTable->get_array_of<double>("beer").value_or(std::vector<double>{0.0, 0.0, 0.0}));
             material.innerMedium.beersLawAttenuation = beersLawAtt;
-            obj.material = scene.materials.size();
-            scene.materials.push_back(material);
         }
         else {
             throw std::runtime_error(std::string("Unknown material type : ") + *type);
         }
+
+        auto normalMapTex = materialTable->get_as<std::string>("normalmap");
+        if(normalMapTex) {
+            material.normalMapTexture = scene.textureCache.loadTextureFromFile("", *normalMapTex);
+            auto & texture = scene.textureCache.textures[material.normalMapTexture];
+            // Convert normal map color to normal [0, 1] -> [-1, 1]
+            texture->forEachPixelChannel(
+                [](Texture & image, size_t x, size_t y, int c) {
+                    image.set(x, y, c, image.get(x, y, c) * 2.0f - 1.0f);
+                });
+        }
+
+        obj.material = scene.materials.size();
+        scene.materials.push_back(material);
     }
 }
 

@@ -39,5 +39,6 @@ struct RayIntersection
 };
 
 std::ostream & operator<<(std::ostream & os, const Ray & r);
+std::ostream & operator<<(std::ostream & os, const RayIntersection & ri);
 
 #endif

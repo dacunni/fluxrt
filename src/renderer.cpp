@@ -29,6 +29,23 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
     const Material & material = materialFromID(intersection.material, scene.materials);
     auto A = material.alpha(scene.textureCache.textures, intersection.texcoord);
 
+    if(material.hasNormalMap()) {
+        auto normalMap = material.normalMap(scene.textureCache.textures, intersection.texcoord);
+
+        auto normal = (intersection.normal * normalMap.z +
+                       intersection.tangent * normalMap.x +
+                       intersection.bitangent * normalMap.y).normalized();
+
+        auto tangent = cross(intersection.bitangent, normal).normalized();
+
+        auto bitangent = cross(normal, tangent).normalized();
+        
+
+        intersection.normal = normal;
+        intersection.tangent = tangent;
+        intersection.bitangent = bitangent;
+    }
+
     if(A < 1.0f) { // transparent
         // Trace a new ray just past the intersection
         float newMinDistance = intersection.distance + epsilon;
@@ -72,8 +89,8 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float m
         N.negate();
     }
 
-    const auto D = material.diffuse(scene.textureCache.textures, intersection.texcoord);
-    const auto S = material.specular(scene.textureCache.textures, intersection.texcoord);
+    const auto D  = material.diffuse(scene.textureCache.textures, intersection.texcoord);
+    const auto S  = material.specular(scene.textureCache.textures, intersection.texcoord);
     const bool hasDiffuse = material.hasDiffuse();
     const bool hasSpecular = material.hasSpecular();
     const bool isRefractive = material.isRefractive;

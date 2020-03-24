@@ -115,24 +115,49 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
         }
     }
 
-    // Interpolate texture coordinates, if available
+    // Interpolate texture coordinates, if available, and generate tangent/bitangent vectors
+
     auto tci0 = mesh.indices.texcoord[3 * tri + 0];
     auto tci1 = mesh.indices.texcoord[3 * tri + 1];
     auto tci2 = mesh.indices.texcoord[3 * tri + 2];
 
     if(tci0 != TriangleMesh::NoTexCoord && tci1 != TriangleMesh::NoTexCoord && tci2 != TriangleMesh::NoTexCoord) {
-        intersection.texcoord = interpolate(mesh.texcoords[tci0],
-                                            mesh.texcoords[tci1],
-                                            mesh.texcoords[tci2], bary);
+        TextureCoordinate tc0 = mesh.texcoords[tci0];
+        TextureCoordinate tc1 = mesh.texcoords[tci1];
+        TextureCoordinate tc2 = mesh.texcoords[tci2];
+
+        intersection.texcoord = interpolate(tc0, tc1, tc2, bary);
         intersection.hasTexCoord = true;
+
+        // Generate tangent / bitangent
+        //   Reference: https://www.cs.utexas.edu/~fussell/courses/cs384g-spring2016/lectures/normal_mapping_tangent.pdf
+        Position3 P0 = mesh.triangleVertex(tri, 0);
+        Position3 P1 = mesh.triangleVertex(tri, 1);
+        Position3 P2 = mesh.triangleVertex(tri, 2);
+
+        Direction3 V1 = P1 - P0;
+        Direction3 V2 = P2 - P0;
+
+        float du1 = tc1.u - tc0.u;
+        float dv1 = tc1.v - tc0.v;
+        float du2 = tc2.u - tc0.u;
+        float dv2 = tc2.v - tc0.v;
+
+        float sf = du1 * dv2 - du2 * dv1;
+
+        if(sf == 0.0f)
+            sf = 1.0f;
+
+        intersection.tangent   = ( dv2 * V1 - dv1 * V2) / sf;
+        intersection.bitangent = (-du2 * V1 + du1 * V2) / sf;
     }
     else {
         intersection.texcoord = { 0.0f, 0.0f };
         intersection.hasTexCoord = false;
-    }
 
-    // generate tangent / bitangent
-    coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
+        // Generate tangent / bitangent
+        coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
+    }
 }
 
 size_t TriangleMesh::numTriangles() const

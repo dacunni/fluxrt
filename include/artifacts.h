@@ -24,15 +24,15 @@ class Artifacts
         {
             // TODO: Put a flag around this
             if(std::isinf(color.r) || std::isinf(color.g) || std::isinf(color.b)) {
-                std::cerr << "WARNING: Pixel color has Inf value : " << color.string() << '\n';;
+                std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Inf value : " << color.string() << '\n';;
                 pixelColor.accum(x, y, ::color::ColorRGB::BLACK());
             }
             else if(std::isnan(color.r) || std::isnan(color.g) || std::isnan(color.b)) {
-                std::cerr << "WARNING: Pixel color has NaN value : " << color.string() << '\n';;
+                std::cerr << "WARNING: Pixel " << x << ", " << y << " color has NaN value : " << color.string() << '\n';;
                 pixelColor.accum(x, y, ::color::ColorRGB::BLACK());
             }
             else if(color.r < 0.0f || color.g < 0.0f || color.b < 0.0f) {
-                std::cerr << "WARNING: Pixel color has Negative value : " << color.string() << '\n';;
+                std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Negative value : " << color.string() << '\n';;
                 pixelColor.accum(x, y, ::color::ColorRGB::BLACK());
             }
             else {

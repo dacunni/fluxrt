@@ -1,4 +1,11 @@
+#include <iostream>
 #include "texture.h"
+
+std::ostream & operator<<(std::ostream & os, const TextureCoordinate & texcoord)
+{
+    os << "TexCoord u " << texcoord.u << " v " << texcoord.v;
+    return os;
+}
 
 TextureID TextureCache::loadTextureFromFile(const std::string & path,
                                             const std::string & filename)
