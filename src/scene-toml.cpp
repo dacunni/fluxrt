@@ -192,10 +192,13 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
             auto position = Position3(vectorToVec3(cameraTable->get_array_of<double>("position").value_or(std::vector<double>{0.0, 0.0, 0.0})));
             auto direction = Direction3(vectorToVec3(cameraTable->get_array_of<double>("direction").value_or(std::vector<double>{0.0, 0.0, -1.0})));
             direction.normalize();
+
             auto lookat = cameraTable->get_array_of<double>("lookat");
             if(lookat) {
-                // TODO
+                auto lookAtPos = Position3(vectorToVec3(*lookat));
+                direction = (lookAtPos - position).normalized();
             }
+
             auto up = Direction3(vectorToVec3(cameraTable->get_array_of<double>("up").value_or(std::vector<double>{0.0, 1.0, 0.0})));
             up.normalize();
 
