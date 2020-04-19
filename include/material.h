@@ -13,6 +13,8 @@ struct ReflectanceRGB
 {
     ReflectanceRGB(float r, float g, float b) : r(r), g(g), b(b) {}
     ReflectanceRGB(float rgb[3]) : r(rgb[0]), g(rgb[1]), b(rgb[2]) {}
+    explicit ReflectanceRGB(const color::ColorRGB & c)
+        : r(c.r), g(c.g), b(c.b) {}
 
     float r = 1.0f;
     float g = 1.0f;
@@ -113,11 +115,7 @@ inline ReflectanceRGB Material::diffuse(const TextureArray & tex, const TextureC
 {
     if(diffuseTexture != NoTexture) {
         auto & texture = tex[diffuseTexture];
-        float u = texcoord.u;
-        float v = texcoord.v;
-        return { texture->lerpUV(u, v, 0),
-                 texture->lerpUV(u, v, 1),
-                 texture->lerpUV(u, v, 2) };
+        return ReflectanceRGB(texture->lerpUV3(texcoord.u, texcoord.v));
     }
     else {
         return diffuseColor;
@@ -136,11 +134,7 @@ inline ReflectanceRGB Material::specular(const TextureArray & tex, const Texture
 {
     if(specularTexture != NoTexture) {
         auto & texture = tex[specularTexture];
-        float u = texcoord.u;
-        float v = texcoord.v;
-        return { texture->lerpUV(u, v, 0),
-                 texture->lerpUV(u, v, 1),
-                 texture->lerpUV(u, v, 2) };
+        return ReflectanceRGB(texture->lerpUV3(texcoord.u, texcoord.v));
     }
     else {
         return specularColor;
