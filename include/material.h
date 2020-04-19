@@ -8,36 +8,23 @@
 #include "vectortypes.h"
 #include "texture.h"
 #include "radiometry.h"
+#include "valuergb.h"
 
-struct ReflectanceRGB
+struct ReflectanceRGB : public ValueRGB<ReflectanceRGB, ValueRGBInitOne>
 {
-    ReflectanceRGB(float r, float g, float b) : r(r), g(g), b(b) {}
-    ReflectanceRGB(float rgb[3]) : r(rgb[0]), g(rgb[1]), b(rgb[2]) {}
-    explicit ReflectanceRGB(const color::ColorRGB & c)
-        : r(c.r), g(c.g), b(c.b) {}
-
-    float r = 1.0f;
-    float g = 1.0f;
-    float b = 1.0f;
-
-    ReflectanceRGB residual() const { return { 1.0f - r, 1.0f - g, 1.0f - b }; }
-
-    static const ReflectanceRGB RED() { return { 1.0f, 0.0f, 0.0f }; }
-    static const ReflectanceRGB GREEN() { return { 0.0f, 1.0f, 0.0f }; }
-    static const ReflectanceRGB BLUE() { return { 0.0f, 0.0f, 1.0f }; }
+    ReflectanceRGB(float r, float g, float b)          : ValueRGB(r, g, b) {}
+    ReflectanceRGB(float rgb[3])                       : ValueRGB(rgb) {}
+    explicit ReflectanceRGB(const color::ColorRGB & c) : ValueRGB(c) {}
 };
 
 inline RadianceRGB operator*(const ReflectanceRGB & ref,
                              const RadianceRGB & rad);
 
-struct ParameterRGB
+struct ParameterRGB : public ValueRGB<ParameterRGB, ValueRGBInitZero>
 {
-    ParameterRGB(float r, float g, float b) : r(r), g(g), b(b) {}
-    ParameterRGB(float rgb[3]) : r(rgb[0]), g(rgb[1]), b(rgb[2]) {}
-
-    float r = 0.0f;
-    float g = 0.0f;
-    float b = 0.0f;
+    ParameterRGB(float r, float g, float b)          : ValueRGB(r, g, b) {}
+    ParameterRGB(float rgb[3])                       : ValueRGB(rgb) {}
+    explicit ParameterRGB(const color::ColorRGB & c) : ValueRGB(c) {}
 };
 
 inline RadianceRGB operator*(const ParameterRGB & param,

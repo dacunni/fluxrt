@@ -1,6 +1,8 @@
 #ifndef _RADIOMETRY_H_
 #define _RADIOMETRY_H_
 
+#include "valuergb.h"
+
 // Radiometric units
 
 // Radiant Flux (Phi) or Power (units: Joules/sec, J/s)
@@ -28,17 +30,11 @@ using Radiance = float;
 using SpectralRadiance = float;
 
 // RGB Radiance Samples
-struct RadianceRGB
+struct RadianceRGB : public ValueRGB<RadianceRGB, ValueRGBInitZero>
 {
-    RadianceRGB(float r, float g, float b) : r(r), g(g), b(b) {}
-    RadianceRGB() = default;
-    ~RadianceRGB() = default;
-
-    static const RadianceRGB BLACK() { return { 0.0f, 0.0f, 0.0f }; }
-
-    Radiance r = 0.0f;
-    Radiance g = 0.0f;
-    Radiance b = 0.0f;
+    RadianceRGB()                          : ValueRGB()        {}
+    RadianceRGB(float r, float g, float b) : ValueRGB(r, g, b) {}
+    RadianceRGB(float rgb[3])              : ValueRGB(rgb)     {}
 };
 
 inline RadianceRGB operator+(const RadianceRGB & a, const RadianceRGB & b)
