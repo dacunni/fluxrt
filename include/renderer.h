@@ -8,6 +8,8 @@ struct Ray;
 struct RayIntersection;
 struct RNG;
 struct Scene;
+struct PointLight;
+struct DiskLight;
 
 class Renderer
 {
@@ -51,6 +53,21 @@ class Renderer
                                         const MediumStack & mediumStack,
                                         const Direction3 & Wi,
                                         const Position3 & P, const Direction3 & N) const;
+
+        inline RadianceRGB radianceFromPointLight(const Scene & scene,
+                                                  const PointLight & light,
+                                                  const Position3 & P,
+                                                  const Direction3 & N,
+                                                  float minDistance,
+                                                  Direction3 & lightDir) const;
+
+        inline RadianceRGB radianceFromDiskLight(const Scene & scene,
+                                                 RNG & rng,
+                                                 const DiskLight & light,
+                                                 const Position3 & P,
+                                                 const Direction3 & N,
+                                                 float minDistance,
+                                                 Direction3 & lightDir) const;
 
     public:
 

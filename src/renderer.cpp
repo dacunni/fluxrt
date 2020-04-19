@@ -228,47 +228,83 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
     L += traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
                   epsilon, depth + 1, mediumStack);
 
+    Direction3 lightDir;
+
     // Sample point lights
     for(const auto & light: scene.pointLights) {
-        Direction3 toLight = (light.position - P);
-        if(dot(toLight, N) < 0.0f)
-            continue;
-        Direction3 lightDir = toLight.normalized();
-        float lightDist = toLight.magnitude();
-
-        if(!intersects(Ray{P, lightDir}, scene, epsilon, lightDist)) {
-            float lightDistSq = toLight.magnitude_sq();
-            float c = clampedDot(lightDir, N);
-            RadianceRGB Ld_point = light.intensity * c / lightDistSq;
-            L += Ld_point;
-        }
+        RadianceRGB Lp = radianceFromPointLight(scene, light, P, N, epsilon, lightDir);
+        float c = clampedDot(lightDir, N);
+        L += c * Lp;
     }
 
     // Sample disk lights
-    // TODO - Direct intersection for cases when we don't sample them
+    // TODO - Direct intersection for
+    //           - Cases when we don't sample them
+    //           - Dirac BRDFs
     for(const auto & light : scene.diskLights) {
-        vec2 offset = rng.uniformCircle(light.radius);
-        // rotate to align with direction
-        vec3 ax1, ax2;
-        coordinate::coordinateSystem(light.direction, ax1, ax2);
-        vec3 pointOnDisk = offset.x * ax1 + offset.y * ax2;
-        Position3 pointOnLight = light.position + Direction3(pointOnDisk);
-        Direction3 toLight = pointOnLight - P;
-
-        if(dot(toLight, N) < 0.0f)
-            continue;
-        Direction3 lightDir = toLight.normalized();
-        float lightDist = toLight.magnitude();
-
-        if(!intersects(Ray{P, lightDir}, scene, epsilon, lightDist)) {
-            float lightDistSq = lightDist * lightDist;
-            float c = clampedDot(lightDir, N);
-            // TODO - verify this math
-            RadianceRGB Ld_point = light.intensity * c / lightDistSq;
-            L += Ld_point;
-        }
+        RadianceRGB Lp = radianceFromDiskLight(scene, rng, light, P, N, epsilon, lightDir);
+        float c = clampedDot(lightDir, N);
+        L += c * Lp;
     }
 
     return L;
 }
+
+inline RadianceRGB Renderer::radianceFromPointLight(const Scene & scene,
+                                                    const PointLight & light,
+                                                    const Position3 & P,
+                                                    const Direction3 & N,
+                                                    float minDistance,
+                                                    Direction3 & lightDir) const
+{
+    Direction3 toLight = light.position - P;
+
+    // Make sure the light is on the right size of the surface
+    if(dot(toLight, N) < 0.0f)
+        return RadianceRGB::BLACK();
+
+    lightDir = toLight.normalized();
+    const float lightDistSq = toLight.magnitude_sq();
+    const float lightDist = std::sqrt(lightDistSq);
+
+    // If we hit something, we can't see the light
+    if(intersects(Ray{P, lightDir}, scene, minDistance, lightDist)) {
+        return RadianceRGB::BLACK();
+    }
+
+    return light.intensity / lightDistSq;
+}
+
+inline RadianceRGB Renderer::radianceFromDiskLight(const Scene & scene,
+                                                   RNG & rng,
+                                                   const DiskLight & light,
+                                                   const Position3 & P,
+                                                   const Direction3 & N,
+                                                   float minDistance,
+                                                   Direction3 & lightDir) const
+{
+    vec2 offset = rng.uniformCircle(light.radius);
+    // rotate to align with direction
+    vec3 ax1, ax2;
+    coordinate::coordinateSystem(light.direction, ax1, ax2);
+    vec3 pointOnDisk = offset.x * ax1 + offset.y * ax2;
+    Position3 pointOnLight = light.position + Direction3(pointOnDisk);
+    Direction3 toLight = pointOnLight - P;
+
+    // Make sure the light is on the right size of the surface
+    if(dot(toLight, N) < 0.0f)
+        return RadianceRGB::BLACK();
+
+    lightDir = toLight.normalized();
+    const float lightDistSq = toLight.magnitude_sq();
+    const float lightDist = std::sqrt(lightDistSq);
+
+    // If we hit something, we can't see the light
+    if(intersects(Ray{P, lightDir}, scene, epsilon, lightDist)) {
+        return RadianceRGB::BLACK();
+    }
+
+    return light.intensity  / lightDistSq;
+}
+
 

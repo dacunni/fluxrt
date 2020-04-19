@@ -34,6 +34,8 @@ struct RadianceRGB
     RadianceRGB() = default;
     ~RadianceRGB() = default;
 
+    static const RadianceRGB BLACK() { return { 0.0f, 0.0f, 0.0f }; }
+
     Radiance r = 0.0f;
     Radiance g = 0.0f;
     Radiance b = 0.0f;
