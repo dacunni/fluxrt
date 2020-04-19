@@ -2,16 +2,25 @@
 type = "pinhole"
 hfov = 75
 
-position = [ 0.5, 0.0, 0.0 ]
-direction = [ -1.8, 0.0, 0.0 ]
+position = [ -10.0, 5.0, 0.0 ]
+lookat = [ 0.0, 5.0, 0.0 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
 pixelwidth = 600
 pixelheight = 400
 
+#[envmap]
+#type = "gradient"
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
+#direction = [ 1.0, 1.0, 1.0 ]
+
+[[pointlights]]
+position = [ 0.0, 5.0, 0.0 ]
+intensity = [ 10.0, 10.0, 10.0 ]
 
 [[meshes]]
 file = "dabrovic-sponza/sponza.obj"
-scaletocube = 1.0
+#scaletocube = 1.0
 

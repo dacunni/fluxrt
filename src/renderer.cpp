@@ -3,6 +3,7 @@
 #include "ray.h"
 #include "rng.h"
 #include "scene.h"
+#include "coordinate.h"
 
 void printDepthPrefix(unsigned int num)
 {
@@ -238,6 +239,31 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
         if(!intersects(Ray{P, lightDir}, scene, epsilon, lightDist)) {
             float lightDistSq = toLight.magnitude_sq();
             float c = clampedDot(lightDir, N);
+            RadianceRGB Ld_point = light.intensity * c / lightDistSq;
+            L += Ld_point;
+        }
+    }
+
+    // Sample disk lights
+    // TODO - Direct intersection for cases when we don't sample them
+    for(const auto & light : scene.diskLights) {
+        vec2 offset = rng.uniformCircle(light.radius);
+        // rotate to align with direction
+        vec3 ax1, ax2;
+        coordinate::coordinateSystem(light.direction, ax1, ax2);
+        vec3 pointOnDisk = offset.x * ax1 + offset.y * ax2;
+        Position3 pointOnLight = light.position + Direction3(pointOnDisk);
+        Direction3 toLight = pointOnLight - P;
+
+        if(dot(toLight, N) < 0.0f)
+            continue;
+        Direction3 lightDir = toLight.normalized();
+        float lightDist = toLight.magnitude();
+
+        if(!intersects(Ray{P, lightDir}, scene, epsilon, lightDist)) {
+            float lightDistSq = lightDist * lightDist;
+            float c = clampedDot(lightDir, N);
+            // TODO - verify this math
             RadianceRGB Ld_point = light.intensity * c / lightDistSq;
             L += Ld_point;
         }

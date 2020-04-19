@@ -35,14 +35,16 @@ type = "gradient"
 #high = [ 0.8, 0.6, 0.6 ]
 low = [ 0.0, 0.0, 0.0 ]
 high = [ 1.0, 1.0, 1.0 ]
+#low = [ 1.0, 1.0, 1.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
 #low = [ 0.1, 0.1, 0.1 ]
 #high = [ 0.0, 1.0, 0.0 ]
 
-direction = [ 0.0, 1.0, 1.0 ]
+direction = [ 1.0, 1.0, 1.0 ]
 
 #type = "cubemap"
 
-#scalefactor = 2.0
+scalefactor = 2.0
 
 xneg = "HornstullsStrand2/negx.jpg"
 xpos = "HornstullsStrand2/posx.jpg"
@@ -51,11 +53,33 @@ ypos = "HornstullsStrand2/posy.jpg"
 zneg = "HornstullsStrand2/negz.jpg"
 zpos = "HornstullsStrand2/posz.jpg"
 
+#xneg = "SaintPetersBasilica/negx.jpg"
+#xpos = "SaintPetersBasilica/posx.jpg"
+#yneg = "SaintPetersBasilica/negy.jpg"
+#ypos = "SaintPetersBasilica/posy.jpg"
+#zneg = "SaintPetersBasilica/negz.jpg"
+#zpos = "SaintPetersBasilica/posz.jpg"
+
+#xneg = "ArstaBridge/negx.jpg"
+#xpos = "ArstaBridge/posx.jpg"
+#yneg = "ArstaBridge/negy.jpg"
+#ypos = "ArstaBridge/posy.jpg"
+#zneg = "ArstaBridge/negz.jpg"
+#zpos = "ArstaBridge/posz.jpg"
+
+#xneg = "NissiBeach/negx.jpg"
+#xpos = "NissiBeach/posx.jpg"
+#yneg = "NissiBeach/negy.jpg"
+#ypos = "NissiBeach/posy.jpg"
+#zneg = "NissiBeach/negz.jpg"
+#zpos = "NissiBeach/posz.jpg"
+
 [[meshes]]
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
     [meshes.material]
-    type = "refractive"
-    beer = [ 2.0, 2.0, 1.0 ]
+    type = "diffuse"
+    #diffuse = [ 1.0, 1.0, 1.0 ]
+    diffuse = [ 0.3, 0.3, 0.3 ]
 
 [[spheres]]
 radius = 0.5

@@ -362,6 +362,19 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
             }
         }
 
+        auto diskLightTableArray = top->get_table_array("disklights");
+        if(diskLightTableArray) {
+            for(const auto & diskLightTable : *diskLightTableArray) {
+                auto position = Position3(vectorToVec3(diskLightTable->get_array_of<double>("position").value_or(std::vector<double>{0.0, 0.0, 0.0})));
+                auto direction = Direction3(vectorToVec3(diskLightTable->get_array_of<double>("direction").value_or(std::vector<double>{0.0, -1.0, 0.0})));
+                direction.normalize();
+                float radius = (float) diskLightTable->get_as<double>("radius").value_or(1.0);
+                auto intensity = vectorToRadianceRGB(diskLightTable->get_array_of<double>("intensity").value_or(std::vector<double>{1.0, 1.0, 1.0}));
+
+                scene.diskLights.emplace_back(position, direction, radius, intensity);
+            }
+        }
+
         scene.print();
     }
     catch(cpptoml::parse_exception & e) {

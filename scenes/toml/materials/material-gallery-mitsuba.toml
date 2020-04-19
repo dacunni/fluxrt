@@ -1,0 +1,243 @@
+[camera]
+type = "pinhole"
+hfov = 60
+#type = "ortho"
+#hsize = 8
+
+position = [ 8.0, 16.0, 16.0 ]
+lookat = [ 0.0, 0.5, 0.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 1200
+pixelheight = 800
+
+[envmap]
+
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+direction = [ 5.0, 1.0, 0.0 ]
+
+# Refractive (diamond)
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "refractive"
+    ior = 2.42
+    [[meshes.transform]]
+    translate = [ -6.0, 0.0, 3.0 ]
+
+# Refractive (plexiglass)
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "refractive"
+    ior = 1.49
+    [[meshes.transform]]
+    translate = [ -3.0, 0.0, 3.0 ]
+
+# Refractive (water)
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "refractive"
+    ior = 1.333
+    [[meshes.transform]]
+    translate = [ 0.0, 0.0, 3.0 ]
+
+# Refractive + Beer's Law absorption (water)
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "refractive"
+    ior = 1.333
+    beer = [ 2.0, 2.0, 2.0 ]
+    [[meshes.transform]]
+    translate = [ -6.0, 0.0, 6.0 ]
+
+# Refractive + Beer's Law absorption (water)
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "refractive"
+    ior = 1.333
+    beer = [ 1.0, 1.0, 1.0 ]
+    [[meshes.transform]]
+    translate = [ -3.0, 0.0, 6.0 ]
+
+# Refractive + Beer's Law absorption (water)
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "refractive"
+    ior = 1.333
+    beer = [ 0.5, 0.5, 0.5 ]
+    [[meshes.transform]]
+    translate = [ 0.0, 0.0, 6.0 ]
+
+# Refractive + Beer's Law absorption (water)
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "refractive"
+    ior = 1.333
+    beer = [ 2.0, 2.0, 0.0 ]
+    [[meshes.transform]]
+    translate = [ 3.0, 0.0, 6.0 ]
+
+# Refractive + Beer's Law absorption (water)
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "refractive"
+    ior = 1.333
+    beer = [ 2.0, 0.0, 2.0 ]
+    [[meshes.transform]]
+    translate = [ 6.0, 0.0, 6.0 ]
+
+# Refractive + Beer's Law absorption (water)
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "refractive"
+    ior = 1.333
+    beer = [ 0.0, 2.0, 2.0 ]
+    [[meshes.transform]]
+    translate = [ 9.0, 0.0, 6.0 ]
+
+# Black diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.0, 0.0, 0.0 ]
+    [[meshes.transform]]
+    translate = [ -9.0, 0.0, 0.0 ]
+
+# 18% "middle" gray diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.18, 0.18, 0.18 ]
+    [[meshes.transform]]
+    translate = [ -6.0, 0.0, 0.0 ]
+
+# 50% gray diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.5, 0.5, 0.5 ]
+    [[meshes.transform]]
+    translate = [ -3.0, 0.0, 0.0 ]
+
+# White diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 1.0, 1.0, 1.0 ]
+    [[meshes.transform]]
+    translate = [ 0.0, 0.0, 0.0 ]
+
+# Mirror
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "mirror"
+    [[meshes.transform]]
+    translate = [ 3.0, 0.0, 0.0 ]
+
+# 18% red diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.18, 0.0, 0.0 ]
+    [[meshes.transform]]
+    translate = [ -6.0, 0.0, -3.0 ]
+
+# 50% red diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.5, 0.0, 0.0 ]
+    [[meshes.transform]]
+    translate = [ -3.0, 0.0, -3.0 ]
+
+# Red diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 1.0, 0.0, 0.0 ]
+    [[meshes.transform]]
+    translate = [ 0.0, 0.0, -3.0 ]
+
+# 18% green diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.0, 0.18, 0.0 ]
+    [[meshes.transform]]
+    translate = [ -6.0, 0.0, -6.0 ]
+
+# 50% green diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.0, 0.5, 0.0 ]
+    [[meshes.transform]]
+    translate = [ -3.0, 0.0, -6.0 ]
+
+# Green diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.0, 1.0, 0.0 ]
+    [[meshes.transform]]
+    translate = [ 0.0, 0.0, -6.0 ]
+
+# 18% blue diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.0, 0.0, 0.18 ]
+    [[meshes.transform]]
+    translate = [ -6.0, 0.0, -9.0 ]
+
+# 50% blue diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.0, 0.0, 0.5 ]
+    [[meshes.transform]]
+    translate = [ -3.0, 0.0, -9.0 ]
+
+# Blue diffuse
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.0, 0.0, 1.0 ]
+    [[meshes.transform]]
+    translate = [ 0.0, 0.0, -9.0 ]
+
+# Floor
+[[slabs]]
+min = [ -100.0, -0.5, -100.0 ]
+max = [  100.0, -0.04, 100.0 ]
+
+    [slabs.material]
+    type = "diffuse"
+#    diffuse = [ 0.5, 0.5, 0.5 ]
+    diffuse = [ 0.1, 0.1, 0.1 ]
+

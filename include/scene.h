@@ -30,6 +30,7 @@ struct Scene
 
     // Lights
     std::vector<PointLight> pointLights;
+    std::vector<DiskLight> diskLights;
 
     // Always points to a valid envionment map
     std::unique_ptr<EnvironmentMap> environmentMap;
