@@ -33,4 +33,9 @@ struct DiskLight
     RadianceRGB intensity = { 1.0f, 1.0f, 1.0f };
 };
 
+// Ray intersection
+inline bool intersects(const Ray & ray, const DiskLight & light, float minDistance, float maxDistance);
+inline bool findIntersection(const Ray & ray, const DiskLight & light, float minDistance, RayIntersection & intersection);
+
+#include "light.hpp"
 #endif

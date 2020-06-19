@@ -43,7 +43,7 @@ int main(int argc, char ** argv)
     struct {
         unsigned int numThreads = 1;
         unsigned int samplesPerPixel = 1;
-        unsigned int maxDepth = 1;
+        unsigned int maxDepth = 2;
         float sensorScaleFactor = 1.0f;
         bool noMonteCarloRefraction = false;
         struct {
@@ -74,6 +74,7 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
+    printf("Samples per pixel: %d\n", options.samplesPerPixel);
     printf("Number of threads: %d\n", options.numThreads);
 
     std::string sceneFile = arguments[0];

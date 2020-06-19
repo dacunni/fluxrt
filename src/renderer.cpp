@@ -20,7 +20,9 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
         return false;
     }
 
-    if(!findIntersection(ray, scene, minDistance, intersection)) {
+    bool hit = findIntersection(ray, scene, minDistance, intersection);
+
+    if(!hit) {
         Lo = scene.environmentMap->sampleRay(ray);
         return false;
     }
@@ -223,10 +225,18 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
 {
     RadianceRGB L;
 
+#if 1
     // Sample according to cosine lobe about the normal
     Direction3 diffuseDir(rng.cosineAboutDirection(N));
     L += traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
                   epsilon, depth + 1, mediumStack);
+#else
+    // Uniform sampling across the hemisphere
+    Direction3 diffuseDir(rng.uniformSurfaceUnitHalfSphere(N));
+    L += 2.0f * clampedDot(diffuseDir, N)
+        * traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
+                   epsilon, depth + 1, mediumStack);
+#endif
 
     Direction3 lightDir;
 

@@ -78,7 +78,7 @@ zpos = "HornstullsStrand2/posz.jpg"
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
     [meshes.material]
     type = "diffuse"
-    diffuse = [ 1.0, 1.0, 1.0 ]
+    diffuse = [ 0.7, 0.7, 0.7 ]
 
 [[spheres]]
 radius = 0.5

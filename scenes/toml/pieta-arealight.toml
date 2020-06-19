@@ -13,22 +13,23 @@ up = [ 0.0, 1.0, 0.0 ]
 pixelwidth = 400
 pixelheight = 450
 
-[envmap]
+[[disklights]]
+position = [ 150.0, 100.0, 150.0 ]
+direction = [ 1.0, 0.0, 0.0 ]
+radius = 10.0
+intensity = [ 1000.0, 2000.0, 2000.0 ]
 
-type = "gradient"
-low = [ 0.0, 0.0, 0.0 ]
-high = [ 1.0, 1.0, 1.0 ]
-direction = [ 1, 0, 0 ]
-
-#type = "latlon"
-#file = "hdrihaven/adams_place_bridge_1k.hdr"
-#file = "hdrihaven/kloppenheim_02_1k.hdr"
-#file = "hdrihaven/spruit_sunrise_1k.hdr"
-#scalefactor=0.5
-scalefactor=3
+[[disklights]]
+position = [ -150.0, 100.0, 150.0 ]
+direction = [ 1.0, 0.0, 0.0 ]
+radius = 10.0
+intensity = [ 2000.0, 1000.0, 1000.0 ]
 
 [[meshes]]
 file = "myminifactory.com/scantheworld/smk16-kas115-pieta-michelangelo.stl"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 1.0, 1.0, 1.0 ]
 
     [[meshes.transform]]
     rotate_axis = [ 1.0, 0.0, 0.0 ]
@@ -38,4 +39,7 @@ file = "myminifactory.com/scantheworld/smk16-kas115-pieta-michelangelo.stl"
 [[slabs]]
 min = [ -1000.0, -1000.0, -1000.0 ]
 max = [ 1000.0, -0.5, 1000.0 ]
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.5, 0.5, 0.5 ]
 

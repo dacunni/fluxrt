@@ -13,3 +13,6 @@
 [submodule "external/generator"]
 	path = external/generator
 	url = git@github.com:dacunni/generator.git
+[submodule "external/imgui"]
+	path = external/imgui
+	url = git@github.com:ocornut/imgui.git
