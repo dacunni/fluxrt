@@ -38,12 +38,9 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
         auto normal = (intersection.normal * normalMap.z +
                        intersection.tangent * normalMap.x +
                        intersection.bitangent * normalMap.y).normalized();
-
         auto tangent = cross(intersection.bitangent, normal).normalized();
-
         auto bitangent = cross(normal, tangent).normalized();
         
-
         intersection.normal = normal;
         intersection.tangent = tangent;
         intersection.bitangent = bitangent;
@@ -143,8 +140,14 @@ inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
                                           const Direction3 & Wi,
                                           const Position3 & P, const Direction3 & N) const
 {
-    return traceRay(scene, rng, Ray(P + N * epsilon, mirror(Wi, N)),
-                    epsilon, depth + 1, mediumStack);
+    const Direction3 Wo = mirror(Wi, N);
+    const Ray ray(P + N * epsilon, Wo);
+    RadianceRGB L;
+
+    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack);
+    L += directLightingAlongRay(scene, ray);
+
+    return L;
 }
 
 
@@ -154,8 +157,13 @@ inline RadianceRGB Renderer::shadeRefract(const Scene & scene, RNG & rng,
                                           const Direction3 & Dt,
                                           const Position3 & P, const Direction3 & N) const
 {
-    return traceRay(scene, rng, Ray(P - N * epsilon, Dt),
-                    epsilon, depth + 1, mediumStack);
+    const Ray ray(P - N * epsilon, Dt);
+    RadianceRGB L;
+
+    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack);
+    L += directLightingAlongRay(scene, ray);
+
+    return L;
 }
 
 inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG & rng,
@@ -217,6 +225,53 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
     return Ls + Lt;
 }
 
+inline RadianceRGB Renderer::directLightingAlongRay(const Scene & scene,
+                                                    const Ray & ray) const
+{
+    RadianceRGB L;
+
+    // Check for hit on disk lights
+    RayIntersection lightIntersection;
+    for(const auto & light : scene.diskLights) {
+        // Skip if we don't hit the light
+        if(!findIntersection(ray, light, epsilon, lightIntersection))
+            continue;
+        Direction3 toLight = lightIntersection.position - ray.origin;
+        float lightDist = toLight.magnitude();
+        // Make sure we don't hit an object closer than the light
+        if(!intersects(ray, scene, epsilon, lightDist)) {
+            L += light.intensity / (lightDist * lightDist);
+        }
+    }
+
+    return L;
+}
+
+inline RadianceRGB Renderer::sampleDirectLighting(const Scene & scene,
+                                                  RNG & rng,
+                                                  const Position3 & P,
+                                                  const Direction3 & N) const
+{
+    RadianceRGB L;
+    Direction3 lightDir;
+
+    // Sample point lights
+    for(const auto & light: scene.pointLights) {
+        RadianceRGB Lp = samplePointLight(scene, light, P, N, epsilon, lightDir);
+        float c = clampedDot(lightDir, N);
+        L += c * Lp;
+    }
+
+    // Sample disk lights
+    for(const auto & light : scene.diskLights) {
+        RadianceRGB Lp = sampleDiskLight(scene, rng, light, P, N, epsilon, lightDir);
+        float c = clampedDot(lightDir, N);
+        L += c * Lp;
+    }
+
+    return L;
+}
+
 inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
                                           const float minDistance, const unsigned int depth,
                                           const MediumStack & mediumStack,
@@ -238,34 +293,17 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
                    epsilon, depth + 1, mediumStack);
 #endif
 
-    Direction3 lightDir;
-
-    // Sample point lights
-    for(const auto & light: scene.pointLights) {
-        RadianceRGB Lp = radianceFromPointLight(scene, light, P, N, epsilon, lightDir);
-        float c = clampedDot(lightDir, N);
-        L += c * Lp;
-    }
-
-    // Sample disk lights
-    // TODO - Direct intersection for
-    //           - Cases when we don't sample them
-    //           - Dirac BRDFs
-    for(const auto & light : scene.diskLights) {
-        RadianceRGB Lp = radianceFromDiskLight(scene, rng, light, P, N, epsilon, lightDir);
-        float c = clampedDot(lightDir, N);
-        L += c * Lp;
-    }
+    L += sampleDirectLighting(scene, rng, P, N);
 
     return L;
 }
 
-inline RadianceRGB Renderer::radianceFromPointLight(const Scene & scene,
-                                                    const PointLight & light,
-                                                    const Position3 & P,
-                                                    const Direction3 & N,
-                                                    float minDistance,
-                                                    Direction3 & lightDir) const
+inline RadianceRGB Renderer::samplePointLight(const Scene & scene,
+                                              const PointLight & light,
+                                              const Position3 & P,
+                                              const Direction3 & N,
+                                              float minDistance,
+                                              Direction3 & lightDir) const
 {
     Direction3 toLight = light.position - P;
 
@@ -285,13 +323,13 @@ inline RadianceRGB Renderer::radianceFromPointLight(const Scene & scene,
     return light.intensity / lightDistSq;
 }
 
-inline RadianceRGB Renderer::radianceFromDiskLight(const Scene & scene,
-                                                   RNG & rng,
-                                                   const DiskLight & light,
-                                                   const Position3 & P,
-                                                   const Direction3 & N,
-                                                   float minDistance,
-                                                   Direction3 & lightDir) const
+inline RadianceRGB Renderer::sampleDiskLight(const Scene & scene,
+                                             RNG & rng,
+                                             const DiskLight & light,
+                                             const Position3 & P,
+                                             const Direction3 & N,
+                                             float minDistance,
+                                             Direction3 & lightDir) const
 {
     vec2 offset = rng.uniformCircle(light.radius);
     // rotate to align with direction

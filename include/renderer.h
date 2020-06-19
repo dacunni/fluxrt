@@ -54,20 +54,28 @@ class Renderer
                                         const Direction3 & Wi,
                                         const Position3 & P, const Direction3 & N) const;
 
-        inline RadianceRGB radianceFromPointLight(const Scene & scene,
-                                                  const PointLight & light,
-                                                  const Position3 & P,
-                                                  const Direction3 & N,
-                                                  float minDistance,
-                                                  Direction3 & lightDir) const;
+        inline RadianceRGB directLightingAlongRay(const Scene & scene,
+                                                  const Ray & ray) const;
 
-        inline RadianceRGB radianceFromDiskLight(const Scene & scene,
-                                                 RNG & rng,
-                                                 const DiskLight & light,
-                                                 const Position3 & P,
-                                                 const Direction3 & N,
-                                                 float minDistance,
-                                                 Direction3 & lightDir) const;
+        inline RadianceRGB sampleDirectLighting(const Scene & scene,
+                                                RNG & rng,
+                                                const Position3 & P,
+                                                const Direction3 & N) const;
+
+        inline RadianceRGB samplePointLight(const Scene & scene,
+                                            const PointLight & light,
+                                            const Position3 & P,
+                                            const Direction3 & N,
+                                            float minDistance,
+                                            Direction3 & lightDir) const;
+
+        inline RadianceRGB sampleDiskLight(const Scene & scene,
+                                           RNG & rng,
+                                           const DiskLight & light,
+                                           const Position3 & P,
+                                           const Direction3 & N,
+                                           float minDistance,
+                                           Direction3 & lightDir) const;
 
     public:
 
