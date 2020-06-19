@@ -9,7 +9,7 @@ inline bool intersectPlane(const Ray & ray,
 {
     float denom = dot(N, ray.direction);
 
-    if (denom > 1.0e-6f) {
+    if (std::abs(denom) > 1.0e-6f) {
         vec3 originToPOP = pointOnPlane - ray.origin;
         t = dot(originToPOP, N) / denom;
         return t >= 0;
@@ -33,7 +33,7 @@ inline bool findIntersection(const Ray & ray, const DiskLight & light, float min
         vec3 v = p - light.position;
         float d2 = dot(v, v);
         if(d2 <= light.radius * light.radius) {
-            intersection.distance = std::sqrt(d2);
+            intersection.distance = t;
             // compute intersection position
             intersection.position = add(ray.origin, scale(ray.direction, intersection.distance));
             // compute surface normal
