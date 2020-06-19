@@ -23,6 +23,9 @@ class Renderer
         RadianceRGB traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
                       const MediumStack & mediumStack) const;
 
+        bool traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+                            const MediumStack & mediumStack,
+                            RayIntersection & intersection, RadianceRGB & Lo) const;
     protected:
 
         inline RadianceRGB shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,

@@ -43,7 +43,7 @@ int main(int argc, char ** argv)
     struct {
         unsigned int numThreads = 1;
         unsigned int samplesPerPixel = 1;
-        unsigned int maxDepth = 2;
+        unsigned int maxDepth = 10;
         float sensorScaleFactor = 1.0f;
         bool noMonteCarloRefraction = false;
         struct {
@@ -125,7 +125,7 @@ int main(int argc, char ** argv)
 
             RayIntersection intersection;
             RadianceRGB pixelRadiance;
-            bool hit = renderer.traceRay(scene, rng[threadIndex], ray, minDistance, 1, { VaccuumMedium }, intersection, pixelRadiance);
+            bool hit = renderer.traceCameraRay(scene, rng[threadIndex], ray, minDistance, 1, { VaccuumMedium }, intersection, pixelRadiance);
             artifacts.accumPixelRadiance(x, y, pixelRadiance);
             if(hit) {
                 artifacts.setIntersection(x, y, minDistance, scene, intersection);

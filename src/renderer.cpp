@@ -134,6 +134,17 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float m
     return Lo;
 }
 
+bool Renderer::traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+                              const MediumStack & mediumStack,
+                              RayIntersection & intersection, RadianceRGB & Lo) const
+{
+    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, intersection, Lo);
+
+    Lo += directLightingAlongRay(scene, ray);
+
+    return hit;
+}
+
 inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
                                           const float minDistance, const unsigned int depth,
                                           const MediumStack & mediumStack,
@@ -228,19 +239,17 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
 inline RadianceRGB Renderer::directLightingAlongRay(const Scene & scene,
                                                     const Ray & ray) const
 {
+    RayIntersection lightIntersection;
     RadianceRGB L;
 
     // Check for hit on disk lights
-    RayIntersection lightIntersection;
     for(const auto & light : scene.diskLights) {
         // Skip if we don't hit the light
         if(!findIntersection(ray, light, epsilon, lightIntersection))
             continue;
-        Direction3 toLight = lightIntersection.position - ray.origin;
-        float lightDist = toLight.magnitude();
         // Make sure we don't hit an object closer than the light
-        if(!intersects(ray, scene, epsilon, lightDist)) {
-            L += light.intensity / (lightDist * lightDist);
+        if(!intersects(ray, scene, epsilon, lightIntersection.distance)) {
+            L += light.intensity / (lightIntersection.distance * lightIntersection.distance);
         }
     }
 
