@@ -13,16 +13,8 @@ up = [ 0.0, 1.0, 0.0 ]
 pixelwidth = 400
 pixelheight = 450
 
-#[[disklights]]
-#position = [ 150.0, 100.0, 150.0 ]
-#direction = [ 1.0, 0.0, 0.0 ]
-#radius = 10.0
-#intensity = [ 1000.0, 2000.0, 2000.0 ]
-
-[[disklights]]
+[[pointlights]]
 position = [ -150.0, 100.0, 150.0 ]
-direction = [ 1.0, 0.0, 0.0 ]
-radius = 10.0
 intensity = [ 20000.0, 20000.0, 20000.0 ]
 
 [[meshes]]
