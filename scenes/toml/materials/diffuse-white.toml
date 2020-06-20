@@ -1,0 +1,5 @@
+[[namedmaterials]]
+name = "heromat"
+type = "diffuse"
+diffuse = [ 1.0, 1.0, 1.0 ]
+

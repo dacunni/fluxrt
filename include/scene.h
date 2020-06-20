@@ -52,6 +52,11 @@ bool loadSceneFromFile(Scene & scene, const std::string & filename);
 bool loadSceneFromTOMLString(Scene & scene, const std::string & toml);
 bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename);
 
+bool loadSceneFromTOMLString(Scene & scene, const std::string & toml,
+                             std::map<std::string, MaterialID> & namedMaterials);
+bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename,
+                           std::map<std::string, MaterialID> & namedMaterials);
+
 // Ray intersection
 inline bool intersects(const Ray & ray, const Scene & scene, float minDistance, float maxDistance = std::numeric_limits<float>::max());
 inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDistance, RayIntersection & intersection);

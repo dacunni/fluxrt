@@ -65,49 +65,67 @@ void loadMaterialSpecularComponent(const std::shared_ptr<cpptoml::table> & table
     }
 }
 
+MaterialID loadMaterial(const std::shared_ptr<cpptoml::table> & materialTable, Scene & scene,
+                        const std::map<std::string, MaterialID> & namedMaterials)
+{
+    auto include = materialTable->get_as<std::string>("include");
+    if(include) {
+        std::cout << "Including named material: " << *include << '\n';
+        auto it = namedMaterials.find(*include);
+        if(it == namedMaterials.end()) {
+            throw std::runtime_error("Material include references non-existent named material " + *include);
+        }
+        return it->second;
+    }
+
+    auto type = materialTable->get_as<std::string>("type");
+    if(!type) { throw std::runtime_error("Material must supply a type"); }
+
+    Material material;
+
+    if(*type == "diffuse") {
+        loadMaterialDiffuseComponent(materialTable, scene, material);
+    }
+    else if(*type == "diffusespecular") {
+        loadMaterialDiffuseComponent(materialTable, scene, material);
+        loadMaterialSpecularComponent(materialTable, scene, material);
+    }
+    else if(*type == "mirror") {
+        material = Material::makeMirror();
+    }
+    else if(*type == "refractive") {
+        auto indexOfRefraction = materialTable->get_as<double>("ior").value_or(1.333);
+        material = Material::makeRefractive(indexOfRefraction);
+        auto beersLawAtt = vectorToParameterRGB(materialTable->get_array_of<double>("beer").value_or(std::vector<double>{0.0, 0.0, 0.0}));
+        material.innerMedium.beersLawAttenuation = beersLawAtt;
+    }
+    else {
+        throw std::runtime_error(std::string("Unknown material type : ") + *type);
+    }
+
+    auto normalMapTex = materialTable->get_as<std::string>("normalmap");
+    if(normalMapTex) {
+        material.normalMapTexture = scene.textureCache.loadTextureFromFile("", *normalMapTex);
+        auto & texture = scene.textureCache.textures[material.normalMapTexture];
+        // Convert normal map color to normal [0, 1] -> [-1, 1]
+        texture->forEachPixelChannel(
+                                     [](Texture & image, size_t x, size_t y, int c) {
+                                     image.set(x, y, c, image.get(x, y, c) * 2.0f - 1.0f);
+                                     });
+    }
+
+    MaterialID id = scene.materials.size();
+    scene.materials.push_back(material);
+    return id;
+}
+
 template<typename OBJ>
-void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & obj, Scene & scene)
+void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & obj, Scene & scene,
+                           std::map<std::string, MaterialID> & namedMaterials)
 {
     auto materialTable = table->get_table("material");
     if(materialTable) {
-        auto type = materialTable->get_as<std::string>("type");
-        if(!type) { throw std::runtime_error("Material must supply a type"); }
-
-        Material material;
-
-        if(*type == "diffuse") {
-            loadMaterialDiffuseComponent(materialTable, scene, material);
-        }
-        else if(*type == "diffusespecular") {
-            loadMaterialDiffuseComponent(materialTable, scene, material);
-            loadMaterialSpecularComponent(materialTable, scene, material);
-        }
-        else if(*type == "mirror") {
-            material = Material::makeMirror();
-        }
-        else if(*type == "refractive") {
-            auto indexOfRefraction = materialTable->get_as<double>("ior").value_or(1.333);
-            material = Material::makeRefractive(indexOfRefraction);
-            auto beersLawAtt = vectorToParameterRGB(materialTable->get_array_of<double>("beer").value_or(std::vector<double>{0.0, 0.0, 0.0}));
-            material.innerMedium.beersLawAttenuation = beersLawAtt;
-        }
-        else {
-            throw std::runtime_error(std::string("Unknown material type : ") + *type);
-        }
-
-        auto normalMapTex = materialTable->get_as<std::string>("normalmap");
-        if(normalMapTex) {
-            material.normalMapTexture = scene.textureCache.loadTextureFromFile("", *normalMapTex);
-            auto & texture = scene.textureCache.textures[material.normalMapTexture];
-            // Convert normal map color to normal [0, 1] -> [-1, 1]
-            texture->forEachPixelChannel(
-                [](Texture & image, size_t x, size_t y, int c) {
-                    image.set(x, y, c, image.get(x, y, c) * 2.0f - 1.0f);
-                });
-        }
-
-        obj.material = scene.materials.size();
-        scene.materials.push_back(material);
+        obj.material = loadMaterial(materialTable, scene, namedMaterials);
     }
 }
 
@@ -159,7 +177,8 @@ void loadTransformsForObject(const std::shared_ptr<cpptoml::table> & table, OBJ 
     }
 }
 
-bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & top)
+bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & top,
+                             std::map<std::string, MaterialID> & namedMaterials)
 {
     try {
         auto getEnvVar = [](const char * name) {
@@ -191,7 +210,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 if(!source) { throw std::runtime_error("Includes must supply a file name"); }
                 std::string fullFilePath = applyPathPrefix(scenePath, *source);
                 std::cout << "Include: source " << fullFilePath << std::endl;
-                if(!loadSceneFromTOMLFile(scene, fullFilePath)) {
+                if(!loadSceneFromTOMLFile(scene, fullFilePath, namedMaterials)) {
                     throw std::runtime_error("Error including file " + fullFilePath);
                 }
             }
@@ -299,6 +318,16 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
             }
         }
 
+        auto namedMaterialTableArray = top->get_table_array("namedmaterials");
+        if(namedMaterialTableArray) {
+            for (const auto & namedMaterialTable : *namedMaterialTableArray) {
+                auto name = namedMaterialTable->get_as<std::string>("name");
+                if(!name) { throw std::runtime_error("Named material requires a name"); }
+                std::cout << "Named material: " << *name << '\n';
+                namedMaterials[*name] = loadMaterial(namedMaterialTable, scene, namedMaterials);
+            }
+        }
+
         auto meshTableArray = top->get_table_array("meshes");
         if(meshTableArray) {
             for (const auto & meshTable : *meshTableArray) {
@@ -314,7 +343,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                     throw std::runtime_error("Error loading mesh");
                 }
 
-                loadMaterialForObject(meshTable, *mesh, scene);
+                loadMaterialForObject(meshTable, *mesh, scene, namedMaterials);
 
                 auto scaletocube = meshTable->get_as<double>("scaletocube");
                 if(scaletocube) {
@@ -353,7 +382,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 scene.spheres.emplace_back(Sphere(position, radius));
                 auto & obj = scene.spheres.back();
-                loadMaterialForObject(sphereTable, obj.shape, scene);
+                loadMaterialForObject(sphereTable, obj.shape, scene, namedMaterials);
                 loadTransformsForObject(sphereTable, obj, scene);
             }
         }
@@ -368,7 +397,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 scene.slabs.emplace_back(Slab(min, max));
                 auto & obj = scene.slabs.back();
-                loadMaterialForObject(slabTable, obj.shape, scene);
+                loadMaterialForObject(slabTable, obj.shape, scene, namedMaterials);
                 loadTransformsForObject(slabTable, obj, scene);
             }
         }
@@ -413,11 +442,33 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
     return true;
 }
 
-bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename)
+bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename,
+                           std::map<std::string, MaterialID> & namedMaterials)
 {
     try {
         auto top = cpptoml::parse_file(filename);
-        return loadSceneFromParsedTOML(scene, top);
+        return loadSceneFromParsedTOML(scene, top, namedMaterials);
+    }
+    catch(cpptoml::parse_exception & e) {
+        std::cout << "Caught cpptoml exception: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename)
+{
+    std::map<std::string, MaterialID> namedMaterials;
+    return loadSceneFromTOMLFile(scene, filename, namedMaterials);
+}
+
+bool loadSceneFromTOMLString(Scene & scene, const std::string & toml,
+                             std::map<std::string, MaterialID> & namedMaterials)
+{
+    std::istringstream iss(toml);
+    cpptoml::parser parser(iss);
+    try {
+        auto top = parser.parse();
+        return loadSceneFromParsedTOML(scene, top, namedMaterials);
     }
     catch(cpptoml::parse_exception & e) {
         std::cout << "Caught cpptoml exception: " << e.what() << std::endl;
@@ -427,15 +478,7 @@ bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename)
 
 bool loadSceneFromTOMLString(Scene & scene, const std::string & toml)
 {
-    std::istringstream iss(toml);
-    cpptoml::parser parser(iss);
-    try {
-        auto top = parser.parse();
-        return loadSceneFromParsedTOML(scene, top);
-    }
-    catch(cpptoml::parse_exception & e) {
-        std::cout << "Caught cpptoml exception: " << e.what() << std::endl;
-        return false;
-    }
+    std::map<std::string, MaterialID> namedMaterials;
+    return loadSceneFromTOMLString(scene, toml, namedMaterials);
 }
 
