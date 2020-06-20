@@ -66,6 +66,10 @@ struct Material
     inline bool hasNormalMap() const;
     inline Direction3 normalMap(const TextureArray & tex, const TextureCoordinate & texcoord) const;
 
+    // Apply normal map (if any) to the supplied basis vectors
+    inline void applyNormalMap(const TextureArray & tex, const TextureCoordinate & texcoord,
+                               Direction3 & normal, Direction3 & tangent, Direction3 & bitangent) const;
+
     // Factories
     static Material makeDiffuse(float D[3]);
     static Material makeDiffuse(const ReflectanceRGB & D);
@@ -136,7 +140,7 @@ inline bool Material::hasSpecular() const
         || specularColor.b > 0.0f;
 }
 
-float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const
+inline float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {
     if(alphaTexture != NoTexture) {
         auto & texture = tex[alphaTexture];
@@ -150,12 +154,12 @@ float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoo
     }
 }
 
-bool Material::hasNormalMap() const
+inline bool Material::hasNormalMap() const
 {
     return normalMapTexture != NoTexture;
 }
 
-Direction3 Material::normalMap(const TextureArray & tex, const TextureCoordinate & texcoord) const
+inline Direction3 Material::normalMap(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {
     if(normalMapTexture != NoTexture) {
         auto & texture = tex[normalMapTexture];
@@ -168,6 +172,26 @@ Direction3 Material::normalMap(const TextureArray & tex, const TextureCoordinate
     else {
         return Direction3{ 0.0f, 0.0f, 1.0f };
     }
+}
+
+inline void Material::applyNormalMap(const TextureArray & tex, const TextureCoordinate & texcoord,
+                                     Direction3 & normal, Direction3 & tangent, Direction3 & bitangent) const
+{
+    if(!hasNormalMap()) {
+        return;
+    }
+
+    auto map = normalMap(tex, texcoord);
+
+    // Compute new basis by purturbing via the normal map
+    auto N = (normal * map.z + tangent * map.x + bitangent * map.y).normalized();
+    auto T = cross(bitangent, normal).normalized();
+    auto B = cross(normal, tangent).normalized();
+
+    // Copy new values to output
+    normal    = N;
+    tangent   = T;
+    bitangent = B;
 }
 
 inline const Material & materialFromID(MaterialID id, const MaterialArray & materials)
