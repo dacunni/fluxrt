@@ -12,7 +12,7 @@ up = [ 0.0, 1.0, 0.0 ]
 [envmap]
 
 type = "gradient"
-low = [ 1.0, 1.0, 1.0 ]
+low = [ 0.0, 0.0, 0.0 ]
 high = [ 1.0, 1.0, 1.0 ]
 
 [sensor]

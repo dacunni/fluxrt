@@ -24,6 +24,9 @@ file = "blender/monkey2.obj"
 [[spheres]]
 radius = 0.5
 position = [ 2.0, 0.5, 0.0 ]
+    [spheres.material]
+    type = "diffuse"
+    diffuse = [ 0.9, 0.9, 0.9 ]
 
 [[spheres]]
 radius = 0.5
@@ -36,6 +39,7 @@ position = [ 3.0, 4.0, 3.0 ]
 direction = [ 1.0, 0.0, 0.0 ]
 radius = 1.1
 intensity = [ 5.0, 5.0, 5.0 ]
+#intensity = [ 0.5, 0.5, 0.5 ]
 
 # Behind the refractive model
 [[disklights]]
@@ -43,6 +47,7 @@ position = [ 1.0, 2.0, -5.0 ]
 direction = [ 0.0, 0.0, -1.0 ]
 radius = 1.1
 intensity = [ 5.0, 5.0, 5.0 ]
+#intensity = [ 0.5, 0.5, 0.5 ]
 
 # Floor
 [[slabs]]

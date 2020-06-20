@@ -162,19 +162,40 @@ void loadTransformsForObject(const std::shared_ptr<cpptoml::table> & table, OBJ 
 bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & top)
 {
     try {
-        const char * meshPath = getenv("MESH_PATH");
-        const char * envMapPath = getenv("ENV_MAP_PATH");
+        auto getEnvVar = [](const char * name) {
+            const char * value = getenv(name);
+            if(value)
+                return std::string(value);
+            return std::string("");
+        };
+        std::string meshPath = getEnvVar("MESH_PATH");
+        std::string envMapPath = getEnvVar("ENV_MAP_PATH");
+        std::string scenePath = getEnvVar("SCENE_PATH");
 
-        auto applyPathPrefix = [](const char * prefix, const std::string & path) {
+        auto applyPathPrefix = [](const std::string & prefix, const std::string & path) {
             // If prefix is defined and path is not absolute
-            if(prefix && path.front() != '/') {
+            if(!prefix.empty() && path.front() != '/') {
                 return std::string(prefix) + '/' + path;
             }
             return path;
         };
 
-        if(meshPath) { std::cout << "Mesh path = " << meshPath << '\n'; }
-        if(envMapPath) { std::cout << "Env map path = " << envMapPath << '\n'; }
+        std::cout << "Mesh path = " << meshPath << '\n';
+        std::cout << "Env map path = " << envMapPath << '\n';
+        std::cout << "Scene path = " << scenePath << '\n';
+
+        auto includeTableArray = top->get_table_array("include");
+        if(includeTableArray) {
+            for (const auto & includeTable : *includeTableArray) {
+                auto source = includeTable->get_as<std::string>("source");
+                if(!source) { throw std::runtime_error("Includes must supply a file name"); }
+                std::string fullFilePath = applyPathPrefix(scenePath, *source);
+                std::cout << "Include: source " << fullFilePath << std::endl;
+                if(!loadSceneFromTOMLFile(scene, fullFilePath)) {
+                    throw std::runtime_error("Error including file " + fullFilePath);
+                }
+            }
+        }
 
         auto sensorTable = top->get_table("sensor");
         if(sensorTable) {

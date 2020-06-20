@@ -43,6 +43,7 @@ even if these environment variables are set.
 ```
 export MESH_PATH=/Volumes/Extra/data/3dmodels
 export ENV_MAP_PATH=/Volumes/Extra/data/envmaps
+export SCENE_PATH=../../scenes/toml
 ./trace_scene -s 10 -d 5 -t 3 ../../scenes/toml/mitsuba-sphere-envmap.toml
 ```
 

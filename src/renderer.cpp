@@ -85,6 +85,15 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float m
     const bool isRefractive = material.isRefractive;
     const Medium & medium = material.innerMedium;
 
+    //
+    // --------------------------
+    //                | specular
+    // --------------------------
+    //  refractive    | diffuse
+    // --------------------------
+    //  transmissive  |
+    // --------------------------
+
     RadianceRGB Ld, Ls, Lr;
 
     if(isRefractive) {
@@ -238,6 +247,7 @@ inline RadianceRGB Renderer::directLightingAlongRay(const Scene & scene,
             continue;
         // Make sure we don't hit an object closer than the light
         if(!intersects(ray, scene, epsilon, lightIntersection.distance)) {
+            // TODO - make sure this is right
             L += light.intensity / (lightIntersection.distance * lightIntersection.distance);
         }
     }
@@ -350,7 +360,8 @@ inline RadianceRGB Renderer::sampleDiskLight(const Scene & scene,
         return RadianceRGB::BLACK();
     }
 
-    return light.intensity  / lightDistSq;
+    // TODO - make sure this is right
+    return light.intensity / lightDistSq;
 }
 
 
