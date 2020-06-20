@@ -1,40 +1,9 @@
-[camera]
-type = "pinhole"
-hfov = 45
+[[include]]
+source = "standard/materials/diffuse-white.toml"
 
-# front
-position = [ 0.0, 2.0, 6.0 ]
-direction = [ 0.0, -0.2, -1.0 ]
-
-up = [ 0.0, 1.0, 0.0 ]
-
-[sensor]
-pixelwidth = 400
-pixelheight = 300
-
-[[meshes]]
-file = "blender/monkey_simple_smooth.obj"
-    [meshes.material]
-    type = "diffuse"
-    diffuse = [ 1.0, 1.0, 1.0 ]
-    [[meshes.transform]]
-    translate = [ 0.0, 1.0, 0.0 ]
-
-[[spheres]]
-radius = 0.5
-position = [ 2.0, 0.5, 0.0 ]
-
-[[spheres]]
-radius = 0.5
-position = [ -2.0, 0.5, 0.0 ]
-    [spheres.material]
-    type = "mirror"
+[[include]]
+source = "standard/scenes/suzanne-and-spheres.toml"
 
 [[pointlights]]
 position = [ 5.0, 5.0, 2.0 ]
 intensity = [ 1.0, 1.0, 1.0 ]
-
-# Floor
-[[slabs]]
-min = [ -2.5, -0.5, -1.5 ]
-max = [ 2.5, -0.04, 1.5 ]
