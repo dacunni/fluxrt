@@ -1,0 +1,15 @@
+[[namedmaterials]]
+name = "heromat"
+type = "diffusespecular"
+diffuse = "/Volumes/Extra/data/textures/texturehaven.com/denim_fabric_1k_jpg/denim_fabric_diff_1k.jpg"
+#specular = 
+normalmap = "/Volumes/Extra/data/textures/texturehaven.com/denim_fabric_1k_jpg/denim_fabric_nor_1k.jpg"
+
+
+#/Volumes/Extra/data/textures/texturehaven.com/denim_fabric_1k_jpg/denim_fabric_ao_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/denim_fabric_1k_jpg/denim_fabric_diff_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/denim_fabric_1k_jpg/denim_fabric_disp_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/denim_fabric_1k_jpg/denim_fabric_nor_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/denim_fabric_1k_jpg/denim_fabric_rough_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/denim_fabric_1k_jpg/denim_fabric_rough_ao_1k.jpg
+

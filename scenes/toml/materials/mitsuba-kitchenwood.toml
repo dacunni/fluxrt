@@ -1,5 +1,6 @@
 [[include]]
-source = "standard/materials/diffuse-gray-0.7.toml"
+source = "standard/materials/textures/kitchenwood.toml"
 
 [[include]]
 source = "standard/scenes/mitsuba-sphere-and-spheres.toml"
+

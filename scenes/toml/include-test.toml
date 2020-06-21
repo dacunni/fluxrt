@@ -1,7 +1,4 @@
 [[include]]
-source = "standard/materials/diffuse-white.toml"
-
-[[include]]
 source = "standard/scenes/suzanne-and-spheres.toml"
 
 [[pointlights]]

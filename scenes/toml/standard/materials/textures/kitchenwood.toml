@@ -1,0 +1,13 @@
+[[namedmaterials]]
+name = "heromat"
+type = "diffusespecular"
+diffuse = "/Volumes/Extra/data/textures/texturehaven.com/kitchen_wood_1k_jpg/kitchen_wood_diff_1k.jpg"
+specular = [ 0.04, 0.04, 0.04 ]
+#normalmap = "/Volumes/Extra/data/textures/texturehaven.com/kitchen_wood_1k_jpg/kitchen_wood_nor_1k.jpg"
+
+
+#/Volumes/Extra/data/textures/texturehaven.com/kitchen_wood_1k_jpg/kitchen_wood_ao_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/kitchen_wood_1k_jpg/kitchen_wood_diff_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/kitchen_wood_1k_jpg/kitchen_wood_nor_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/kitchen_wood_1k_jpg/kitchen_wood_rough_1k.jpg
+
