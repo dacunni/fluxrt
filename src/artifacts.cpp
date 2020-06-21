@@ -79,5 +79,13 @@ void Artifacts::writePixelColor()
     };
     finalPixelColor.forEachPixelChannel(divideByNumSamples);
     writePNG(applyStandardGamma(finalPixelColor), prefix + "color.png");
+
+    auto applyToneMap = [&](Image<float> & image, size_t x, size_t y, int c) {
+        float value = image.get(x, y, c);
+        value = tonemapping::reinhard(value);
+        image.set(x, y, c, value);
+    };
+    finalPixelColor.forEachPixelChannel(applyToneMap);
+    writePNG(applyStandardGamma(finalPixelColor), prefix + "color_tone_mapped.png");
 }
 
