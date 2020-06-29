@@ -80,9 +80,6 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float m
 
     const auto D = material.diffuse(scene.textureCache.textures, intersection.texcoord);
     const auto S = material.specular(scene.textureCache.textures, intersection.texcoord);
-    const bool hasDiffuse = material.hasDiffuse();
-    const bool hasSpecular = material.hasSpecular();
-    const bool isRefractive = material.isRefractive;
     const Medium & medium = material.innerMedium;
 
     //
@@ -94,39 +91,43 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float m
     //  transmissive  |
     // --------------------------
 
-    RadianceRGB Ld, Ls, Lr;
+    RadianceRGB Lo;
 
-    if(isRefractive) {
-        // Refraction
-        Lr = shadeRefractiveInterface(scene, rng, minDistance, depth, mediumStack, medium, Wi, P, N);
+    if(material.isRefractive) {
+        Lo = shadeRefractiveInterface(scene, rng, minDistance, depth, mediumStack, medium, Wi, P, N);
     }
     else {
-        // Trace diffuse bounce
-        if(hasDiffuse) {
-            Ld = shadeDiffuse(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+        RadianceRGB Ld, Ls;
+        ReflectanceRGB F = { 0.0f, 0.0f, 0.0f };
+
+        // Randomly choose between specular and diffuse
+        // TODO: Determine the best probability
+        float comp = std::min(S.r, std::min(S.g, S.b));
+        float probSpec = material.hasSpecular() ? comp : 0.0f;
+        float probDiffuse = 1.0f - probSpec;
+        bool doSpec = rng.uniform01() < probSpec;
+        bool doDiffuse = !doSpec && material.hasDiffuse();
+
+        // Trace specular bounce
+        if(material.hasSpecular()) {
+            // Fresnel = specular - TODO: Is this right?
+            ReflectanceRGB F0 = S;
+            F = fresnel::schlick(F0, absDot(Wi, N));
         }
 
         // Trace specular bounce
-        if(hasSpecular) {
+        if(doSpec) {
             Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+            Ls /= probSpec;
         }
-    }
 
-    RadianceRGB Lo;
+        // Trace diffuse bounce
+        if(doDiffuse) {
+            Ld = shadeDiffuse(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+            Ld /= probDiffuse;
+        }
 
-    if(isRefractive) {
-        Lo = Lr;
-    }
-    else if(hasSpecular) {
-        // Fresnel = specular
-        ReflectanceRGB F0rgb = S;
-        float cosIncidentAngle = absDot(Wi, N);
-        ReflectanceRGB Frgb = fresnel::schlick(F0rgb, cosIncidentAngle);
-        ReflectanceRGB OmFrgb = Frgb.residual();
-        Lo = OmFrgb * (D * Ld) + Frgb * Ls;
-    }
-    else {
-        Lo = D * Ld;
+        Lo = F.residual() * (D * Ld) + F * Ls;
     }
 
     return Lo;
