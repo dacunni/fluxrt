@@ -46,6 +46,7 @@ int main(int argc, char ** argv)
         unsigned int maxDepth = 10;
         float sensorScaleFactor = 1.0f;
         bool noMonteCarloRefraction = false;
+        float russianRouletteChance = 0.1f;
         struct {
             bool compute = false;
             bool sampleCosineLobe = false;
@@ -58,6 +59,7 @@ int main(int argc, char ** argv)
     argParser.addArgument('s', "spp", options.samplesPerPixel);
     argParser.addArgument('d', "maxdepth", options.maxDepth);
     argParser.addArgument('p', "sensorscale", options.sensorScaleFactor);
+    argParser.addArgument('r', "rr", options.russianRouletteChance);
     argParser.addFlag('R', "nomontecarlorefraction", options.noMonteCarloRefraction);
 
     // Ambient Occlusion
@@ -108,6 +110,7 @@ int main(int argc, char ** argv)
     Renderer renderer;
     renderer.maxDepth = options.maxDepth;
     renderer.monteCarloRefraction = !options.noMonteCarloRefraction;
+    renderer.russianRouletteChance = options.russianRouletteChance;
 
     auto tracePixel = [&](size_t x, size_t y, size_t threadIndex) {
         ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
@@ -140,6 +143,7 @@ int main(int argc, char ** argv)
     };
 
     printf("Monte Carlo refraction = %s\n", renderer.monteCarloRefraction ? "ON" : "OFF");
+    printf("Russian Roulette chance = %.2f\n", renderer.russianRouletteChance);
     printf("Max depth = %u\n", renderer.maxDepth);
     printf("Tracing scene\n");
     auto traceTimer = WallClockTimer::makeRunningTimer();

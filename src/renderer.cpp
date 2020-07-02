@@ -20,6 +20,10 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
         return false;
     }
 
+    if(rng.uniform01() < russianRouletteChance) {
+        return false;
+    }
+
     bool hit = findIntersection(ray, scene, minDistance, intersection);
 
     if(!hit) {
@@ -51,6 +55,8 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
         optics::beersLawAttenuation(att.b, intersection.distance)
     };
     Lo = Lo * beer;
+
+    Lo /= (1.0f - russianRouletteChance);
 
     return true;
 }

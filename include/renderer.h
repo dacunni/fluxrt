@@ -84,6 +84,12 @@ class Renderer
 
         const float epsilon = 1.0e-4;
         unsigned int maxDepth = 2;
+
+        // Use Monte Carlo to choose between reflected and transmitted
+        // ray at a refraction boundary. If false, both rays are traced.
         bool monteCarloRefraction = true;
+
+        // Russian roulette chance [0, 1]. 0 = no RR termination
+        float russianRouletteChance = 0.1f;
 };
 
