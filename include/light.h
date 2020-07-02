@@ -23,14 +23,14 @@ struct DiskLight
 {
     inline DiskLight() = default;
     inline DiskLight(const Position3 & p, const Direction3 & d, float r,
-                     const RadianceRGB & intensity)
-        : position(p), direction(d), radius(r), intensity(intensity) {}
+                     MaterialID material)
+        : position(p), direction(d), radius(r), material(material) {}
     inline ~DiskLight() = default;
 
 	Position3 position = Position3{ 0.0f, 0.0f, 0.0f };
     Direction3 direction = Direction3{ 0.0f, -1.0f, 0.0f };
     float radius = 1.0f;
-    RadianceRGB intensity = { 1.0f, 1.0f, 1.0f };
+    MaterialID material = NoMaterial;
 };
 
 // Ray intersection

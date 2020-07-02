@@ -28,7 +28,13 @@ file = "myminifactory.com/scantheworld/smk16-kas115-pieta-michelangelo.stl"
     translate = [ -0.5, 0.0, 0.0 ]
 
 # TEMP - remove when we have emissive meshes
-[[pointlights]]
+#[[pointlights]]
+#position = [ -0.5, 1.25, 0.5 ]
+#intensity = [ 0.3, 0.3, 0.3 ]
+
+[[disklights]]
 position = [ -0.5, 1.25, 0.5 ]
-intensity = [ 0.3, 0.3, 0.3 ]
+direction = [ 1.0, 0.0, 0.0 ]
+radius = 0.3
+intensity = [ 0.5, 0.5, 0.5 ]
 

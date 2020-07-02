@@ -48,6 +48,7 @@ struct Material
     ReflectanceRGB diffuseColor =  { 1.0f, 1.0f, 1.0f };
     // Specular of all 0 indicates no specular present
     ReflectanceRGB specularColor = { 0.0f, 0.0f, 0.0f };
+    RadianceRGB emissionColor = { 0.0f, 0.0f, 0.0f };
 
     TextureID diffuseTexture  = NoTexture;
     TextureID specularTexture = NoTexture;
@@ -60,15 +61,20 @@ struct Material
 
     inline ReflectanceRGB diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline ReflectanceRGB specular(const TextureArray & tex, const TextureCoordinate & texcoord) const;
+    inline RadianceRGB emission(const TextureArray & tex, const TextureCoordinate & texcoord) const;
+    inline Direction3 normalMap(const TextureArray & tex, const TextureCoordinate & texcoord) const;
+    inline float alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const;
+
     inline bool hasDiffuse() const;
     inline bool hasSpecular() const;
-    inline float alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const;
+    inline bool hasEmission() const;
     inline bool hasNormalMap() const;
-    inline Direction3 normalMap(const TextureArray & tex, const TextureCoordinate & texcoord) const;
 
     // Apply normal map (if any) to the supplied basis vectors
     inline void applyNormalMap(const TextureArray & tex, const TextureCoordinate & texcoord,
                                Direction3 & normal, Direction3 & tangent, Direction3 & bitangent) const;
+
+    void print() const;
 
     // Factories
     static Material makeDiffuse(float D[3]);
@@ -77,6 +83,8 @@ struct Material
     static Material makeDiffuseSpecular(const ReflectanceRGB & D, const ReflectanceRGB & S);
     static Material makeMirror();
     static Material makeRefractive(float ior);
+    static Material makeEmissive(float E[3]);
+    static Material makeEmissive(const RadianceRGB & E);
 };
 
 static const Material DefaultMaterial = Material();
@@ -152,6 +160,20 @@ inline float Material::alpha(const TextureArray & tex, const TextureCoordinate &
     else {
         return 1.0f;
     }
+}
+
+inline RadianceRGB Material::emission(const TextureArray & tex, const TextureCoordinate & texcoord) const
+{
+    // TODO - emissive texture
+    return emissionColor;
+}
+
+inline bool Material::hasEmission() const
+{
+    // TODO - emissive texture
+    return emissionColor.r > 0.0f
+        || emissionColor.g > 0.0f
+        || emissionColor.b > 0.0f;
 }
 
 inline bool Material::hasNormalMap() const

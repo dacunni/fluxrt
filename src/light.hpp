@@ -49,8 +49,7 @@ inline bool findIntersection(const Ray & ray, const DiskLight & light, float min
             intersection.normal = light.direction;
             // generate tangent / bitangent
             coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
-            // TODO - material?
-            //intersection.material = light.material;
+            intersection.material = light.material;
             return true;
         }
      }

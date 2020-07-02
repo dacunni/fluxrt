@@ -20,6 +20,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
         return false;
     }
 
+    // Check for RR termination
     if(rng.uniform01() < russianRouletteChance) {
         return false;
     }
@@ -56,6 +57,11 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
     };
     Lo = Lo * beer;
 
+    // Emission
+    const auto E = material.emission(scene.textureCache.textures, intersection.texcoord);
+    Lo += E;
+
+    // Account for RR loss
     Lo /= (1.0f - russianRouletteChance);
 
     return true;
@@ -145,7 +151,7 @@ bool Renderer::traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray, c
 {
     bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, intersection, Lo);
 
-    Lo += directLightingAlongRay(scene, ray);
+    //Lo += directLightingAlongRay(scene, ray);
 
     return hit;
 }
@@ -161,7 +167,7 @@ inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
     RadianceRGB L;
 
     L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack);
-    L += directLightingAlongRay(scene, ray);
+    //L += directLightingAlongRay(scene, ray);
 
     return L;
 }
@@ -177,7 +183,6 @@ inline RadianceRGB Renderer::shadeRefract(const Scene & scene, RNG & rng,
     RadianceRGB L;
 
     L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack);
-    L += directLightingAlongRay(scene, ray);
 
     return L;
 }
@@ -255,7 +260,8 @@ inline RadianceRGB Renderer::directLightingAlongRay(const Scene & scene,
         // Make sure we don't hit an object closer than the light
         if(!intersects(ray, scene, epsilon, lightIntersection.distance - epsilon)) {
             // TODO - make sure this is right
-            L += light.intensity / (lightIntersection.distance * lightIntersection.distance);
+            const Material & material = materialFromID(light.material, scene.materials);
+            L += material.emission(scene.textureCache.textures, lightIntersection.texcoord);
         }
     }
 
@@ -367,8 +373,9 @@ inline RadianceRGB Renderer::sampleDiskLight(const Scene & scene,
         return RadianceRGB::BLACK();
     }
 
-    // TODO - make sure this is right
-    return light.intensity / lightDistSq;
+    const Material & material = materialFromID(light.material, scene.materials);
+    RayIntersection lightIntersection; // FIXME - dummy for texcoords that we don't support yet
+    return material.emission(scene.textureCache.textures, lightIntersection.texcoord);
 }
 
 

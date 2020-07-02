@@ -19,7 +19,14 @@ inline bool intersects(const Ray & ray, const Scene & scene,
             return true;
         }
     }
+
     for(const auto & o : scene.meshes) {
+        if(intersects(ray, o, minDistance, maxDistance)) {
+            return true;
+        }
+    }
+
+    for(const auto & o : scene.diskLights) {
         if(intersects(ray, o, minDistance, maxDistance)) {
             return true;
         }
@@ -62,6 +69,12 @@ inline bool findIntersection(const Ray & ray, const Scene & scene,
     }
 
     for(const auto & o : scene.meshes) {
+        if(findIntersection(ray, o, minDistance, nextIntersection)) {
+            updateBestHit();
+        }
+    }
+
+    for(const auto & o : scene.diskLights) {
         if(findIntersection(ray, o, minDistance, nextIntersection)) {
             updateBestHit();
         }

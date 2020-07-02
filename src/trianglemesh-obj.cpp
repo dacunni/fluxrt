@@ -68,6 +68,7 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
             //case 10: // TODO
             //    break;
             default:
+                std::cerr << "OBJ illum type " << objmaterial.illum << " not implemented\n";
                 material = Material::makeDiffuseSpecular(D, S);
         }
 

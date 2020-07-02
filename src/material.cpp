@@ -1,4 +1,15 @@
+#include <cstdio>
 #include "material.h"
+
+void Material::print() const
+{
+    std::string has;
+    if(hasDiffuse())   has += "D";
+    if(hasSpecular())  has += "S";
+    if(hasEmission())  has += "E";
+    if(hasNormalMap()) has += "N";
+    printf("Material comp=%s\n", has.c_str());
+}
 
 Material Material::makeDiffuse(float D[3])
 {
@@ -43,6 +54,22 @@ Material Material::makeRefractive(float ior)
     Material m;
     m.innerMedium.indexOfRefraction = ior;
     m.isRefractive = true;
+    return m;
+}
+
+Material Material::makeEmissive(float E[3])
+{
+    Material m;
+    m.diffuseColor = ReflectanceRGB{ 0.0f, 0.0f, 0.0f };
+    m.emissionColor = RadianceRGB(E);
+    return m;
+}
+
+Material Material::makeEmissive(const RadianceRGB & E)
+{
+    Material m;
+    m.diffuseColor = ReflectanceRGB{ 0.0f, 0.0f, 0.0f };
+    m.emissionColor = E;
     return m;
 }
 
