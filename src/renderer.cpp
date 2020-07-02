@@ -253,7 +253,7 @@ inline RadianceRGB Renderer::directLightingAlongRay(const Scene & scene,
         if(!findIntersection(ray, light, epsilon, lightIntersection))
             continue;
         // Make sure we don't hit an object closer than the light
-        if(!intersects(ray, scene, epsilon, lightIntersection.distance)) {
+        if(!intersects(ray, scene, epsilon, lightIntersection.distance - epsilon)) {
             // TODO - make sure this is right
             L += light.intensity / (lightIntersection.distance * lightIntersection.distance);
         }
@@ -363,7 +363,7 @@ inline RadianceRGB Renderer::sampleDiskLight(const Scene & scene,
     const float lightDist = std::sqrt(lightDistSq);
 
     // If we hit something, we can't see the light
-    if(intersects(Ray{P, lightDir}, scene, epsilon, lightDist)) {
+    if(intersects(Ray{P, lightDir}, scene, epsilon, lightDist - epsilon)) {
         return RadianceRGB::BLACK();
     }
 

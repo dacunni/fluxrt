@@ -21,7 +21,13 @@ inline bool intersectPlane(const Ray & ray,
 inline bool intersects(const Ray & ray, const DiskLight & light, float minDistance, float maxDistance)
 {
     RayIntersection intersection;
-    return findIntersection(ray, light, minDistance, intersection);
+
+    if(findIntersection(ray, light, minDistance, intersection) &&
+       intersection.distance <= maxDistance) {
+        return true;
+    }
+
+    return false;
 }
 
 inline bool findIntersection(const Ray & ray, const DiskLight & light, float minDistance, RayIntersection & intersection)
@@ -29,6 +35,9 @@ inline bool findIntersection(const Ray & ray, const DiskLight & light, float min
     float t = 0;
 
     if(intersectPlane(ray, light.position, light.direction, t)) {
+        if(t < minDistance) {
+            return false;
+        }
         Position3 p = ray.origin + ray.direction * t;
         vec3 v = p - light.position;
         float d2 = dot(v, v);
