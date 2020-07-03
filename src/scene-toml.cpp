@@ -420,14 +420,9 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 direction.normalize();
                 float radius = (float) diskLightTable->get_as<double>("radius").value_or(1.0);
                 auto intensity = vectorToRadianceRGB(diskLightTable->get_array_of<double>("intensity").value_or(std::vector<double>{1.0, 1.0, 1.0}));
-
                 Material material = Material::makeEmissive(intensity);
                 MaterialID id = scene.materials.size();
                 scene.materials.push_back(material);
-
-                printf("Material for Disk light:\n"); // TEMP
-                material.print();
-
                 scene.diskLights.emplace_back(position, direction, radius, id);
             }
         }

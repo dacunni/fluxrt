@@ -1,0 +1,36 @@
+[camera]
+type = "pinhole"
+hfov = 45
+#type = "ortho"
+#hsize = 8
+
+position = [ 0.0, 2.0, 3.0 ]
+lookat = [ 0.0, 0.0, -0.5 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 300
+pixelheight = 200
+
+# brighter light
+[[disklights]]
+position = [ 0.0, 1.0, 0.0 ]
+direction = [ 0.0, 1.0, 0.0 ]
+radius = 0.5
+intensity = [ 0.4, 0.4, 0.9 ]
+
+# dim shadow caster light
+[[disklights]]
+position = [ 0.0, 0.25, 0.0 ]
+direction = [ 0.5, 1.0, 0.0 ]
+radius = 0.25
+intensity = [ 0.1, 0.2, 0.1 ]
+
+
+[[slabs]]
+min = [ -1000.0, -1000.0, -1000.0 ]
+max = [ 1000.0, 0.0, 1000.0 ]
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.5, 0.5, 0.5 ]
+

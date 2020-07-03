@@ -17,25 +17,19 @@ pixelheight = 300
 #[envmap]
 #type = "gradient"
 #low = [ 0.0, 0.0, 0.0 ]
-##high = [ 0.8, 0.6, 0.6 ]
 #high = [ 0.8, 0.8, 0.8 ]
 #direction = [ 1.0, 1.0, 0.0 ]
 #type = "latlon"
-##file = "hdrihaven/street_lamp_1k.hdr"
+#file = "hdrihaven/street_lamp_1k.hdr"
 #file = "hdrihaven/adams_place_bridge_1k.hdr"
-##file = "hdrihaven/kloppenheim_02_1k.hdr"
-##file = "hdrihaven/spruit_sunrise_1k.hdr"
+#file = "hdrihaven/kloppenheim_02_1k.hdr"
+#file = "hdrihaven/spruit_sunrise_1k.hdr"
 
 [[disklights]]
 position = [ 3.0, 4.0, 3.0 ]
 direction = [ 1.0, 0.0, 0.0 ]
-radius = 2.0
-#intensity = [ 0.0, 3.0, 3.0 ]
-#intensity = [ 0.5, 0.5, 0.5 ]
+radius = 5.0
 intensity = [ 1.0, 1.0, 1.0 ]
-#intensity = [ 2.0, 2.0, 2.0 ]
-#intensity = [ 8.0, 8.0, 8.0 ]
-#intensity = [ 15.0, 15.0, 15.0 ]
 
 [[meshes]]
 file = "blendswap.com/jars/jars.obj"

@@ -12,11 +12,17 @@ up = [ 0.0, 1.0, 0.0 ]
 pixelwidth = 400
 pixelheight = 300
 
-[envmap]
-type = "gradient"
-low = [ 0.0, 0.0, 0.0 ]
-high = [ 1.0, 1.0, 1.0 ]
+#[envmap]
+#type = "gradient"
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
+#direction = [ 1.0, 0.0, 1.0 ]
+
+[[disklights]]
+position = [ 3.0, 4.0, 3.0 ]
 direction = [ 1.0, 0.0, 1.0 ]
+radius = 1.1
+intensity = [ 0.3, 0.3, 0.3 ]
 
 [[slabs]] # Floor
 min = [ -1000.0, -1000.0, -1000.0 ]
