@@ -99,6 +99,11 @@ MaterialID loadMaterial(const std::shared_ptr<cpptoml::table> & materialTable, S
         auto beersLawAtt = vectorToParameterRGB(materialTable->get_array_of<double>("beer").value_or(std::vector<double>{0.0, 0.0, 0.0}));
         material.innerMedium.beersLawAttenuation = beersLawAtt;
     }
+    else if(*type == "emissive") {
+        auto rgb = materialTable->get_array_of<double>("emissive");
+        auto emissive = vectorToRadianceRGB(*rgb);
+        material = Material::makeEmissive(emissive);
+    }
     else {
         throw std::runtime_error(std::string("Unknown material type : ") + *type);
     }
