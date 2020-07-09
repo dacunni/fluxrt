@@ -26,14 +26,17 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                "ior %.3f "
                "D %.1f %.1f %.1f Dt '%s' "
                "S %.1f %.1f %.1f St '%s' "
-               "At '%s' dissolve %.1f"
+               "At '%s' dissolve %.1f "
+               "shin %.1f"
                "\n",
                mi,
                objmaterial.illum,
                objmaterial.ior,
                D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
                S[0], S[1], S[2], objmaterial.specular_texname.c_str(),
-               objmaterial.alpha_texname.c_str(), objmaterial.dissolve);
+               objmaterial.alpha_texname.c_str(), objmaterial.dissolve,
+               objmaterial.shininess
+               );
 
         Material material;
        
@@ -42,9 +45,10 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
             case 1: // Lambertian diffuse
                 material = Material::makeDiffuse(D);
                 break;
-            //case 2: // diffuse + specular (Blinn-Phong)
-            // TODO
-            //    break;
+            case 2: // diffuse + specular (Blinn-Phong)
+                material = Material::makeDiffuseSpecular(D, S);
+                // TODO 
+                break;
             //case 3: // diffuse + specular (Blinn-Phong) + Whitted
             // TODO
             //    break;

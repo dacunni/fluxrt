@@ -4,6 +4,7 @@
 #include "rng.h"
 #include "scene.h"
 #include "coordinate.h"
+#include "brdf.h"
 
 void printDepthPrefix(unsigned int num)
 {
@@ -12,9 +13,12 @@ void printDepthPrefix(unsigned int num)
     }
 }
 
-bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
+                        const float minDistance, const unsigned int depth,
                         const MediumStack & mediumStack,
-                        RayIntersection & intersection, RadianceRGB & Lo) const
+                        bool accumEmission,
+                        RayIntersection & intersection,
+                        RadianceRGB & Lo) const
 {
     if(depth > maxDepth) {
         return false;
@@ -43,7 +47,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
     if(A < 1.0f) { // transparent
         // Trace a new ray just past the intersection
         float newMinDistance = intersection.distance + epsilon;
-        return traceRay(scene, rng, ray, newMinDistance, depth, mediumStack, intersection, Lo);
+        return traceRay(scene, rng, ray, newMinDistance, depth, mediumStack, accumEmission, intersection, Lo);
     }
 
     Lo = shade(scene, rng, minDistance, depth, mediumStack, Wi, intersection, material);
@@ -58,8 +62,10 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
     Lo = Lo * beer;
 
     // Emission
-    const auto E = material.emission(scene.textureCache.textures, intersection.texcoord);
-    Lo += E;
+    if(accumEmission) {
+        const auto E = material.emission(scene.textureCache.textures, intersection.texcoord);
+        Lo += E;
+    }
 
     // Account for RR loss
     Lo /= (1.0f - russianRouletteChance);
@@ -67,20 +73,27 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const f
     return true;
 }
 
-RadianceRGB Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
-                               const MediumStack & mediumStack) const
+RadianceRGB Renderer::traceRay(const Scene & scene, RNG & rng,
+                               const Ray & ray,
+                               const float minDistance, const unsigned int depth,
+                               const MediumStack & mediumStack,
+                               bool accumEmission) const
 {
     RayIntersection intersection;
     RadianceRGB L;
     
-    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, intersection, L);
+    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, accumEmission, intersection, L);
 
     return L;
 }
 
-inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
+inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
+                                   const float minDistance,
+                                   const unsigned int depth,
                                    const MediumStack & mediumStack,
-                                   const Direction3 & Wi, RayIntersection & intersection, const Material & material) const
+                                   const Direction3 & Wi,
+                                   RayIntersection & intersection,
+                                   const Material & material) const
 {
     // Notational convenience
     const auto P = intersection.position;
@@ -149,9 +162,7 @@ bool Renderer::traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray, c
                               const MediumStack & mediumStack,
                               RayIntersection & intersection, RadianceRGB & Lo) const
 {
-    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, intersection, Lo);
-
-    //Lo += directLightingAlongRay(scene, ray);
+    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, true, intersection, Lo);
 
     return hit;
 }
@@ -166,8 +177,7 @@ inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
     const Ray ray(P + N * epsilon, Wo);
     RadianceRGB L;
 
-    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack);
-    //L += directLightingAlongRay(scene, ray);
+    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true);
 
     return L;
 }
@@ -182,7 +192,7 @@ inline RadianceRGB Renderer::shadeRefract(const Scene & scene, RNG & rng,
     const Ray ray(P - N * epsilon, Dt);
     RadianceRGB L;
 
-    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack);
+    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true);
 
     return L;
 }
@@ -246,28 +256,6 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
     return Ls + Lt;
 }
 
-inline RadianceRGB Renderer::directLightingAlongRay(const Scene & scene,
-                                                    const Ray & ray) const
-{
-    RayIntersection lightIntersection;
-    RadianceRGB L;
-
-    // Check for hit on disk lights
-    for(const auto & light : scene.diskLights) {
-        // Skip if we don't hit the light
-        if(!findIntersection(ray, light, epsilon, lightIntersection))
-            continue;
-        // Make sure we don't hit an object closer than the light
-        if(!intersects(ray, scene, epsilon, lightIntersection.distance - epsilon)) {
-            // TODO - make sure this is right
-            const Material & material = materialFromID(light.material, scene.materials);
-            L += material.emission(scene.textureCache.textures, lightIntersection.texcoord);
-        }
-    }
-
-    return L;
-}
-
 inline RadianceRGB Renderer::sampleDirectLighting(const Scene & scene,
                                                   RNG & rng,
                                                   const Position3 & P,
@@ -301,20 +289,29 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
 {
     RadianceRGB L;
 
-#if 1
-    // Sample according to cosine lobe about the normal
-    Direction3 diffuseDir(rng.cosineAboutDirection(N));
-    L += traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
-                  epsilon, depth + 1, mediumStack);
-#else
-    // Uniform sampling across the hemisphere
-    Direction3 diffuseDir(rng.uniformSurfaceUnitHalfSphere(N));
-    L += 2.0f * clampedDot(diffuseDir, N)
-        * traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
-                   epsilon, depth + 1, mediumStack);
-#endif
+    // Note: We don't accumulate emission on the next hit if we sample
+    //       lighting directly, to avoid double counting direct illumination.
 
-    L += sampleDirectLighting(scene, rng, P, N);
+    const bool sampleLights = true;
+    const bool sampleCosineLobe = true;
+
+    if(sampleLights) {
+        L += sampleDirectLighting(scene, rng, P, N) / constants::PI;
+    }
+
+    if(sampleCosineLobe) {
+        // Sample according to cosine lobe about the normal
+        Direction3 diffuseDir(rng.cosineAboutDirection(N));
+        L += traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
+                      epsilon, depth + 1, mediumStack, !sampleLights);
+    }
+    else {
+        // Uniform sampling across the hemisphere
+        Direction3 diffuseDir(rng.uniformSurfaceUnitHalfSphere(N));
+        L += 2.0f * clampedDot(diffuseDir, N)
+            * traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
+                       epsilon, depth + 1, mediumStack, !sampleLights);
+    }
 
     return L;
 }
@@ -375,7 +372,13 @@ inline RadianceRGB Renderer::sampleDiskLight(const Scene & scene,
 
     const Material & material = materialFromID(light.material, scene.materials);
     RayIntersection lightIntersection; // FIXME - dummy for texcoords that we don't support yet
-    return material.emission(scene.textureCache.textures, lightIntersection.texcoord);
+    auto E = material.emission(scene.textureCache.textures, lightIntersection.texcoord);
+
+    // Scale by the solid angle of the light as seen by the shaded point
+    float A = constants::PI * light.radius * light.radius;
+    float cos = std::abs(dot(light.direction, lightDir));
+    float sa = A * cos / lightDistSq;
+    return E * sa;
 }
 
 

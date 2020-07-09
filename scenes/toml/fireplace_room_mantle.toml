@@ -1,16 +1,12 @@
 [camera]
 type = "pinhole"
+hfov = 30
 #hfov = 45
-hfov = 60
+#hfov = 60
 #hfov = 75
 
-#position = [ 0.3, -0.2, -0.3 ]
-#direction = [ -1.0, 0.0, 1.0 ]
-#position = [ 0.3, -0.2, 0.6 ]
-#direction = [ -1.0, 0.0, -1.0 ]
 position = [ 0.3, -0.2, -1.0 ]
-direction = [ -0.6, 0.0, 1.0 ]
-
+lookat = [ -0.2, -0.2, 1.0 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]

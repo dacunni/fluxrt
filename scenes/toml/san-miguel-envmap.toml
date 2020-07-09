@@ -4,15 +4,17 @@ hfov = 45
 #type = "ortho"
 #hsize = 8
 
-position = [ 0.0, -0.4, 0.0 ]
-#position = [ 0.0, -4.0, 0.0 ]
-direction = [ 1.0, 0.0, -0.5 ]
+# plants along railing
+#position = [ 0.0, -0.4, 0.0 ]
+##position = [ 0.0, -4.0, 0.0 ]
+#direction = [ 1.0, 0.0, -0.5 ]
 
 #position = [ -40.0, 0.0, 0.0 ]
 #direction = [ 1.0, 0.0, 0.0 ]
 
-#position = [ 0.0, -0.0, 0.0 ]
-#direction = [ 0.5, -0.6, 1.0 ]
+# fountain and tables through trees
+position = [ 0.0, -0.0, 0.0 ]
+direction = [ 0.5, -0.6, 1.0 ]
 
 up = [ 0.0, 1.0, 0.0 ]
 
@@ -27,20 +29,20 @@ file = "san-miguel/san-miguel.obj"
 scaletocube = 10.0
 
 [envmap]
-#type = "gradient"
+type = "gradient"
 #low = [ 0.0, 0.0, 0.0 ]
 #high = [ 0.8, 0.6, 0.6 ]
-#low = [ 0.0, 0.0, 0.0 ]
-#high = [ 1.0, 1.0, 1.0 ]
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
 
-type = "cubemap"
-
-xneg = "NissiBeach/negx.jpg"
-xpos = "NissiBeach/posx.jpg"
-yneg = "NissiBeach/negy.jpg"
-ypos = "NissiBeach/posy.jpg"
-zneg = "NissiBeach/negz.jpg"
-zpos = "NissiBeach/posz.jpg"
+#type = "cubemap"
+#
+#xneg = "NissiBeach/negx.jpg"
+#xpos = "NissiBeach/posx.jpg"
+#yneg = "NissiBeach/negy.jpg"
+#ypos = "NissiBeach/posy.jpg"
+#zneg = "NissiBeach/negz.jpg"
+#zpos = "NissiBeach/posz.jpg"
 
 #xneg = "SaintPetersBasilica/negx.jpg"
 #xpos = "SaintPetersBasilica/posx.jpg"

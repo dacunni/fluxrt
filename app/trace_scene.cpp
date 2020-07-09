@@ -116,9 +116,6 @@ int main(int argc, char ** argv)
         ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
         const vec2 pixelCenter = vec2(x, y) + vec2(0.5f, 0.5f);
 
-        float focusDistance = 20.0f;
-        float focusDivergence = focusDistance * 0.02f;
-
         for(unsigned int samplesIndex = 0; samplesIndex < options.samplesPerPixel; ++samplesIndex) {
             vec2 jitteredPixel = pixelCenter + jitter[samplesIndex];
             auto standardPixel = scene.sensor.pixelStandardImageLocation(jitteredPixel);

@@ -16,12 +16,19 @@ class Renderer
     using MediumStack = std::vector<Medium>;
 
     public:
-        bool traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+        bool traceRay(const Scene & scene, RNG & rng,
+                      const Ray & ray,
+                      const float minDistance, const unsigned int depth,
                       const MediumStack & mediumStack,
-                      RayIntersection & intersection, RadianceRGB & Lo) const;
+                      bool accumEmission,
+                      RayIntersection & intersection,
+                      RadianceRGB & Lo) const;
 
-        RadianceRGB traceRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
-                      const MediumStack & mediumStack) const;
+        RadianceRGB traceRay(const Scene & scene, RNG & rng,
+                             const Ray & ray,
+                             const float minDistance, const unsigned int depth,
+                             const MediumStack & mediumStack,
+                             bool accumEmission) const;
 
         bool traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
                             const MediumStack & mediumStack,
@@ -56,9 +63,6 @@ class Renderer
                                         const MediumStack & mediumStack,
                                         const Direction3 & Wi,
                                         const Position3 & P, const Direction3 & N) const;
-
-        inline RadianceRGB directLightingAlongRay(const Scene & scene,
-                                                  const Ray & ray) const;
 
         inline RadianceRGB sampleDirectLighting(const Scene & scene,
                                                 RNG & rng,

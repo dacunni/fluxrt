@@ -1,0 +1,37 @@
+[camera]
+type = "pinhole"
+hfov = 30
+#type = "ortho"
+#hsize = 8
+
+# front
+position = [ 0.0, 100.0, 50.0 ]
+lookat = [ -10.0, 0.0, 11.0 ]
+up = [ 0.0, 0.0, 1.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 300
+
+[envmap]
+#type = "gradient"
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
+#direction = [ 0.0, 1.0, 1.0 ]
+
+type = "cubemap"
+scalefactor = 2.0
+xneg = "HornstullsStrand2/negx.jpg"
+xpos = "HornstullsStrand2/posx.jpg"
+yneg = "HornstullsStrand2/negy.jpg"
+ypos = "HornstullsStrand2/posy.jpg"
+zneg = "HornstullsStrand2/negz.jpg"
+zpos = "HornstullsStrand2/posz.jpg"
+
+[[meshes]]
+file = "dacunni/mysimball/tinker.obj"
+
+# Floor
+#[[slabs]]
+#mi200 = [ -1000.0, -1000.0, -1000.0 ]
+#max = [ 1000.0, -0.04, 1000.0 ]
