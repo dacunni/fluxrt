@@ -127,8 +127,7 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
 
         // Randomly choose between specular and diffuse
         // TODO: Determine the best probability
-        float comp = std::min(S.r, std::min(S.g, S.b));
-        float probSpec = material.hasSpecular() ? comp : 0.0f;
+        float probSpec = material.hasSpecular() ? ((S.r + S.g + S.b) / 3.0f) : 0.0f;
         float probDiffuse = 1.0f - probSpec;
         bool doSpec = rng.uniform01() < probSpec;
         bool doDiffuse = !doSpec && material.hasDiffuse();

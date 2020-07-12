@@ -147,9 +147,11 @@ RadianceRGB CubeMapEnvironmentMap::sampleRay(const Ray & ray)
 
     directionToTileCoord(ray.direction, texture, texcoord);
 
-    return { scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 0),
-             scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 1),
-             scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 2) };
+    color::ColorRGB sample = texture->lerpUV3(texcoord.u, texcoord.v);
+
+    return { scaleFactor * sample.r,
+             scaleFactor * sample.g,
+             scaleFactor * sample.b };
 }
 
 void LatLonEnvironmentMap::loadFromFile(const std::string & filename)
@@ -177,11 +179,11 @@ RadianceRGB LatLonEnvironmentMap::sampleRay(const Ray & ray)
     texcoord.u = 0.5f * (1.0f + std::atan2(D.x, -D.z) / PI);
     texcoord.v = std::acos(D.y) / PI;
 
-    auto radiance = RadianceRGB{ scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 0),
-                                 scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 1),
-                                 scaleFactor * texture->lerpUV(texcoord.u, texcoord.v, 2) };
+    color::ColorRGB sample = texture->lerpUV3(texcoord.u, texcoord.v);
 
-    return radiance;
+    return { scaleFactor * sample.r,
+             scaleFactor * sample.g,
+             scaleFactor * sample.b };
 }
 
 
