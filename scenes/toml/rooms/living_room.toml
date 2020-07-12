@@ -16,12 +16,17 @@ file = "casual-effects.com/living_room/living_room.obj"
 #file = "casual-effects.com/living_room/living_room_no_window_blockers.obj"
 scaletocube = 10.0
 
-[envmap]
-type = "gradient"
-low = [ 0.0, 0.0, 0.0 ]
-high = [ 10.0, 10.0, 10.0 ]
+#[envmap]
+#type = "gradient"
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 10.0, 10.0, 10.0 ]
 
-[[pointlights]]
-position = [ 0.0, 0.0, 0.0 ]
-intensity = [ 3.0, 3.0, 3.0 ]
+#[[pointlights]]
+#position = [ 0.0, 0.0, 0.0 ]
+#intensity = [ 3.0, 3.0, 3.0 ]
 
+[[disklights]]
+position = [ 0.0, 0.0, -3.0 ]
+direction = [ 0.0, 1.0, 1.0 ]
+radius = 0.25
+intensity = [ 30.0, 30.0, 30.0 ]
