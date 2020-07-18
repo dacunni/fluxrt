@@ -95,5 +95,7 @@ class Renderer
 
         // Russian roulette chance [0, 1]. 0 = no RR termination
         float russianRouletteChance = 0.1f;
+        // Only apply RR if at or beyond this depth
+        unsigned int russianRouletteMinDepth = 2;
 };
 

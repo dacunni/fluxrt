@@ -25,7 +25,8 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
     }
 
     // Check for RR termination
-    if(rng.uniform01() < russianRouletteChance) {
+    if(depth >= russianRouletteMinDepth
+       && rng.uniform01() < russianRouletteChance) {
         return false;
     }
 
@@ -68,7 +69,9 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
     }
 
     // Account for RR loss
-    Lo /= (1.0f - russianRouletteChance);
+    if(depth >= russianRouletteMinDepth) {
+        Lo /= (1.0f - russianRouletteChance);
+    }
 
     return true;
 }
@@ -157,7 +160,8 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
     return Lo;
 }
 
-bool Renderer::traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
+bool Renderer::traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray,
+                              const float minDistance, const unsigned int depth,
                               const MediumStack & mediumStack,
                               RayIntersection & intersection, RadianceRGB & Lo) const
 {
