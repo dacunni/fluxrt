@@ -5,9 +5,10 @@
 
 namespace constants {
 
-    static constexpr double PI      = M_PI;
-    static constexpr double TWO_PI  = 2.0 * PI;
-    static constexpr double FOUR_PI = 4.0 * PI;
+    static constexpr double PI          = M_PI;
+    static constexpr double TWO_PI      = 2.0 * PI;
+    static constexpr double FOUR_PI     = 4.0 * PI;
+    static constexpr double PI_OVER_TWO = 0.5 * PI;
 
 };
 
