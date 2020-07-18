@@ -35,6 +35,16 @@ inline T Image<T>::get(size_t x, size_t y, int channel) const
 }
 
 template<typename T>
+inline T Image<T>::channelSum(size_t x, size_t y) const
+{
+    T sum = (T) 0;
+    for(int c = 0; c < numChannels; ++c) {
+        sum += get(x, y, c);
+    }
+    return sum;
+}
+
+template<typename T>
 inline T Image<T>::lerp(float x, float y, int channel) const
 {
     x -= 0.5f;
@@ -146,6 +156,22 @@ void Image<T>::forEachPixelChannel(const PixelChannelFunction & fn)
                 fn(*this, x, y, c);
             }
         }
+    }
+}
+
+template<typename T>
+void Image<T>::forEachPixelInRow(size_t y, const PixelFunction & fn)
+{
+    for(int x = 0; x < width; x++) {
+        fn(*this, x, y);
+    }
+}
+
+template<typename T>
+void Image<T>::forEachPixelInColumn(size_t x, const PixelFunction & fn)
+{
+    for(int y = 0; y < height; y++) {
+        fn(*this, x, y);
     }
 }
 

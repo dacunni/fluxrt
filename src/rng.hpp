@@ -66,6 +66,25 @@ inline vec2 RNG::uniformRectangle(float xmin, float xmax,
     };
 }
 
+inline vec2 RNG::uniform2DRange01()
+{
+    return { 
+        uniform01(),
+        uniform01()
+    };
+}
+
+inline vec2 RNG::uniform2DRange01Stratified(int xbins, int ybins, int index)
+{
+    int xbin = index % xbins;
+    int ybin = (index / xbins) % ybins;
+
+    return {
+        uniformRange(xbin, xbin + 1) / float(xbins),
+        uniformRange(ybin, ybin + 1) / float(ybins)
+    };
+}
+
 inline void RNG::uniformSurfaceUnitSphere(float & x, float & y, float & z)
 {
     using namespace constants;

@@ -16,6 +16,7 @@ struct Image
     ~Image() = default;
 
     inline T get(size_t x, size_t y, int channel) const;
+    inline T channelSum(size_t x, size_t y) const;
     inline T lerp(float x, float y, int channel) const;
     inline T lerpUV(float u, float v, int channel) const;
     inline color::ColorRGB lerpUV3(float u, float v) const;
@@ -39,6 +40,9 @@ struct Image
                                                     int    /*c*/)>;
     void forEachPixel(const PixelFunction & fn);
     void forEachPixelChannel(const PixelChannelFunction & fn);
+
+    void forEachPixelInRow(size_t y, const PixelFunction & fn);
+    void forEachPixelInColumn(size_t x, const PixelFunction & fn);
 
     enum OutOfBoundsBehavior {
         ClampOutOfBoundsCoordinate,

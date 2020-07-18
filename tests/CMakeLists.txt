@@ -16,6 +16,18 @@ if(RUN_INSPECTION_TESTS)
 endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
+ADD_EXECUTABLE (test_imp_samp_envmap test_imp_samp_envmap.cpp)
+TARGET_LINK_LIBRARIES (test_imp_samp_envmap micromath)
+
+if(RUN_INSPECTION_TESTS)
+    ADD_CUSTOM_COMMAND(TARGET test_imp_samp_envmap POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/imp_samp_envmap)
+    ADD_CUSTOM_COMMAND(TARGET test_imp_samp_envmap POST_BUILD
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/imp_samp_envmap
+                       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_imp_samp_envmap)
+endif(RUN_INSPECTION_TESTS)
+
+# ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_interpolation test_interpolation.cpp)
 TARGET_LINK_LIBRARIES (test_interpolation micromath)
 

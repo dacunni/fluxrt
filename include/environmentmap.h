@@ -4,8 +4,10 @@
 #include "texture.h"
 #include "radiometry.h"
 #include "vectortypes.h"
+#include "vec2.h"
 
 class Ray;
+class RNG;
 
 class EnvironmentMap
 {
@@ -51,8 +53,6 @@ class CubeMapEnvironmentMap : public EnvironmentMap
         void setScaleFactor(float f) { scaleFactor = f; }
 
     protected:
-        using TexturePtr = std::shared_ptr<Texture>;
-
         TexturePtr loadDirectionTile(const std::string & file);
 
         void directionToTileCoord(const Direction3 & v,
@@ -76,15 +76,26 @@ class LatLonEnvironmentMap : public EnvironmentMap
         virtual ~LatLonEnvironmentMap() = default;
 
         void loadFromFile(const std::string & filename);
+        void loadFromImage(const Image<float> & image);
 
         virtual RadianceRGB sampleRay(const Ray & ray);
 
         void setScaleFactor(float f) { scaleFactor = f; }
 
+        TexturePtr getTexture() const { return texture; }
+
+        // Importance sample using index variables e1,e2 in [0, 1]
+        // Returns pixel coordinate of index
+        vec2 importanceSample(float e1, float e2) const;
+
     protected:
-        using TexturePtr = std::shared_ptr<Texture>;
+        void buildImportanceSampleLookup();
 
         TexturePtr texture;
+
+        // Importance sampling
+        TexturePtr         rowSums; // Cumulative sums along rows
+        std::vector<float> cumRows; // Cumulative sum of row sums
 
         float scaleFactor = 1.0f;
 };

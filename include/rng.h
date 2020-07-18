@@ -30,6 +30,8 @@ struct RNG
                                  vec2 & v);
     inline vec2 uniformRectangle(float xmin, float xmax,
                                  float ymin, float ymax);
+    inline vec2 uniform2DRange01();
+    inline vec2 uniform2DRange01Stratified(int xbins, int ybins, int index);
 
     // 3D
 	inline void uniformSurfaceUnitSphere(float & x, float & y, float & z);
