@@ -88,3 +88,14 @@ endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
 
+ADD_EXECUTABLE (test_rng test_rng.cpp)
+TARGET_LINK_LIBRARIES (test_rng micromath)
+
+if(RUN_INSPECTION_TESTS)
+    ADD_CUSTOM_COMMAND(TARGET test_rng POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/rng)
+    ADD_CUSTOM_COMMAND(TARGET test_rng POST_BUILD
+                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/rng
+                       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_rng)
+endif(RUN_INSPECTION_TESTS)
+

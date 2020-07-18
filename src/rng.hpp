@@ -86,6 +86,13 @@ inline void RNG::uniformSurfaceUnitSphere(vec3 & v)
     return uniformSurfaceUnitSphere(v.x, v.y, v.z);
 }
 
+inline vec3 RNG::uniformSurfaceUnitSphere()
+{
+    vec3 v;
+    uniformSurfaceUnitSphere(v);
+    return v;
+}
+
 inline void RNG::uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace, vec3 & v)
 {
     uniformSurfaceUnitSphere(v);
