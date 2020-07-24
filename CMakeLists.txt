@@ -32,6 +32,9 @@ set(SRCS
     src/camera.cpp
     src/color.cpp
     src/environmentmap.cpp
+    src/GradientEnvironmentMap.cpp
+    src/LatLonEnvironmentMap.cpp
+    src/CubeMapEnvironmentMap.cpp
     src/filesystem.cpp
     src/fresnel.cpp
     src/image.cpp

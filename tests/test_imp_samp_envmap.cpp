@@ -3,7 +3,7 @@
 
 #include "base.h"
 #include "image.h"
-#include "environmentmap.h"
+#include "LatLonEnvironmentMap.h"
 #include "rng.h"
 
 int main(int argc, char ** argv)

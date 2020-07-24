@@ -6,6 +6,9 @@
 #include "filesystem.h"
 #include "constants.h"
 #include "transform.h"
+#include "GradientEnvironmentMap.h"
+#include "LatLonEnvironmentMap.h"
+#include "CubeMapEnvironmentMap.h"
 
 static vec3 vectorToVec3(const std::vector<double> & v)
 {

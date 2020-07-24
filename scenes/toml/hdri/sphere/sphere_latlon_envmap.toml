@@ -1,0 +1,38 @@
+[camera]
+type = "pinhole"
+hfov = 45
+
+position = [ 0.0, 0.0, 20.0 ]
+direction = [ 0.0, 0.0, -1.0 ]
+lookat = [ 0.2, 0.3, 0.5 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[envmap]
+type = "latlon"
+#file = "hdrihaven/adams_place_bridge_1k.hdr"
+#file = "hdrihaven/moonless_golf_1k.hdr"
+file = "hdrihaven/street_lamp_1k.hdr"
+#scalefactor = 0.1
+
+[sensor]
+pixelwidth = 600
+pixelheight = 300
+
+[[spheres]]
+radius = 3.0
+    [spheres.material]
+    type = "diffuse"
+    diffuse = [ 1.0, 1.0, 1.0 ]
+
+# Witness spheres
+[[spheres]]
+position = [ -6.5, 0.0, 0.0 ]
+radius = 1.0
+    [spheres.material]
+    type = "mirror"
+[[spheres]]
+position = [ 6.5, 0.0, 0.0 ]
+radius = 1.0
+    [spheres.material]
+    type = "mirror"
+
