@@ -69,19 +69,20 @@ int main(int argc, char ** argv)
 
     RNG rng;
     int numSamples = 20000;
+    float pdf;
 
 #if 1
     // stratified sampling
     for(int sample = 0; sample < numSamples; ++sample) {
         vec2 e = rng.uniform2DRange01Stratified(200, 100, sample);
-        vec2 coord = latlonEnvmap.importanceSample(e.x, e.y);
+        vec2 coord = latlonEnvmap.importanceSample(e.x, e.y, pdf);
         latlonEnvmapSamples.set(coord.x, coord.y, 0, 1.0f);
     }
 #else
     // random sampling
     for(int sample = 0; sample < numSamples; ++sample) {
         vec2 e = rng.uniform2DRange01();
-        vec2 coord = latlonEnvmap.importanceSample(e.x, e.y);
+        vec2 coord = latlonEnvmap.importanceSample(e.x, e.y, pdf);
         latlonEnvmapSamples.set(coord.x, coord.y, 0, 1.0f);
     }
 #endif
