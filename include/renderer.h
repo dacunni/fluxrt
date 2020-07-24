@@ -21,6 +21,7 @@ class Renderer
                       const float minDistance, const unsigned int depth,
                       const MediumStack & mediumStack,
                       bool accumEmission,
+                      bool accumEnvMap,
                       RayIntersection & intersection,
                       RadianceRGB & Lo) const;
 
@@ -28,7 +29,8 @@ class Renderer
                              const Ray & ray,
                              const float minDistance, const unsigned int depth,
                              const MediumStack & mediumStack,
-                             bool accumEmission) const;
+                             bool accumEmission,
+                             bool accumEnvMap) const;
 
         bool traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
                             const MediumStack & mediumStack,

@@ -37,15 +37,13 @@ pixelheight = 300
 #pixelheight = 1500
 
 [envmap]
-type = "gradient"
-low = [ 0.0, 0.0, 0.0 ]
-high = [ 0.8, 0.8, 0.8 ]
+#type = "gradient"
 #low = [ 0.0, 0.0, 0.0 ]
-#high = [ 1.0, 1.0, 1.0 ]
-#low = [ 0.0, 0.0, 0.1 ]
-#high = [ 0.8, 0.3, 0.0 ]
-direction = [ 1.0, 0.0, 0.0 ]
-#direction = [ 0.0, -0.8, -1.0 ]
+#high = [ 0.8, 0.8, 0.8 ]
+#direction = [ 1.0, 0.0, 0.0 ]
+
+type = "latlon"
+file = "hdrihaven/adams_place_bridge_1k.hdr"
 
 #type = "cubemap"
 

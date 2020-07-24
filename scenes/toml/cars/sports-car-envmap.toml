@@ -32,6 +32,9 @@ pixelheight = 1000
 #low = [ 0.0, 0.0, 0.0 ]
 #high = [ 1.0, 1.0, 1.0 ]
 
+#type = "latlon"
+#file = "hdrihaven/adams_place_bridge_1k.hdr"
+
 type = "cubemap"
 
 #xneg = "HornstullsStrand2/negx.jpg"
@@ -65,6 +68,9 @@ zpos = "NissiBeach/posz.jpg"
 [[meshes]]
 file = "casual-effects.com/sportsCar/sportsCar.obj"
 scaletocube = 15.0
+#[meshes.material]
+#type = "diffuse"
+#diffuse = [ 0.8, 0.8, 0.8 ]
 
 # Floor
 [[slabs]]

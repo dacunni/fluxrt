@@ -22,8 +22,11 @@ direction = [ 1, 0, 0 ]
 
 #type = "latlon"
 #file = "hdrihaven/adams_place_bridge_1k.hdr"
+#file = "hdrihaven/moonless_golf_1k.hdr"
+#file = "hdrihaven/street_lamp_1k.hdr"
 #file = "hdrihaven/kloppenheim_02_1k.hdr"
 #file = "hdrihaven/spruit_sunrise_1k.hdr"
+#scalefactor=0.2
 #scalefactor=0.5
 #scalefactor=3
 

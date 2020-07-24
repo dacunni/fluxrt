@@ -21,6 +21,11 @@ pixelheight = 300
 #pixelwidth = 2000
 #pixelheight = 1000
 
+[envmap]
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+
 [[meshes]]
 file = "casual-effects.com/sportsCar/sportsCar.obj"
 scaletocube = 15.0

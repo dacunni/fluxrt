@@ -162,6 +162,9 @@ int main(int argc, char ** argv)
     auto artifactWriteTime = artifactWriteTimer.elapsed();
     printf("Artifacts written in %f sec\n", artifactWriteTime);
 
+    // TEMP
+    scene.environmentMap->saveDebugSampleImage();
+
     return EXIT_SUCCESS;
 }
 

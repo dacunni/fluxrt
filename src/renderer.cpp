@@ -17,6 +17,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
                         const float minDistance, const unsigned int depth,
                         const MediumStack & mediumStack,
                         bool accumEmission,
+                        bool accumEnvMap,
                         RayIntersection & intersection,
                         RadianceRGB & Lo) const
 {
@@ -33,7 +34,9 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
     bool hit = findIntersection(ray, scene, minDistance, intersection);
 
     if(!hit) {
-        Lo = scene.environmentMap->sampleRay(ray);
+        if(accumEnvMap) {
+            Lo = scene.environmentMap->sampleRay(ray);
+        }
         return false;
     }
 
@@ -48,7 +51,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
     if(A < 1.0f) { // transparent
         // Trace a new ray just past the intersection
         float newMinDistance = intersection.distance + epsilon;
-        return traceRay(scene, rng, ray, newMinDistance, depth, mediumStack, accumEmission, intersection, Lo);
+        return traceRay(scene, rng, ray, newMinDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, Lo);
     }
 
     Lo = shade(scene, rng, minDistance, depth, mediumStack, Wi, intersection, material);
@@ -80,12 +83,12 @@ RadianceRGB Renderer::traceRay(const Scene & scene, RNG & rng,
                                const Ray & ray,
                                const float minDistance, const unsigned int depth,
                                const MediumStack & mediumStack,
-                               bool accumEmission) const
+                               bool accumEmission, bool accumEnvMap) const
 {
     RayIntersection intersection;
     RadianceRGB L;
     
-    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, accumEmission, intersection, L);
+    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, L);
 
     return L;
 }
@@ -165,7 +168,7 @@ bool Renderer::traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray,
                               const MediumStack & mediumStack,
                               RayIntersection & intersection, RadianceRGB & Lo) const
 {
-    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, true, intersection, Lo);
+    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, true, true, intersection, Lo);
 
     return hit;
 }
@@ -180,7 +183,7 @@ inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
     const Ray ray(P + N * epsilon, Wo);
     RadianceRGB L;
 
-    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true);
+    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true, true);
 
     return L;
 }
@@ -195,7 +198,7 @@ inline RadianceRGB Renderer::shadeRefract(const Scene & scene, RNG & rng,
     const Ray ray(P - N * epsilon, Dt);
     RadianceRGB L;
 
-    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true);
+    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true, true);
 
     return L;
 }
@@ -297,23 +300,42 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
 
     const bool sampleLights = true;
     const bool sampleCosineLobe = true;
+    const bool sampleEnvMap = scene.environmentMap->canImportanceSample();
 
     if(sampleLights) {
         L += sampleDirectLighting(scene, rng, P, N) / constants::PI;
+    }
+
+    if(sampleEnvMap) {
+        // Importance sample environment map. Note, we do not draw another
+        // sample if the first sample is not visible, as doing so biases the
+        // estimate.
+        vec2 e = rng.uniform2DRange01();
+        RandomDirection dirSample = scene.environmentMap->importanceSampleDirection(e.x, e.y);
+        float DdotN = dot(dirSample.direction, N);
+
+        if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
+            Ray r{ P + N * epsilon, dirSample.direction };
+            if(!intersects(r, scene, minDistance)) {
+                L += DdotN * scene.environmentMap->sampleRay(r) / dirSample.pdf;
+            }
+        }
     }
 
     if(sampleCosineLobe) {
         // Sample according to cosine lobe about the normal
         Direction3 diffuseDir(rng.cosineAboutDirection(N));
         L += traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
-                      epsilon, depth + 1, mediumStack, !sampleLights);
+                      epsilon, depth + 1, mediumStack, !sampleLights,
+                      !sampleEnvMap);
     }
     else {
         // Uniform sampling across the hemisphere
         Direction3 diffuseDir(rng.uniformSurfaceUnitHalfSphere(N));
         L += 2.0f * clampedDot(diffuseDir, N)
             * traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
-                       epsilon, depth + 1, mediumStack, !sampleLights);
+                       epsilon, depth + 1, mediumStack, !sampleLights,
+                       !sampleEnvMap);
     }
 
     return L;

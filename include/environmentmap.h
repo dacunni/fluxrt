@@ -9,6 +9,11 @@
 class Ray;
 class RNG;
 
+struct RandomDirection {
+    Direction3 direction;
+    float pdf;
+};
+
 class EnvironmentMap
 {
     public:
@@ -16,6 +21,14 @@ class EnvironmentMap
         virtual ~EnvironmentMap() = default;
 
         virtual RadianceRGB sampleRay(const Ray & ray);
+
+        // Importance sampling
+        virtual vec2 importanceSample(float e1, float e2, float & pdf) const { pdf = 0.0f; return vec2(0.0f, 0.0f); }
+        virtual RandomDirection importanceSampleDirection(float e1, float e2) const { return { Direction3(0.0f, 0.0f, 0.0f), 0.0f }; }
+        virtual bool canImportanceSample() const { return false; }
+
+        virtual void saveDebugImages() {};
+        virtual void saveDebugSampleImage() {};
 };
 
 class GradientEnvironmentMap : public EnvironmentMap
@@ -27,7 +40,7 @@ class GradientEnvironmentMap : public EnvironmentMap
                                const RadianceRGB & high,
                                const Direction3 & direction);
 
-        virtual RadianceRGB sampleRay(const Ray & ray);
+        RadianceRGB sampleRay(const Ray & ray) override;
 
     protected:
         RadianceRGB low;
@@ -48,7 +61,7 @@ class CubeMapEnvironmentMap : public EnvironmentMap
                                     const std::string & negz,
                                     const std::string & posz);
 
-        virtual RadianceRGB sampleRay(const Ray & ray);
+        RadianceRGB sampleRay(const Ray & ray) override;
 
         void setScaleFactor(float f) { scaleFactor = f; }
 
@@ -78,7 +91,7 @@ class LatLonEnvironmentMap : public EnvironmentMap
         void loadFromFile(const std::string & filename);
         void loadFromImage(const Image<float> & image);
 
-        virtual RadianceRGB sampleRay(const Ray & ray);
+        RadianceRGB sampleRay(const Ray & ray) override;
 
         void setScaleFactor(float f) { scaleFactor = f; }
 
@@ -86,7 +99,12 @@ class LatLonEnvironmentMap : public EnvironmentMap
 
         // Importance sample using index variables e1,e2 in [0, 1]
         // Returns pixel coordinate of index
-        vec2 importanceSample(float e1, float e2) const;
+        vec2 importanceSample(float e1, float e2, float & pdf) const override;
+        RandomDirection importanceSampleDirection(float e1, float e2) const override;
+        bool canImportanceSample() const override { return true; }
+
+        void saveDebugImages() override;
+        void saveDebugSampleImage() override;
 
     protected:
         void buildImportanceSampleLookup();
@@ -94,10 +112,16 @@ class LatLonEnvironmentMap : public EnvironmentMap
         TexturePtr texture;
 
         // Importance sampling
+        //   PDFs/CDFs stored per row in textures
+        //   PDF/CDF of row aggregates
         TexturePtr         rowSums; // Cumulative sums along rows
         std::vector<float> cumRows; // Cumulative sum of row sums
+        TexturePtr         pdf2D;   // PDF
 
         float scaleFactor = 1.0f;
+
+        // Debug
+        TexturePtr debugSamples;
 };
 
 
