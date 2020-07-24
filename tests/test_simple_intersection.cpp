@@ -4,7 +4,7 @@
 
 #include "base.h"
 #include "image.h"
-#include "sphere.h"
+#include "Sphere.h"
 #include "Triangle.h"
 #include "TriangleMesh.h"
 #include "TriangleMeshOctree.h"

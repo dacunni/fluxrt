@@ -1,7 +1,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
-#include "trianglemesh.h"
+#include "TriangleMesh.h"
 #include "slab.h"
 
 //

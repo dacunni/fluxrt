@@ -1,7 +1,7 @@
 #ifndef _RADIOMETRY_H_
 #define _RADIOMETRY_H_
 
-#include "valuergb.h"
+#include "ValueRGB.h"
 
 // Radiometric units
 

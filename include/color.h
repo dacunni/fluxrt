@@ -5,7 +5,7 @@
 #include <string>
 #include <algorithm>
 
-#include "valuergb.h"
+#include "ValueRGB.h"
 
 namespace color {
 

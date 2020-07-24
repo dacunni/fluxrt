@@ -20,7 +20,7 @@
 
 #include "Ray.h"
 
-#include "sphere.h"
+#include "Sphere.h"
 #include "slab.h"
 #include "triangle.h"
 #include "trianglemesh.h"

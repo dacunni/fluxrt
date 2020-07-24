@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "sphere.h"
+#include "Sphere.h"
 
 namespace {
 

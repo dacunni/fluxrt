@@ -8,7 +8,7 @@
 #include "vectortypes.h"
 #include "texture.h"
 #include "radiometry.h"
-#include "valuergb.h"
+#include "ValueRGB.h"
 
 struct ReflectanceRGB : public ValueRGB<ReflectanceRGB, ValueRGBInitOne>
 {

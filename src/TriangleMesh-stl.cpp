@@ -1,7 +1,7 @@
 #define STLLOADER_IMPLEMENTATION
 #include <stlloader.h>
 
-#include "trianglemesh.h"
+#include "TriangleMesh.h"
 #include "slab.h"
 
 bool loadTriangleMeshFromSTL(TriangleMesh & mesh,

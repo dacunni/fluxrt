@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "sphere.h"
+#include "Sphere.h"
 #include "slab.h"
 #include "TriangleMesh.h"
 #include "TriangleMeshOctree.h"
@@ -13,7 +13,7 @@
 #include "sensor.h"
 #include "camera.h"
 #include "Ray.h"
-#include "heapmanager.h"
+#include "HeapManager.h"
 #include "traceable.h"
 
 struct Scene
