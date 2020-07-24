@@ -1,20 +1,8 @@
-#ifndef __LIGHT_H__
-#define __LIGHT_H__
+#ifndef __DISK_LIGHT_H__
+#define __DISK_LIGHT_H__
 
 #include "vectortypes.h"
 #include "radiometry.h"
-
-// Point Light
-//   Radiates equally in all directions
-struct PointLight
-{
-	inline PointLight() = default;
-	inline PointLight(const Position3 & p, const RadianceRGB & i) : position(p), intensity(i) {}
-	inline ~PointLight() = default;
-
-	Position3 position = Position3{ 0.0f, 0.0f, 0.0f };
-    RadianceRGB intensity = { 1.0f, 1.0f, 1.0f };
-};
 
 // Disk Light (diffuse)
 //   Centered at the origin. Oriented facing +/-Y.
@@ -37,5 +25,5 @@ struct DiskLight
 inline bool intersects(const Ray & ray, const DiskLight & light, float minDistance, float maxDistance);
 inline bool findIntersection(const Ray & ray, const DiskLight & light, float minDistance, RayIntersection & intersection);
 
-#include "light.hpp"
+#include "DiskLight.hpp"
 #endif
