@@ -1,7 +1,7 @@
 #include <benchmark/benchmark.h>
 #include <iostream>
 #include <vector>
-#include "triangle.h"
+#include "Triangle.h"
 
 static void RayTriangleIntersectsAnySingleHit(benchmark::State& state) {
     Ray ray(Position3(0, 0, 10), Direction3(0, 0, -1));

@@ -2,8 +2,8 @@
 #include <string>
 #include <limits>
 
-#include "trianglemesh.h"
-#include "triangle.h"
+#include "TriangleMesh.h"
+#include "Triangle.h"
 #include "Ray.h"
 #include "barycentric.h"
 #include "coordinate.h"

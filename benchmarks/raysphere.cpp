@@ -1,6 +1,6 @@
 #include <benchmark/benchmark.h>
 #include <random>
-#include "sphere.h"
+#include "Sphere.h"
 
 static void RaySphereIntersects1(benchmark::State& state) {
     Sphere obj(Position3(0.3, 0.4, 0.2), 0.6);

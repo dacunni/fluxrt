@@ -1,5 +1,5 @@
 #include <cassert>
-#include "triangle.h"
+#include "Triangle.h"
 
 bool intersectsTriangles(const Ray & ray, const vec3 vertices[], size_t nvertices, float minDistance, float maxDistance)
 {
