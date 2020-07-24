@@ -2,7 +2,7 @@
 #define __TRIANGLE_H__
 
 #include <cmath>
-#include "ray.h"
+#include "Ray.h"
 
 struct Triangle
 {

@@ -3,7 +3,7 @@
 
 #include "vectortypes.h"
 #include "vec2.h"
-#include "ray.h"
+#include "Ray.h"
 #include "constants.h"
 
 struct Camera

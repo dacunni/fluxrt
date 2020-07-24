@@ -1,6 +1,6 @@
 #include "material.h"
-#include "renderer.h"
-#include "ray.h"
+#include "Renderer.h"
+#include "Ray.h"
 #include "rng.h"
 #include "scene.h"
 #include "coordinate.h"

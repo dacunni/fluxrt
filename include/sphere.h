@@ -1,7 +1,7 @@
 #ifndef __SPHERE_H__
 #define __SPHERE_H__
 
-#include "ray.h"
+#include "Ray.h"
 #include "material.h"
 
 struct Sphere

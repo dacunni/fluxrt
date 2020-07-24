@@ -2,7 +2,7 @@
 #define __Slab__
 
 #include "traceable.h"
-#include "ray.h"
+#include "Ray.h"
 #include "material.h"
 
 struct Slab

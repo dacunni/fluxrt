@@ -3,8 +3,8 @@
 #include <vector>
 
 #include "slab.h"
-#include "trianglemesh.h"
-#include "trianglemeshoctree.h"
+#include "TriangleMesh.h"
+#include "TriangleMeshOctree.h"
 
 #include "filesystem.h"
 

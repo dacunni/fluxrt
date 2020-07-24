@@ -4,7 +4,7 @@
 
 #include "trianglemesh.h"
 #include "triangle.h"
-#include "ray.h"
+#include "Ray.h"
 #include "barycentric.h"
 #include "coordinate.h"
 #include "slab.h"

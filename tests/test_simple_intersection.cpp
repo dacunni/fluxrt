@@ -5,9 +5,9 @@
 #include "base.h"
 #include "image.h"
 #include "sphere.h"
-#include "triangle.h"
-#include "trianglemesh.h"
-#include "trianglemeshoctree.h"
+#include "Triangle.h"
+#include "TriangleMesh.h"
+#include "TriangleMeshOctree.h"
 
 inline void setDistColor(Image<float> & isectDist, int x, int y, float minDistance, const RayIntersection & isect)
 {

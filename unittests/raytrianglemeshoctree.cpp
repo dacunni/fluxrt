@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "vectortypes.h"
-#include "trianglemeshoctree.h"
+#include "TriangleMeshOctree.h"
 
 namespace {
 

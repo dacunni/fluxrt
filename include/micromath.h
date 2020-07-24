@@ -18,7 +18,7 @@
 #include "optics.h"
 #include "fresnel.h"
 
-#include "ray.h"
+#include "Ray.h"
 
 #include "sphere.h"
 #include "slab.h"

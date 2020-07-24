@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ray.h"
+#include "Ray.h"
 
 std::ostream & operator<<(std::ostream & os, const Ray & r)
 {

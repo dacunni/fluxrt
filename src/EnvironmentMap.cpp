@@ -1,4 +1,4 @@
-#include "environmentmap.h"
+#include "EnvironmentMap.h"
 
 RadianceRGB EnvironmentMap::sampleRay(const Ray & ray)
 {

@@ -4,9 +4,9 @@
 #include <iostream>
 #include <cassert>
 
-#include "trianglemeshoctree.h"
-#include "trianglemesh.h"
-#include "triangle.h"
+#include "TriangleMeshOctree.h"
+#include "TriangleMesh.h"
+#include "Triangle.h"
 #include "vectortypes.h"
 #include "slab.h"
 

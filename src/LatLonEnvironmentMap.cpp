@@ -1,7 +1,7 @@
 #include <iostream>
 #include "constants.h"
 #include "LatLonEnvironmentMap.h"
-#include "ray.h"
+#include "Ray.h"
 #include "vectortypes.h"
 #include "interpolation.h"
 #include "rng.h"

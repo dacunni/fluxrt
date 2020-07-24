@@ -13,7 +13,7 @@
 #include "ambientocclusion.h"
 #include "timer.h"
 #include "argparse.h"
-#include "renderer.h"
+#include "Renderer.h"
 
 std::atomic<bool> flushImmediate(false); // Flush the color output as soon as possible
 

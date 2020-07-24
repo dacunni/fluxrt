@@ -47,8 +47,8 @@ set(SRCS
     src/matrix.cpp
     src/optics.cpp
     src/radiometry.cpp
-    src/ray.cpp
-    src/renderer.cpp
+    src/Ray.cpp
+    src/Renderer.cpp
     src/rng.cpp
     src/sensor.cpp
     src/slab.cpp
@@ -56,11 +56,11 @@ set(SRCS
     src/scene-toml.cpp
     src/texture.cpp
     src/timer.cpp
-    src/triangle.cpp
-    src/trianglemesh.cpp
-    src/trianglemesh-stl.cpp
-    src/trianglemesh-obj.cpp
-    src/trianglemeshoctree.cpp
+    src/Triangle.cpp
+    src/TriangleMesh.cpp
+    src/TriangleMesh-stl.cpp
+    src/TriangleMesh-obj.cpp
+    src/TriangleMeshOctree.cpp
     )
 ADD_LIBRARY(micromath ${SRCS})
 

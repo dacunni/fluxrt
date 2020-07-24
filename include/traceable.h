@@ -2,7 +2,7 @@
 #define __TRACEABLE__
 
 #include "transform.h"
-#include "ray.h"
+#include "Ray.h"
 
 //
 // Wrapper template for making generic traceable objects out of more

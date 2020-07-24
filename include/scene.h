@@ -5,13 +5,13 @@
 
 #include "sphere.h"
 #include "slab.h"
-#include "trianglemesh.h"
-#include "trianglemeshoctree.h"
+#include "TriangleMesh.h"
+#include "TriangleMeshOctree.h"
 #include "light.h"
 #include "EnvironmentMap.h"
 #include "sensor.h"
 #include "camera.h"
-#include "ray.h"
+#include "Ray.h"
 #include "heapmanager.h"
 #include "traceable.h"
 
