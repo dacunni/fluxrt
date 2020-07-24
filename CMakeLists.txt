@@ -31,7 +31,7 @@ set(SRCS
     src/brdf.cpp
     src/camera.cpp
     src/color.cpp
-    src/environmentmap.cpp
+    src/EnvironmentMap.cpp
     src/GradientEnvironmentMap.cpp
     src/LatLonEnvironmentMap.cpp
     src/CubeMapEnvironmentMap.cpp

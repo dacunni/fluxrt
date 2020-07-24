@@ -1,7 +1,7 @@
 #ifndef __LATLON_ENVIRONMENT_MAP_H__
 #define __LATLON_ENVIRONMENT_MAP_H__
 
-#include "environmentmap.h"
+#include "EnvironmentMap.h"
 
 class LatLonEnvironmentMap : public EnvironmentMap
 {

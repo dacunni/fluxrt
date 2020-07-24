@@ -8,7 +8,7 @@
 #include "trianglemesh.h"
 #include "trianglemeshoctree.h"
 #include "light.h"
-#include "environmentmap.h"
+#include "EnvironmentMap.h"
 #include "sensor.h"
 #include "camera.h"
 #include "ray.h"

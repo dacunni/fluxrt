@@ -1,7 +1,7 @@
 #ifndef __CUBEMAP_ENVIRONMENT_MAP_H__
 #define __CUBEMAP_ENVIRONMENT_MAP_H__
 
-#include "environmentmap.h"
+#include "EnvironmentMap.h"
 
 class CubeMapEnvironmentMap : public EnvironmentMap
 {
