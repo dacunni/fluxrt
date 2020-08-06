@@ -9,7 +9,7 @@ public:
     ProcessorTimer() = default;
     ~ProcessorTimer() = default;
     
-    static ProcessorTimer makeRunningTimer();
+    static inline ProcessorTimer makeRunningTimer();
 
     inline void start();
     inline void stop();
@@ -27,7 +27,7 @@ public:
     WallClockTimer() = default;
     ~WallClockTimer() = default;
 
-    static WallClockTimer makeRunningTimer();
+    static inline WallClockTimer makeRunningTimer();
 
     void start();
     void stop();
@@ -46,7 +46,7 @@ protected:
 
 // Inline implementations
 
-ProcessorTimer ProcessorTimer::makeRunningTimer()
+inline ProcessorTimer ProcessorTimer::makeRunningTimer()
 {
     ProcessorTimer timer;
     timer.start();
@@ -79,7 +79,7 @@ inline double ProcessorTimer::elapsed()
     return (double) (end_time - start_time) / CLOCKS_PER_SEC;
 }
 
-WallClockTimer WallClockTimer::makeRunningTimer()
+inline WallClockTimer WallClockTimer::makeRunningTimer()
 {
     WallClockTimer timer;
     timer.start();
