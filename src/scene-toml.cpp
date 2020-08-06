@@ -6,6 +6,7 @@
 #include "filesystem.h"
 #include "constants.h"
 #include "transform.h"
+#include "timer.h"
 #include "GradientEnvironmentMap.h"
 #include "LatLonEnvironmentMap.h"
 #include "CubeMapEnvironmentMap.h"
@@ -366,7 +367,10 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                     std::cout << "Building octree" << std::endl;
                     scene.heapManager.add(mesh);
                     TriangleMeshOctree meshOctree(*mesh);
+                    auto writeTimer = WallClockTimer::makeRunningTimer();
                     meshOctree.build();
+                    auto writeTime = writeTimer.elapsed();
+                    printf("Octree built in %f sec\n", writeTime);
                     scene.meshOctrees.emplace_back(std::move(meshOctree));
                     auto & obj = scene.meshOctrees.back();
                     loadTransformsForObject(meshTable, obj, scene);
