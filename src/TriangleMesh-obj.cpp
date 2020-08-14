@@ -22,12 +22,12 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         auto & D = objmaterial.diffuse;
         auto & S = objmaterial.specular;
         printf("    material %2d "
-               "illum %d "
+               "il %d "
                "ior %.3f "
                "D %.1f %.1f %.1f Dt '%s' "
                "S %.1f %.1f %.1f St '%s' "
-               "At '%s' dissolve %.1f "
-               "shin %.1f"
+               "At '%s' dis %.1f "
+               "sh %.1f"
                "\n",
                mi,
                objmaterial.illum,
@@ -50,19 +50,27 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                 // TODO 
                 break;
             //case 3: // diffuse + specular (Blinn-Phong) + Whitted
-            // TODO
-            //    break;
+                //material = Material::makeDiffuseSpecular(D, S);
+                // TODO
+                //break;
             //case 4: // glassy ???
-            // TODO
-            //    break;
+                //material = Material::makeDiffuseSpecular(D, S);
+                // TODO
+                //break;
             //case 5: // diffuse + specular (Blinn-Phong) + Fresnel
-            // TODO
-            //    break;
+                // TODO
+                //break;
             //case 6: // diffuse + specular (Blinn-Phong) + refraction (optical density)
-            // TODO
-            //    break;
+                // TODO
+                //break;
             case 7: // diffuse + specular (Blinn-Phong) + refraction (Fresnel)
                 // TODO - incomplete
+                // WAR: Some models have an IOR of 1, which causes no
+                //      refraction and thus transparent models. We default
+                //      to crown glass if this is the case.
+                if(objmaterial.ior <= 1.01f) {
+                    objmaterial.ior = 1.52;
+                }
                 material = Material::makeRefractive(objmaterial.ior);
                 break;
             //case 8: // TODO
@@ -141,7 +149,9 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         auto dir = Direction3(coord[0], coord[1], coord[2]);
         dir.normalize();
         if(dir.isZeros()) {
+#if 0
             printf("WARNING: Mesh normal at index %d is all zeros. Replacing with 0,1,0\n", ni);
+#endif
             dir = Direction3(0.0f, 1.0f, 0.0f);
         }
         mesh.normals.push_back(dir);
