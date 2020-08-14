@@ -24,3 +24,6 @@ jobs:
           name: "Test"
           command: cd build && ctest
 
+      - store_artifacts:
+          path: build/app/trace_scene
+
