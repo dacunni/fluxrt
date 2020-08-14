@@ -19,7 +19,7 @@ jobs:
           command: mkdir build && cd build && cmake -DBUILD_PYTHON_BINDINGS:BOOL=OFF ..
       - run:
           name: "Build"
-          command: cd build && make -j
+          command: cd build && make -j install
       - run: ls -lR build
       - run:
           name: "Test"
