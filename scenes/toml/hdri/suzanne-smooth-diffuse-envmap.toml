@@ -26,7 +26,7 @@ file = "blender/monkey2.obj"
     type = "diffuse"
     diffuse = [ 0.8, 0.8, 0.8 ]
     [[meshes.transform]]
-    translate = [ 0.0, 1.0, 0.0 ]
+    translate = [ 0.0, 1.2, 0.0 ]
 
 [[spheres]]
 radius = 0.5

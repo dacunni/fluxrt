@@ -1,6 +1,7 @@
 [camera]
 type = "pinhole"
-hfov = 45
+#hfov = 45
+hfov = 60
 #type = "ortho"
 #hsize = 8
 
@@ -13,8 +14,19 @@ hfov = 45
 #direction = [ 1.0, 0.0, 0.0 ]
 
 # fountain and tables through trees
-position = [ 0.0, -0.0, 0.0 ]
-direction = [ 0.5, -0.6, 1.0 ]
+#position = [ 0.0, -0.0, 0.0 ]
+#direction = [ 0.5, -0.6, 1.0 ]
+
+# looking down on tables and columns
+#position = [ -3.0, -2.0, 0.0 ]
+#lookat = [ 0.0, -5.0, 0.0 ]
+
+# at table level looking toward corridor
+#position = [ -3.0, -4.0, 0.0 ]
+#lookat = [ 5.0, -5.0, 0.0 ]
+
+position = [ -3.0, -4.0, 0.0 ]
+lookat = [ 0.0, -5.0, 5.0 ]
 
 up = [ 0.0, 1.0, 0.0 ]
 
@@ -25,13 +37,16 @@ pixelwidth = 1000
 pixelheight = 1000
 
 [[meshes]]
-file = "san-miguel/san-miguel.obj"
+#file = "san-miguel/san-miguel.obj"
+file = "san-miguel-2/san-miguel.obj"
 scaletocube = 10.0
 
 [envmap]
 type = "gradient"
-low = [ 0.0, 0.0, 0.0 ]
-high = [ 1.0, 1.0, 1.0 ]
+#low = [ 0.0, 0.0, 0.0 ]
+low = [ 5.0, 5.0, 5.0 ]
+high = [ 5.0, 5.0, 5.0 ]
+#direction = [ 0.0, 1.0, 0.0 ]
 
 #type = "latlon"
 #file = "hdrihaven/adams_place_bridge_1k.hdr"

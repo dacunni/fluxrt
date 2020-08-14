@@ -24,7 +24,7 @@ file = "blender/monkey_simple_smooth.obj"
     [meshes.material]
     type = "mirror"
     [[meshes.transform]]
-    translate = [ 0.0, 1.0, 0.0 ]
+    translate = [ 0.0, 1.2, 0.0 ]
 
 [[spheres]]
 radius = 0.5

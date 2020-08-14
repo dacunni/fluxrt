@@ -35,6 +35,9 @@ class Renderer
         bool traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray, const float minDistance, const unsigned int depth,
                             const MediumStack & mediumStack,
                             RayIntersection & intersection, RadianceRGB & Lo) const;
+
+        void printConfiguration() const;
+
     protected:
 
         inline RadianceRGB shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
@@ -99,5 +102,12 @@ class Renderer
         float russianRouletteChance = 0.1f;
         // Only apply RR if at or beyond this depth
         unsigned int russianRouletteMinDepth = 2;
+
+        // Diffuse shading parameters
+        struct {
+            unsigned int numEnvMapSamples = 10;
+            bool sampleCosineLobe = true;
+            bool sampleLights = true;
+        } shadeDiffuseParams;
 };
 

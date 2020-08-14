@@ -79,8 +79,8 @@ int main(int argc, char ** argv)
     printf("Samples per pixel: %d\n", options.samplesPerPixel);
     printf("Number of threads: %d\n", options.numThreads);
 
+    printf("====[ Loading Scene ]====\n");
     std::string sceneFile = arguments[0];
-
     auto sceneLoadTimer = WallClockTimer::makeRunningTimer();
     Scene scene;
     if(!loadSceneFromFile(scene, sceneFile)) {
@@ -139,10 +139,9 @@ int main(int argc, char ** argv)
         }
     };
 
-    printf("Monte Carlo refraction = %s\n", renderer.monteCarloRefraction ? "ON" : "OFF");
-    printf("Russian Roulette chance = %.2f\n", renderer.russianRouletteChance);
-    printf("Max depth = %u\n", renderer.maxDepth);
-    printf("Tracing scene\n");
+    renderer.printConfiguration();
+    printf("====[ Tracing Scene ]====\n");
+
     auto traceTimer = WallClockTimer::makeRunningTimer();
     uint32_t tileSize = 8;
     if(options.numThreads == 1) {

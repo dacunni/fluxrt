@@ -298,35 +298,39 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
     // Note: We don't accumulate emission on the next hit if we sample
     //       lighting directly, to avoid double counting direct illumination.
 
-    const bool sampleLights = true;
-    const bool sampleCosineLobe = true;
     const bool sampleEnvMap = scene.environmentMap->canImportanceSample();
 
-    if(sampleLights) {
+    if(shadeDiffuseParams.sampleLights) {
         L += sampleDirectLighting(scene, rng, P, N) / constants::PI;
     }
 
     if(sampleEnvMap) {
-        // Importance sample environment map. Note, we do not draw another
-        // sample if the first sample is not visible, as doing so biases the
-        // estimate.
-        vec2 e = rng.uniform2DRange01();
-        RandomDirection dirSample = scene.environmentMap->importanceSampleDirection(e.x, e.y);
-        float DdotN = dot(dirSample.direction, N);
+        RadianceRGB Lenv;
 
-        if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
-            Ray r{ P + N * epsilon, dirSample.direction };
-            if(!intersects(r, scene, minDistance)) {
-                L += DdotN * scene.environmentMap->sampleRay(r) / dirSample.pdf;
+        for(unsigned int envSample = 0; envSample < shadeDiffuseParams.numEnvMapSamples; ++envSample) {
+            // Importance sample environment map. Note, we do not draw another
+            // sample if the sample is not visible, as doing so biases the estimate.
+            vec2 e = rng.uniform2DRange01();
+            RandomDirection dirSample = scene.environmentMap->importanceSampleDirection(e.x, e.y);
+            float DdotN = dot(dirSample.direction, N);
+
+            if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
+                Ray r{ P + N * epsilon, dirSample.direction };
+                if(!intersects(r, scene, minDistance)) {
+                    Lenv += DdotN * scene.environmentMap->sampleRay(r) / dirSample.pdf;
+                }
             }
         }
+
+        L += Lenv / float(shadeDiffuseParams.numEnvMapSamples);
     }
 
-    if(sampleCosineLobe) {
+    if(shadeDiffuseParams.sampleCosineLobe) {
         // Sample according to cosine lobe about the normal
         Direction3 diffuseDir(rng.cosineAboutDirection(N));
         L += traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
-                      epsilon, depth + 1, mediumStack, !sampleLights,
+                      epsilon, depth + 1, mediumStack,
+                      !shadeDiffuseParams.sampleLights,
                       !sampleEnvMap);
     }
     else {
@@ -334,7 +338,8 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
         Direction3 diffuseDir(rng.uniformSurfaceUnitHalfSphere(N));
         L += 2.0f * clampedDot(diffuseDir, N)
             * traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
-                       epsilon, depth + 1, mediumStack, !sampleLights,
+                       epsilon, depth + 1, mediumStack,
+                       !shadeDiffuseParams.sampleLights,
                        !sampleEnvMap);
     }
 
@@ -406,4 +411,24 @@ inline RadianceRGB Renderer::sampleDiskLight(const Scene & scene,
     return E * sa;
 }
 
+void Renderer::printConfiguration() const
+{
+    auto onoff = [](bool v) { return v ? "ON" : "OFF"; };
+
+    printf("Renderer Configuration:\n");
+    printf("  Epsilon = %.8f\n", epsilon);
+    printf("  Max depth = %u\n", maxDepth);
+    printf("  Monte Carlo refraction = %s\n", onoff(monteCarloRefraction));
+    printf("  Russian Roulette:\n"
+           "    Chance = %.2f\n"
+           "    Minimum depth = %u\n",
+           russianRouletteChance, russianRouletteMinDepth);
+    auto & dp = shadeDiffuseParams;
+    printf("  Diffuse shading:\n"
+           "    Environment map samples = %u\n"
+           "    Sample cosine lobe = %s\n"
+           "    Sample point lights = %s\n",
+           dp.numEnvMapSamples, onoff(dp.sampleCosineLobe), onoff(dp.sampleLights));
+
+}
 
