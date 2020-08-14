@@ -9,9 +9,10 @@ up = [ 0.0, 1.0, 0.0 ]
 
 [envmap]
 type = "latlon"
-file = "hdrihaven/adams_place_bridge_1k.hdr"
+#file = "hdrihaven/adams_place_bridge_1k.hdr"
 #file = "hdrihaven/moonless_golf_1k.hdr"
 #file = "hdrihaven/street_lamp_1k.hdr"
+file = "hdrihaven/royal_esplanade_1k.hdr"
 #scalefactor = 0.1
 
 [sensor]

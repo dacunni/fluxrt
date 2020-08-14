@@ -86,6 +86,8 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
             material.alphaTexture = textureCache.loadTextureFromFile(path, objmaterial.alpha_texname);
         }
 
+        material.opacity = objmaterial.dissolve;
+
         objMatToMatArrIndex[mi] = materials.size();
         materials.push_back(material);
     }

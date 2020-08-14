@@ -48,7 +48,8 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
     material.applyNormalMap(scene.textureCache.textures, intersection.texcoord,
                             intersection.normal, intersection.tangent, intersection.bitangent);
 
-    if(A < 1.0f) { // transparent
+    // Transparency
+    if(A < 1.0f && rng.uniform01() > A) {
         // Trace a new ray just past the intersection
         float newMinDistance = intersection.distance + epsilon;
         return traceRay(scene, rng, ray, newMinDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, Lo);

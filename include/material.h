@@ -59,6 +59,9 @@ struct Material
     Medium innerMedium;
     bool isRefractive = false;
 
+    // Non-refractive opacity
+    float opacity = 1.0f;
+
     inline ReflectanceRGB diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline ReflectanceRGB specular(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline RadianceRGB emission(const TextureArray & tex, const TextureCoordinate & texcoord) const;
@@ -155,10 +158,10 @@ inline float Material::alpha(const TextureArray & tex, const TextureCoordinate &
         float u = texcoord.u;
         float v = texcoord.v;
         // Take the last channel, assuming 1 channel is a mask, 3 is B&W, and 4 has alpha
-        return texture->lerpUV(u, v, texture->numChannels - 1);
+        return opacity * texture->lerpUV(u, v, texture->numChannels - 1);
     }
     else {
-        return 1.0f;
+        return opacity;
     }
 }
 
