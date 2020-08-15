@@ -89,7 +89,7 @@ int main(int argc, char ** argv)
     }
     double sceneLoadTime = sceneLoadTimer.elapsed();
 
-    printf("Scene loaded in %f sec\n", sceneLoadTime);
+    printf("Scene loaded in %s\n", hoursMinutesSeconds(sceneLoadTime).c_str());
 
     if(options.sensorScaleFactor != 1.0f) {
         printf("Overriding sensor size to %.2f %% of original\n", options.sensorScaleFactor * 100.0f);
@@ -136,6 +136,7 @@ int main(int argc, char ** argv)
         if(flushImmediate.exchange(false)) {
             printf("Flushing artifacts\n");
             artifacts.writeAll();
+            printf("Done flushing artifacts\n");
         }
     };
 
@@ -153,7 +154,7 @@ int main(int argc, char ** argv)
         scene.sensor.forEachPixelTiledThreaded(tracePixel, tileSize, options.numThreads);
     }
     double traceTime = traceTimer.elapsed();
-    printf("Scene traced in %f sec\n", traceTime);
+    printf("Scene traced in %s\n", hoursMinutesSeconds(traceTime).c_str());
 
     printf("Writing artifacts\n");
     auto artifactWriteTimer = WallClockTimer::makeRunningTimer();
@@ -162,7 +163,7 @@ int main(int argc, char ** argv)
     printf("Artifacts written in %f sec\n", artifactWriteTime);
 
     // TEMP
-    scene.environmentMap->saveDebugSampleImage();
+    //scene.environmentMap->saveDebugSampleImage();
 
     return EXIT_SUCCESS;
 }

@@ -21,19 +21,20 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         auto & objmaterial = objmaterials[mi];
         auto & D = objmaterial.diffuse;
         auto & S = objmaterial.specular;
-        printf("    material %2d "
-               "il %d "
-               "ior %.3f "
-               "D %.1f %.1f %.1f Dt '%s' "
-               "S %.1f %.1f %.1f St '%s' "
-               "At '%s' dis %.1f "
-               "sh %.1f"
-               "\n",
+        auto & E = objmaterial.emission;
+        printf("  material %2d "
+               "    illum_model %d ior %.3f\n"
+               "    D %.1f %.1f %.1f Dt '%s'\n"
+               "    S %.1f %.1f %.1f St '%s'\n"
+               "    E %.1f %.1f %.1f Et '%s'\n"
+               "    At '%s' dis %.1f\n"
+               "    sh %.1f\n",
                mi,
                objmaterial.illum,
                objmaterial.ior,
                D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
                S[0], S[1], S[2], objmaterial.specular_texname.c_str(),
+               E[0], E[1], E[2], objmaterial.emissive_texname.c_str(),
                objmaterial.alpha_texname.c_str(), objmaterial.dissolve,
                objmaterial.shininess
                );
@@ -83,6 +84,8 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                 std::cerr << "OBJ illum type " << objmaterial.illum << " not implemented\n";
                 material = Material::makeDiffuseSpecular(D, S);
         }
+
+        material.emissionColor = RadianceRGB(E);
 
         if(!objmaterial.diffuse_texname.empty()) {
             material.diffuseTexture = textureCache.loadTextureFromFile(path, objmaterial.diffuse_texname);
