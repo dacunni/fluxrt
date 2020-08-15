@@ -85,7 +85,9 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                 material = Material::makeDiffuseSpecular(D, S);
         }
 
-        material.emissionColor = RadianceRGB(E);
+        // FIXME: This is fine, but we should add a way to disable emission
+        // in loaded models so we can test without the lights they include.
+        //material.emissionColor = RadianceRGB(E);
 
         if(!objmaterial.diffuse_texname.empty()) {
             material.diffuseTexture = textureCache.loadTextureFromFile(path, objmaterial.diffuse_texname);
