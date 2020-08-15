@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <ctime>
+#include <string>
 
 class ProcessorTimer {
 public:
@@ -43,6 +44,8 @@ protected:
     bool running = false;
     bool valid   = false;
 };
+
+std::string hoursMinutesSeconds(double t);
 
 // Inline implementations
 
