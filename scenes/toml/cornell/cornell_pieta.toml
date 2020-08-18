@@ -22,10 +22,10 @@ file = "myminifactory.com/scantheworld/smk16-kas115-pieta-michelangelo.stl"
     rotate_angle = 1.5708
 
     [[meshes.transform]]
-    scale = [ 0.008, 0.008, 0.008 ]
+    scale = [ 0.01, 0.01, 0.01 ]
 
     [[meshes.transform]]
-    translate = [ -0.5, 0.0, 0.0 ]
+    translate = [ -0.6, 0.0, 0.0 ]
 
 # TEMP - remove when we have emissive meshes
 #[[pointlights]]
@@ -33,8 +33,9 @@ file = "myminifactory.com/scantheworld/smk16-kas115-pieta-michelangelo.stl"
 #intensity = [ 0.3, 0.3, 0.3 ]
 
 [[disklights]]
-position = [ -0.5, 1.25, 0.5 ]
+position = [ -0.85, 1.25, 0.5 ]
 direction = [ 1.0, 0.0, 0.0 ]
 radius = 0.3
-intensity = [ 0.5, 0.5, 0.5 ]
+#intensity = [ 0.5, 0.5, 0.5 ]
+intensity = [ 2.0, 2.0, 2.0 ]
 
