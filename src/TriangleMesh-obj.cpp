@@ -91,6 +91,10 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
 
         if(!objmaterial.diffuse_texname.empty()) {
             material.diffuseTexture = textureCache.loadTextureFromFile(path, objmaterial.diffuse_texname);
+            // If the texture is RGBA, get alpha from the txture
+            if(textureCache.textures[material.diffuseTexture]->numChannels == 4) {
+                material.alphaTexture = material.diffuseTexture;
+            }
         }
         if(!objmaterial.specular_texname.empty()) {
             material.specularTexture = textureCache.loadTextureFromFile(path, objmaterial.specular_texname);
