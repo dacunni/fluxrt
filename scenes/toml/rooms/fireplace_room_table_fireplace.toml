@@ -1,13 +1,10 @@
 [camera]
 type = "pinhole"
-hfov = 30
+hfov = 45
 
-focus_distance = 0.7
-focus_divergence = 0.01
-
-# Looking at table up close
-position = [ 0.2, -0.2, -0.7 ]
-direction = [ -0.6, -0.2, 1.0 ]
+# Looking at table and fireplace
+position = [ 0.3, -0.2, -1.0 ]
+direction = [ -0.6, 0.0, 1.0 ]
 
 up = [ 0.0, 1.0, 0.0 ]
 
