@@ -19,14 +19,20 @@ pixelheight = 300
 #high = [ 1.0, 1.0, 1.0 ]
 #direction = [ 0.0, 1.0, 1.0 ]
 
-type = "cubemap"
-scalefactor = 2.0
-xneg = "HornstullsStrand2/negx.jpg"
-xpos = "HornstullsStrand2/posx.jpg"
-yneg = "HornstullsStrand2/negy.jpg"
-ypos = "HornstullsStrand2/posy.jpg"
-zneg = "HornstullsStrand2/negz.jpg"
-zpos = "HornstullsStrand2/posz.jpg"
+type = "latlon"
+file = "hdrihaven/adams_place_bridge_1k.hdr"
+#file = "hdrihaven/moonless_golf_1k.hdr"
+#file = "hdrihaven/street_lamp_1k.hdr"
+#scalefactor = 0.1
+
+#type = "cubemap"
+#scalefactor = 2.0
+#xneg = "HornstullsStrand2/negx.jpg"
+#xpos = "HornstullsStrand2/posx.jpg"
+#yneg = "HornstullsStrand2/negy.jpg"
+#ypos = "HornstullsStrand2/posy.jpg"
+#zneg = "HornstullsStrand2/negz.jpg"
+#zpos = "HornstullsStrand2/posz.jpg"
 
 [[meshes]]
 file = "dacunni/mysimball/tinker.obj"

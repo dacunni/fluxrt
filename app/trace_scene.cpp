@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <unistd.h>
 #include <iostream>
 #include <chrono>
 #include <atomic>
@@ -23,6 +24,7 @@ void signalHandler(int signum)
 #if defined(SIGINFO)
        || signum == SIGINFO // Ctrl-T
 #endif
+       || signum == SIGALRM // Timeout
       ) {
         flushImmediate = true;
     }
@@ -37,10 +39,12 @@ int main(int argc, char ** argv)
 #if defined(SIGINFO)
     signal(SIGINFO, signalHandler);
 #endif
+    signal(SIGALRM, signalHandler);
 
     CommandLineArgumentParser argParser;
 
     struct {
+        unsigned int flushTimeout = 0;
         unsigned int numThreads = 1;
         unsigned int samplesPerPixel = 1;
         unsigned int maxDepth = 10;
@@ -55,6 +59,7 @@ int main(int argc, char ** argv)
     } options;
 
     // General
+    argParser.addArgument('f', "flushtimeout", options.flushTimeout);
     argParser.addArgument('t', "threads", options.numThreads);
     argParser.addArgument('s', "spp", options.samplesPerPixel);
     argParser.addArgument('d', "maxdepth", options.maxDepth);
@@ -76,6 +81,7 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
+    printf("Flush timeout: %d sec\n", options.flushTimeout);
     printf("Samples per pixel: %d\n", options.samplesPerPixel);
     printf("Number of threads: %d\n", options.numThreads);
 
@@ -137,11 +143,18 @@ int main(int argc, char ** argv)
             printf("Flushing artifacts\n");
             artifacts.writeAll();
             printf("Done flushing artifacts\n");
+            if(options.flushTimeout != 0) {
+                alarm(options.flushTimeout);
+            }
         }
     };
 
     renderer.printConfiguration();
     printf("====[ Tracing Scene ]====\n");
+
+    if(options.flushTimeout != 0) {
+        alarm(options.flushTimeout);
+    }
 
     auto traceTimer = WallClockTimer::makeRunningTimer();
     uint32_t tileSize = 8;
