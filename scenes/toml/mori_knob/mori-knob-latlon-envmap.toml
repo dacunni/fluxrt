@@ -1,0 +1,27 @@
+[camera]
+type = "pinhole"
+hfov = 20
+
+position = [ -3.0, 2.0, -6.0 ]
+lookat = [ 0.0, 0.0, 0.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 400
+
+[envmap]
+type = "latlon"
+file = "hdrihaven/adams_place_bridge_1k.hdr"
+#file = "hdrihaven/moonless_golf_1k.hdr"
+#file = "hdrihaven/street_lamp_1k.hdr"
+#scalefactor = 0.1
+
+[[meshes]]
+file = "casual-effects.com/mori_knob/testObj.obj"
+
+# Floor - included floor is thin and light shines through
+#[[slabs]]
+#min = [ -1000.0, -1000.0, -1000.0 ]
+#max = [ 1000.0, -0.5, 1000.0 ]
+
