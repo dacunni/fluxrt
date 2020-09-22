@@ -1,24 +1,44 @@
 [camera]
 type = "pinhole"
 hfov = 45
+#type = "ortho"
+#hsize = 8
 
 # front
 position = [ 0.0, 2.0, 6.0 ]
 direction = [ 0.0, -0.2, -1.0 ]
+# side
+#position = [ -6.0, 2.0, 0.0 ]
+#direction = [ 1.0, -0.2, 0.0 ]
+# side
+#position = [ 6.0, 2.0, 0.0 ]
+#direction = [ -1.0, -0.2, 0.0 ]
+# quarter
+#position = [ 6.0, 2.0, 6.0 ]
+#direction = [ -1.0, -0.2, -1.0 ]
+# back
+#position = [ 0.0, 2.0, -6.0 ]
+#direction = [ 0.0, -0.2, 1.0 ]
 
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
 pixelwidth = 400
 pixelheight = 300
+#pixelwidth = 120
+#pixelheight = 90
 
 [envmap]
 
 #type = "gradient"
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 0.8, 0.6, 0.6 ]
 low = [ 0.0, 0.0, 0.0 ]
 high = [ 1.0, 1.0, 1.0 ]
+#low = [ 0.1, 0.1, 0.1 ]
+#high = [ 0.0, 1.0, 0.0 ]
 
-direction = [ 1.0, 1.0, 1.0 ]
+direction = [ 0.0, 1.0, 1.0 ]
 
 type = "cubemap"
 
@@ -53,14 +73,7 @@ zpos = "HornstullsStrand2/posz.jpg"
 #zpos = "NissiBeach/posz.jpg"
 
 [[meshes]]
-#file = "blender/monkey_simple_smooth.obj"
-# This is much smoother than ^^^
-file = "blender/monkey2.obj"
-    [meshes.material]
-    type = "mirror"
-    [[meshes.transform]]
-    #translate = [ 0.0, 1.0, 0.0 ]
-    translate = [ 0.0, 1.2, 0.0 ]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
 
 [[spheres]]
 radius = 0.5

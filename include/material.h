@@ -55,6 +55,9 @@ struct Material
     TextureID alphaTexture    = NoTexture;
     TextureID normalMapTexture = NoTexture;
 
+    // Specular exponent (0 = mirror)
+    float specularExponent = 0.0f;
+
     // Refractive layer
     Medium innerMedium;
     bool isRefractive = false;
@@ -72,6 +75,8 @@ struct Material
     inline bool hasSpecular() const;
     inline bool hasEmission() const;
     inline bool hasNormalMap() const;
+
+    inline bool isGlossy() const { return specularExponent > 0.01f; }
 
     // Apply normal map (if any) to the supplied basis vectors
     inline void applyNormalMap(const TextureArray & tex, const TextureCoordinate & texcoord,

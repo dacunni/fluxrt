@@ -57,9 +57,10 @@ zpos = "HornstullsStrand2/posz.jpg"
 # This is much smoother than ^^^
 file = "blender/monkey2.obj"
     [meshes.material]
-    type = "mirror"
+    type = "diffusespecular"
+    specular = [ 1.0, 1.0, 1.0 ]
+    specular_exponent = 10.0
     [[meshes.transform]]
-    #translate = [ 0.0, 1.0, 0.0 ]
     translate = [ 0.0, 1.2, 0.0 ]
 
 [[spheres]]

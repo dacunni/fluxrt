@@ -69,6 +69,13 @@ class Renderer
                                         const Direction3 & Wi,
                                         const Position3 & P, const Direction3 & N) const;
 
+        inline RadianceRGB shadeSpecularGlossy(const Scene & scene, RNG & rng,
+                                               const float minDistance, const unsigned int depth,
+                                               const MediumStack & mediumStack,
+                                               const Direction3 & Wi,
+                                               const Position3 & P, const Direction3 & N,
+                                               float exponent) const;
+
         inline RadianceRGB sampleDirectLighting(const Scene & scene,
                                                 RNG & rng,
                                                 const Position3 & P,

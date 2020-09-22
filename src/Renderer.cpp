@@ -148,7 +148,12 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
 
         // Trace specular bounce
         if(doSpec) {
-            Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+            if(material.isGlossy()) {
+                Ls = shadeSpecularGlossy(scene, rng, minDistance, depth, mediumStack, Wi, P, N, material.specularExponent);
+            }
+            else {
+                Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+            }
             Ls /= probSpec;
         }
 
@@ -182,11 +187,7 @@ inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
 {
     const Direction3 Wo = mirror(Wi, N);
     const Ray ray(P + N * epsilon, Wo);
-    RadianceRGB L;
-
-    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true, true);
-
-    return L;
+    return traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true, true);
 }
 
 
@@ -344,6 +345,46 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
                        !sampleEnvMap);
     }
 
+    return L;
+}
+
+inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
+                                                 const float minDistance, const unsigned int depth,
+                                                 const MediumStack & mediumStack,
+                                                 const Direction3 & Wi,
+                                                 const Position3 & P, const Direction3 & N,
+                                                 float exponent) const
+{
+    RadianceRGB L;
+
+#if 1
+    // Importance sample the Phong distribution
+    Direction3 mirrorDir = mirror(Wi, N);
+    Direction3 tangent, bitangent;
+    coordinate::coordinateSystem(mirrorDir, tangent, bitangent);
+
+    vec2 u = rng.uniform2DRange01();
+    float theta = std::acos(std::pow(u.x, 1.0f / (exponent + 1.0f)));
+    float phi = u.y * constants::TWO_PI;
+    float sin_theta = std::sin(theta);
+
+    Direction3 Wo = std::cos(theta) * mirrorDir +
+                    sin_theta * std::cos(phi) * tangent +
+                    sin_theta * std::sin(phi) * bitangent;
+
+    if(dot(Wo, N) > 0.0f) {
+        L += traceRay(scene, rng, Ray(P + N * epsilon, Wo),
+                      epsilon, depth + 1, mediumStack, true, true);
+    }
+#else
+    // Uniform sampling across the hemisphere
+    Direction3 Wo(rng.uniformSurfaceUnitHalfSphere(N));
+
+    // Evaluate BRDF
+    L += constants::TWO_PI * brdf::phong(Wi, Wo, N, exponent)
+        * traceRay(scene, rng, Ray(P + N * epsilon, dir),
+                   epsilon, depth + 1, mediumStack, true, true);
+#endif
     return L;
 }
 

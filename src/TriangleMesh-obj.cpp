@@ -89,6 +89,8 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         // in loaded models so we can test without the lights they include.
         //material.emissionColor = RadianceRGB(E);
 
+        material.specularExponent = objmaterial.shininess;
+
         if(!objmaterial.diffuse_texname.empty()) {
             material.diffuseTexture = textureCache.loadTextureFromFile(path, objmaterial.diffuse_texname);
             // If the texture is RGBA, get alpha from the txture

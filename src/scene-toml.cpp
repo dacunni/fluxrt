@@ -57,6 +57,9 @@ void loadMaterialSpecularComponent(const std::shared_ptr<cpptoml::table> & table
 {
     auto rgb = table->get_array_of<double>("specular");
     auto tex = table->get_as<std::string>("specular");
+    auto specularExponent = table->get_as<double>("specular_exponent").value_or(0.0);
+
+    material.specularExponent = specularExponent;
 
     if(rgb) {
         material.specularColor = vectorToReflectanceRGB(*rgb);
