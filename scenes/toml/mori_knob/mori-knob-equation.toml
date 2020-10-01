@@ -1,0 +1,25 @@
+[camera]
+type = "pinhole"
+hfov = 3.0
+
+position = [ -3.0, 2.0, -6.0 ]
+lookat = [ 0.1, 0.25, 0.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 500
+pixelheight = 200
+
+[envmap]
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+
+[[meshes]]
+file = "casual-effects.com/mori_knob/testObj.obj"
+
+# Floor - included floor is thin and light shines through
+#[[slabs]]
+#min = [ -1000.0, -1000.0, -1000.0 ]
+#max = [ 1000.0, -0.5, 1000.0 ]
+

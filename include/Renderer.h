@@ -116,5 +116,10 @@ class Renderer
             bool sampleCosineLobe = true;
             bool sampleLights = true;
         } shadeDiffuseParams;
+
+        // Specular shading parameters
+        struct {
+            bool samplePhongLobe = true;
+        } shadeSpecularParams;
 };
 

@@ -357,34 +357,36 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
 {
     RadianceRGB L;
 
-#if 1
-    // Importance sample the Phong distribution
-    Direction3 mirrorDir = mirror(Wi, N);
-    Direction3 tangent, bitangent;
-    coordinate::coordinateSystem(mirrorDir, tangent, bitangent);
+    if(shadeSpecularParams.samplePhongLobe) {
+        // Importance sample the Phong distribution
+        Direction3 mirrorDir = mirror(Wi, N);
+        Direction3 tangent, bitangent;
+        coordinate::coordinateSystem(mirrorDir, tangent, bitangent);
 
-    vec2 u = rng.uniform2DRange01();
-    float theta = std::acos(std::pow(u.x, 1.0f / (exponent + 1.0f)));
-    float phi = u.y * constants::TWO_PI;
-    float sin_theta = std::sin(theta);
+        vec2 u = rng.uniform2DRange01();
+        float theta = std::acos(std::pow(u.x, 1.0f / (exponent + 1.0f)));
+        float phi = u.y * constants::TWO_PI;
+        float sin_theta = std::sin(theta);
 
-    Direction3 Wo = std::cos(theta) * mirrorDir +
-                    sin_theta * std::cos(phi) * tangent +
-                    sin_theta * std::sin(phi) * bitangent;
+        Direction3 Wo = std::cos(theta) * mirrorDir +
+            sin_theta * std::cos(phi) * tangent +
+            sin_theta * std::sin(phi) * bitangent;
 
-    if(dot(Wo, N) > 0.0f) {
-        L += traceRay(scene, rng, Ray(P + N * epsilon, Wo),
-                      epsilon, depth + 1, mediumStack, true, true);
+        if(dot(Wo, N) > 0.0f) {
+            L += traceRay(scene, rng, Ray(P + N * epsilon, Wo),
+                          epsilon, depth + 1, mediumStack, true, true);
+        }
     }
-#else
-    // Uniform sampling across the hemisphere
-    Direction3 Wo(rng.uniformSurfaceUnitHalfSphere(N));
+    else {
+        // Uniform sampling across the hemisphere
+        Direction3 Wo(rng.uniformSurfaceUnitHalfSphere(N));
 
-    // Evaluate BRDF
-    L += constants::TWO_PI * brdf::phong(Wi, Wo, N, exponent)
-        * traceRay(scene, rng, Ray(P + N * epsilon, dir),
-                   epsilon, depth + 1, mediumStack, true, true);
-#endif
+        // Evaluate BRDF
+        L += constants::TWO_PI * brdf::phong(Wi, Wo, N, exponent)
+            * traceRay(scene, rng, Ray(P + N * epsilon, Wo),
+                       epsilon, depth + 1, mediumStack, true, true);
+    }
+
     return L;
 }
 
@@ -465,6 +467,7 @@ void Renderer::printConfiguration() const
            "    Chance = %.2f\n"
            "    Minimum depth = %u\n",
            russianRouletteChance, russianRouletteMinDepth);
+
     auto & dp = shadeDiffuseParams;
     printf("  Diffuse shading:\n"
            "    Environment map samples = %u\n"
@@ -472,5 +475,9 @@ void Renderer::printConfiguration() const
            "    Sample point lights = %s\n",
            dp.numEnvMapSamples, onoff(dp.sampleCosineLobe), onoff(dp.sampleLights));
 
+    auto & sp = shadeSpecularParams;
+    printf("  Specular shading:\n"
+           "    Sample Phong lobe = %s\n",
+           onoff(sp.samplePhongLobe));
 }
 
