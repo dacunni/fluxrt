@@ -51,6 +51,7 @@ int main(int argc, char ** argv)
         float sensorScaleFactor = 1.0f;
         bool noMonteCarloRefraction = false;
         float russianRouletteChance = 0.1f;
+        bool noSampleSpecularLobe = false;
         struct {
             bool compute = false;
             bool sampleCosineLobe = false;
@@ -66,6 +67,9 @@ int main(int argc, char ** argv)
     argParser.addArgument('p', "sensorscale", options.sensorScaleFactor);
     argParser.addArgument('r', "rr", options.russianRouletteChance);
     argParser.addFlag('R', "nomontecarlorefraction", options.noMonteCarloRefraction);
+
+    // Sampling
+    argParser.addFlag('X', "nosamplespecular", options.noSampleSpecularLobe);
 
     // Ambient Occlusion
     argParser.addFlag('a', "ao", options.ambientOcclusion.compute);
@@ -117,6 +121,7 @@ int main(int argc, char ** argv)
     renderer.maxDepth = options.maxDepth;
     renderer.monteCarloRefraction = !options.noMonteCarloRefraction;
     renderer.russianRouletteChance = options.russianRouletteChance;
+    renderer.shadeSpecularParams.samplePhongLobe = !options.noSampleSpecularLobe;
 
     auto tracePixel = [&](size_t x, size_t y, size_t threadIndex) {
         ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
