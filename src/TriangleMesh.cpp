@@ -122,6 +122,8 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
     auto tci2 = mesh.indices.texcoord[3 * tri + 2];
 
     if(tci0 != TriangleMesh::NoTexCoord && tci1 != TriangleMesh::NoTexCoord && tci2 != TriangleMesh::NoTexCoord) {
+        // FIXME: This branch produces faceted artifacts in the tangent
+        //        and bitangent with the mori model.
         TextureCoordinate tc0 = mesh.texcoords[tci0];
         TextureCoordinate tc1 = mesh.texcoords[tci1];
         TextureCoordinate tc2 = mesh.texcoords[tci2];
@@ -150,6 +152,15 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
 
         intersection.tangent   = ( dv2 * V1 - dv1 * V2) / sf;
         intersection.bitangent = (-du2 * V1 + du1 * V2) / sf;
+
+        intersection.tangent.normalize();
+        intersection.bitangent.normalize();
+
+        // Make sure we have a right handed coordinate system
+        if(dot(cross(intersection.normal, intersection.tangent),
+               intersection.bitangent) < 0.0f) {
+            intersection.bitangent.negate();
+        }
     }
     else {
         intersection.texcoord = { 0.0f, 0.0f };
