@@ -37,6 +37,26 @@ class Artifacts
             }
             else {
                 pixelColor.accum(x, y, color);
+                // Update running variance
+                auto Np = samplesPerPixel.get(x, y, 0) + 1;
+                vec3 Mn, Sn;
+                if(Np <= 1) {
+                    Mn = { color.r, color.g, color.b };
+                    Sn = { 0.0f, 0.0f, 0.0f };
+                }
+                else {
+                    // Compute running variance using Welford method
+                    //   https://www.johndcook.com/blog/standard_deviation/
+                    vec3 Mp = { runningVarianceM.get(x, y, 0), runningVarianceM.get(x, y, 1), runningVarianceM.get(x, y, 2) };
+                    vec3 Sp = { runningVarianceS.get(x, y, 0), runningVarianceS.get(x, y, 1), runningVarianceS.get(x, y, 2) };
+                    vec3 Dp = { color.r - Mp.x, color.g - Mp.y, color.b - Mp.z };
+                    Mn = Mp + Dp / float(Np);
+                    vec3 Dn = { color.r - Mn.x, color.g - Mn.y, color.b - Mn.z };
+                    Sn = Sp + vec3{ Dp.x * Dn.x, Dp.y * Dn.y, Dp.z * Dn.z };
+                }
+
+                runningVarianceM.set3(x, y, Mn.x, Mn.y, Mn.z);
+                runningVarianceS.set3(x, y, Sn.x, Sn.y, Sn.z);
             }
             samplesPerPixel.accum(x, y, 0, 1);
         }
@@ -206,6 +226,8 @@ class Artifacts
 
         Image<float> pixelColor;
         Image<uint32_t> samplesPerPixel;
+        Image<float> runningVarianceM;
+        Image<float> runningVarianceS;
 
         bool hasAO = false;
 

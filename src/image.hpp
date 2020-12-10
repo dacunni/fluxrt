@@ -35,6 +35,16 @@ inline T Image<T>::get(size_t x, size_t y, int channel) const
 }
 
 template<typename T>
+inline color::ColorRGB Image<T>::getRGB(size_t x, size_t y) const
+{
+    return {
+        get(x, y, 0),
+        get(x, y, 1),
+        get(x, y, 2)
+    };
+}
+
+template<typename T>
 inline T Image<T>::channelSum(size_t x, size_t y) const
 {
     T sum = (T) 0;

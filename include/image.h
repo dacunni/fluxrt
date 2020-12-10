@@ -16,6 +16,7 @@ struct Image
     ~Image() = default;
 
     inline T get(size_t x, size_t y, int channel) const;
+    inline color::ColorRGB getRGB(size_t x, size_t y) const;
     inline T channelSum(size_t x, size_t y) const;
     inline T lerp(float x, float y, int channel) const;
     inline T lerpUV(float u, float v, int channel) const;

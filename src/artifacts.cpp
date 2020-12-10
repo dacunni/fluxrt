@@ -21,7 +21,9 @@ Artifacts::Artifacts(int w, int h)
     isectAO(w, h, 3),
     isectTime(w, h, 3),
     pixelColor(w, h, 3),
-    samplesPerPixel(w, h, 1)
+    samplesPerPixel(w, h, 1),
+    runningVarianceM(w, h, 3),
+    runningVarianceS(w, h, 3)
 {
     hitMask.setAll(0.0f);
     isectDist.setAll(0.0f);
@@ -36,6 +38,8 @@ Artifacts::Artifacts(int w, int h)
     isectAO.setAll(0.0f);
     isectTime.setAll(0.0f);
     pixelColor.setAll(0.0f);
+    runningVarianceS.setAll(0.0f);
+    runningVarianceM.setAll(0.0f);
     samplesPerPixel.setAll(0u);
 }
 
@@ -64,6 +68,17 @@ void Artifacts::writeAll()
     };
     scaledTime.forEachPixelChannel(scaleToMax);
     writePNG(scaledTime, prefix + "isect_time.png");
+
+    auto stddev = runningVarianceS;
+    auto makeStdDev = [&](Image<float> & image, size_t x, size_t y, int c) {
+        auto Np = samplesPerPixel.get(x, y, 0);
+        if(Np > 1) {
+            float var = image.get(x, y, c) / float(Np - 1);
+            image.set(x, y, c, std::sqrt(var));
+        }
+    };
+    stddev.forEachPixelChannel(makeStdDev);
+    writePNG(stddev, prefix + "isect_stddev.png");
 
     writePixelColor();
 }
