@@ -132,9 +132,7 @@ inline ReflectanceRGB Material::diffuse(const TextureArray & tex, const TextureC
 inline bool Material::hasDiffuse() const
 {
     return diffuseTexture != NoTexture
-        || diffuseColor.r > 0.0f
-        || diffuseColor.g > 0.0f
-        || diffuseColor.b > 0.0f;
+        || diffuseColor.hasNonZeroComponent();
 }
 
 inline ReflectanceRGB Material::specular(const TextureArray & tex, const TextureCoordinate & texcoord) const
