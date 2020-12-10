@@ -151,9 +151,7 @@ inline ReflectanceRGB Material::specular(const TextureArray & tex, const Texture
 inline bool Material::hasSpecular() const
 {
     return specularTexture != NoTexture
-        || specularColor.r > 0.0f
-        || specularColor.g > 0.0f
-        || specularColor.b > 0.0f;
+        || specularColor.hasNonZeroComponent();
 }
 
 inline float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const
@@ -179,9 +177,7 @@ inline RadianceRGB Material::emission(const TextureArray & tex, const TextureCoo
 inline bool Material::hasEmission() const
 {
     // TODO - emissive texture
-    return emissionColor.r > 0.0f
-        || emissionColor.g > 0.0f
-        || emissionColor.b > 0.0f;
+    return emissionColor.hasNonZeroComponent();
 }
 
 inline bool Material::hasNormalMap() const

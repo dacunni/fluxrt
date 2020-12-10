@@ -21,6 +21,8 @@ struct ValueRGB
 
     T residual() const { return { 1.0f - r, 1.0f - g, 1.0f - b }; }
 
+    bool hasNonZeroComponent() const { return r > 0.0f || g > 0.0f || b > 0.0f; }
+
     static const T WHITE()   { return { 1.0f, 1.0f, 1.0f }; }
     static const T BLACK()   { return { 0.0f, 0.0f, 0.0f }; }
     static const T RED()     { return { 1.0f, 0.0f, 0.0f }; }
