@@ -1,4 +1,5 @@
 #include "artifacts.h"
+#include "timer.h"
 #include "tonemapping.h"
 
 Artifacts::Artifacts()
@@ -45,6 +46,8 @@ Artifacts::Artifacts(int w, int h)
 
 void Artifacts::writeAll()
 {
+    printf("Flushing artifacts\n");
+    auto artifactWriteTimer = WallClockTimer::makeRunningTimer();
     writePNG(hitMask, prefix + "hit_mask.png");
     writePNG(isectDist, prefix + "isect_distance.png");
     writePNG(isectNormal, prefix + "isect_normal.png");
@@ -58,8 +61,6 @@ void Artifacts::writeAll()
     if(hasAO) {
         writePNG(applyStandardGamma(isectAO), prefix + "ao.png");
     }
-
-    //writePNG(isectTime, prefix + "isect_time.png");
 
     auto scaledTime = isectTime;
     float maxTime = *std::max_element(begin(isectTime.data), end(isectTime.data));
@@ -81,6 +82,8 @@ void Artifacts::writeAll()
     writePNG(stddev, prefix + "isect_stddev.png");
 
     writePixelColor();
+    auto artifactWriteTime = artifactWriteTimer.elapsed();
+    printf("Artifacts written in %f sec\n", artifactWriteTime);
 }
 
 void Artifacts::writePixelColor()

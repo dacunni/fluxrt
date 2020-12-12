@@ -52,6 +52,11 @@ void Sensor::forEachPixelTiled(const PixelFunction & fn, uint32_t tileSize)
 
 void Sensor::forEachPixelThreaded(const PixelFunction & fn, uint32_t numThreads)
 {
+    if(numThreads == 1) {
+        forEachPixel(fn);
+        return;
+    }
+
     auto rowFn = [&](int y, ThreadIndex tid) {
         for(int x = 0; x < pixelwidth; x++) {
             fn(x, y, tid);
@@ -78,6 +83,11 @@ void Sensor::forEachPixelThreaded(const PixelFunction & fn, uint32_t numThreads)
 
 void Sensor::forEachPixelTiledThreaded(const PixelFunction & fn, uint32_t tileSize, uint32_t numThreads)
 {
+    if(numThreads == 1) {
+        forEachPixelTiled(fn, tileSize);
+        return;
+    }
+
     struct Tile {
         uint32_t ymin, xmin, ymax, xmax;
     };

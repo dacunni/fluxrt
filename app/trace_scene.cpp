@@ -146,9 +146,7 @@ int main(int argc, char ** argv)
         artifacts.setTime(x, y, pixelTimer.elapsed());
 
         if(flushImmediate.exchange(false)) {
-            printf("Flushing artifacts\n");
             artifacts.writeAll();
-            printf("Done flushing artifacts\n");
             if(options.flushTimeout != 0) {
                 alarm(options.flushTimeout);
             }
@@ -164,22 +162,12 @@ int main(int argc, char ** argv)
 
     auto traceTimer = WallClockTimer::makeRunningTimer();
     uint32_t tileSize = 8;
-    if(options.numThreads == 1) {
-        //scene.sensor.forEachPixel(tracePixel);
-        scene.sensor.forEachPixelTiled(tracePixel, tileSize);
-    }
-    else {
-        //scene.sensor.forEachPixelThreaded(tracePixel, options.numThreads);
-        scene.sensor.forEachPixelTiledThreaded(tracePixel, tileSize, options.numThreads);
-    }
+    //scene.sensor.forEachPixelThreaded(tracePixel, options.numThreads);
+    scene.sensor.forEachPixelTiledThreaded(tracePixel, tileSize, options.numThreads);
     double traceTime = traceTimer.elapsed();
     printf("Scene traced in %s\n", hoursMinutesSeconds(traceTime).c_str());
 
-    printf("Writing artifacts\n");
-    auto artifactWriteTimer = WallClockTimer::makeRunningTimer();
     artifacts.writeAll();
-    auto artifactWriteTime = artifactWriteTimer.elapsed();
-    printf("Artifacts written in %f sec\n", artifactWriteTime);
 
     // TEMP
     //scene.environmentMap->saveDebugSampleImage();
