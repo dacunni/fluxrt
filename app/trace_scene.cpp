@@ -44,6 +44,7 @@ int main(int argc, char ** argv)
     CommandLineArgumentParser argParser;
 
     struct {
+        bool help = false;
         unsigned int flushTimeout = 0;
         unsigned int numThreads = 1;
         unsigned int samplesPerPixel = 1;
@@ -60,6 +61,7 @@ int main(int argc, char ** argv)
     } options;
 
     // General
+    argParser.addFlag('h', "help", options.help);
     argParser.addArgument('f', "flushtimeout", options.flushTimeout);
     argParser.addArgument('t', "threads", options.numThreads);
     argParser.addArgument('s', "spp", options.samplesPerPixel);
@@ -77,6 +79,11 @@ int main(int argc, char ** argv)
     argParser.addArgument('S', "aosamples", options.ambientOcclusion.numSamples);
 
     argParser.parse(argc, argv);
+
+    if(options.help) {
+        argParser.printUsage();
+        return EXIT_SUCCESS;
+    }
 
     auto arguments = argParser.unnamedArguments();
 

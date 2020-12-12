@@ -29,6 +29,7 @@ class CommandLineArgumentParser
         std::vector<std::string> unnamedArguments();
 
         void print();
+        void printUsage();
 
     protected:
         struct Argument {
@@ -192,6 +193,19 @@ void CommandLineArgumentParser::print()
     printf("Unnamed:\n");
     for(auto & arg : _unnamedArguments) {
         printf("  %s\n", arg.c_str());
+    }
+}
+
+void CommandLineArgumentParser::printUsage()
+{
+    printf("<program> <arguments>\n");
+
+    for(auto & option : _arguments) {
+        printf("    -%c --%s %s\n",
+               (char) option.shortName,
+               option.longName.c_str(),
+               option.requiresArgument ? "<arg>" : ""
+               );
     }
 }
 
