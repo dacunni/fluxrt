@@ -115,7 +115,8 @@ int main(int argc, char ** argv)
 
     // Jitter offsets (applied the same to all corresponding pixel samples)
     vec2 jitter[options.samplesPerPixel];
-    std::generate(jitter, jitter + options.samplesPerPixel, [&]() { return rng[0].uniformRectangle(-0.5f, 0.5f, -0.5f, 0.5f); });
+    //std::generate(jitter, jitter + options.samplesPerPixel, [&]() { return rng[0].uniformRectangle(-0.5f, 0.5f, -0.5f, 0.5f); });
+    std::generate(jitter, jitter + options.samplesPerPixel, [&]() { return rng[0].gaussian2D(0.5f); });
 
     Renderer renderer;
     renderer.maxDepth = options.maxDepth;

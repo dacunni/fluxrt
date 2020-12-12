@@ -12,6 +12,16 @@ inline float RNG::uniformRange(float min, float max)
 	return uniform01() * (max - min) + min;
 }
 
+inline float RNG::gaussian(float mean, float stddev)
+{
+    return mean + normalDistribution(engine) * stddev;
+}
+
+inline float RNG::gaussian(float stddev)
+{
+    return normalDistribution(engine) * stddev;
+}
+
 inline void RNG::uniformUnitCircle(float & x, float & y)
 {
     uniformCircle(1.0f, x, y);
@@ -85,6 +95,16 @@ inline vec2 RNG::uniform2DRange01Stratified(int xbins, int ybins, int index)
     };
 }
 
+inline vec2 RNG::gaussian2D(float mean, float stddev)
+{
+    return { gaussian(mean, stddev), gaussian(mean, stddev) };
+}
+
+inline vec2 RNG::gaussian2D(float stddev)
+{
+    return { gaussian(stddev), gaussian(stddev) };
+}
+
 inline void RNG::uniformSurfaceUnitSphere(float & x, float & y, float & z)
 {
     using namespace constants;
@@ -146,6 +166,16 @@ inline vec3 RNG::cosineAboutDirection(const Direction3 & n)
     vec3 v;
     cosineAboutDirection(n, v);
     return v;
+}
+
+inline vec3 RNG::gaussian3D(float mean, float stddev)
+{
+    return { gaussian(mean, stddev), gaussian(mean, stddev), gaussian(mean, stddev) };
+}
+
+inline vec3 RNG::gaussian3D(float stddev)
+{
+    return { gaussian(stddev), gaussian(stddev), gaussian(stddev) };
 }
 
 
