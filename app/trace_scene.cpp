@@ -131,24 +131,27 @@ int main(int argc, char ** argv)
     renderer.russianRouletteChance = options.russianRouletteChance;
     renderer.shadeSpecularParams.samplePhongLobe = !options.noSampleSpecularLobe;
 
-    auto tracePixel = [&](size_t x, size_t y, size_t threadIndex) {
-        ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
+    auto tracePixelRay = [&](size_t x, size_t y, size_t threadIndex, uint32_t sampleIndex) {
         const vec2 pixelCenter = vec2(x, y) + vec2(0.5f, 0.5f);
+        vec2 jitteredPixel = pixelCenter + jitter[sampleIndex];
+        auto standardPixel = scene.sensor.pixelStandardImageLocation(jitteredPixel);
 
-        for(unsigned int samplesIndex = 0; samplesIndex < options.samplesPerPixel; ++samplesIndex) {
-            vec2 jitteredPixel = pixelCenter + jitter[samplesIndex];
-            auto standardPixel = scene.sensor.pixelStandardImageLocation(jitteredPixel);
+        vec2 randomBlurCoord = rng[threadIndex].uniformUnitCircle();
+        auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel, randomBlurCoord);
 
-            vec2 randomBlurCoord = rng[threadIndex].uniformUnitCircle();
-            auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel, randomBlurCoord);
+        RayIntersection intersection;
+        RadianceRGB pixelRadiance;
+        bool hit = renderer.traceCameraRay(scene, rng[threadIndex], ray, minDistance, 1, { VaccuumMedium }, intersection, pixelRadiance);
+        artifacts.accumPixelRadiance(x, y, pixelRadiance);
+        if(hit) {
+            artifacts.setIntersection(x, y, minDistance, scene, intersection);
+        }
+    };
 
-            RayIntersection intersection;
-            RadianceRGB pixelRadiance;
-            bool hit = renderer.traceCameraRay(scene, rng[threadIndex], ray, minDistance, 1, { VaccuumMedium }, intersection, pixelRadiance);
-            artifacts.accumPixelRadiance(x, y, pixelRadiance);
-            if(hit) {
-                artifacts.setIntersection(x, y, minDistance, scene, intersection);
-            }
+    auto renderPixelAllSamples = [&](size_t x, size_t y, size_t threadIndex) {
+        ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
+        for(unsigned int sampleIndex = 0; sampleIndex < options.samplesPerPixel; ++sampleIndex) {
+            tracePixelRay(x, y, threadIndex, sampleIndex);
         }
         artifacts.setTime(x, y, pixelTimer.elapsed());
 
@@ -169,8 +172,8 @@ int main(int argc, char ** argv)
 
     auto traceTimer = WallClockTimer::makeRunningTimer();
     uint32_t tileSize = 8;
-    //scene.sensor.forEachPixelThreaded(tracePixel, options.numThreads);
-    scene.sensor.forEachPixelTiledThreaded(tracePixel, tileSize, options.numThreads);
+    //scene.sensor.forEachPixelThreaded(renderPixelAllSamples, options.numThreads);
+    scene.sensor.forEachPixelTiledThreaded(renderPixelAllSamples, tileSize, options.numThreads);
     double traceTime = traceTimer.elapsed();
     printf("Scene traced in %s\n", hoursMinutesSeconds(traceTime).c_str());
 
