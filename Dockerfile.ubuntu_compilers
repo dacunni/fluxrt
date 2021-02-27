@@ -6,7 +6,6 @@ RUN apt-get install -y cmake make
 RUN apt-get install -y python3
 RUN apt-get install -y gcc g++
 RUN apt-get install -y clang
-RUN apt-get install -y swig
 
 # Install Google Test
 RUN git clone -q https://github.com/google/googletest.git /googletest \

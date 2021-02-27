@@ -1,9 +1,5 @@
 FROM centos_compilers:latest
 
-# Install any needed packages specified in requirements.txt
-RUN yum install -y --enablerepo=epel \
-    swig
-
 # Install Google Test
 RUN git clone -q https://github.com/google/googletest.git /googletest \
     && mkdir -p /googletest/build \

@@ -68,11 +68,6 @@ add_subdirectory(app)
 
 add_subdirectory(benchmarks)
 
-option(BUILD_PYTHON_BINDINGS "Build Python bindings" OFF)
-if(BUILD_PYTHON_BINDINGS)
-    add_subdirectory(python)
-endif(BUILD_PYTHON_BINDINGS)
-
 enable_testing()
 add_subdirectory(unittests)
 
