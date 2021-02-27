@@ -13,7 +13,7 @@ Setup the build
 ```
 mkdir build
 cd build
-cmake -DBUILD_PYTHON_BINDINGS:BOOL=OFF ..
+cmake ..
 ```
 
 Build and unit test the code
@@ -44,6 +44,7 @@ even if these environment variables are set.
 export MESH_PATH=/Volumes/Extra/data/3dmodels
 export ENV_MAP_PATH=/Volumes/Extra/data/envmaps
 export SCENE_PATH=../../scenes/toml
+cd app
 ./trace_scene -s 10 -d 5 -t 3 ../../scenes/toml/mitsuba-sphere-envmap.toml
 ```
 
