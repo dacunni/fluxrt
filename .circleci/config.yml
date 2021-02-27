@@ -16,7 +16,7 @@ jobs:
       - run: ls -l
       - run:
           name: "Setup Build"
-          command: mkdir build && cd build && cmake -DBUILD_PYTHON_BINDINGS:BOOL=OFF ..
+          command: mkdir build && cd build && cmake ..
       - run:
           name: "Build"
           command: cd build && make -j install
