@@ -1,6 +1,79 @@
 #include <benchmark/benchmark.h>
 #include "rng.h"
 
+// Reference of C++ RNG Engines
+
+static void Ref_UniformFloat_default(benchmark::State& state) {
+    std::random_device device;
+    std::default_random_engine engine(device());
+    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(distribution(engine));
+    }
+}
+BENCHMARK(Ref_UniformFloat_default);
+
+static void Ref_UniformFloat_minstd_rand(benchmark::State& state) {
+    std::random_device device;
+    std::minstd_rand engine(device());
+    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(distribution(engine));
+    }
+}
+BENCHMARK(Ref_UniformFloat_minstd_rand);
+
+static void Ref_UniformFloat_mt19937(benchmark::State& state) {
+    std::random_device device;
+    std::mt19937 engine(device());
+    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(distribution(engine));
+    }
+}
+BENCHMARK(Ref_UniformFloat_mt19937);
+
+static void Ref_UniformFloat_mt19937_64(benchmark::State& state) {
+    std::random_device device;
+    std::mt19937_64 engine(device());
+    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(distribution(engine));
+    }
+}
+BENCHMARK(Ref_UniformFloat_mt19937_64);
+
+static void Ref_UniformFloat_ranlux24(benchmark::State& state) {
+    std::random_device device;
+    std::ranlux24 engine(device());
+    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(distribution(engine));
+    }
+}
+BENCHMARK(Ref_UniformFloat_ranlux24);
+
+static void Ref_UniformFloat_knuth_b(benchmark::State& state) {
+    std::random_device device;
+    std::knuth_b engine(device());
+    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(distribution(engine));
+    }
+}
+BENCHMARK(Ref_UniformFloat_knuth_b);
+
+static void Ref_UniformFloat_device(benchmark::State& state) {
+    std::random_device engine;
+    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(distribution(engine));
+    }
+}
+BENCHMARK(Ref_UniformFloat_device);
+
+// RNG Class
+
 static void RandomUniform01(benchmark::State& state) {
     RNG rng;
     for (auto _ : state) {
