@@ -5,7 +5,7 @@ option(RUN_INSPECTION_TESTS "Run tests that generate output files for inspection
 
 # ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_image_write test_image_write.cpp)
-TARGET_LINK_LIBRARIES (test_image_write micromath)
+TARGET_LINK_LIBRARIES (test_image_write fluxrt)
 
 if(RUN_INSPECTION_TESTS)
     ADD_CUSTOM_COMMAND(TARGET test_image_write POST_BUILD
@@ -17,7 +17,7 @@ endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_imp_samp_envmap test_imp_samp_envmap.cpp)
-TARGET_LINK_LIBRARIES (test_imp_samp_envmap micromath)
+TARGET_LINK_LIBRARIES (test_imp_samp_envmap fluxrt)
 
 if(RUN_INSPECTION_TESTS)
     ADD_CUSTOM_COMMAND(TARGET test_imp_samp_envmap POST_BUILD
@@ -29,7 +29,7 @@ endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_interpolation test_interpolation.cpp)
-TARGET_LINK_LIBRARIES (test_interpolation micromath)
+TARGET_LINK_LIBRARIES (test_interpolation fluxrt)
 
 if(RUN_INSPECTION_TESTS)
     ADD_CUSTOM_COMMAND(TARGET test_interpolation POST_BUILD
@@ -41,7 +41,7 @@ endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_mesh_load test_mesh_load.cpp)
-TARGET_LINK_LIBRARIES (test_mesh_load micromath)
+TARGET_LINK_LIBRARIES (test_mesh_load fluxrt)
 
 if(RUN_INSPECTION_TESTS)
     ADD_CUSTOM_COMMAND(TARGET test_mesh_load POST_BUILD
@@ -54,7 +54,7 @@ endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_scene_load test_scene_load.cpp)
-TARGET_LINK_LIBRARIES (test_scene_load micromath)
+TARGET_LINK_LIBRARIES (test_scene_load fluxrt)
 
 if(RUN_INSPECTION_TESTS)
     ADD_CUSTOM_COMMAND(TARGET test_scene_load POST_BUILD
@@ -68,7 +68,7 @@ endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_simple_intersection test_simple_intersection.cpp)
-TARGET_LINK_LIBRARIES (test_simple_intersection micromath)
+TARGET_LINK_LIBRARIES (test_simple_intersection fluxrt)
 
 if(RUN_INSPECTION_TESTS)
     ADD_CUSTOM_COMMAND(TARGET test_simple_intersection POST_BUILD
@@ -81,7 +81,7 @@ endif(RUN_INSPECTION_TESTS)
 
 # ------------------------------------------------------------------------------
 ADD_EXECUTABLE (test_fresnel test_fresnel.cpp)
-TARGET_LINK_LIBRARIES (test_fresnel micromath)
+TARGET_LINK_LIBRARIES (test_fresnel fluxrt)
 
 if(RUN_INSPECTION_TESTS)
     ADD_CUSTOM_COMMAND(TARGET test_fresnel POST_BUILD
@@ -101,7 +101,7 @@ endif(RUN_INSPECTION_TESTS)
 # ------------------------------------------------------------------------------
 
 ADD_EXECUTABLE (test_rng test_rng.cpp)
-TARGET_LINK_LIBRARIES (test_rng micromath)
+TARGET_LINK_LIBRARIES (test_rng fluxrt)
 
 if(RUN_INSPECTION_TESTS)
     ADD_CUSTOM_COMMAND(TARGET test_rng POST_BUILD

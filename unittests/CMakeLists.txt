@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-PROJECT (micromath_tests)
+PROJECT (fluxrt_tests)
 
 SET(CMAKE_CXX_FLAGS "-std=c++14 -O2")
 
@@ -24,7 +24,7 @@ add_executable(coordinate coordinate.cpp)
 add_executable(filesystem filesystem.cpp)
 add_executable(jacobian jacobian.cpp)
 
-set(LIBS ${GTEST_BOTH_LIBRARIES} micromath pthread)
+set(LIBS ${GTEST_BOTH_LIBRARIES} fluxrt pthread)
 
 target_link_libraries(vec3 ${LIBS})
 target_link_libraries(vec4 ${LIBS})

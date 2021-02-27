@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-PROJECT (micromath_benchmark)
+PROJECT (fluxrt_benchmark)
 
 option(BUILD_BENCHMARKS "Build benchmarks" ON)
 
@@ -11,7 +11,7 @@ include_directories(..)
 
 link_directories(/usr/local/lib)
 
-set(LIBS benchmark micromath pthread)
+set(LIBS benchmark fluxrt pthread)
 
 add_executable(vector_bench vector.cpp)
 target_link_libraries(vector_bench ${LIBS})

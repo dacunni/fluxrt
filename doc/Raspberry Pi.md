@@ -34,7 +34,7 @@ popd
 
 ## Checkout
 ```
-git clone git@github.com:dacunni/micromath.git
+git clone git@github.com:dacunni/fluxrt.git
 # optional: git checkout raspberrypi
 git submodule init
 git submodule update --remote

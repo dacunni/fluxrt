@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-PROJECT (micromath)
+PROJECT (fluxrt)
 
 option(OPTIMIZE_FOR_NATIVE "Build with -march=native" OFF)
 
@@ -62,7 +62,7 @@ set(SRCS
     src/TriangleMesh-obj.cpp
     src/TriangleMeshOctree.cpp
     )
-ADD_LIBRARY(micromath ${SRCS})
+ADD_LIBRARY(fluxrt ${SRCS})
 
 add_subdirectory(app)
 
