@@ -48,7 +48,8 @@ int main(int argc, char ** argv)
         unsigned int flushTimeout = 0;
         unsigned int numThreads = 1;
         unsigned int samplesPerPixel = 1;
-        unsigned int maxDepth = 10;
+        float epsilon = Renderer::DEFAULT_EPSILON;
+        unsigned int maxDepth = Renderer::DEFAULT_MAX_DEPTH;
         float sensorScaleFactor = 1.0f;
         bool noMonteCarloRefraction = false;
         float russianRouletteChance = 0.1f;
@@ -65,6 +66,7 @@ int main(int argc, char ** argv)
     argParser.addArgument('f', "flushtimeout", options.flushTimeout);
     argParser.addArgument('t', "threads", options.numThreads);
     argParser.addArgument('s', "spp", options.samplesPerPixel);
+    argParser.addArgument('e', "epsilon", options.epsilon);
     argParser.addArgument('d', "maxdepth", options.maxDepth);
     argParser.addArgument('p', "sensorscale", options.sensorScaleFactor);
     argParser.addArgument('r', "rr", options.russianRouletteChance);
@@ -94,6 +96,7 @@ int main(int argc, char ** argv)
 
     printf("Flush timeout: %d sec\n", options.flushTimeout);
     printf("Samples per pixel: %d\n", options.samplesPerPixel);
+    printf("Epsilon: %f\n", options.epsilon);
     printf("Number of threads: %d\n", options.numThreads);
 
     printf("====[ Loading Scene ]====\n");
@@ -126,6 +129,7 @@ int main(int argc, char ** argv)
     std::generate(jitter, jitter + options.samplesPerPixel, [&]() { return rng[0].gaussian2D(0.5f); });
 
     Renderer renderer;
+    renderer.epsilon = options.epsilon;
     renderer.maxDepth = options.maxDepth;
     renderer.monteCarloRefraction = !options.noMonteCarloRefraction;
     renderer.russianRouletteChance = options.russianRouletteChance;

@@ -98,8 +98,12 @@ class Renderer
 
     public:
 
-        const float epsilon = 1.0e-4;
-        unsigned int maxDepth = 2;
+        static constexpr float        DEFAULT_EPSILON   = 1.0e-4;
+        static constexpr unsigned int DEFAULT_MAX_DEPTH = 10;
+
+        float epsilon = DEFAULT_EPSILON;
+
+        unsigned int maxDepth = DEFAULT_MAX_DEPTH;
 
         // Use Monte Carlo to choose between reflected and transmitted
         // ray at a refraction boundary. If false, both rays are traced.
