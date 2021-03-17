@@ -14,6 +14,13 @@ float snellsLawSine(float n_i, float sin_i, float n_o);
 // transmitted radiant flux to incident radiant flux.
 float beersLawAttenuation(float att, float dist);
 
+namespace ior {
+
+// Sellmeier equation relating index of refraction to wavelength (in um)
+float sellmeier(float wavelength, float B[], float C[], unsigned int num_coeffs);
+
+}; // ior
+
 }; // optics
 
 #endif

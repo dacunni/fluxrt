@@ -20,4 +20,20 @@ float beersLawAttenuation(float att, float dist)
     return std::exp(-att * dist);
 }
 
+namespace ior {
+
+float sellmeier(float wavelength, float B[], float C[], unsigned int num_coeffs)
+{
+    float n2 = 1.0f;
+    float w2 = wavelength * wavelength;
+
+    for(unsigned int i = 0; i < num_coeffs; ++i) {
+        n2 += B[i] * w2 / (w2 - C[i]);
+    }
+
+    return std::sqrt(n2);
+}
+
+}; // ior
+
 }; // optics
