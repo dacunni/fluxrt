@@ -64,6 +64,9 @@ set(SRCS
     )
 ADD_LIBRARY(fluxrt ${SRCS})
 
+add_subdirectory(external/pybind11)
+add_subdirectory(bindings/python)
+
 add_subdirectory(app)
 
 add_subdirectory(benchmarks)
