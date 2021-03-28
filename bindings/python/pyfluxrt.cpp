@@ -1,6 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/iostream.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
@@ -17,6 +18,8 @@ class PYBIND11_EXPORT Camera;
 #include "rng.h"
 #include "scene.h"
 #include "sensor.h"
+#include "radiometry.h"
+#include "material.h"
 
 // Bindings
 #include "vec2_bindings.h"
@@ -26,6 +29,9 @@ class PYBIND11_EXPORT Camera;
 #include "sensor_bindings.h"
 #include "scene_bindings.h"
 #include "camera_bindings.h"
+#include "radiometry_bindings.h"
+#include "rng_bindings.h"
+#include "material_bindings.h"
 
 PYBIND11_MODULE(pyfluxrt, m) {
     m.doc() = "Python bindings for fluxrt";
@@ -37,5 +43,8 @@ PYBIND11_MODULE(pyfluxrt, m) {
     sensor_bindings(m);
     scene_bindings(m);
     camera_bindings(m);
+    radiometry_bindings(m);
+    rng_bindings(m);
+    material_bindings(m);
 }
 
