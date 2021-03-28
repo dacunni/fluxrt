@@ -39,6 +39,8 @@ struct Medium {
 
 const Medium VaccuumMedium = { 1.0f, { 0.0f, 0.0f, 0.0f } };
 
+using MediumStack = std::vector<Medium>;
+
 using MaterialID = uint32_t;
 
 static const MaterialID NoMaterial = std::numeric_limits<MaterialID>::max();

@@ -1,8 +1,8 @@
 #include "fresnel.h"
 #include "radiometry.h"
+#include "material.h"
 
 struct Direction3;
-struct Material;
 struct Position3;
 struct Ray;
 struct RayIntersection;
@@ -13,8 +13,6 @@ struct DiskLight;
 
 class Renderer
 {
-    using MediumStack = std::vector<Medium>;
-
     public:
         bool traceRay(const Scene & scene, RNG & rng,
                       const Ray & ray,
@@ -115,14 +113,14 @@ class Renderer
         unsigned int russianRouletteMinDepth = 2;
 
         // Diffuse shading parameters
-        struct {
+        struct DiffuseShadingParameters {
             unsigned int numEnvMapSamples = 10;
             bool sampleCosineLobe = true;
             bool sampleLights = true;
         } shadeDiffuseParams;
 
         // Specular shading parameters
-        struct {
+        struct SpecularShadingParameters {
             bool samplePhongLobe = true;
         } shadeSpecularParams;
 };
