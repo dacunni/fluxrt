@@ -1,7 +1,7 @@
 
 void sensor_bindings(py::module_ & m)
 {
-    py::class_<Sensor>(m, "Sensor")
+    py::class_<Sensor, std::shared_ptr<Sensor>>(m, "Sensor")
         // constructors
         .def(py::init<>())
         .def(py::init<uint32_t, uint32_t>())
@@ -16,7 +16,8 @@ void sensor_bindings(py::module_ & m)
         .def("pixelStandardImageLocation",
              static_cast<vec2(Sensor::*)(const vec2 &)>(&Sensor::pixelStandardImageLocation))
         .def("aspectRatio", &Sensor::aspectRatio)
-        .def("print", &Sensor::print)
+        .def("print", &Sensor::print,
+             py::call_guard<py::scoped_ostream_redirect>())
         // properties
         .def_readwrite("pixelwidth", &Sensor::pixelwidth)
         .def_readwrite("pixelheight", &Sensor::pixelheight)

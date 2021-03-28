@@ -1,7 +1,7 @@
 
 void vec3_bindings(py::module_ & m)
 {
-    py::class_<vec3>(m, "vec3")
+    py::class_<vec3, std::shared_ptr<vec3>>(m, "vec3")
         // constructors
         .def(py::init<>())
         .def(py::init<const vec3 &>())
@@ -51,5 +51,20 @@ void vec3_bindings(py::module_ & m)
     m.def("mirror", [](const vec3 & a, const vec3 & n) { return mirror(a, n); });
     m.def("refract", [](const vec3 & a, const vec3 & n, float n1, float n2) { return refract(a, n, n1, n2); });
     m.def("interp", [](const vec3 & a, const vec3 & b, float alpha) { return interp(a, b, alpha); });
+
+    py::class_<Position3, vec3, std::shared_ptr<Position3>>(m, "Position3")
+        // constructors
+        .def(py::init<>())
+        .def(py::init<const vec3 &>())
+        .def(py::init<float, float, float>())
+        ;
+
+    py::class_<Direction3, vec3, std::shared_ptr<Direction3>>(m, "Direction3")
+        // constructors
+        .def(py::init<>())
+        .def(py::init<const vec3 &>())
+        .def(py::init<float, float, float>())
+        .def("normalized", &Direction3::normalized)
+        ;
 }
 

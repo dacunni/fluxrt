@@ -1,7 +1,7 @@
 
 void renderer_bindings(py::module_ & m)
 {
-    py::class_<Renderer>(m, "Renderer")
+    py::class_<Renderer, std::shared_ptr<Renderer>>(m, "Renderer")
         // constructors
         .def(py::init<>())
         // methods
@@ -32,7 +32,8 @@ void renderer_bindings(py::module_ & m)
                                 RayIntersection &,
                                 RadianceRGB &) const>(&Renderer::traceCameraRay))
 
-        .def("printConfiguration", &Renderer::printConfiguration)
+        .def("printConfiguration", &Renderer::printConfiguration,
+             py::call_guard<py::scoped_ostream_redirect>())
         // properties
         .def_readwrite("epsilon", &Renderer::epsilon)
         .def_readwrite("maxDepth", &Renderer::maxDepth)
@@ -43,7 +44,8 @@ void renderer_bindings(py::module_ & m)
         .def_readwrite("shadeSpecularParams", &Renderer::shadeSpecularParams)
         ;
 
-    py::class_<Renderer::DiffuseShadingParameters>(m, "DiffuseShadingParameters")
+    py::class_<Renderer::DiffuseShadingParameters,
+               std::shared_ptr<Renderer::DiffuseShadingParameters>>(m, "DiffuseShadingParameters")
         // constructors
         .def(py::init<>())
         .def_readwrite("numEnvMapSamples", &Renderer::DiffuseShadingParameters::numEnvMapSamples)
@@ -51,7 +53,8 @@ void renderer_bindings(py::module_ & m)
         .def_readwrite("sampleLights", &Renderer::DiffuseShadingParameters::sampleLights)
         ;
 
-    py::class_<Renderer::SpecularShadingParameters>(m, "SpecularShadingParameters")
+    py::class_<Renderer::SpecularShadingParameters,
+               std::shared_ptr<Renderer::SpecularShadingParameters>>(m , "SpecularShadingParameters")
         // constructors
         .def(py::init<>())
         .def_readwrite("samplePhongLobe", &Renderer::SpecularShadingParameters::samplePhongLobe)

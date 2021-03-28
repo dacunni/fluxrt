@@ -1,7 +1,7 @@
 
 void ray_bindings(py::module_ & m)
 {
-    py::class_<Ray>(m, "Ray")
+    py::class_<Ray, std::shared_ptr<Ray>>(m, "Ray")
         // constructors
         .def(py::init<>())
         .def(py::init<const Position3 &, const Direction3 &>())
@@ -18,7 +18,7 @@ void ray_bindings(py::module_ & m)
             });
         ;
 
-    py::class_<RayIntersection>(m, "RayIntersection")
+    py::class_<RayIntersection, std::shared_ptr<RayIntersection>>(m, "RayIntersection")
         // constructors
         .def(py::init<>())
         // properties
