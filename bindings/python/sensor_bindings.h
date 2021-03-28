@@ -1,5 +1,3 @@
-#include <sstream>
-#include "sensor.h"
 
 void sensor_bindings(py::module_ & m)
 {

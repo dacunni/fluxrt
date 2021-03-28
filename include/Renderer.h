@@ -1,3 +1,6 @@
+#ifndef __RENDERER_H__
+#define __RENDERER_H__
+
 #include "fresnel.h"
 #include "radiometry.h"
 #include "material.h"
@@ -125,3 +128,4 @@ class Renderer
         } shadeSpecularParams;
 };
 
+#endif

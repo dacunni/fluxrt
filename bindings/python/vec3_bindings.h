@@ -1,4 +1,3 @@
-#include "vec3.h"
 
 void vec3_bindings(py::module_ & m)
 {
@@ -44,13 +43,13 @@ void vec3_bindings(py::module_ & m)
         ;
 
     // vec3 free functions
-    m.def("dot", &dot);
-    m.def("absDot", &absDot);
-    m.def("clampedDot", &clampedDot);
-    m.def("cross", &cross);
-    m.def("blend", &blend);
-    m.def("mirror", &mirror);
-    m.def("refract", &refract);
-    m.def("interp", &interp);
+    m.def("dot", [](const vec3 & a, const vec3 & b) { return dot(a, b); });
+    m.def("absDot", [](const vec3 & a, const vec3 & b) { return absDot(a, b); });
+    m.def("clampedDot", [](const vec3 & a, const vec3 & b) { return clampedDot(a, b); });
+    m.def("cross", [](const vec3 & a, const vec3 & b) { return cross(a, b); });
+    m.def("blend", [](const vec3 & a, float s, const vec3 & b, float t) { return blend(a, s, b, t); });
+    m.def("mirror", [](const vec3 & a, const vec3 & n) { return mirror(a, n); });
+    m.def("refract", [](const vec3 & a, const vec3 & n, float n1, float n2) { return refract(a, n, n1, n2); });
+    m.def("interp", [](const vec3 & a, const vec3 & b, float alpha) { return interp(a, b, alpha); });
 }
 

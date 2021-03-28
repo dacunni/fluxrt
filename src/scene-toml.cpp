@@ -275,7 +275,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 }
                 std::cout << std::endl;
 
-                auto pinholeCamera = std::make_unique<PinholeCamera>(hfov, vfov);
+                auto pinholeCamera = std::make_shared<PinholeCamera>(hfov, vfov);
                 if(applyLensBlur) {
                     pinholeCamera->applyLensBlur = true;
                     if(focusDistance) pinholeCamera->focusDistance = *focusDistance;
@@ -293,7 +293,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                     << " hsize " << hsize << " vsize " << vsize
                     << std::endl;
 
-                scene.camera = std::make_unique<OrthoCamera>(hsize, vsize);
+                scene.camera = std::make_shared<OrthoCamera>(hsize, vsize);
             }
 
             scene.camera->setPositionDirectionUp(position, direction, up);

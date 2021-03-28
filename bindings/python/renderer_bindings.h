@@ -1,8 +1,3 @@
-#include <sstream>
-#include "Renderer.h"
-#include "rng.h"
-#include "Ray.h"
-#include "scene.h"
 
 void renderer_bindings(py::module_ & m)
 {

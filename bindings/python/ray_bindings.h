@@ -1,5 +1,3 @@
-#include <sstream>
-#include "Ray.h"
 
 void ray_bindings(py::module_ & m)
 {

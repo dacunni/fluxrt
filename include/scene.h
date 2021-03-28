@@ -40,7 +40,7 @@ struct Scene
     TextureCache textureCache;
 
     Sensor sensor;
-    std::unique_ptr<Camera> camera;
+    std::shared_ptr<Camera> camera;
 
     // Heap manager for holding pointers to any objects that must
     // live for the lifetime of the scene, but are otherwise unowned.
