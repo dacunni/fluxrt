@@ -1,11 +1,24 @@
 FROM ubuntu:latest
 
+# Environment Variables
+#  Prevent prompts by tzdata
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=America/Denver
+
 RUN apt-get update
+
+# Version Control
 RUN apt-get install -y git
+
+# Build System / Compilers
 RUN apt-get install -y cmake make
-RUN apt-get install -y python3
 RUN apt-get install -y gcc g++
 RUN apt-get install -y clang
+
+# Python Bindings
+RUN apt-get install -y python3
+RUN apt-get install -y python3-pip
+RUN python3 -m pip install pybind11
 
 # Install Google Test
 RUN git clone -q https://github.com/google/googletest.git /googletest \

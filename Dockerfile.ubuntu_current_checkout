@@ -7,7 +7,8 @@ WORKDIR /app
 ADD . /app
 
 # Setup build
-RUN mkdir build && cd build && cmake -DBUILD_PYTHON_BINDINGS:BOOL=OFF ..
+RUN mkdir build && cd build && cmake ..
+#RUN mkdir build && cd build
 
 # Run build
 #RUN cd build && make -j

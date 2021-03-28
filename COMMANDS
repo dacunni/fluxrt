@@ -6,7 +6,7 @@ docker build -t centos_current_checkout -f Dockerfile.centos_current_checkout .
 
 docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro centos_current_checkout
 
-# Ubuntu
+# Ubuntu (used for circleci builds)
 docker build -t ubuntu_compilers -f Dockerfile.ubuntu_compilers .
 docker build -t ubuntu_current_checkout -f Dockerfile.ubuntu_current_checkout .
 

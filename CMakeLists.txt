@@ -15,6 +15,7 @@ endif()
 set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ version selection")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-report")
