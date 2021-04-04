@@ -6,12 +6,21 @@ sudo apt install -y git cmake make python3 gcc g++ clang swig
 ```
 
 ## Installing Google Test / Benchmark Suites
+
+Installing from the apt package manager:
+
+```
+sudo apt install -y libgtest-dev libbenchmark-dev
+```
+
+### Installing From Source
+
 ```
 mkdir tps
 cd tps
 ```
 
-### Build / Install Google Test
+#### Build / Install Google Test
 ```
 git clone -q https://github.com/google/googletest.git googletest
 mkdir -p googletest/build
@@ -21,7 +30,7 @@ sudo make install
 popd
 ```
 
-### Build / Install Google Benchmark
+#### Build / Install Google Benchmark
 ```
 git clone -q https://github.com/google/benchmark.git googlebenchmark
 mkdir -p googlebenchmark/build

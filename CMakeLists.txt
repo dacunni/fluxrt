@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 PROJECT (fluxrt)
 
 option(OPTIMIZE_FOR_NATIVE "Build with -march=native" OFF)
+option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
 
 if(OPTIMIZE_FOR_NATIVE)
     include(CheckCXXCompilerFlag)
@@ -67,8 +68,10 @@ set(SRCS
     )
 ADD_LIBRARY(fluxrt ${SRCS})
 
-add_subdirectory(external/pybind11)
-add_subdirectory(bindings/python)
+if(BUILD_PYTHON_BINDINGS)
+    add_subdirectory(external/pybind11)
+    add_subdirectory(bindings/python)
+endif(BUILD_PYTHON_BINDINGS)
 
 add_subdirectory(app)
 
