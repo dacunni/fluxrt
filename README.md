@@ -33,6 +33,15 @@ export CXX=/usr/local/bin/g++
 # cmake ...
 ```
 
+### Disabling Python Bindings
+
+If you wish to disable building the Python bindings, you can turn off a cmake
+variable to do so:
+
+```
+cmake -DBUILD_PYTHON_BINDINGS:BOOL=OFF ..
+```
+
 ## Tracing a Scene
 
 If a scene description uses relative paths for resource specification,
