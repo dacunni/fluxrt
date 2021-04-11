@@ -22,6 +22,7 @@ class PYBIND11_EXPORT Camera;
 #include "radiometry.h"
 #include "material.h"
 #include "fresnel.h"
+#include "optics.h"
 
 // Bindings
 #include "vec2_bindings.h"
@@ -35,6 +36,7 @@ class PYBIND11_EXPORT Camera;
 #include "rng_bindings.h"
 #include "material_bindings.h"
 #include "fresnel_bindings.h"
+#include "optics_bindings.h"
 
 PYBIND11_MODULE(pyfluxrt, m) {
     m.doc() = "Python bindings for fluxrt";
@@ -50,5 +52,6 @@ PYBIND11_MODULE(pyfluxrt, m) {
     rng_bindings(m);
     material_bindings(m);
     fresnel_bindings(m);
+    optics_bindings(m);
 }
 
