@@ -397,7 +397,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 scene.spheres.emplace_back(Sphere(position, radius));
                 auto & obj = scene.spheres.back();
-                loadMaterialForObject(sphereTable, obj.shape, scene, namedMaterials);
+                loadMaterialForObject(sphereTable, obj, scene, namedMaterials);
                 loadTransformsForObject(sphereTable, obj, scene);
             }
         }
@@ -412,7 +412,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 scene.slabs.emplace_back(Slab(min, max));
                 auto & obj = scene.slabs.back();
-                loadMaterialForObject(slabTable, obj.shape, scene, namedMaterials);
+                loadMaterialForObject(slabTable, obj, scene, namedMaterials);
                 loadTransformsForObject(slabTable, obj, scene);
             }
         }

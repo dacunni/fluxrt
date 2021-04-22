@@ -31,21 +31,20 @@ bool loadTriangleMesh(TriangleMesh & mesh,
     return false;
 }
 
-bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance, float maxDistance)
+bool TriangleMesh::intersects(const Ray & ray, float minDistance, float maxDistance) const
 {
-    return intersectsTrianglesIndexed(ray, &mesh.vertices[0], &mesh.indices.vertex[0], mesh.indices.vertex.size(),
+    return intersectsTrianglesIndexed(ray, &vertices[0], &indices.vertex[0], indices.vertex.size(),
                                       minDistance, maxDistance);
 }
 
-bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
-                      float minDistance, RayIntersection & intersection)
+bool TriangleMesh::findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const
 {
     float bestDistance = FLT_MAX, t = FLT_MAX;
     uint32_t bestTriangle = 0;
     bool hit = false;
 
-    auto vertex = [&mesh](uint32_t tri, uint32_t index) { return mesh.triangleVertex(tri, index); };
-    const auto numTriangles = mesh.numTriangles();
+    auto vertex = [&](uint32_t tri, uint32_t index) { return triangleVertex(tri, index); };
+    const auto numTriangles = this->numTriangles();
 
     for(uint32_t tri = 0; tri < numTriangles; ++tri) {
         if(intersectsTriangle(ray, vertex(tri, 0), vertex(tri, 1), vertex(tri, 2),
@@ -60,45 +59,44 @@ bool findIntersection(const Ray & ray, const TriangleMesh & mesh,
     if(!hit)
         return false;
 
-    fillTriangleMeshIntersection(ray, mesh, bestTriangle, bestDistance, intersection);
+    fillTriangleMeshIntersection(ray, bestTriangle, bestDistance, intersection);
 
     return true;
 }
 
-void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
-                                  uint32_t tri, float t, RayIntersection & intersection)
+void TriangleMesh::fillTriangleMeshIntersection(const Ray & ray, uint32_t tri, float t, RayIntersection & intersection) const
 {
     intersection.distance = t;
     intersection.position = ray.origin + ray.direction * t;
 
     // Use material override if present, otherwise use mesh material
-    if(mesh.material != NoMaterial) {
-        intersection.material = mesh.material;
+    if(material != NoMaterial) {
+        intersection.material = material;
     }
     else {
-        intersection.material = mesh.faces.material[tri];
+        intersection.material = faces.material[tri];
     }
 
     auto bary = barycentricForPointInTriangle(intersection.position,
-                                              mesh.triangleVertex(tri, 0),
-                                              mesh.triangleVertex(tri, 1),
-                                              mesh.triangleVertex(tri, 2));
+                                              triangleVertex(tri, 0),
+                                              triangleVertex(tri, 1),
+                                              triangleVertex(tri, 2));
 
-    if(mesh.hasNormals()) {
+    if(hasNormals()) {
 #if 1
         // TODO: Remove this once we condition input normals to be
         //       pointing consistently in the same direction.
-        Direction3 n0 = mesh.triangleNormal(tri, 0);
-        Direction3 n1 = mesh.triangleNormal(tri, 1);
-        Direction3 n2 = mesh.triangleNormal(tri, 2);
+        Direction3 n0 = triangleNormal(tri, 0);
+        Direction3 n1 = triangleNormal(tri, 1);
+        Direction3 n2 = triangleNormal(tri, 2);
         if(dot(n0, ray.direction) > 0.0f) { n0.negate(); }
         if(dot(n1, ray.direction) > 0.0f) { n1.negate(); }
         if(dot(n2, ray.direction) > 0.0f) { n2.negate(); }
         intersection.normal = interpolate(n0, n1, n2, bary);
 #else
-        intersection.normal = interpolate(mesh.triangleNormal(tri, 0),
-                                          mesh.triangleNormal(tri, 1),
-                                          mesh.triangleNormal(tri, 2), bary);
+        intersection.normal = interpolate(triangleNormal(tri, 0),
+                                          triangleNormal(tri, 1),
+                                          triangleNormal(tri, 2), bary);
 #endif
     }
     else {
@@ -106,9 +104,9 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
         // TODO: This will give flat shading. It would be nice to generate
         //       per vertex normals on mesh load so we can just interpolate
         //       here as usual.
-        auto v0 = mesh.triangleVertex(tri, 0);
-        auto v1 = mesh.triangleVertex(tri, 1);
-        auto v2 = mesh.triangleVertex(tri, 2);
+        auto v0 = triangleVertex(tri, 0);
+        auto v1 = triangleVertex(tri, 1);
+        auto v2 = triangleVertex(tri, 2);
         intersection.normal = cross(v2 - v0, v1 - v0).normalized();
         if(dot(ray.direction, intersection.normal) > 0.0f) {
             intersection.normal.negate();
@@ -117,25 +115,25 @@ void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh,
 
     // Interpolate texture coordinates, if available, and generate tangent/bitangent vectors
 
-    auto tci0 = mesh.indices.texcoord[3 * tri + 0];
-    auto tci1 = mesh.indices.texcoord[3 * tri + 1];
-    auto tci2 = mesh.indices.texcoord[3 * tri + 2];
+    auto tci0 = indices.texcoord[3 * tri + 0];
+    auto tci1 = indices.texcoord[3 * tri + 1];
+    auto tci2 = indices.texcoord[3 * tri + 2];
 
     if(tci0 != TriangleMesh::NoTexCoord && tci1 != TriangleMesh::NoTexCoord && tci2 != TriangleMesh::NoTexCoord) {
         // FIXME: This branch produces faceted artifacts in the tangent
         //        and bitangent with the mori model.
-        TextureCoordinate tc0 = mesh.texcoords[tci0];
-        TextureCoordinate tc1 = mesh.texcoords[tci1];
-        TextureCoordinate tc2 = mesh.texcoords[tci2];
+        TextureCoordinate tc0 = texcoords[tci0];
+        TextureCoordinate tc1 = texcoords[tci1];
+        TextureCoordinate tc2 = texcoords[tci2];
 
         intersection.texcoord = interpolate(tc0, tc1, tc2, bary);
         intersection.hasTexCoord = true;
 
         // Generate tangent / bitangent
         //   Reference: https://www.cs.utexas.edu/~fussell/courses/cs384g-spring2016/lectures/normal_mapping_tangent.pdf
-        Position3 P0 = mesh.triangleVertex(tri, 0);
-        Position3 P1 = mesh.triangleVertex(tri, 1);
-        Position3 P2 = mesh.triangleVertex(tri, 2);
+        Position3 P0 = triangleVertex(tri, 0);
+        Position3 P1 = triangleVertex(tri, 1);
+        Position3 P2 = triangleVertex(tri, 2);
 
         Direction3 V1 = P1 - P0;
         Direction3 V2 = P2 - P0;

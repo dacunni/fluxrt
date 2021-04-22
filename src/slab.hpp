@@ -26,24 +26,24 @@ inline bool Slab::contains(const Position3 & P) const
         zmin <= P.z && zmax >= P.z;
 }
 
-inline bool intersects(const Ray & ray, const Slab & slab, float minDistance, float maxDistance)
+inline bool Slab::intersects(const Ray & ray, float minDistance, float maxDistance) const
 {
     vec3 dinv(1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z);
 
-    float tx1 = (slab.xmin - ray.origin.x) * dinv.x;
-    float tx2 = (slab.xmax - ray.origin.x) * dinv.x;
+    float tx1 = (xmin - ray.origin.x) * dinv.x;
+    float tx2 = (xmax - ray.origin.x) * dinv.x;
 
     float tmin = std::min(tx1, tx2);
     float tmax = std::max(tx1, tx2);
 
-    float ty1 = (slab.ymin - ray.origin.y) * dinv.y;
-    float ty2 = (slab.ymax - ray.origin.y) * dinv.y;
+    float ty1 = (ymin - ray.origin.y) * dinv.y;
+    float ty2 = (ymax - ray.origin.y) * dinv.y;
 
     tmin = std::max(tmin, std::min(ty1, ty2));
     tmax = std::min(tmax, std::max(ty1, ty2));
 
-    float tz1 = (slab.zmin - ray.origin.z) * dinv.z;
-    float tz2 = (slab.zmax - ray.origin.z) * dinv.z;
+    float tz1 = (zmin - ray.origin.z) * dinv.z;
+    float tz2 = (zmax - ray.origin.z) * dinv.z;
 
     tmin = std::max(tmin, std::min(tz1, tz2));
     tmax = std::min(tmax, std::max(tz1, tz2));
@@ -98,7 +98,7 @@ const int LOOK_NEGATIVE_NORMAL_OFFSET = 1;
 // Reference: http://www.scratchapixel.com/lessons/3d-basic-lessons/lesson-7-intersecting-simple-shapes/ray-box-intersection/
 //
 // Note: This method assumes that slab min/max values are ordered correctly.
-inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistance, RayIntersection & intersection)
+inline bool Slab::findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const
 {
     float xn, xf, yn, yf, zn, zf;       // near and far planes for the box
     int nin, nif, nix, niy, niz;        // indices into normal table (near plane, far plane, x, y, z)
@@ -110,29 +110,29 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
     // Determine which sides of the box to label "near" or "far" depending on the
     // ray direction
     if(dinv.x >= 0.0f) {
-        xn = slab.xmin; xf = slab.xmax;
+        xn = xmin; xf = xmax;
         nix = X_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
     }
     else {
-        xn = slab.xmax; xf = slab.xmin;
+        xn = xmax; xf = xmin;
         nix = X_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
     
     if(dinv.y >= 0.0f) {
-        yn = slab.ymin; yf = slab.ymax;
+        yn = ymin; yf = ymax;
         niy = Y_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
     }
     else {
-        yn = slab.ymax; yf = slab.ymin;
+        yn = ymax; yf = ymin;
         niy = Y_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
 
     if(dinv.z >= 0.0f) {
-        zn = slab.zmin; zf = slab.zmax;
+        zn = zmin; zf = zmax;
         niz = Z_NORMAL_BASE_INDEX + LOOK_POSITIVE_NORMAL_OFFSET;
     }
     else {
-        zn = slab.zmax; zf = slab.zmin;
+        zn = zmax; zf = zmin;
         niz = Z_NORMAL_BASE_INDEX + LOOK_NEGATIVE_NORMAL_OFFSET;
     }
 
@@ -201,7 +201,7 @@ inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistan
     intersection.position = add(ray.origin, scale(ray.direction, intersection.distance));
     intersection.texcoord.u = dot(Direction3(intersection.position), intersection.tangent);
     intersection.texcoord.v = dot(Direction3(intersection.position), intersection.bitangent);
-    intersection.material = slab.material;
+    intersection.material = material;
 
     return true;
 }

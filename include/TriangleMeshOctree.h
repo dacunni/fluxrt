@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 
+#include "traceable.h"
 #include "slab.h"
 
 struct Ray;
@@ -12,7 +13,7 @@ struct RayIntersection;
 struct TriangleMesh;
 struct Direction3;
 
-struct TriangleMeshOctree
+struct TriangleMeshOctree : public Traceable
 {
     using child_index_t = unsigned int;
     static const child_index_t MAX_CHILDREN = 8;
@@ -21,6 +22,18 @@ struct TriangleMeshOctree
 
     TriangleMeshOctree(TriangleMesh & mesh);
     ~TriangleMeshOctree() = default;
+
+    // Ray intersection implementation
+    virtual bool intersects(const Ray & ray, float minDistance, float maxDistance) const override;
+    virtual bool findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const override;
+
+    bool intersectsNode(const Ray & ray, float minDistance, float maxDistance,
+                        const TriangleMeshOctree::child_array_t & childOrder,
+                        uint32_t nodeIndex) const;
+    bool findIntersectionNode(const Ray & ray, float minDistance,
+                              uint32_t & bestTriangle, float & bestDistance,
+                              const TriangleMeshOctree::child_array_t & childOrder,
+                              uint32_t nodeIndex) const;
 
     void build();
 
@@ -83,8 +96,5 @@ struct TriangleMeshOctree
     uint8_t buildMaxLevel = 8;
 };
 
-// Ray intersection
-bool intersects(const Ray & ray, const TriangleMeshOctree & meshOctree, float minDistance, float maxDistance);
-bool findIntersection(const Ray & ray, const TriangleMeshOctree & meshOctree, float minDistance, RayIntersection & intersection);
 
 #endif

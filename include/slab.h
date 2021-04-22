@@ -5,7 +5,7 @@
 #include "Ray.h"
 #include "material.h"
 
-struct Slab
+struct Slab : public Traceable
 {
     inline Slab() = default;
     inline Slab(float xmind, float ymind, float zmind,
@@ -36,6 +36,10 @@ struct Slab
 
     void print() const;
 
+    // Ray intersection implementation
+    inline virtual bool intersects(const Ray & ray, float minDistance, float maxDistance) const override;
+    inline virtual bool findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const override;
+
     float xmin = 0.0f, ymin = 0.0f, zmin = 0.0f;
     float xmax = 0.0f, ymax = 0.0f, zmax = 0.0f;
 
@@ -48,10 +52,6 @@ Slab merge(const Slab & a, const Position3 & p);
 Slab boundingBox(const std::vector<Position3> & points);
 
 vec3 relativeScale(const Slab & a, const Slab & b);
-
-// Ray intersection
-inline bool intersects(const Ray & ray, const Slab & slab, float minDistance, float maxDistance);
-inline bool findIntersection(const Ray & ray, const Slab & slab, float minDistance, RayIntersection & intersection);
 
 #include "slab.hpp"
 #endif

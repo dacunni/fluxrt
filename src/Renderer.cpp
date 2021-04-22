@@ -31,7 +31,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
         return false;
     }
 
-    bool hit = findIntersection(ray, scene, minDistance, intersection);
+    bool hit = findIntersectionWorldRay(ray, scene, minDistance, intersection);
 
     if(!hit) {
         if(accumEnvMap) {
@@ -318,7 +318,7 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
 
             if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
                 Ray r{ P + N * epsilon, dirSample.direction };
-                if(!intersects(r, scene, minDistance)) {
+                if(!intersectsWorldRay(r, scene, minDistance)) {
                     Lenv += DdotN * scene.environmentMap->sampleRay(r) / dirSample.pdf;
                 }
             }
@@ -408,7 +408,7 @@ inline RadianceRGB Renderer::samplePointLight(const Scene & scene,
     const float lightDist = std::sqrt(lightDistSq);
 
     // If we hit something, we can't see the light
-    if(intersects(Ray{P, lightDir}, scene, minDistance, lightDist)) {
+    if(intersectsWorldRay(Ray{P, lightDir}, scene, minDistance, lightDist)) {
         return RadianceRGB::BLACK();
     }
 
@@ -440,7 +440,7 @@ inline RadianceRGB Renderer::sampleDiskLight(const Scene & scene,
     const float lightDist = std::sqrt(lightDistSq);
 
     // If we hit something, we can't see the light
-    if(intersects(Ray{P, lightDir}, scene, epsilon, lightDist - epsilon)) {
+    if(intersectsWorldRay(Ray{P, lightDir}, scene, epsilon, lightDist - epsilon)) {
         return RadianceRGB::BLACK();
     }
 

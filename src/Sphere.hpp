@@ -2,11 +2,11 @@
 #include <sstream>
 #include "coordinate.h"
 
-inline bool intersectHelper(const Ray & ray, const Sphere & sphere, float & dist1, float & dist2)
+inline bool Sphere::intersectHelper(const Ray & ray, float & dist1, float & dist2) const
 {
-	auto dst = subtract(ray.origin, sphere.center);
+	auto dst = subtract(ray.origin, center);
 	float b = dot(dst, ray.direction);
-	float c = dot(dst, dst) - sq(sphere.radius);
+	float c = dot(dst, dst) - sq(radius);
 	float d = sq(b) - c;
     
     if(d < 0.0f)
@@ -19,10 +19,10 @@ inline bool intersectHelper(const Ray & ray, const Sphere & sphere, float & dist
     return true;
 }
 
-inline bool intersects(const Ray & ray, const Sphere & sphere, float minDistance, float maxDistance)
+inline bool Sphere::intersects(const Ray & ray, float minDistance, float maxDistance) const
 {
     float dist1, dist2;
-    if(!intersectHelper(ray, sphere, dist1, dist2))
+    if(!intersectHelper(ray, dist1, dist2))
         return false;
 
     auto minmax = std::minmax(dist1, dist2);
@@ -31,10 +31,10 @@ inline bool intersects(const Ray & ray, const Sphere & sphere, float minDistance
         || (minmax.second >= minDistance && minmax.second <= maxDistance);
 }
 
-inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDistance, RayIntersection & intersection)
+inline bool Sphere::findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const
 {
     float dist1, dist2;
-    if(!intersectHelper(ray, sphere, dist1, dist2))
+    if(!intersectHelper(ray, dist1, dist2))
         return false;
 
 #if 1 // TODO: check that this is equivalent
@@ -52,10 +52,10 @@ inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDi
     // compute intersection position
     intersection.position = add(ray.origin, scale(ray.direction, intersection.distance));
     // compute surface normal
-    intersection.normal = subtract(intersection.position, sphere.center).normalized();
+    intersection.normal = subtract(intersection.position, center).normalized();
     // generate tangent / bitangent
     coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
-    intersection.material = sphere.material;
+    intersection.material = material;
     return true;
 }
 

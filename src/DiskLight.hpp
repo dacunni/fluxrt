@@ -18,11 +18,11 @@ inline bool intersectPlane(const Ray & ray,
     return false;
 }
 
-inline bool intersects(const Ray & ray, const DiskLight & light, float minDistance, float maxDistance)
+inline bool DiskLight::intersects(const Ray & ray, float minDistance, float maxDistance) const
 {
     RayIntersection intersection;
 
-    if(findIntersection(ray, light, minDistance, intersection) &&
+    if(findIntersection(ray, minDistance, intersection) &&
        intersection.distance <= maxDistance) {
         return true;
     }
@@ -30,26 +30,26 @@ inline bool intersects(const Ray & ray, const DiskLight & light, float minDistan
     return false;
 }
 
-inline bool findIntersection(const Ray & ray, const DiskLight & light, float minDistance, RayIntersection & intersection)
+inline bool DiskLight::findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const
 {
     float t = 0;
 
-    if(intersectPlane(ray, light.position, light.direction, t)) {
+    if(intersectPlane(ray, position, direction, t)) {
         if(t < minDistance) {
             return false;
         }
         Position3 p = ray.origin + ray.direction * t;
-        vec3 v = p - light.position;
+        vec3 v = p - position;
         float d2 = dot(v, v);
-        if(d2 <= light.radius * light.radius) {
+        if(d2 <= radius * radius) {
             intersection.distance = t;
             // compute intersection position
             intersection.position = add(ray.origin, scale(ray.direction, intersection.distance));
             // compute surface normal
-            intersection.normal = light.direction;
+            intersection.normal = direction;
             // generate tangent / bitangent
             coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
-            intersection.material = light.material;
+            intersection.material = material;
             return true;
         }
      }

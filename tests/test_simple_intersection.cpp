@@ -153,7 +153,7 @@ void make_intersection_images(const OBJ & obj, const MaterialArray & materials, 
         hitMask.forEachPixel(
             [&](Image<float> &, int x, int y) {
                 // Predicate intersection (hit / no hit)
-                bool hit = intersects(pixelRay(x, y), obj, minDistance, maxDistance);
+                bool hit = obj.intersects(pixelRay(x, y), minDistance, maxDistance);
                 hitMask.set(x, y, 0, hit ? 1.0f : 0.0f);
             });
         });
@@ -162,7 +162,7 @@ void make_intersection_images(const OBJ & obj, const MaterialArray & materials, 
         isectMask.forEachPixel(
             [&](Image<float> &, int x, int y) {
                 // Full intersection
-                bool hit = findIntersection(pixelRay(x, y), obj, minDistance, isect);
+                bool hit = obj.findIntersection(pixelRay(x, y), minDistance, isect);
                 isectMask.set(x, y, 0, hit ? 1.0f : 0.0f);
                 if(hit) {
                     setDistColor(isectDist, x, y, minDistance, isect);
@@ -201,11 +201,13 @@ int main(int argc, char ** argv)
     Sphere sphere(Position3(0, 0, 0), 0.5f);
     make_intersection_images(sphere, materials, textureCache.textures, "sphere");
 
+#if 0
     Triangle triangle;
     triangle.vertices[0] = Position3(-0.4, -0.3,  0.0f);
     triangle.vertices[1] = Position3( 0.1,  0.6,  0.2f);
     triangle.vertices[2] = Position3( 0.5, -0.5, -0.3f);
     make_intersection_images(triangle, materials, textureCache.textures, "triangle");
+#endif
 
     TriangleMesh mesh;
     //if(!loadTriangleMesh(mesh, materials, textureCache, "models/blender/sphere.obj")) {

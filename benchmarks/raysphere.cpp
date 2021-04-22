@@ -11,7 +11,7 @@ static void RaySphereIntersects1(benchmark::State& state) {
     benchmark::DoNotOptimize(minDistance);
     int numTests = 0;
     for (auto _ : state) {
-        benchmark::DoNotOptimize(intersects(ray, obj, minDistance, 1000.0f));
+        benchmark::DoNotOptimize(obj.intersects(ray, minDistance, 1000.0f));
         numTests++;
     }
     state.counters["tests"] = benchmark::Counter(numTests, benchmark::Counter::kAvgThreadsRate);
@@ -27,7 +27,7 @@ static void RaySphereIntersectsFirstHit(benchmark::State& state) {
     benchmark::DoNotOptimize(minDistance);
     int numTests = 0;
     for (auto _ : state) {
-        benchmark::DoNotOptimize(intersects(ray, obj, minDistance, 1000.0f));
+        benchmark::DoNotOptimize(obj.intersects(ray, minDistance, 1000.0f));
         numTests++;
     }
     state.counters["tests"] = benchmark::Counter(numTests, benchmark::Counter::kAvgThreadsRate);
@@ -43,7 +43,7 @@ static void RaySphereIntersectsSecondHit(benchmark::State& state) {
     benchmark::DoNotOptimize(minDistance);
     int numTests = 0;
     for (auto _ : state) {
-        benchmark::DoNotOptimize(intersects(ray, obj, minDistance, 1000.0f));
+        benchmark::DoNotOptimize(obj.intersects(ray, minDistance, 1000.0f));
         numTests++;
     }
     state.counters["tests"] = benchmark::Counter(numTests, benchmark::Counter::kAvgThreadsRate);
@@ -61,7 +61,7 @@ static void RaySphereFindIntersection1(benchmark::State& state) {
     benchmark::DoNotOptimize(minDistance);
     int numTests = 0;
     for (auto _ : state) {
-        benchmark::DoNotOptimize(findIntersection(ray, obj, minDistance, intersection));
+        benchmark::DoNotOptimize(obj.findIntersection(ray, minDistance, intersection));
         numTests++;
     }
     state.counters["tests"] = benchmark::Counter(numTests, benchmark::Counter::kAvgThreadsRate);
@@ -79,7 +79,7 @@ static void RaySphereFindIntersectionFirstHit(benchmark::State& state) {
     benchmark::DoNotOptimize(minDistance);
     int numTests = 0;
     for (auto _ : state) {
-        benchmark::DoNotOptimize(findIntersection(ray, obj, minDistance, intersection));
+        benchmark::DoNotOptimize(obj.findIntersection(ray, minDistance, intersection));
         numTests++;
     }
     state.counters["tests"] = benchmark::Counter(numTests, benchmark::Counter::kAvgThreadsRate);
@@ -97,7 +97,7 @@ static void RaySphereFindIntersectionSecondHit(benchmark::State& state) {
     benchmark::DoNotOptimize(minDistance);
     int numTests = 0;
     for (auto _ : state) {
-        benchmark::DoNotOptimize(findIntersection(ray, obj, minDistance, intersection));
+        benchmark::DoNotOptimize(obj.findIntersection(ray, minDistance, intersection));
         numTests++;
     }
     state.counters["tests"] = benchmark::Counter(numTests, benchmark::Counter::kAvgThreadsRate);

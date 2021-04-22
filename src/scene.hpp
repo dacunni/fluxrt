@@ -1,33 +1,34 @@
 
-inline bool intersects(const Ray & ray, const Scene & scene,
-                       float minDistance, float maxDistance)
+inline bool intersectsWorldRay(const Ray & rayWorld, const Scene & scene,
+                               float minDistance, float maxDistance)
 {
     for(const auto & o : scene.spheres) {
-        if(intersects(ray, o, minDistance, maxDistance)) {
+        if(o.intersectsWorldRay(rayWorld, minDistance, maxDistance)) {
             return true;
         }
     }
 
     for(const auto & o : scene.slabs) {
-        if(intersects(ray, o, minDistance, maxDistance)) {
+        if(o.intersectsWorldRay(rayWorld, minDistance, maxDistance)) {
             return true;
         }
     }
 
     for(const auto & o : scene.meshOctrees) {
-        if(intersects(ray, o, minDistance, maxDistance)) {
+        if(o.intersectsWorldRay(rayWorld, minDistance, maxDistance)) {
+            return true;
             return true;
         }
     }
 
     for(const auto & o : scene.meshes) {
-        if(intersects(ray, o, minDistance, maxDistance)) {
+        if(o.intersectsWorldRay(rayWorld, minDistance, maxDistance)) {
             return true;
         }
     }
 
     for(const auto & o : scene.diskLights) {
-        if(intersects(ray, o, minDistance, maxDistance)) {
+        if(o.intersectsWorldRay(rayWorld, minDistance, maxDistance)) {
             return true;
         }
     }
@@ -35,8 +36,8 @@ inline bool intersects(const Ray & ray, const Scene & scene,
     return false;
 }
 
-inline bool findIntersection(const Ray & ray, const Scene & scene,
-                             float minDistance, RayIntersection & intersection)
+inline bool findIntersectionWorldRay(const Ray & rayWorld, const Scene & scene,
+                                     float minDistance, RayIntersection & intersection)
 {
     RayIntersection nextIntersection;
     bool hit = false;
@@ -51,37 +52,37 @@ inline bool findIntersection(const Ray & ray, const Scene & scene,
     // Iterate over scene objects
 
     for(const auto & o : scene.spheres) {
-        if(findIntersection(ray, o, minDistance, nextIntersection)) {
+        if(o.findIntersectionWorldRay(rayWorld, minDistance, nextIntersection)) {
             updateBestHit();
         }
     }
 
     for(const auto & o : scene.slabs) {
-        if(findIntersection(ray, o, minDistance, nextIntersection)) {
+        if(o.findIntersectionWorldRay(rayWorld, minDistance, nextIntersection)) {
             updateBestHit();
         }
     }
 
     for(const auto & o : scene.meshOctrees) {
-        if(findIntersection(ray, o, minDistance, nextIntersection)) {
+        if(o.findIntersectionWorldRay(rayWorld, minDistance, nextIntersection)) {
             updateBestHit();
         }
     }
 
     for(const auto & o : scene.meshes) {
-        if(findIntersection(ray, o, minDistance, nextIntersection)) {
+        if(o.findIntersectionWorldRay(rayWorld, minDistance, nextIntersection)) {
             updateBestHit();
         }
     }
 
     for(const auto & o : scene.diskLights) {
-        if(findIntersection(ray, o, minDistance, nextIntersection)) {
+        if(o.findIntersectionWorldRay(rayWorld, minDistance, nextIntersection)) {
             updateBestHit();
         }
     }
 
     if(hit) {
-        intersection.ray = ray;
+        intersection.ray = rayWorld;
     }
 
     return hit;

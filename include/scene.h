@@ -24,10 +24,10 @@ struct Scene
     void print() const;
 
     // Objects
-    std::vector<Traceable<Sphere>> spheres;
-    std::vector<Traceable<Slab>> slabs;
-    std::vector<Traceable<TriangleMesh>> meshes;
-    std::vector<Traceable<TriangleMeshOctree>> meshOctrees;
+    std::vector<Sphere> spheres;
+    std::vector<Slab> slabs;
+    std::vector<TriangleMesh> meshes;
+    std::vector<TriangleMeshOctree> meshOctrees;
 
     // Lights
     std::vector<PointLight> pointLights;
@@ -59,8 +59,8 @@ bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename,
                            std::map<std::string, MaterialID> & namedMaterials);
 
 // Ray intersection
-inline bool intersects(const Ray & ray, const Scene & scene, float minDistance, float maxDistance = std::numeric_limits<float>::max());
-inline bool findIntersection(const Ray & ray, const Sphere & sphere, float minDistance, RayIntersection & intersection);
+inline bool intersectsWorldRay(const Ray & rayWorld, const Scene & scene, float minDistance, float maxDistance = std::numeric_limits<float>::max());
+inline bool findIntersectionWorldRay(const Ray & rayWorld, const Sphere & sphere, float minDistance, RayIntersection & intersection);
 
 #include "scene.hpp"
 #endif

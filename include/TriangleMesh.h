@@ -4,15 +4,22 @@
 #include <vector>
 #include "vectortypes.h"
 #include "material.h"
+#include "traceable.h"
 
 struct Ray;
 struct RayIntersection;
 struct Slab;
 
-struct TriangleMesh
+struct TriangleMesh : public Traceable
 {
     inline TriangleMesh() = default;
     inline ~TriangleMesh() = default;
+
+    // Ray intersection implementation
+    virtual bool intersects(const Ray & ray, float minDistance, float maxDistance) const override;
+    virtual bool findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const override;
+
+    void fillTriangleMeshIntersection(const Ray & ray, uint32_t tri, float t, RayIntersection & intersection) const;
 
     size_t numTriangles() const;
     bool hasNormals() const;
@@ -60,10 +67,5 @@ bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
                              MaterialArray & materials,
                              TextureCache & textureCache,
                              const std::string & path, const std::string & filename);
-
-// Ray intersection
-bool intersects(const Ray & ray, const TriangleMesh & mesh, float minDistance, float maxDistance);
-bool findIntersection(const Ray & ray, const TriangleMesh & mesh, float minDistance, RayIntersection & intersection);
-void fillTriangleMeshIntersection(const Ray & ray, const TriangleMesh & mesh, uint32_t tri, float t, RayIntersection & intersection);
 
 #endif
