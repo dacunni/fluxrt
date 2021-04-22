@@ -1,0 +1,1058 @@
+
+[camera]
+type = "pinhole"
+hfov = 60
+
+position = [ 30.0, 16.0, 30.0 ]
+lookat = [ 5.0, 0.5, 5.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 1200
+pixelheight = 800
+
+[envmap]
+
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+direction = [ 1.0, 0.2, 0.0 ]
+
+# Floor
+[[slabs]]
+min = [ -100.0, -0.5, -100.0 ]
+max = [  100.0, -0.04, 100.0 ]
+
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.5, 0.5, 0.5 ]
+
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 2.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 2.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 2.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 2.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 2.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 2.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 2.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 4.7, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 4.7, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 4.7, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 4.7, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 4.7, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 4.7, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 4.7, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 6.9, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 6.9, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 6.9, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 6.9, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 6.9, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 6.9, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 6.9, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 9.100000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 9.100000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 9.100000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 9.100000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 9.100000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 9.100000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 9.100000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 11.3, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 11.3, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 11.3, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 11.3, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 11.3, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 11.3, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 11.3, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 13.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 13.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 13.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 13.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 13.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 13.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 13.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 15.700000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 15.700000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 15.700000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 15.700000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 15.700000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 15.700000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 0.0, 15.700000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 2.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 2.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 2.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 2.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 2.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 2.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 2.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 4.7, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 4.7, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 4.7, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 4.7, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 4.7, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 4.7, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 4.7, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 6.9, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 6.9, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 6.9, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 6.9, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 6.9, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 6.9, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 6.9, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 9.100000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 9.100000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 9.100000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 9.100000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 9.100000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 9.100000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 9.100000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 11.3, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 11.3, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 11.3, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 11.3, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 11.3, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 11.3, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 11.3, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 13.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 13.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 13.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 13.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 13.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 13.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 13.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 15.700000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 15.700000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 15.700000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 15.700000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 15.700000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 15.700000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 2.2, 15.700000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 2.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 2.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 2.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 2.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 2.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 2.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 2.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 4.7, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 4.7, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 4.7, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 4.7, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 4.7, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 4.7, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 4.7, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 6.9, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 6.9, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 6.9, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 6.9, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 6.9, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 6.9, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 6.9, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 9.100000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 9.100000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 9.100000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 9.100000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 9.100000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 9.100000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 9.100000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 11.3, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 11.3, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 11.3, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 11.3, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 11.3, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 11.3, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 11.3, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 13.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 13.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 13.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 13.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 13.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 13.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 13.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 15.700000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 15.700000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 15.700000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 15.700000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 15.700000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 15.700000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 4.4, 15.700000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 2.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 2.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 2.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 2.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 2.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 2.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 2.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 4.7, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 4.7, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 4.7, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 4.7, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 4.7, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 4.7, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 4.7, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 6.9, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 6.9, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 6.9, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 6.9, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 6.9, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 6.9, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 6.9, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 9.100000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 9.100000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 9.100000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 9.100000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 9.100000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 9.100000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 9.100000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 11.3, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 11.3, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 11.3, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 11.3, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 11.3, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 11.3, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 11.3, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 13.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 13.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 13.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 13.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 13.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 13.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 13.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 15.700000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 15.700000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 15.700000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 15.700000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 15.700000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 15.700000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 6.6000000000000005, 15.700000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 2.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 2.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 2.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 2.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 2.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 2.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 2.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 4.7, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 4.7, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 4.7, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 4.7, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 4.7, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 4.7, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 4.7, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 6.9, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 6.9, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 6.9, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 6.9, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 6.9, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 6.9, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 6.9, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 9.100000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 9.100000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 9.100000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 9.100000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 9.100000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 9.100000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 9.100000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 11.3, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 11.3, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 11.3, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 11.3, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 11.3, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 11.3, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 11.3, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 13.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 13.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 13.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 13.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 13.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 13.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 13.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 15.700000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 15.700000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 15.700000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 15.700000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 15.700000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 15.700000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 8.8, 15.700000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 2.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 2.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 2.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 2.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 2.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 2.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 2.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 4.7, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 4.7, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 4.7, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 4.7, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 4.7, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 4.7, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 4.7, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 6.9, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 6.9, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 6.9, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 6.9, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 6.9, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 6.9, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 6.9, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 9.100000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 9.100000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 9.100000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 9.100000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 9.100000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 9.100000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 9.100000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 11.3, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 11.3, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 11.3, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 11.3, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 11.3, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 11.3, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 11.3, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 13.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 13.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 13.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 13.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 13.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 13.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 13.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 15.700000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 15.700000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 15.700000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 15.700000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 15.700000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 15.700000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 11.0, 15.700000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 2.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 2.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 2.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 2.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 2.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 2.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 2.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 4.7, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 4.7, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 4.7, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 4.7, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 4.7, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 4.7, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 4.7, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 6.9, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 6.9, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 6.9, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 6.9, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 6.9, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 6.9, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 6.9, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 9.100000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 9.100000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 9.100000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 9.100000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 9.100000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 9.100000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 9.100000000000001, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 11.3, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 11.3, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 11.3, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 11.3, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 11.3, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 11.3, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 11.3, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 13.5, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 13.5, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 13.5, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 13.5, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 13.5, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 13.5, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 13.5, 13.200000000000001 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 15.700000000000001, 0.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 15.700000000000001, 2.2 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 15.700000000000001, 4.4 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 15.700000000000001, 6.6000000000000005 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 15.700000000000001, 8.8 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 15.700000000000001, 11.0 ]
+[[spheres]]
+radius = 1.0
+position = [ 13.200000000000001, 15.700000000000001, 13.200000000000001 ]
