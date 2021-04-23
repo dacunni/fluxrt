@@ -1,6 +1,7 @@
 #ifndef __TRACEABLE__
 #define __TRACEABLE__
 
+#include <memory>
 #include "transform.h"
 #include "Ray.h"
 
@@ -20,6 +21,8 @@ struct Traceable
 
     Transform transform;
 };
+
+using TraceablePtr = std::shared_ptr<Traceable>;
 
 // Inline implementations
 inline bool Traceable::intersectsWorldRay(const Ray & rayWorld, float minDistanceWorld, float maxDistanceWorld) const

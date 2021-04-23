@@ -13,7 +13,6 @@
 #include "sensor.h"
 #include "camera.h"
 #include "Ray.h"
-#include "HeapManager.h"
 #include "traceable.h"
 
 struct Scene
@@ -24,10 +23,7 @@ struct Scene
     void print() const;
 
     // Objects
-    std::vector<Sphere> spheres;
-    std::vector<Slab> slabs;
-    std::vector<TriangleMesh> meshes;
-    std::vector<TriangleMeshOctree> meshOctrees;
+    std::vector<TraceablePtr> objects;
 
     // Lights
     std::vector<PointLight> pointLights;
@@ -41,10 +37,6 @@ struct Scene
 
     Sensor sensor;
     std::shared_ptr<Camera> camera;
-
-    // Heap manager for holding pointers to any objects that must
-    // live for the lifetime of the scene, but are otherwise unowned.
-    HeapManager heapManager;
 };
 
 // Load scene from a file, deducing the type from the extension

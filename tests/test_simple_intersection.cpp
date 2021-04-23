@@ -209,32 +209,32 @@ int main(int argc, char ** argv)
     make_intersection_images(triangle, materials, textureCache.textures, "triangle");
 #endif
 
-    TriangleMesh mesh;
-    //if(!loadTriangleMesh(mesh, materials, textureCache, "models/blender/sphere.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textureCache, "models/blender/monkey2.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textureCache, "models/blender/monkey3.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textureCache, "models/blender/monkey_simple_flat.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textureCache, "models/blender/monkey_simple_smooth.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textureCache, "models/casual-effects.com/sportsCar/sportsCar.obj")) {
-    if(!loadTriangleMesh(mesh, materials, textureCache, "models/casual-effects.com/bmw/bmw.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textureCache, "models/casual-effects.com/mitsuba/mitsuba-sphere.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textureCache, "models/casual-effects.com/mori_knob/testObj.obj")) {
-    //if(!loadTriangleMesh(mesh, materials, textureCache, "models/casual-effects.com/living_room/living_room.obj")) {
+    auto mesh = std::make_shared<TriangleMesh>();
+    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/blender/sphere.obj")) {
+    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/blender/monkey2.obj")) {
+    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/blender/monkey3.obj")) {
+    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/blender/monkey_simple_flat.obj")) {
+    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/blender/monkey_simple_smooth.obj")) {
+    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/casual-effects.com/sportsCar/sportsCar.obj")) {
+    if(!loadTriangleMesh(*mesh, materials, textureCache, "models/casual-effects.com/bmw/bmw.obj")) {
+    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/casual-effects.com/mitsuba/mitsuba-sphere.obj")) {
+    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/casual-effects.com/mori_knob/testObj.obj")) {
+    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/casual-effects.com/living_room/living_room.obj")) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }
-    Slab meshBounds = boundingBox(mesh.vertices);
+    Slab meshBounds = boundingBox(mesh->vertices);
     printf("Mesh bounds: "); meshBounds.print();
     printf("Scaling mesh to visible area\n");
-    mesh.scaleToFit(Slab::centeredCube(2.0f));
-    meshBounds = boundingBox(mesh.vertices);
+    mesh->scaleToFit(Slab::centeredCube(2.0f));
+    meshBounds = boundingBox(mesh->vertices);
     printf("Mesh bounds: "); meshBounds.print();
     //make_intersection_images(mesh, materials, textureCache.textures, "mesh";
 
-    TriangleMeshOctree meshOctree(mesh);
-    meshOctree.build();
-    printf("Octree covers all triangles: %d\n", (int) meshOctree.nodesCoverAllTriangles());
-    make_intersection_images(meshOctree, materials, textureCache.textures, "mesh_octree");
+    auto meshOctree = std::make_shared<TriangleMeshOctree>(mesh);
+    meshOctree->build();
+    printf("Octree covers all triangles: %d\n", (int) meshOctree->nodesCoverAllTriangles());
+    make_intersection_images(*meshOctree, materials, textureCache.textures, "mesh_octree");
 
     return EXIT_SUCCESS;
 }

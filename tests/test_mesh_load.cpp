@@ -18,23 +18,23 @@ int main(int argc, char ** argv)
         modelFile = argv[1];
     }
 
-    TriangleMesh mesh;
+    auto mesh = std::make_shared<TriangleMesh>();
     MaterialArray materials;
     TextureCache textureCache;
-    if(!loadTriangleMesh(mesh, materials, textureCache, modelFile)) {
+    if(!loadTriangleMesh(*mesh, materials, textureCache, modelFile)) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }
-    printf("Mesh meta: "); mesh.printMeta();
-    auto bounds = boundingBox(mesh.vertices);
+    printf("Mesh meta: "); mesh->printMeta();
+    auto bounds = boundingBox(mesh->vertices);
     printf("Mesh bounds: "); bounds.print();
 
     printf("\nOctree Test\n");
-    TriangleMeshOctree octree(mesh);
+    auto octree = std::make_shared<TriangleMeshOctree>(mesh);
     printf("Building octree\n");
-    octree.build();
-    //octree.printNodes();
-    printf("Octree has full coverage: %s\n", octree.nodesCoverAllTriangles() ? "YES" : "NO");
+    octree->build();
+    //octree->printNodes();
+    printf("Octree has full coverage: %s\n", octree->nodesCoverAllTriangles() ? "YES" : "NO");
 
 
     return EXIT_SUCCESS;

@@ -10,7 +10,7 @@
 #include "vectortypes.h"
 #include "slab.h"
 
-TriangleMeshOctree::TriangleMeshOctree(TriangleMesh & mesh)
+TriangleMeshOctree::TriangleMeshOctree(std::shared_ptr<TriangleMesh> & mesh)
     : mesh(mesh)
 {
 
@@ -23,14 +23,14 @@ void TriangleMeshOctree::build()
 
     auto rootIndex = addNode(0);
 
-    Slab bounds = boundingBox(mesh.vertices);
+    Slab bounds = boundingBox(mesh->vertices);
 
     // Create a list of unique triangle indices
     std::vector<uint32_t> tris;
-    tris.resize(mesh.numTriangles());
+    tris.resize(mesh->numTriangles());
     std::iota(tris.begin(), tris.end(), 0u);
 
-    triangles.reserve(mesh.numTriangles());
+    triangles.reserve(mesh->numTriangles());
     buildNode(rootIndex, tris, bounds);
 }
 
@@ -64,9 +64,9 @@ void TriangleMeshOctree::buildNode(uint32_t nodeIndex,
 
     // Helper functions for partitioning
     auto evalForVerts = [&](uint32_t ti, std::function<bool(const Position3 &)> p) {
-        return p(mesh.triangleVertex(ti, 0))
-            || p(mesh.triangleVertex(ti, 1))
-            || p(mesh.triangleVertex(ti, 2));
+        return p(mesh->triangleVertex(ti, 0))
+            || p(mesh->triangleVertex(ti, 1))
+            || p(mesh->triangleVertex(ti, 2));
     };
 
     // FIXME: This is not sufficient to determine if a triangle intersects a bounding box. There is a WAR in findIntersection(),
@@ -140,7 +140,7 @@ uint32_t TriangleMeshOctree::addNode(uint8_t level)
 void TriangleMeshOctree::printNodes() const
 {
     printf("triangles mesh %u octree %u\n",
-           (unsigned int) mesh.numTriangles(),
+           (unsigned int) mesh->numTriangles(),
            (unsigned int) triangles.size());
     for(uint32_t i = 0; i < nodes.size(); ++i) {
         auto & node = nodes[i];
@@ -157,7 +157,7 @@ void TriangleMeshOctree::printNodes() const
 
 bool TriangleMeshOctree::nodesCoverAllTriangles() const
 {
-    std::vector<uint8_t> claimed(mesh.numTriangles());
+    std::vector<uint8_t> claimed(mesh->numTriangles());
     std::fill(claimed.begin(), claimed.end(), uint8_t(0));
     for(auto & node : nodes) {
         for(uint32_t ti = 0; ti < node.numTriangles; ++ti) {
@@ -234,7 +234,7 @@ bool TriangleMeshOctree::intersectsNode(const Ray & ray, float minDistance, floa
         for(uint32_t ti = 0; ti < node.numTriangles; ++ti) {
             auto tri = triangles[node.firstTriangle + ti];
             if(intersectsTriangle(ray,
-                                  mesh.triangleVertex(tri, 0), mesh.triangleVertex(tri, 1), mesh.triangleVertex(tri, 2),
+                                  mesh->triangleVertex(tri, 0), mesh->triangleVertex(tri, 1), mesh->triangleVertex(tri, 2),
                                   minDistance, maxDistance)) {
                 return true;
             }
@@ -279,7 +279,7 @@ bool TriangleMeshOctree::findIntersectionNode(const Ray & ray, float minDistance
         for(uint32_t ti = 0; ti < node.numTriangles; ++ti) {
             auto tri = triangles[node.firstTriangle + ti];
             if(intersectsTriangle(ray,
-                                  mesh.triangleVertex(tri, 0), mesh.triangleVertex(tri, 1), mesh.triangleVertex(tri, 2),
+                                  mesh->triangleVertex(tri, 0), mesh->triangleVertex(tri, 1), mesh->triangleVertex(tri, 2),
                                   minDistance, std::numeric_limits<float>::max(), &t)) {
                 if(t < bestDistance) {
                     bestTriangle = tri;
@@ -323,7 +323,7 @@ bool TriangleMeshOctree::findIntersection(const Ray & ray, float minDistance, Ra
     if(!hit)
         return false;
 
-    mesh.fillTriangleMeshIntersection(ray, bestTriangle, bestDistance, intersection);
+    mesh->fillTriangleMeshIntersection(ray, bestTriangle, bestDistance, intersection);
 
     return true;
 }

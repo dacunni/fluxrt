@@ -349,7 +349,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 std::string fullFilePath = applyPathPrefix(meshPath, *filePath);
                 std::cout << "Mesh: name " << name << " file " << fullFilePath << std::endl;
 
-                TriangleMesh * mesh = new TriangleMesh();
+                auto mesh = std::make_shared<TriangleMesh>();
 
                 if(!loadTriangleMesh(*mesh, scene.materials, scene.textureCache, fullFilePath)) {
                     throw std::runtime_error("Error loading mesh");
@@ -368,21 +368,17 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 if(accelerator == "octree") {
                     std::cout << "Building octree" << std::endl;
-                    scene.heapManager.add(mesh);
-                    TriangleMeshOctree meshOctree(*mesh);
+                    auto meshOctree = std::make_shared<TriangleMeshOctree>(mesh);
                     auto writeTimer = WallClockTimer::makeRunningTimer();
-                    meshOctree.build();
+                    meshOctree->build();
                     auto writeTime = writeTimer.elapsed();
                     printf("Octree built in %f sec\n", writeTime);
-                    scene.meshOctrees.emplace_back(std::move(meshOctree));
-                    auto & obj = scene.meshOctrees.back();
-                    loadTransformsForObject(meshTable, obj, scene);
+                    scene.objects.push_back(meshOctree);
+                    loadTransformsForObject(meshTable, *meshOctree, scene);
                 }
                 else {
-                    scene.meshes.emplace_back(std::move(*mesh));
-                    auto & obj = scene.meshes.back();
-                    loadTransformsForObject(meshTable, obj, scene);
-                    delete(mesh);
+                    scene.objects.push_back(mesh);
+                    loadTransformsForObject(meshTable, *mesh, scene);
                 }
             }
         }
@@ -395,10 +391,10 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 std::cout << "Sphere: radius " << radius << " position " << position << std::endl;
 
-                scene.spheres.emplace_back(Sphere(position, radius));
-                auto & obj = scene.spheres.back();
-                loadMaterialForObject(sphereTable, obj, scene, namedMaterials);
-                loadTransformsForObject(sphereTable, obj, scene);
+                auto obj = std::make_shared<Sphere>(position, radius);
+                scene.objects.push_back(obj);
+                loadMaterialForObject(sphereTable, *obj, scene, namedMaterials);
+                loadTransformsForObject(sphereTable, *obj, scene);
             }
         }
 
@@ -410,10 +406,10 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 std::cout << "Slab:  min " << min << " max " << max << std::endl;
 
-                scene.slabs.emplace_back(Slab(min, max));
-                auto & obj = scene.slabs.back();
-                loadMaterialForObject(slabTable, obj, scene, namedMaterials);
-                loadTransformsForObject(slabTable, obj, scene);
+                auto obj = std::make_shared<Slab>(min, max);
+                scene.objects.push_back(obj);
+                loadMaterialForObject(slabTable, *obj, scene, namedMaterials);
+                loadTransformsForObject(slabTable, *obj, scene);
             }
         }
 

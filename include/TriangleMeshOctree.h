@@ -20,7 +20,7 @@ struct TriangleMeshOctree : public Traceable
     static const child_index_t NO_CHILD = 0;
     using child_array_t = child_index_t[MAX_CHILDREN];
 
-    TriangleMeshOctree(TriangleMesh & mesh);
+    TriangleMeshOctree(std::shared_ptr<TriangleMesh> & mesh);
     ~TriangleMeshOctree() = default;
 
     // Ray intersection implementation
@@ -43,7 +43,7 @@ struct TriangleMeshOctree : public Traceable
     void printNodes() const;
     bool nodesCoverAllTriangles() const;
 
-    TriangleMesh & mesh;
+    std::shared_ptr<TriangleMesh> mesh;
 
     // Traversal helper
     static void childOrderForDirection(const Direction3 & d,

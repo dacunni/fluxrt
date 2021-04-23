@@ -14,10 +14,7 @@ Scene::Scene()
 void Scene::print() const
 {
     std::cout << "Scene: "
-        << " spheres " << spheres.size()
-        << " slabs " << slabs.size()
-        << " meshes " << meshes.size()
-        << " mesh_octrees " << meshOctrees.size()
+        << " objects " << objects.size()
         << " point lights " << pointLights.size()
         << std::endl;
     sensor.print();
