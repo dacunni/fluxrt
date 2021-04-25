@@ -1,6 +1,7 @@
 #include <cmath>
 #include <sstream>
 #include "coordinate.h"
+#include "slab.h"
 
 inline bool Sphere::intersectHelper(const Ray & ray, float & dist1, float & dist2) const
 {
@@ -57,5 +58,11 @@ inline bool Sphere::findIntersection(const Ray & ray, float minDistance, RayInte
     coordinate::coordinateSystem(intersection.normal, intersection.tangent, intersection.bitangent);
     intersection.material = material;
     return true;
+}
+
+inline Slab Sphere::boundingBox()
+{
+    Direction3 d(radius, radius, radius);
+    return Slab(center - d, center + d);
 }
 

@@ -7,7 +7,6 @@
 #include "Ray.h"
 #include "barycentric.h"
 #include "coordinate.h"
-#include "slab.h"
 #include "filesystem.h"
 
 const uint32_t TriangleMesh::NoTexCoord = std::numeric_limits<uint32_t>::max();
@@ -62,6 +61,11 @@ bool TriangleMesh::findIntersection(const Ray & ray, float minDistance, RayInter
     fillTriangleMeshIntersection(ray, bestTriangle, bestDistance, intersection);
 
     return true;
+}
+
+Slab TriangleMesh::boundingBox()
+{
+    return bounds;
 }
 
 void TriangleMesh::fillTriangleMeshIntersection(const Ray & ray, uint32_t tri, float t, RayIntersection & intersection) const
@@ -202,7 +206,7 @@ void TriangleMesh::printMeta() const
 
 void TriangleMesh::scaleToFit(const Slab & bounds)
 {
-    Slab old = boundingBox(vertices);
+    Slab old = ::boundingBox(vertices);
 
     auto s = relativeScale(old, bounds);
     auto mine = s.minElement();

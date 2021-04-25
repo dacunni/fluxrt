@@ -38,9 +38,8 @@ bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
             ++vertex_index;
         }
     }
-
-    Slab bounds = boundingBox(mesh.vertices);
-    printf("Mesh bounds: "); bounds.print();
+    mesh.bounds = boundingBox(mesh.vertices);
+    printf("Mesh bounds: "); mesh.bounds.print();
 
     return true;
 }

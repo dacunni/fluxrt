@@ -23,7 +23,7 @@ void TriangleMeshOctree::build()
 
     auto rootIndex = addNode(0);
 
-    Slab bounds = boundingBox(mesh->vertices);
+    Slab bounds = ::boundingBox(mesh->vertices);
 
     // Create a list of unique triangle indices
     std::vector<uint32_t> tris;
@@ -326,5 +326,15 @@ bool TriangleMeshOctree::findIntersection(const Ray & ray, float minDistance, Ra
     mesh->fillTriangleMeshIntersection(ray, bestTriangle, bestDistance, intersection);
 
     return true;
+}
+
+Slab TriangleMeshOctree::boundingBox()
+{
+    if(!nodes.empty()) {
+        return nodes[0].bounds;
+    }
+    else {
+        return Slab();
+    }
 }
 

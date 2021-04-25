@@ -5,10 +5,10 @@
 #include "vectortypes.h"
 #include "material.h"
 #include "traceable.h"
+#include "slab.h"
 
 struct Ray;
 struct RayIntersection;
-struct Slab;
 
 struct TriangleMesh : public Traceable
 {
@@ -18,6 +18,9 @@ struct TriangleMesh : public Traceable
     // Ray intersection implementation
     virtual bool intersects(const Ray & ray, float minDistance, float maxDistance) const override;
     virtual bool findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const override;
+
+    // Bounding volume
+    Slab boundingBox() override;
 
     void fillTriangleMeshIntersection(const Ray & ray, uint32_t tri, float t, RayIntersection & intersection) const;
 
@@ -35,6 +38,8 @@ struct TriangleMesh : public Traceable
     std::vector<Position3> vertices;
     std::vector<Direction3> normals;
     std::vector<TextureCoordinate> texcoords;
+
+    Slab bounds;
 
     // Special texcoord index indicating no texture coordinates exist for the vertex
     static const uint32_t NoTexCoord;

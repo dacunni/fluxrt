@@ -154,6 +154,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         auto pos = Position3(coord[0], coord[1], coord[2]);
         mesh.vertices.push_back(pos);
     }
+    mesh.bounds = ::boundingBox(mesh.vertices);
 
     for(int ni = 0; ni < attrib.normals.size() / 3; ++ni) {
         auto coord = &attrib.normals[ni * 3];

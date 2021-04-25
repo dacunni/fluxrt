@@ -15,6 +15,9 @@ struct Sphere : public Traceable
     inline virtual bool intersects(const Ray & ray, float minDistance, float maxDistance) const override;
     inline virtual bool findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const override;
 
+    // Bounding volume
+    inline Slab boundingBox() override;
+
     inline bool intersectHelper(const Ray & ray, float & dist1, float & dist2) const;
 
 	Position3 center = Position3{ 0.0f, 0.0f, 0.0f };

@@ -40,6 +40,9 @@ struct Slab : public Traceable
     inline virtual bool intersects(const Ray & ray, float minDistance, float maxDistance) const override;
     inline virtual bool findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const override;
 
+    // Bounding volume
+    Slab boundingBox() override { return *this; }
+
     float xmin = 0.0f, ymin = 0.0f, zmin = 0.0f;
     float xmax = 0.0f, ymax = 0.0f, zmax = 0.0f;
 

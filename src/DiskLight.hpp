@@ -1,6 +1,7 @@
 #include <cmath>
 #include <sstream>
 #include "coordinate.h"
+#include "slab.h"
 
 inline bool intersectPlane(const Ray & ray,
                            const Position3 & pointOnPlane,
@@ -55,5 +56,16 @@ inline bool DiskLight::findIntersection(const Ray & ray, float minDistance, RayI
      }
 
      return false;
+}
+
+inline Slab DiskLight::boundingBox()
+{
+    auto extent = radius * Direction3(
+        cross(direction, Direction3(1.0f, 0.0f, 0.0f)).magnitude(),
+        cross(direction, Direction3(0.0f, 1.0f, 0.0f)).magnitude(),
+        cross(direction, Direction3(0.0f, 0.0f, 1.0f)).magnitude()
+    );
+        
+    return Slab(position - extent, position + extent);
 }
 

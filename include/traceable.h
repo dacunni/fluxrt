@@ -5,6 +5,8 @@
 #include "transform.h"
 #include "Ray.h"
 
+class Slab;
+
 // Base class for traceable objects
 struct Traceable
 {
@@ -18,6 +20,9 @@ struct Traceable
     // Ray intersection implementation
     virtual bool intersects(const Ray & ray, float minDistance, float maxDistance) const = 0;
     virtual bool findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const = 0;
+
+    // Bounding volume
+    virtual Slab boundingBox() = 0;
 
     Transform transform;
 };

@@ -35,6 +35,9 @@ struct TriangleMeshOctree : public Traceable
                               const TriangleMeshOctree::child_array_t & childOrder,
                               uint32_t nodeIndex) const;
 
+    // Bounding volume
+    Slab boundingBox() override;
+
     void build();
 
     // Add a new node and return its index
