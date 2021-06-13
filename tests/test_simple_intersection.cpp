@@ -196,6 +196,7 @@ void make_intersection_images(const OBJ & obj, const MaterialArray & materials, 
 int main(int argc, char ** argv)
 {
     MaterialArray materials;
+    TriangleMeshDataCache meshDataCache;
     TextureCache textureCache;
 
     Sphere sphere(Position3(0, 0, 0), 0.5f);
@@ -210,16 +211,7 @@ int main(int argc, char ** argv)
 #endif
 
     auto mesh = std::make_shared<TriangleMesh>();
-    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/blender/sphere.obj")) {
-    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/blender/monkey2.obj")) {
-    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/blender/monkey3.obj")) {
-    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/blender/monkey_simple_flat.obj")) {
-    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/blender/monkey_simple_smooth.obj")) {
-    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/casual-effects.com/sportsCar/sportsCar.obj")) {
-    if(!loadTriangleMesh(*mesh, materials, textureCache, "models/casual-effects.com/bmw/bmw.obj")) {
-    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/casual-effects.com/mitsuba/mitsuba-sphere.obj")) {
-    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/casual-effects.com/mori_knob/testObj.obj")) {
-    //if(!loadTriangleMesh(*mesh, materials, textureCache, "models/casual-effects.com/living_room/living_room.obj")) {
+    if(!loadTriangleMesh(*mesh, materials, meshDataCache, textureCache, "models/casual-effects.com/bmw/bmw.obj")) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }

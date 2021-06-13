@@ -20,8 +20,9 @@ int main(int argc, char ** argv)
 
     auto mesh = std::make_shared<TriangleMesh>();
     MaterialArray materials;
+    TriangleMeshDataCache meshDataCache;
     TextureCache textureCache;
-    if(!loadTriangleMesh(*mesh, materials, textureCache, modelFile)) {
+    if(!loadTriangleMesh(*mesh, materials, meshDataCache, textureCache, modelFile)) {
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }
