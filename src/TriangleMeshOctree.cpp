@@ -23,7 +23,7 @@ void TriangleMeshOctree::build()
 
     auto rootIndex = addNode(0);
 
-    Slab bounds = ::boundingBox(mesh->vertices);
+    Slab bounds = ::boundingBox(mesh->meshData->vertices);
 
     // Create a list of unique triangle indices
     std::vector<uint32_t> tris;

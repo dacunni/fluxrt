@@ -10,6 +10,30 @@
 struct Ray;
 struct RayIntersection;
 
+struct TriangleMeshData
+{
+    std::vector<Position3> vertices;
+    std::vector<Direction3> normals;
+    std::vector<TextureCoordinate> texcoords;
+
+    // Special texcoord index indicating no texture coordinates exist for the vertex
+    static const uint32_t NoTexCoord;
+
+    // Per-vertex properties
+    struct {
+        std::vector<uint32_t> vertex;
+        std::vector<uint32_t> normal;
+        std::vector<uint32_t> texcoord;
+    } indices;
+
+    // Per-face properties
+    struct {
+        std::vector<MaterialID> material;
+    } faces;
+
+    Slab bounds;
+};
+
 struct TriangleMesh : public Traceable
 {
     inline TriangleMesh() = default;
@@ -35,26 +59,7 @@ struct TriangleMesh : public Traceable
 
     void scaleToFit(const Slab & bounds);
 
-    std::vector<Position3> vertices;
-    std::vector<Direction3> normals;
-    std::vector<TextureCoordinate> texcoords;
-
-    Slab bounds;
-
-    // Special texcoord index indicating no texture coordinates exist for the vertex
-    static const uint32_t NoTexCoord;
-
-    // Per-vertex properties
-    struct {
-        std::vector<uint32_t> vertex;
-        std::vector<uint32_t> normal;
-        std::vector<uint32_t> texcoord;
-    } indices;
-
-    // Per-face properties
-    struct {
-        std::vector<MaterialID> material;
-    } faces;
+    std::shared_ptr<TriangleMeshData> meshData;
 
     // Global material override
     MaterialID material = NoMaterial;

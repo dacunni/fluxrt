@@ -22,24 +22,27 @@ bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
         return vec3(v.x, v.z, -v.y);
     };
 
+    mesh.meshData = std::make_shared<TriangleMeshData>();
+    auto & meshData = *mesh.meshData;
+
     int vertex_index = 0;
     for(const auto & facet : stlmesh.facets) {
         auto & fn = facet.normal;
         auto normal = Direction3(remapOrientation(vec3(fn.x, fn.y, fn.z)));
-        mesh.faces.material.push_back(NoMaterial);
+        meshData.faces.material.push_back(NoMaterial);
         for(int vi = 0; vi < 3; ++vi) {
             auto & coord = facet.vertices[vi];
             auto pos = Position3(remapOrientation(vec3(coord.x, coord.y, coord.z)));
-            mesh.vertices.push_back(pos);
-            mesh.normals.push_back(normal);
-            mesh.indices.vertex.push_back(vertex_index);
-            mesh.indices.normal.push_back(vertex_index);
-            mesh.indices.texcoord.push_back(TriangleMesh::NoTexCoord);
+            meshData.vertices.push_back(pos);
+            meshData.normals.push_back(normal);
+            meshData.indices.vertex.push_back(vertex_index);
+            meshData.indices.normal.push_back(vertex_index);
+            meshData.indices.texcoord.push_back(TriangleMeshData::NoTexCoord);
             ++vertex_index;
         }
     }
-    mesh.bounds = boundingBox(mesh.vertices);
-    printf("Mesh bounds: "); mesh.bounds.print();
+    meshData.bounds = boundingBox(meshData.vertices);
+    printf("Mesh bounds: "); meshData.bounds.print();
 
     return true;
 }

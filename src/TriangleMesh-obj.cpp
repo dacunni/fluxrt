@@ -149,12 +149,15 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
 
     loadMaterialsFromOBJ(materials, objMatToMatArrIndex, textureCache, objmaterials, path);
 
+    mesh.meshData = std::make_shared<TriangleMeshData>();
+    auto & meshData = *mesh.meshData;
+
     for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
         auto pos = Position3(coord[0], coord[1], coord[2]);
-        mesh.vertices.push_back(pos);
+        meshData.vertices.push_back(pos);
     }
-    mesh.bounds = ::boundingBox(mesh.vertices);
+    meshData.bounds = ::boundingBox(meshData.vertices);
 
     for(int ni = 0; ni < attrib.normals.size() / 3; ++ni) {
         auto coord = &attrib.normals[ni * 3];
@@ -166,13 +169,13 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
 #endif
             dir = Direction3(0.0f, 1.0f, 0.0f);
         }
-        mesh.normals.push_back(dir);
+        meshData.normals.push_back(dir);
     }
 
     for(int ti = 0; ti < attrib.texcoords.size() / 2; ++ti) {
         auto coord = &attrib.texcoords[ti * 2];
         auto tc = TextureCoordinate{coord[0], 1.0f - coord[1]};
-        mesh.texcoords.push_back(tc);
+        meshData.texcoords.push_back(tc);
     }
 
     // shapes
@@ -192,23 +195,23 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
             if(matIndex >= 0 && matIndex < objMatToMatArrIndex.size()) {
                 materialId = objMatToMatArrIndex[matIndex];
             }
-            mesh.faces.material.push_back(materialId);
+            meshData.faces.material.push_back(materialId);
             // vertex indices
             for (int vi = 0; vi < 3; ++vi) {
                 // FIXME - Handle -1 for missing vertex_index, normal_index, texcoord_index
-                mesh.indices.vertex.push_back(indices[vi].vertex_index);
-                mesh.indices.normal.push_back(indices[vi].normal_index);
+                meshData.indices.vertex.push_back(indices[vi].vertex_index);
+                meshData.indices.normal.push_back(indices[vi].normal_index);
                 if(indices[vi].texcoord_index < 0) {
-                    mesh.indices.texcoord.push_back(TriangleMesh::NoTexCoord);
+                    meshData.indices.texcoord.push_back(TriangleMeshData::NoTexCoord);
                 }
                 else {
-                    mesh.indices.texcoord.push_back(indices[vi].texcoord_index);
+                    meshData.indices.texcoord.push_back(indices[vi].texcoord_index);
                 }
             }
         }
     }
 
-    Slab bounds = boundingBox(mesh.vertices);
+    Slab bounds = boundingBox(meshData.vertices);
     printf("Mesh bounds: "); bounds.print();
 
     // TODO: Handle missing normals

@@ -223,6 +223,7 @@ int main(int argc, char ** argv)
         std::cerr << "Error loading mesh\n";
         return EXIT_FAILURE;
     }
+#if 0 // deprecated scaleToFit
     Slab meshBounds = boundingBox(mesh->vertices);
     printf("Mesh bounds: "); meshBounds.print();
     printf("Scaling mesh to visible area\n");
@@ -230,6 +231,7 @@ int main(int argc, char ** argv)
     meshBounds = boundingBox(mesh->vertices);
     printf("Mesh bounds: "); meshBounds.print();
     //make_intersection_images(mesh, materials, textureCache.textures, "mesh";
+#endif
 
     auto meshOctree = std::make_shared<TriangleMeshOctree>(mesh);
     meshOctree->build();

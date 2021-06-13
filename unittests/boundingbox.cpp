@@ -33,13 +33,14 @@ TEST(BoundingBoxExtentsTest, SphereBoundingBoxExtents) {
 
 TEST(BoundingBoxExtentsTest, TriangleMeshBoundingBoxExtents) {
     TriangleMesh mesh;
-    mesh.vertices = {
+    mesh.meshData = std::make_shared<TriangleMeshData>();
+    mesh.meshData->vertices = {
         Position3{ -1.0f, 0.0f,  0.0f },
         Position3{  0.0f,  2.0f, 3.0f },
         Position3{  0.0f, -4.0f, 5.0f },
         Position3{  7.0f, -4.0f, 5.0f },
     };
-    mesh.bounds = ::boundingBox(mesh.vertices);
+    mesh.meshData->bounds = ::boundingBox(mesh.meshData->vertices);
     Slab bounds = mesh.boundingBox();
     EXPECT_FLOAT_EQ(bounds.xmin, -1.0f);
     EXPECT_FLOAT_EQ(bounds.ymin, -4.0f);
@@ -52,13 +53,14 @@ TEST(BoundingBoxExtentsTest, TriangleMeshBoundingBoxExtents) {
 
 TEST(BoundingBoxExtentsTest, TriangleMeshOctreeBoundingBoxExtents) {
     auto mesh = std::make_shared<TriangleMesh>();
-    mesh->vertices = {
+    mesh->meshData = std::make_shared<TriangleMeshData>();
+    mesh->meshData->vertices = {
         Position3{ -1.0f, 0.0f,  0.0f },
         Position3{  0.0f,  2.0f, 3.0f },
         Position3{  0.0f, -4.0f, 5.0f },
         Position3{  7.0f, -4.0f, 5.0f },
     };
-    mesh->bounds = ::boundingBox(mesh->vertices);
+    mesh->meshData->bounds = ::boundingBox(mesh->meshData->vertices);
 
     TriangleMeshOctree octree(mesh);
     octree.build();

@@ -26,8 +26,7 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
     printf("Mesh meta: "); mesh->printMeta();
-    auto bounds = boundingBox(mesh->vertices);
-    printf("Mesh bounds: "); bounds.print();
+    printf("Mesh bounds: "); mesh->meshData->bounds.print();
 
     printf("\nOctree Test\n");
     auto octree = std::make_shared<TriangleMeshOctree>(mesh);

@@ -9,7 +9,7 @@
 #include "coordinate.h"
 #include "filesystem.h"
 
-const uint32_t TriangleMesh::NoTexCoord = std::numeric_limits<uint32_t>::max();
+const uint32_t TriangleMeshData::NoTexCoord = std::numeric_limits<uint32_t>::max();
 
 bool loadTriangleMesh(TriangleMesh & mesh,
                       MaterialArray & materials,
@@ -32,7 +32,7 @@ bool loadTriangleMesh(TriangleMesh & mesh,
 
 bool TriangleMesh::intersects(const Ray & ray, float minDistance, float maxDistance) const
 {
-    return intersectsTrianglesIndexed(ray, &vertices[0], &indices.vertex[0], indices.vertex.size(),
+    return intersectsTrianglesIndexed(ray, &meshData->vertices[0], &meshData->indices.vertex[0], meshData->indices.vertex.size(),
                                       minDistance, maxDistance);
 }
 
@@ -65,7 +65,7 @@ bool TriangleMesh::findIntersection(const Ray & ray, float minDistance, RayInter
 
 Slab TriangleMesh::boundingBox()
 {
-    return bounds;
+    return meshData->bounds;
 }
 
 void TriangleMesh::fillTriangleMeshIntersection(const Ray & ray, uint32_t tri, float t, RayIntersection & intersection) const
@@ -78,7 +78,7 @@ void TriangleMesh::fillTriangleMeshIntersection(const Ray & ray, uint32_t tri, f
         intersection.material = material;
     }
     else {
-        intersection.material = faces.material[tri];
+        intersection.material = meshData->faces.material[tri];
     }
 
     auto bary = barycentricForPointInTriangle(intersection.position,
@@ -119,16 +119,18 @@ void TriangleMesh::fillTriangleMeshIntersection(const Ray & ray, uint32_t tri, f
 
     // Interpolate texture coordinates, if available, and generate tangent/bitangent vectors
 
-    auto tci0 = indices.texcoord[3 * tri + 0];
-    auto tci1 = indices.texcoord[3 * tri + 1];
-    auto tci2 = indices.texcoord[3 * tri + 2];
+    auto tci0 = meshData->indices.texcoord[3 * tri + 0];
+    auto tci1 = meshData->indices.texcoord[3 * tri + 1];
+    auto tci2 = meshData->indices.texcoord[3 * tri + 2];
 
-    if(tci0 != TriangleMesh::NoTexCoord && tci1 != TriangleMesh::NoTexCoord && tci2 != TriangleMesh::NoTexCoord) {
+    if(tci0 != TriangleMeshData::NoTexCoord &&
+       tci1 != TriangleMeshData::NoTexCoord &&
+       tci2 != TriangleMeshData::NoTexCoord) {
         // FIXME: This branch produces faceted artifacts in the tangent
         //        and bitangent with the mori model.
-        TextureCoordinate tc0 = texcoords[tci0];
-        TextureCoordinate tc1 = texcoords[tci1];
-        TextureCoordinate tc2 = texcoords[tci2];
+        TextureCoordinate tc0 = meshData->texcoords[tci0];
+        TextureCoordinate tc1 = meshData->texcoords[tci1];
+        TextureCoordinate tc2 = meshData->texcoords[tci2];
 
         intersection.texcoord = interpolate(tc0, tc1, tc2, bary);
         intersection.hasTexCoord = true;
@@ -175,37 +177,43 @@ void TriangleMesh::fillTriangleMeshIntersection(const Ray & ray, uint32_t tri, f
 
 size_t TriangleMesh::numTriangles() const
 {
-    return indices.vertex.size() / 3;
+    return meshData->indices.vertex.size() / 3;
 }
 
 bool TriangleMesh::hasNormals() const
 {
-    return normals.size() > 0;
+    return meshData->normals.size() > 0;
 }
 
 const Position3 & TriangleMesh::triangleVertex(uint32_t tri, uint32_t index) const
 {
-    return vertices[indices.vertex[3 * tri + index]];
+    return meshData->vertices[meshData->indices.vertex[3 * tri + index]];
 }
 
 const Direction3 & TriangleMesh::triangleNormal(uint32_t tri, uint32_t index) const
 {
-    return normals[indices.normal[3 * tri + index]];
+    return meshData->normals[meshData->indices.normal[3 * tri + index]];
 }
 
 const TextureCoordinate & TriangleMesh::triangleTextureCoordinate(uint32_t tri, uint32_t index) const
 {
-    return texcoords[indices.texcoord[3 * tri + index]];
+    return meshData->texcoords[meshData->indices.texcoord[3 * tri + index]];
 }
 
 void TriangleMesh::printMeta() const
 {
     printf("TriangleMesh vertices %lu normals %lu indices v %lu n %lu\n",
-           vertices.size(), normals.size(), indices.vertex.size(), indices.normal.size());
+           meshData->vertices.size(), meshData->normals.size(),
+           meshData->indices.vertex.size(), meshData->indices.normal.size());
 }
 
 void TriangleMesh::scaleToFit(const Slab & bounds)
 {
+#if 1
+    printf("WARNING TriangleMesh::scaleToFit needs to be updated to create "
+           "a scaling matrix so mesh data can be shared\n");
+    return;
+#else
     Slab old = ::boundingBox(vertices);
 
     auto s = relativeScale(old, bounds);
@@ -233,6 +241,7 @@ void TriangleMesh::scaleToFit(const Slab & bounds)
         v.z = (v.z - oldCenter.z) * scaleFactor + newCenter.z;
     }
 
+#endif
     // NOTE: We don't need to adjust normals be cause we are scaling uniformly in all directions
 }
 
