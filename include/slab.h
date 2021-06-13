@@ -32,6 +32,8 @@ struct Slab : public Traceable
 
     inline float volume() const { return xdim() * ydim() * zdim(); }
 
+    std::vector<Position3> corners() const;
+
     inline bool contains(const Position3 & P) const;
 
     void print() const;

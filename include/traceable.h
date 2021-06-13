@@ -23,6 +23,7 @@ struct Traceable
 
     // Bounding volume
     virtual Slab boundingBox() = 0;
+    Slab boundingBoxTransformed();
 
     Transform transform;
 };

@@ -4,19 +4,22 @@ type = "pinhole"
 hfov = 60
 
 position = [ 30.0, 16.0, 30.0 ]
-lookat = [ 5.0, 0.5, 5.0 ]
+lookat = [ 5.0, 4.0, 5.0 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
 pixelwidth = 1200
 pixelheight = 800
 
-[envmap]
+#[envmap]
+#type = "gradient"
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
+#direction = [ 1.0, 0.2, 0.0 ]
 
-type = "gradient"
-low = [ 0.0, 0.0, 0.0 ]
-high = [ 1.0, 1.0, 1.0 ]
-direction = [ 1.0, 0.2, 0.0 ]
+[[pointlights]]
+position = [ 25.0, 25.0, 21.0 ]
+intensity = [ 100.0, 100.0, 100.0 ]
 
 # Floor
 [[slabs]]

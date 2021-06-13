@@ -65,6 +65,8 @@ set(SRCS
     src/TriangleMesh-stl.cpp
     src/TriangleMesh-obj.cpp
     src/TriangleMeshOctree.cpp
+    src/TraceableKDTree.cpp
+    src/traceable.cpp
     )
 ADD_LIBRARY(fluxrt ${SRCS})
 

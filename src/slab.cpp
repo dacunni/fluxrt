@@ -26,6 +26,20 @@ float Slab::maxdim() const
     return std::max({xdim(), ydim(), zdim()});
 }
 
+std::vector<Position3> Slab::corners() const
+{
+    return {
+        Position3{ xmin, ymin, zmin },
+        Position3{ xmax, ymin, zmin },
+        Position3{ xmin, ymax, zmin },
+        Position3{ xmax, ymax, zmin },
+        Position3{ xmin, ymin, zmax },
+        Position3{ xmax, ymin, zmax },
+        Position3{ xmin, ymax, zmax },
+        Position3{ xmax, ymax, zmax }
+    };
+}
+
 void Slab::print() const
 {
     printf("Slab min [%.2f %.2f %.2f] max [%.2f %.2f %.2f] dim [%.2f %.2f %.2f]\n",

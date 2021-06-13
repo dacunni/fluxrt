@@ -118,6 +118,9 @@ int main(int argc, char ** argv)
         printf("New sensor size %u x %u\n", scene.sensor.pixelwidth, scene.sensor.pixelheight);
     }
 
+    printf("Building scene graph accelerators\n");
+    scene.buildAccelerators();
+
     Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
     const float minDistance = 0.0f;
 

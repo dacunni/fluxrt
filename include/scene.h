@@ -14,11 +14,14 @@
 #include "camera.h"
 #include "Ray.h"
 #include "traceable.h"
+#include "TraceableKDTree.h"
 
 struct Scene
 {
 	Scene();
 	~Scene() = default;
+
+    void buildAccelerators();
 
     void print() const;
 
@@ -28,6 +31,10 @@ struct Scene
     // Lights
     std::vector<PointLight> pointLights;
     std::vector<DiskLight> diskLights;
+
+    // Accelerators
+    TraceableKDTree objectsKDTree;
+    bool useKDTreeAccelerator = false;
 
     // Always points to a valid envionment map
     std::unique_ptr<EnvironmentMap> environmentMap;

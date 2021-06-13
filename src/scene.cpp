@@ -11,6 +11,11 @@ Scene::Scene()
 {
 }
 
+void Scene::buildAccelerators()
+{
+    objectsKDTree.build(objects);
+}
+
 void Scene::print() const
 {
     std::cout << "Scene: "

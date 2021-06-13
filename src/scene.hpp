@@ -32,9 +32,16 @@ inline bool findIntersectionWorldRay(const Ray & rayWorld, const Scene & scene,
 
     // Iterate over scene objects
 
-    for(const auto & o : scene.objects) {
-        if(o->findIntersectionWorldRay(rayWorld, minDistance, nextIntersection)) {
+    if(scene.useKDTreeAccelerator) {
+        if(scene.objectsKDTree.findIntersectionWorldRay(rayWorld, minDistance, nextIntersection)) {
             updateBestHit();
+        }
+    }
+    else {
+        for(const auto & o : scene.objects) {
+            if(o->findIntersectionWorldRay(rayWorld, minDistance, nextIntersection)) {
+                updateBestHit();
+            }
         }
     }
 
