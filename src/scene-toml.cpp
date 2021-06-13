@@ -351,7 +351,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 auto mesh = std::make_shared<TriangleMesh>();
 
-                if(!loadTriangleMesh(*mesh, scene.materials, scene.textureCache, fullFilePath)) {
+                if(!loadTriangleMesh(*mesh, scene.materials, scene.meshDataCache, scene.textureCache, fullFilePath)) {
                     throw std::runtime_error("Error loading mesh");
                 }
 

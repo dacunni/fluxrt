@@ -34,6 +34,14 @@ struct TriangleMeshData
     Slab bounds;
 };
 
+using TriangleMeshDataPtr = std::shared_ptr<TriangleMeshData>;
+using TriangleMeshDataArray = std::vector<TriangleMeshDataPtr>;
+
+struct TriangleMeshDataCache
+{
+    std::map<std::string, TriangleMeshDataPtr> fileToMeshData;
+};
+
 struct TriangleMesh : public Traceable
 {
     inline TriangleMesh() = default;
@@ -59,7 +67,7 @@ struct TriangleMesh : public Traceable
 
     void scaleToFit(const Slab & bounds);
 
-    std::shared_ptr<TriangleMeshData> meshData;
+    TriangleMeshDataPtr meshData = std::make_shared<TriangleMeshData>();
 
     // Global material override
     MaterialID material = NoMaterial;
@@ -67,14 +75,17 @@ struct TriangleMesh : public Traceable
 
 bool loadTriangleMesh(TriangleMesh & mesh,
                       MaterialArray & materials,
+                      TriangleMeshDataCache & meshDataCache,
                       TextureCache & textureCache,
                       const std::string & pathToFile);
 bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
                              MaterialArray & materials,
+                             TriangleMeshDataCache & meshDataCache,
                              TextureCache & textureCache,
                              const std::string & path, const std::string & filename);
 bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
                              MaterialArray & materials,
+                             TriangleMeshDataCache & meshDataCache,
                              TextureCache & textureCache,
                              const std::string & path, const std::string & filename);
 

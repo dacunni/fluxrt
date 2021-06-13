@@ -40,6 +40,7 @@ struct Scene
     std::unique_ptr<EnvironmentMap> environmentMap;
 
     MaterialArray materials;
+    TriangleMeshDataCache meshDataCache;
     TextureCache textureCache;
 
     Sensor sensor;

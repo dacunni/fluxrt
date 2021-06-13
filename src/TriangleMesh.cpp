@@ -13,21 +13,44 @@ const uint32_t TriangleMeshData::NoTexCoord = std::numeric_limits<uint32_t>::max
 
 bool loadTriangleMesh(TriangleMesh & mesh,
                       MaterialArray & materials,
+                      TriangleMeshDataCache & meshDataCache,
                       TextureCache & textureCache,
                       const std::string & pathToFile)
 {
+    // Check the mesh data cache
+    auto fm = meshDataCache.fileToMeshData.find(pathToFile);
+
+    if(fm != meshDataCache.fileToMeshData.end()) {
+        // Mesh data is in the cache
+        mesh.meshData = fm->second;
+        printf("Mesh data cache hit\n");
+        return true;
+    }
+
+    // Cache miss, load file and update the cache
+
     std::string path, filename;
     std::tie(path, filename) = filesystem::splitFileDirectory(pathToFile);
 
+    bool success = false;
+
     if(filesystem::hasExtension(filename, ".obj")) {
-        return loadTriangleMeshFromOBJ(mesh, materials, textureCache, path, filename);
+        success = loadTriangleMeshFromOBJ(mesh, materials, meshDataCache, textureCache, path, filename);
     }
     else if(filesystem::hasExtension(filename, ".stl")) {
-        return loadTriangleMeshFromSTL(mesh, materials, textureCache, path, filename);
+        success = loadTriangleMeshFromSTL(mesh, materials, meshDataCache, textureCache, path, filename);
+    }
+    else {
+        std::cerr << "Unrecognized mesh type " << filename << '\n';
+        success = false;
     }
 
-    std::cerr << "Unrecognized mesh type " << filename << '\n';
-    return false;
+    if(success) {
+        // Update the cache
+        meshDataCache.fileToMeshData[pathToFile] = mesh.meshData;
+    }
+
+    return success;
 }
 
 bool TriangleMesh::intersects(const Ray & ray, float minDistance, float maxDistance) const

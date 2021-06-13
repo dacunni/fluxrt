@@ -114,6 +114,7 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
 
 bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
                              MaterialArray & materials,
+                             TriangleMeshDataCache & meshDataCache,
                              TextureCache & textureCache,
                              const std::string & path, const std::string & filename)
 {

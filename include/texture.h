@@ -21,7 +21,7 @@ static const TextureID NoTexture = std::numeric_limits<TextureID>::max();
 
 using Texture = Image<float>;
 using TexturePtr = std::shared_ptr<Texture>;
-using TextureArray = std::vector<std::shared_ptr<Texture>>;
+using TextureArray = std::vector<TexturePtr>;
 
 struct TextureCache
 {
