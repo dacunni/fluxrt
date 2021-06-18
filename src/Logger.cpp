@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdarg>
 #include <fstream>
 #include <cstdio>
 #include <unistd.h>
