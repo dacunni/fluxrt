@@ -5,15 +5,18 @@
 #include "traceable.h"
 #include "slab.h"
 
+class Logger;
+
 class TraceableKDTree : public Traceable
 {
     public:
-        TraceableKDTree() = default;
+        TraceableKDTree();
         ~TraceableKDTree() = default;
 
         void build(std::vector<TraceablePtr> & objects);
 
         void print() const;
+        void log(Logger & logger) const;
 
         // Ray intersection implementation
         virtual bool intersects(const Ray & ray, float minDistance, float maxDistance) const override;
@@ -46,10 +49,13 @@ class TraceableKDTree : public Traceable
 
         struct BuildContext;
 
+        std::string splitDirectionString(KDNode::SplitDirection direction) const;
+
         void buildNode(KDNode & node, BuildContext & context, unsigned int depth = 0);
         void splitNode(KDNode & node, SplitStrategy strategy, BuildContext & context, unsigned int depth);
 
         void printNode(const KDNode & node, unsigned int depth = 0) const;
+        void logNode(Logger & logger, const KDNode & node, unsigned int depth = 0) const;
 
         bool intersectsNode(const KDNode & node, const Ray & ray, float minDistance, float maxDistance) const;
         bool findIntersectionNode(const KDNode & node, const Ray & ray, float minDistance, RayIntersection & intersection) const;

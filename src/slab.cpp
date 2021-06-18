@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include "slab.h"
+#include "Logger.h"
 
 Slab Slab::centeredUnitCube()
 {
@@ -45,6 +46,13 @@ void Slab::print() const
     printf("Slab min [%.2f %.2f %.2f] max [%.2f %.2f %.2f] dim [%.2f %.2f %.2f]\n",
            xmin, ymin, zmin, xmax, ymax, zmax,
            xdim(), ydim(), zdim());
+}
+
+void Slab::log(Logger & logger) const
+{
+    logger.normalf("Slab min [%.2f %.2f %.2f] max [%.2f %.2f %.2f] dim [%.2f %.2f %.2f]",
+                   xmin, ymin, zmin, xmax, ymax, zmax,
+                   xdim(), ydim(), zdim());
 }
 
 Slab merge(const Slab & a, const Slab & b)

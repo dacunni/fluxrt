@@ -5,6 +5,8 @@
 #include "Ray.h"
 #include "material.h"
 
+class Logger;
+
 struct Slab : public Traceable
 {
     inline Slab() = default;
@@ -37,6 +39,7 @@ struct Slab : public Traceable
     inline bool contains(const Position3 & P) const;
 
     void print() const;
+    void log(Logger & logger) const;
 
     // Ray intersection implementation
     inline virtual bool intersects(const Ray & ray, float minDistance, float maxDistance) const override;

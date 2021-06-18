@@ -8,6 +8,7 @@
 #include "barycentric.h"
 #include "coordinate.h"
 #include "filesystem.h"
+#include "Logger.h"
 
 const uint32_t TriangleMeshData::NoTexCoord = std::numeric_limits<uint32_t>::max();
 
@@ -17,13 +18,16 @@ bool loadTriangleMesh(TriangleMesh & mesh,
                       TextureCache & textureCache,
                       const std::string & pathToFile)
 {
+    auto & logger = getLogger();
+    logger.normal() << "Loading mesh from " << pathToFile;
+
     // Check the mesh data cache
     auto fm = meshDataCache.fileToMeshData.find(pathToFile);
 
     if(fm != meshDataCache.fileToMeshData.end()) {
         // Mesh data is in the cache
         mesh.meshData = fm->second;
-        printf("Mesh data cache hit\n");
+        logger.normalf("Mesh data cache hit");
         return true;
     }
 

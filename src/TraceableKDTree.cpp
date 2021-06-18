@@ -1,9 +1,25 @@
 #include "TraceableKDTree.h"
 #include "rng.h"
+#include "Logger.h"
 
 struct TraceableKDTree::BuildContext {
     RNG rng;
 };
+
+TraceableKDTree::TraceableKDTree()
+{
+
+}
+
+std::string TraceableKDTree::splitDirectionString(KDNode::SplitDirection direction) const
+{
+    switch(direction) {
+        case KDNode::SPLIT_X: return "X"; break;
+        case KDNode::SPLIT_Y: return "Y"; break;
+        case KDNode::SPLIT_Z: return "Z"; break;
+        default:              return "Invalid";
+    }
+}
 
 void TraceableKDTree::build(std::vector<TraceablePtr> & objects)
 {
@@ -16,7 +32,7 @@ void TraceableKDTree::build(std::vector<TraceablePtr> & objects)
     buildNode(root, context);
     bounds = root.bounds;
 
-    print();
+    log(getLogger());
 }
 
 void TraceableKDTree::buildNode(KDNode & node, BuildContext & context, unsigned int depth)
@@ -51,6 +67,8 @@ void TraceableKDTree::buildNode(KDNode & node, BuildContext & context, unsigned 
 
 void TraceableKDTree::splitNode(KDNode & node, SplitStrategy strategy, BuildContext & context, unsigned int depth)
 {
+    Logger & logger = getLogger();
+
     // Choose a split plane
     switch(strategy) {
     case STRATEGY_MIDPOINT_X:
@@ -66,12 +84,13 @@ void TraceableKDTree::splitNode(KDNode & node, SplitStrategy strategy, BuildCont
         node.splitOffset = 0.5f * (node.bounds.zmin + node.bounds.zmax);
         break;
     default:
-        printf("Unsupported split strategy\n");
+        logger.errorf("Unsupported split strategy %d", (int)strategy);
     }
-    // TODO
-    //node.splitOffset = context.rng.uniformRange(node.bounds.xmin, node.bounds.xmax);
-    printf("Combined bounds: "); node.bounds.print(); // TEMP
-    printf("splitOffset %f\n", node.splitOffset); // TEMP
+    logger.join();
+    logger.debugf("KDTree combined bounds: "); node.bounds.log(logger);
+    logger.debugf("KDTree splitDirection %s splitOffset %f",
+                  splitDirectionString(node.splitDirection).c_str(),
+                  node.splitOffset);
 
     // Sort 
     auto compareAxis = [&](float minCoord, float maxCoord) {
@@ -90,13 +109,12 @@ void TraceableKDTree::splitNode(KDNode & node, SplitStrategy strategy, BuildCont
         case KDNode::SPLIT_X: compareFunc = compareX; break;
         case KDNode::SPLIT_Y: compareFunc = compareY; break;
         case KDNode::SPLIT_Z: compareFunc = compareZ; break;
-        default: printf("Invalid split direction\n");
+        default: logger.errorf("Invalid split direction %d", (int) node.splitDirection);
     }
 
     std::vector<TraceablePtr> leftObjects, rightObjects;
     for(auto & obj : node.objects) {
         auto bb = obj->boundingBoxTransformed();
-        //bb.print(); // TEMP
         int compare = compareFunc(bb);
         if(compare <= 0) { leftObjects.push_back(obj); }
         if(compare >= 0) { rightObjects.push_back(obj); }
@@ -104,8 +122,8 @@ void TraceableKDTree::splitNode(KDNode & node, SplitStrategy strategy, BuildCont
 
     // If no progress was made, stop and make this a leaf node
     if(leftObjects.empty() || rightObjects.empty()) {
-        printf("Abandoning split due to no progress - internal %u\n",
-               (unsigned) node.objects.size()); // TEMP
+        logger.debugf("Abandoning split due to no progress - internal %u",
+                      (unsigned) node.objects.size());
         node.splitDirection = KDNode::LEAF;
         return;
     }
@@ -117,13 +135,13 @@ void TraceableKDTree::splitNode(KDNode & node, SplitStrategy strategy, BuildCont
     float bloatFactor = float(leftObjects.size() + rightObjects.size())
                         / float(node.objects.size());
 
-    printf("before split %u left %u right %u bloat %f\n",
-           (unsigned) node.objects.size(), (unsigned) leftObjects.size(),
-           (unsigned) rightObjects.size(), bloatFactor); // TEMP
+    logger.debugf("before split %u left %u right %u bloat %f",
+                  (unsigned) node.objects.size(), (unsigned) leftObjects.size(),
+                  (unsigned) rightObjects.size(), bloatFactor);
 
     // Abandon split if too much bloat (dupes in children)
     if(bloatFactor > maxBloat) {
-        printf("Abandoning split due to bloat\n");
+        logger.debugf("Abandoning split due to bloat");
         node.splitDirection = KDNode::LEAF;
         return;
     }
@@ -168,6 +186,30 @@ void TraceableKDTree::printNode(const KDNode & node, unsigned int depth) const
         printNode(*node.left, depth + 1);
     if(node.right)
         printNode(*node.right, depth + 1);
+}
+
+void TraceableKDTree::log(Logger & logger) const
+{
+    logNode(logger, root); 
+}
+
+void TraceableKDTree::logNode(Logger & logger, const KDNode & node, unsigned int depth) const
+{
+    std::string tabs(depth * 2, ' ');
+    logger.debugf("%sKDNode split=%s @ %f objects=%u",
+                  tabs.c_str(),
+                  node.splitDirection == KDNode::SPLIT_X
+                      ? "X" : node.splitDirection == KDNode::SPLIT_Y
+                          ? "Y" : node.splitDirection == KDNode::SPLIT_Z
+                              ? "Z" : "LEAF",
+                  node.splitOffset,
+                  (unsigned int) node.objects.size());
+    logger.join();
+    logger.debugf("%sbounds: ", tabs.c_str()); node.bounds.log(logger);
+    if(node.left)
+        logNode(logger, *node.left, depth + 1);
+    if(node.right)
+        logNode(logger, *node.right, depth + 1);
 }
 
 bool TraceableKDTree::intersects(const Ray & ray, float minDistance, float maxDistance) const

@@ -3,6 +3,7 @@
 
 #include "TriangleMesh.h"
 #include "slab.h"
+#include "Logger.h"
 
 //
 // Wavefront OBJ format
@@ -13,6 +14,8 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                                  std::vector<tinyobj::material_t> & objmaterials,
                                  const std::string & path)
 {
+    auto & logger = getLogger();
+
     objmaterials.push_back(tinyobj::material_t()); // default material
 
     objMatToMatArrIndex.resize(objmaterials.size());
@@ -22,22 +25,11 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         auto & D = objmaterial.diffuse;
         auto & S = objmaterial.specular;
         auto & E = objmaterial.emission;
-        printf("  material %2d "
-               "    illum_model %d ior %.3f\n"
-               "    D %.1f %.1f %.1f Dt '%s'\n"
-               "    S %.1f %.1f %.1f St '%s'\n"
-               "    E %.1f %.1f %.1f Et '%s'\n"
-               "    At '%s' dis %.1f\n"
-               "    sh %.1f\n",
-               mi,
-               objmaterial.illum,
-               objmaterial.ior,
-               D[0], D[1], D[2], objmaterial.diffuse_texname.c_str(),
-               S[0], S[1], S[2], objmaterial.specular_texname.c_str(),
-               E[0], E[1], E[2], objmaterial.emissive_texname.c_str(),
-               objmaterial.alpha_texname.c_str(), objmaterial.dissolve,
-               objmaterial.shininess
-               );
+        logger.normalf("material %2d  illum_model %d ior %.3f", mi, objmaterial.illum, objmaterial.ior);
+        logger.normalf(" D %.1f %.1f %.1f Dt '%s'", D[0], D[1], D[2], objmaterial.diffuse_texname.c_str());
+        logger.normalf(" S %.1f %.1f %.1f St '%s'", S[0], S[1], S[2], objmaterial.specular_texname.c_str());
+        logger.normalf(" E %.1f %.1f %.1f Et '%s'", E[0], E[1], E[2], objmaterial.emissive_texname.c_str());
+        logger.normalf(" At '%s' dissolve %.1f shininess %.1f", objmaterial.alpha_texname.c_str(), objmaterial.dissolve, objmaterial.shininess);
 
         Material material;
        
@@ -81,7 +73,7 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
             //case 10: // TODO
             //    break;
             default:
-                std::cerr << "OBJ illum type " << objmaterial.illum << " not implemented\n";
+                logger.warning() << "OBJ illum type " << objmaterial.illum << " not implemented";
                 material = Material::makeDiffuseSpecular(D, S);
         }
 
@@ -118,6 +110,8 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
                              TextureCache & textureCache,
                              const std::string & path, const std::string & filename)
 {
+    auto & logger = getLogger();
+
     std::string warn, err;
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
@@ -126,23 +120,24 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     bool ret = tinyobj::LoadObj(&attrib, &shapes, &objmaterials, &warn, &err,
                                 (path + '/' + filename).c_str(), path.c_str());
     if(!warn.empty()) {
-        std::cout << "WARN: " << warn << std::endl;
+        logger.warning() << warn;
     }
     if(!err.empty()) {
-        std::cerr << err << std::endl;
+        logger.error() << err;
     }
 
     if(!ret) {
-        std::cerr << "Failed to load " << filename << std::endl;
+        logger.error() << "Failed to load " << filename;
         return false;
     }
 
-    printf("OBJ Mesh:");
-    printf("  vertices: %d", (int) (attrib.vertices.size()) / 3);
-    printf("  normals: %d", (int) (attrib.normals.size()) / 3);
-    printf("  texcoords: %d", (int) (attrib.texcoords.size()) / 2);
-    printf("  materials: %d", (int) objmaterials.size());
-    printf("  shapes: %d\n", (int) shapes.size());
+    logger.normalf("OBJ Mesh: vertices: %d normals: %d texcoords: %d"
+                   "  materials: %d shapes: %d",
+                   (int) (attrib.vertices.size()) / 3,
+                   (int) (attrib.normals.size()) / 3,
+                   (int) (attrib.texcoords.size()) / 2,
+                   (int) objmaterials.size(),
+                   (int) shapes.size());
 
     // Keep a mapping from original material indices to the ones we insert into
     // the materials array
@@ -166,7 +161,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         dir.normalize();
         if(dir.isZeros()) {
 #if 0
-            printf("WARNING: Mesh normal at index %d is all zeros. Replacing with 0,1,0\n", ni);
+            logger.warningf("Mesh normal at index %d is all zeros. Replacing with 0,1,0", ni);
 #endif
             dir = Direction3(0.0f, 1.0f, 0.0f);
         }
@@ -184,7 +179,6 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         const auto & shape = shapes[si];
         const auto num_faces = shape.mesh.indices.size() / 3;
         const auto num_materials = shape.mesh.material_ids.size();
-        //printf("    shape %d faces %d materials %d\n", (int) si, (int) num_faces, (int) num_materials);
 
         assert(num_materials == num_faces); // per-face material
 
@@ -213,7 +207,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     }
 
     Slab bounds = boundingBox(meshData.vertices);
-    printf("Mesh bounds: "); bounds.print();
+    logger.normalf("Mesh bounds: "); bounds.log(logger);
 
     // TODO: Handle missing normals
 

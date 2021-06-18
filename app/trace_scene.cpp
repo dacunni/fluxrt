@@ -15,6 +15,7 @@
 #include "timer.h"
 #include "argparse.h"
 #include "Renderer.h"
+#include "Logger.h"
 
 std::atomic<bool> flushImmediate(false); // Flush the color output as soon as possible
 
@@ -45,6 +46,7 @@ int main(int argc, char ** argv)
 
     struct {
         bool help = false;
+        bool verbose = false;
         unsigned int flushTimeout = 0;
         unsigned int numThreads = 1;
         unsigned int samplesPerPixel = 1;
@@ -63,6 +65,7 @@ int main(int argc, char ** argv)
 
     // General
     argParser.addFlag('h', "help", options.help);
+    argParser.addFlag('v', "verbose", options.verbose);
     argParser.addArgument('f', "flushtimeout", options.flushTimeout);
     argParser.addArgument('t', "threads", options.numThreads);
     argParser.addArgument('s', "spp", options.samplesPerPixel);
@@ -85,6 +88,13 @@ int main(int argc, char ** argv)
     if(options.help) {
         argParser.printUsage();
         return EXIT_SUCCESS;
+    }
+
+    auto logger = std::make_shared<FileLogger>("trace.log");
+    setLogger(logger);
+
+    if(options.verbose) {
+        logger->mirrorToStdout = true;
     }
 
     auto arguments = argParser.unnamedArguments();
