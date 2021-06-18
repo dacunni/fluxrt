@@ -14,6 +14,7 @@ public:
     // Special transform factories
     static inline Transform translation(const vec3 & d);
     static inline Transform scale(float xs, float ys, float zs);
+    static inline Transform scale(float s);
     static inline Transform rotation(const vec3 & axis, float angle);
     static inline Transform rotation(float angle, const vec3 & axis);
 

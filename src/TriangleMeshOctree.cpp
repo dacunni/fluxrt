@@ -13,7 +13,7 @@
 TriangleMeshOctree::TriangleMeshOctree(std::shared_ptr<TriangleMesh> & mesh)
     : mesh(mesh)
 {
-
+    transform = mesh->transform;
 }
 
 void TriangleMeshOctree::build()

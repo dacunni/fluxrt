@@ -26,6 +26,11 @@ inline AffineMatrix AffineMatrix::scale(float xs, float ys, float zs)
                         0.0, 0.0,  zs, 0.0);
 }
 
+inline AffineMatrix AffineMatrix::scale(float s)
+{
+    return scale(s, s, s);
+}
+
 inline AffineMatrix AffineMatrix::rotation(const vec3 & axis, float angle)
 {
     float ca = std::cos( angle );

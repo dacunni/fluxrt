@@ -20,6 +20,12 @@ Transform Transform::scale(float xs, float ys, float zs)
                      AffineMatrix::scale(1.0f/xs, 1.0f/ys, 1.0f/zs));
 }
 
+Transform Transform::scale(float s)
+{
+    return Transform(AffineMatrix::scale(s),
+                     AffineMatrix::scale(1.0f/s));
+}
+
 Transform Transform::rotation(const vec3 & axis, float angle)
 {
     return Transform(AffineMatrix::rotation(angle, axis),

@@ -236,12 +236,7 @@ void TriangleMesh::printMeta() const
 
 void TriangleMesh::scaleToFit(const Slab & bounds)
 {
-#if 1
-    printf("WARNING TriangleMesh::scaleToFit needs to be updated to create "
-           "a scaling matrix so mesh data can be shared\n");
-    return;
-#else
-    Slab old = ::boundingBox(vertices);
+    Slab old = ::boundingBox(meshData->vertices);
 
     auto s = relativeScale(old, bounds);
     auto mine = s.minElement();
@@ -250,25 +245,20 @@ void TriangleMesh::scaleToFit(const Slab & bounds)
     float scaleFactor = 1.0f;
 
     if(maxe < 1.0f) {
-        // scale down
-        scaleFactor = maxe;
+        scaleFactor = maxe; // scale down
     }
     else {
-        // scale up
-        scaleFactor = mine;
+        scaleFactor = mine; // scale up
     }
 
     auto oldCenter = old.midpoint();
     auto newCenter = bounds.midpoint();
 
-    // Scale to fit and center in the new bounding volume
-    for(auto & v : vertices) {
-        v.x = (v.x - oldCenter.x) * scaleFactor + newCenter.x;
-        v.y = (v.y - oldCenter.y) * scaleFactor + newCenter.y;
-        v.z = (v.z - oldCenter.z) * scaleFactor + newCenter.z;
-    }
+    transform = compose(
+        Transform::translation(newCenter),
+        Transform::scale(scaleFactor),
+        Transform::translation(-oldCenter));
 
-#endif
     // NOTE: We don't need to adjust normals be cause we are scaling uniformly in all directions
 }
 

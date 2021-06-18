@@ -185,7 +185,7 @@ void loadTransformsForObject(const std::shared_ptr<cpptoml::table> & table, OBJ 
 
         std::cout << "Transform: " << transform.fwd.string() << '\n';
 
-        obj.transform = transform;
+        obj.transform = compose(transform, obj.transform);
     }
 }
 
@@ -359,13 +359,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 auto scaletocube = meshTable->get_as<double>("scaletocube");
                 if(scaletocube) {
-#if 1               // TODO: Replace with scale matrix
-                    printf("WARNING: scaletocube DEPRECATED\n");
-#else
                     mesh->scaleToFit(Slab::centeredCube(*scaletocube));
-                    Slab bounds = boundingBox(mesh->vertices);
-                    printf("Scaled mesh bounds: "); bounds.print();
-#endif
                 }
 
                 auto accelerator = meshTable->get_as<std::string>("accelerator").value_or("octree");
