@@ -65,6 +65,9 @@ class Logger
         OStreamBuffer fatal()   { return OStreamBuffer(*this, Fatal);   }
         OStreamBuffer debug()   { return OStreamBuffer(*this, Debug);   }
 
+	void logArgv(Severity s, const char * msg,
+                 int argc, char ** argv);
+
         // Omit the newline from the next log message so as to append
         // back-to-back messages
         void join();

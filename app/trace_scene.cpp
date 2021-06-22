@@ -97,6 +97,8 @@ int main(int argc, char ** argv)
         logger->mirrorToStdout = true;
     }
 
+    logger->logArgv(Logger::Normal, "Command Line", argc, argv);
+
     auto arguments = argParser.unnamedArguments();
 
     if(arguments.size() < 1) {

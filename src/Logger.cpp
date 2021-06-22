@@ -105,6 +105,20 @@ DFN_VARARG_LOG(errorf, Error);
 DFN_VARARG_LOG(fatalf, Fatal);
 DFN_VARARG_LOG(debugf, Debug);
 
+void Logger::logArgv(Severity s, const char * msg,
+                     int argc, char ** argv)
+{
+    std::stringstream ss;
+
+    for(int i = 0; i < argc; ++i) {
+        ss << argv[i];
+        if(i < argc - 1)
+            ss << ' ';
+    }
+
+    logf(s, "%s : %s", msg, ss.str().c_str());
+}
+
 void Logger::join()
 {
     joinNext = true;
