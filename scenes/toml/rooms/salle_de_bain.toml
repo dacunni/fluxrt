@@ -1,0 +1,51 @@
+[camera]
+type = "pinhole"
+hfov = 60
+
+# tub and sink
+#position = [ 10.0, 20.0, 10.0 ]
+#lookat = [ 0.0, 15.0, 0.0 ]
+
+# full (false wall behind camera)
+position = [ 0.0, 20.0, 40.0 ]
+lookat = [ 0.0, 15.0, 0.0 ]
+
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 1600
+pixelheight = 1000
+
+[[meshes]]
+file = "casual-effects.com/salle_de_bain/salle_de_bain.obj"
+
+[envmap]
+#type = "gradient"
+#low = [ 1.0, 1.0, 1.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
+
+type = "cubemap"
+#xneg = "NissiBeach/negx.jpg"
+#xpos = "NissiBeach/posx.jpg"
+#yneg = "NissiBeach/negy.jpg"
+#ypos = "NissiBeach/posy.jpg"
+#zneg = "NissiBeach/negz.jpg"
+#zpos = "NissiBeach/posz.jpg"
+
+xneg = "HornstullsStrand2/negx.jpg"
+xpos = "HornstullsStrand2/posx.jpg"
+yneg = "HornstullsStrand2/negy.jpg"
+ypos = "HornstullsStrand2/posy.jpg"
+zneg = "HornstullsStrand2/negz.jpg"
+zpos = "HornstullsStrand2/posz.jpg"
+scalefactor = 5.0
+
+#[[pointlights]]
+#position = [ 0.0, 0.0, 0.0 ]
+#intensity = [ 3.0, 3.0, 3.0 ]
+
+#[[disklights]]
+#position = [ 0.0, 0.0, -3.0 ]
+#direction = [ 0.0, 1.0, 1.0 ]
+#radius = 0.25
+#intensity = [ 30.0, 30.0, 30.0 ]
