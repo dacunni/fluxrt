@@ -211,8 +211,8 @@ inline void Material::applyNormalMap(const TextureArray & tex, const TextureCoor
 
     // Compute new basis by purturbing via the normal map
     auto N = (normal * map.z + tangent * map.x + bitangent * map.y).normalized();
-    auto T = cross(bitangent, normal).normalized();
-    auto B = cross(normal, tangent).normalized();
+    auto T = cross(bitangent, N).normalized();
+    auto B = cross(N, T).normalized();
 
     // Copy new values to output
     normal    = N;
