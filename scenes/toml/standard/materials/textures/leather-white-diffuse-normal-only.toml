@@ -1,0 +1,8 @@
+[[namedmaterials]]
+name = "heromat"
+type = "diffusespecular"
+diffuse = [ 0.8, 0.8, 0.8 ]
+normalmap = "/Volumes/Extra/data/textures/texturehaven.com/leather_red_02_1k_jpg/leather_red_02_nor_1k.jpg"
+
+
+

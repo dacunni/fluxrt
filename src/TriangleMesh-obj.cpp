@@ -25,7 +25,7 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         auto & D = objmaterial.diffuse;
         auto & S = objmaterial.specular;
         auto & E = objmaterial.emission;
-        logger.normalf("material %2d  illum_model %d ior %.3f", mi, objmaterial.illum, objmaterial.ior);
+        logger.normalf("material %2d (%s) illum_model %d ior %.3f", mi, objmaterial.name.c_str(), objmaterial.illum, objmaterial.ior);
         logger.normalf(" D %.1f %.1f %.1f Dt '%s'", D[0], D[1], D[2], objmaterial.diffuse_texname.c_str());
         logger.normalf(" S %.1f %.1f %.1f St '%s'", S[0], S[1], S[2], objmaterial.specular_texname.c_str());
         logger.normalf(" E %.1f %.1f %.1f Et '%s'", E[0], E[1], E[2], objmaterial.emissive_texname.c_str());
@@ -39,13 +39,9 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                 material = Material::makeDiffuse(D);
                 break;
             case 2: // diffuse + specular (Blinn-Phong)
+            case 3: // diffuse + specular (Blinn-Phong) + Whitted
                 material = Material::makeDiffuseSpecular(D, S);
-                // TODO 
                 break;
-            //case 3: // diffuse + specular (Blinn-Phong) + Whitted
-                //material = Material::makeDiffuseSpecular(D, S);
-                // TODO
-                //break;
             //case 4: // glassy ???
                 //material = Material::makeDiffuseSpecular(D, S);
                 // TODO

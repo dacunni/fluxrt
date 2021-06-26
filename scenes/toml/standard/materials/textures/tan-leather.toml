@@ -1,0 +1,15 @@
+[[namedmaterials]]
+name = "heromat"
+type = "diffusespecular"
+diffuse = "/Volumes/Extra/data/textures/texturehaven.com/leather_red_02_1k_jpg/leather_red_02_coll2_1k.jpg"
+normalmap = "/Volumes/Extra/data/textures/texturehaven.com/leather_red_02_1k_jpg/leather_red_02_nor_1k.jpg"
+
+# TODO - roughness
+
+#/Volumes/Extra/data/textures/texturehaven.com/leather_red_02_1k_jpg/leather_red_02_ao_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/leather_red_02_1k_jpg/leather_red_02_coll1_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/leather_red_02_1k_jpg/leather_red_02_coll2_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/leather_red_02_1k_jpg/leather_red_02_nor_1k.jpg
+#/Volumes/Extra/data/textures/texturehaven.com/leather_red_02_1k_jpg/leather_red_02_rough_1k.jpg
+
+

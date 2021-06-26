@@ -1,0 +1,12 @@
+[[include]]
+source = "standard/materials/textures/tan-leather.toml"
+
+[[include]]
+source = "standard/scenes/mitsuba-sphere-and-spheres.toml"
+
+#[[disklights]]
+#position = [ 3.0, 3.0, 3.0 ]
+#direction = [ -1.0, -1.0, -1.0 ]
+#radius = 1.1
+#intensity = [ 10.0, 10.0, 10.0 ]
+
