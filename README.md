@@ -2,6 +2,12 @@
 
 [![CircleCI](https://circleci.com/gh/dacunni/fluxrt.svg?style=svg&circle-token=28dd027707113d1736da63596a27712c238f17d0)](https://circleci.com/gh/dacunni/fluxrt)
 
+Flutrt is a path tracer written in C++.
+
+## Gallery
+
+http://dacunni.github.io/fluxrt/render_gallery.html
+
 ## Setup and Build
 Fetch third party dependencies
 ```
