@@ -24,7 +24,10 @@ TextureID TextureCache::loadTextureFromFile(const std::string & path,
         // Cache miss. Load the texture and update the cache.
         textureID = textures.size();
         std::shared_ptr<Texture> texture;
-        texture = readImage<float>(path + '/' + texname);
+        if(!path.empty()) {
+            texname = path + '/' + texname;
+        }
+        texture = readImage<float>(texname);
         texture->outOfBoundsBehavior = Image<float>::Repeat;
         textures.push_back(texture);
         fileToTextureID[texname] = textureID;
