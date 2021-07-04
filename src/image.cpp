@@ -44,6 +44,13 @@ std::shared_ptr<Image<float>> readImage(const char * filename)
     int w = 0, h = 0;
     int numComponents = 0; // 0 = request actual number of components
 
+    // Test patterns
+    if(std::string(filename) == "grayramp") {
+        auto image = std::make_shared<Image<float>>(256, 256, 3);
+        *image = testpattern::grayRamp<float>(256, 256);
+        return image;
+    }
+
     if(stbi_is_hdr(filename)) {
         // Load float data with full dynamic range of the source image
         float * stbiData = stbi_loadf(filename, &w, &h, &numComponents, numComponents);

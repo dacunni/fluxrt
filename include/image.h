@@ -92,6 +92,9 @@ Image<T> applyInverseStandardGamma(const Image<T> & image) {
 namespace testpattern {
 
 template<typename T>
+Image<T> grayRamp(size_t xsize, size_t ysize);
+
+template<typename T>
 Image<T> colorRange();
 
 template<typename T>

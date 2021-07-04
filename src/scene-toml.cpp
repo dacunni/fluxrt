@@ -120,9 +120,8 @@ MaterialID loadMaterial(const std::shared_ptr<cpptoml::table> & materialTable, S
         material.normalMapTexture = scene.textureCache.loadTextureFromFile("", *normalMapTex);
         auto & texture = scene.textureCache.textures[material.normalMapTexture];
         // Convert normal map color to normal [0, 1] -> [-1, 1]
-        texture->forEachPixelChannel(
-                                     [](Texture & image, size_t x, size_t y, int c) {
-                                     image.set(x, y, c, image.get(x, y, c) * 2.0f - 1.0f);
+        texture->forEachPixelChannel([](Texture & image, size_t x, size_t y, int c) {
+                                         image.set(x, y, c, image.get(x, y, c) * 2.0f - 1.0f);
                                      });
     }
 

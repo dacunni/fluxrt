@@ -188,6 +188,23 @@ void Image<T>::forEachPixelInColumn(size_t x, const PixelFunction & fn)
 namespace testpattern {
 
 template<typename T>
+Image<T> grayRamp(size_t xsize, size_t ysize)
+{
+    using namespace color::channel;
+    const auto high = maxValue<T>();
+    Image<T> image(xsize, ysize, 3);
+
+    for(int y = 0; y < ysize; ++y) {
+        for(int x = 0; x < xsize; ++x) {
+            T value = (T) (float(x) / float(xsize - 1) * high);
+            image.set3(x, y, value, value, value);
+        }
+    }
+
+    return image;
+}
+
+template<typename T>
 Image<T> colorRange()
 {
     using namespace color::channel;
