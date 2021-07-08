@@ -1,0 +1,109 @@
+[camera]
+type = "pinhole"
+hfov = 5
+
+# front
+position = [ 0.0, 20.0, 200.0 ]
+lookat = [ 0.0, 0.7, 0.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 800
+pixelheight = 150
+
+[envmap]
+type = "cubemap"
+
+scalefactor = 2.0
+
+xneg = "HornstullsStrand2/negx.jpg"
+xpos = "HornstullsStrand2/posx.jpg"
+yneg = "HornstullsStrand2/negy.jpg"
+ypos = "HornstullsStrand2/posy.jpg"
+zneg = "HornstullsStrand2/negz.jpg"
+zpos = "HornstullsStrand2/posz.jpg"
+
+#xneg = "SaintPetersBasilica/negx.jpg"
+#xpos = "SaintPetersBasilica/posx.jpg"
+#yneg = "SaintPetersBasilica/negy.jpg"
+#ypos = "SaintPetersBasilica/posy.jpg"
+#zneg = "SaintPetersBasilica/negz.jpg"
+#zpos = "SaintPetersBasilica/posz.jpg"
+
+#xneg = "ArstaBridge/negx.jpg"
+#xpos = "ArstaBridge/posx.jpg"
+#yneg = "ArstaBridge/negy.jpg"
+#ypos = "ArstaBridge/posy.jpg"
+#zneg = "ArstaBridge/negz.jpg"
+#zpos = "ArstaBridge/posz.jpg"
+
+#xneg = "NissiBeach/negx.jpg"
+#xpos = "NissiBeach/posx.jpg"
+#yneg = "NissiBeach/negy.jpg"
+#ypos = "NissiBeach/posy.jpg"
+#zneg = "NissiBeach/negz.jpg"
+#zpos = "NissiBeach/posz.jpg"
+
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.0, 0.0, 0.0 ]
+    [[meshes.transform]]
+    translate = [ -7.5, 0.0, 0.0 ]
+
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.167, 0.167, 0.167 ]
+    [[meshes.transform]]
+    translate = [ -5.0, 0.0, 0.0 ]
+
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.33, 0.33, 0.33 ]
+    [[meshes.transform]]
+    translate = [ -2.5, 0.0, 0.0 ]
+
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.5, 0.5, 0.5 ]
+    [[meshes.transform]]
+    translate = [ 0.0, 0.0, 0.0 ]
+
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.67, 0.67, 0.67 ]
+    [[meshes.transform]]
+    translate = [ 2.5, 0.0, 0.0 ]
+
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.83, 0.83, 0.83 ]
+    [[meshes.transform]]
+    translate = [ 5.0, 0.0, 0.0 ]
+
+[[meshes]]
+file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 1.0, 1.0, 1.0 ]
+    [[meshes.transform]]
+    translate = [ 7.5, 0.0, 0.0 ]
+
+
+
+
+# Floor
+[[slabs]]
+min = [ -100.0, -0.5, -1.5 ]
+max = [ 100.0, -0.04, 1.5 ]
