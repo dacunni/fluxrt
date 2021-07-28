@@ -68,8 +68,10 @@ bool writePNG(const Image<T> & image, const char * filename);
 template<typename T>
 bool writePNG(const Image<T> & image, const std::string & filename) { return writePNG(image, filename.c_str()); }
 
-//template<typename T>
-//bool writeHDR(const Image<T> & image, const char * filename);
+template<typename T>
+bool writeHDR(const Image<T> & image, const char * filename);
+template<typename T>
+bool writeHDR(const Image<T> & image, const std::string & filename) { return writeHDR(image, filename.c_str()); }
 
 template<typename T, typename S>
 Image<T> convert(const Image<S> & image);

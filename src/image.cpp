@@ -106,14 +106,12 @@ bool writePNG<float>(const Image<float> & image, const char * filename)
     return writePNG(imageU8, filename);
 }
 
-#if 0
 template<>
 bool writeHDR<float>(const Image<float> & image, const char * filename)
 {
     return !!stbi_write_hdr(filename, image.width, image.height,
                             image.numChannels, &image.data[0]);
 }
-#endif
 
 
 template<>

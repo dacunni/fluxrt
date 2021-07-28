@@ -97,6 +97,7 @@ void Artifacts::writePixelColor()
     };
     finalPixelColor.forEachPixelChannel(divideByNumSamples);
     writePNG(applyStandardGamma(finalPixelColor), prefix + "color.png");
+    writeHDR(finalPixelColor, prefix + "color.hdr");
 
     auto applyToneMap = [&](Image<float> & image, size_t x, size_t y, int c) {
         float value = image.get(x, y, c);

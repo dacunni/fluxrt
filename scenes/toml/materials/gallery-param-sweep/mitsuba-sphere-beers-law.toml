@@ -16,19 +16,19 @@ type = "cubemap"
 
 scalefactor = 2.0
 
-#xneg = "HornstullsStrand2/negx.jpg"
-#xpos = "HornstullsStrand2/posx.jpg"
-#yneg = "HornstullsStrand2/negy.jpg"
-#ypos = "HornstullsStrand2/posy.jpg"
-#zneg = "HornstullsStrand2/negz.jpg"
-#zpos = "HornstullsStrand2/posz.jpg"
+xneg = "HornstullsStrand2/negx.jpg"
+xpos = "HornstullsStrand2/posx.jpg"
+yneg = "HornstullsStrand2/negy.jpg"
+ypos = "HornstullsStrand2/posy.jpg"
+zneg = "HornstullsStrand2/negz.jpg"
+zpos = "HornstullsStrand2/posz.jpg"
 
-xneg = "SaintPetersBasilica/negx.jpg"
-xpos = "SaintPetersBasilica/posx.jpg"
-yneg = "SaintPetersBasilica/negy.jpg"
-ypos = "SaintPetersBasilica/posy.jpg"
-zneg = "SaintPetersBasilica/negz.jpg"
-zpos = "SaintPetersBasilica/posz.jpg"
+#xneg = "SaintPetersBasilica/negx.jpg"
+#xpos = "SaintPetersBasilica/posx.jpg"
+#yneg = "SaintPetersBasilica/negy.jpg"
+#ypos = "SaintPetersBasilica/posy.jpg"
+#zneg = "SaintPetersBasilica/negz.jpg"
+#zpos = "SaintPetersBasilica/posz.jpg"
 
 #xneg = "ArstaBridge/negx.jpg"
 #xpos = "ArstaBridge/posx.jpg"
@@ -47,63 +47,63 @@ zpos = "SaintPetersBasilica/posz.jpg"
 [[meshes]]
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
     [meshes.material]
-    type = "diffusespecular"
-    diffuse = [ 0.8, 0.8, 0.8 ]
-    specular = [ 0.0, 0.0, 0.0 ]
+    type = "refractive"
+    ior = 1.25
+    beer = [ 0.0, 0.0, 0.0 ]
     [[meshes.transform]]
     translate = [ -7.5, 0.0, 0.0 ]
 
 [[meshes]]
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
     [meshes.material]
-    type = "diffusespecular"
-    diffuse = [ 0.8, 0.8, 0.8 ]
-    specular = [ 0.167, 0.167, 0.167 ]
+    type = "refractive"
+    ior = 1.25
+    beer = [ 0.25, 0.25, 0.0 ]
     [[meshes.transform]]
     translate = [ -5.0, 0.0, 0.0 ]
 
 [[meshes]]
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
     [meshes.material]
-    type = "diffusespecular"
-    diffuse = [ 0.8, 0.8, 0.8 ]
-    specular = [ 0.33, 0.33, 0.33 ]
+    type = "refractive"
+    ior = 1.25
+    beer = [ 0.5, 0.5, 0.0 ]
     [[meshes.transform]]
     translate = [ -2.5, 0.0, 0.0 ]
 
 [[meshes]]
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
     [meshes.material]
-    type = "diffusespecular"
-    diffuse = [ 0.8, 0.8, 0.8 ]
-    specular = [ 0.5, 0.5, 0.5 ]
+    type = "refractive"
+    ior = 1.25
+    beer = [ 0.75, 0.75, 0.0 ]
     [[meshes.transform]]
     translate = [ 0.0, 0.0, 0.0 ]
 
 [[meshes]]
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
     [meshes.material]
-    type = "diffusespecular"
-    diffuse = [ 0.8, 0.8, 0.8 ]
-    specular = [ 0.67, 0.67, 0.67 ]
+    type = "refractive"
+    ior = 1.25
+    beer = [ 1.0, 1.0, 0.0 ]
     [[meshes.transform]]
     translate = [ 2.5, 0.0, 0.0 ]
 
 [[meshes]]
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
     [meshes.material]
-    type = "diffusespecular"
-    diffuse = [ 0.8, 0.8, 0.8 ]
-    specular = [ 0.83, 0.83, 0.83 ]
+    type = "refractive"
+    ior = 1.25
+    beer = [ 1.25, 1.25, 0.0 ]
     [[meshes.transform]]
     translate = [ 5.0, 0.0, 0.0 ]
 
 [[meshes]]
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
     [meshes.material]
-    type = "diffusespecular"
-    diffuse = [ 0.8, 0.8, 0.8 ]
-    specular = [ 1.0, 1.0, 1.0 ]
+    type = "refractive"
+    ior = 1.25
+    beer = [ 1.5, 1.5, 0.0 ]
     [[meshes.transform]]
     translate = [ 7.5, 0.0, 0.0 ]
 
