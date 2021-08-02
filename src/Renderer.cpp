@@ -359,21 +359,11 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
 
     if(shadeSpecularParams.samplePhongLobe) {
         // Importance sample the Phong distribution
-        Direction3 mirrorDir = mirror(Wi, N);
-        Direction3 tangent, bitangent;
-        coordinate::coordinateSystem(mirrorDir, tangent, bitangent);
+        brdfSample S = brdf::samplePhong(rng.uniform2DRange01(),
+                                         Wi, N, exponent);
 
-        vec2 u = rng.uniform2DRange01();
-        float theta = std::acos(std::pow(u.x, 1.0f / (exponent + 1.0f)));
-        float phi = u.y * constants::TWO_PI;
-        float sin_theta = std::sin(theta);
-
-        Direction3 Wo = std::cos(theta) * mirrorDir +
-            sin_theta * std::cos(phi) * tangent +
-            sin_theta * std::sin(phi) * bitangent;
-
-        if(dot(Wo, N) > 0.0f) {
-            L += traceRay(scene, rng, Ray(P + N * epsilon, Wo),
+        if(dot(S.Wo, N) > 0.0f) {
+            L += traceRay(scene, rng, Ray(P + N * epsilon, S.Wo),
                           epsilon, depth + 1, mediumStack, true, true);
         }
     }
