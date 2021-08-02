@@ -21,6 +21,7 @@ class PYBIND11_EXPORT Camera;
 #include "sensor.h"
 #include "radiometry.h"
 #include "material.h"
+#include "microfacet.h"
 #include "fresnel.h"
 #include "optics.h"
 
@@ -35,6 +36,7 @@ class PYBIND11_EXPORT Camera;
 #include "radiometry_bindings.h"
 #include "rng_bindings.h"
 #include "material_bindings.h"
+#include "microfacet_bindings.h"
 #include "fresnel_bindings.h"
 #include "optics_bindings.h"
 
@@ -51,6 +53,7 @@ PYBIND11_MODULE(pyfluxrt, m) {
     radiometry_bindings(m);
     rng_bindings(m);
     material_bindings(m);
+    microfacet_bindings(m);
     fresnel_bindings(m);
     optics_bindings(m);
 }
