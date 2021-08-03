@@ -55,7 +55,9 @@ void Artifacts::writeAll()
     writePNG(isectBitangent, prefix + "isect_bitangent.png");
     writePNG(isectTexCoord, prefix + "isect_texcoord.png");
     writePNG(isectPos, prefix + "isect_position.png");
-    writePNG(applyStandardGamma(isectBasicLighting), prefix + "isect_basic_lighting.png");
+    if(doBasicLighting) {
+        writePNG(applyStandardGamma(isectBasicLighting), prefix + "isect_basic_lighting.png");
+    }
     writePNG(isectMatDiffuse, prefix + "isect_mat_diffuse.png");
     writePNG(isectMatSpecular, prefix + "isect_mat_specular.png");
     if(hasAO) {

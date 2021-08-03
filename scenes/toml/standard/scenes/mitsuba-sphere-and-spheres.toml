@@ -22,6 +22,10 @@ high = [ 1.0, 1.0, 1.0 ]
 
 direction = [ 1.0, 1.0, 1.0 ]
 
+#[[pointlights]]
+#position = [ -15.0, 10.0, 15.0 ]
+#intensity = [ 2000.0, 2000.0, 2000.0 ]
+
 [[meshes]]
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
     [meshes.material]

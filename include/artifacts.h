@@ -72,7 +72,9 @@ class Artifacts
             setTexCoord(x, y, intersection.texcoord);
             setMatDiffuseColor(x, y, intersection, scene.materials, scene.textureCache.textures);
             setMatSpecularColor(x, y, intersection, scene.materials, scene.textureCache.textures);
-            setBasicLighting(x, y, intersection, scene.materials, scene.textureCache.textures);
+            if(doBasicLighting) {
+                setBasicLighting(x, y, intersection, scene.materials, scene.textureCache.textures);
+            }
         }
 
         inline void setHit(int x, int y, bool hit) { hitMask.set(x, y, 0, 1.0f); }
@@ -230,6 +232,7 @@ class Artifacts
         Image<float> runningVarianceS;
 
         bool hasAO = false;
+        bool doBasicLighting = false;
 
     protected:
         int w = 0, h = 0;
