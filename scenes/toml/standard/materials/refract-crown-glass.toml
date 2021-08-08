@@ -1,0 +1,5 @@
+[[namedmaterials]]
+name = "heromat"
+type = "refractive"
+ior = 1.52
+

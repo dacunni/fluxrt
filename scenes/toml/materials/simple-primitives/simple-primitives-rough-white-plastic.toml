@@ -1,0 +1,6 @@
+[[include]]
+source = "standard/materials/rough-white-plastic.toml"
+
+[[include]]
+source = "standard/scenes/simple-primitives.toml"
+
