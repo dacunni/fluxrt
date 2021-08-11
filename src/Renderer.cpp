@@ -198,11 +198,7 @@ inline RadianceRGB Renderer::shadeRefract(const Scene & scene, RNG & rng,
                                           const Position3 & P, const Direction3 & N) const
 {
     const Ray ray(P - N * epsilon, Dt);
-    RadianceRGB L;
-
-    L += traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true, true);
-
-    return L;
+    return traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true, true);
 }
 
 inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG & rng,
@@ -327,23 +323,27 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
         L += Lenv / float(shadeDiffuseParams.numEnvMapSamples);
     }
 
+    brdfSample S;
+
     if(shadeDiffuseParams.sampleCosineLobe) {
         // Sample according to cosine lobe about the normal
-        Direction3 diffuseDir(rng.cosineAboutDirection(N));
-        L += traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
-                      epsilon, depth + 1, mediumStack,
-                      !shadeDiffuseParams.sampleLights,
-                      !sampleEnvMap);
+        S.Wo = Direction3(rng.cosineAboutDirection(N));
+        S.pdf = clampedDot(S.Wo, N) / constants::PI;
+        // FIXME - looks right, but can we avoid NaNs by not
+        //         computing dot / dot?
     }
     else {
         // Uniform sampling across the hemisphere
-        Direction3 diffuseDir(rng.uniformSurfaceUnitHalfSphere(N));
-        L += 2.0f * clampedDot(diffuseDir, N)
-            * traceRay(scene, rng, Ray(P + N * epsilon, diffuseDir),
-                       epsilon, depth + 1, mediumStack,
-                       !shadeDiffuseParams.sampleLights,
-                       !sampleEnvMap);
+        S.Wo = Direction3(rng.uniformSurfaceUnitHalfSphere(N));
+        S.pdf = 1.0f / constants::TWO_PI;
     }
+
+    float F = brdf::lambertian(Wi, S.Wo, N);
+    L += F / S.pdf * clampedDot(S.Wo, N)
+        * traceRay(scene, rng, Ray(P + N * epsilon, S.Wo),
+                   epsilon, depth + 1, mediumStack,
+                   !shadeDiffuseParams.sampleLights,
+                   !sampleEnvMap);
 
     return L;
 }
@@ -356,25 +356,24 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
                                                  float exponent) const
 {
     RadianceRGB L;
+    brdfSample S;
 
     if(shadeSpecularParams.samplePhongLobe) {
         // Importance sample the Phong distribution
-        brdfSample S = brdf::samplePhong(rng.uniform2DRange01(),
-                                         Wi, N, exponent);
-
-        if(dot(S.Wo, N) > 0.0f) {
-            L += traceRay(scene, rng, Ray(P + N * epsilon, S.Wo),
-                          epsilon, depth + 1, mediumStack, true, true);
-        }
+        S = brdf::samplePhong(rng.uniform2DRange01(), Wi, N, exponent);
     }
     else {
         // Uniform sampling across the hemisphere
-        Direction3 Wo(rng.uniformSurfaceUnitHalfSphere(N));
+        S.Wo = Direction3(rng.uniformSurfaceUnitHalfSphere(N));
+        S.pdf = 1.0f / constants::TWO_PI;
+    }
 
-        // Evaluate BRDF
-        L += constants::TWO_PI * brdf::phong(Wi, Wo, N, exponent)
-            * traceRay(scene, rng, Ray(P + N * epsilon, Wo),
-                       epsilon, depth + 1, mediumStack, true, true);
+    // Evaluate BRDF
+    if(dot(S.Wo, N) > 0.0f) {
+        float F = brdf::phong(Wi, S.Wo, N, exponent);
+        // FIXME - don't we need a dot(N,Wo) here?
+        L += F / S.pdf * traceRay(scene, rng, Ray(P + N * epsilon, S.Wo),
+                                  epsilon, depth + 1, mediumStack, true, true);
     }
 
     return L;

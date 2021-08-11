@@ -7,13 +7,13 @@ using namespace constants;
 
 namespace brdf {
 
-InverseSteradians lambertian(const Direction3 & wi, const Direction3 & wo, const Direction3 & N)
+InverseSteradians lambertian(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N)
 {
     return 1.0f / PI;
 }
 
-InverseSteradians phong(const Direction3 & wi,
-                        const Direction3 & wo,
+InverseSteradians phong(const Direction3 & Wi,
+                        const Direction3 & Wo,
                         const Direction3 & N,
                         float a)
 {
@@ -21,15 +21,15 @@ InverseSteradians phong(const Direction3 & wi,
     //            Both seem to conserve energy. Not sure which is best.
     float normFactor = (a + 1.0) / TWO_PI;
     //float normFactor = (a + 2.0) / TWO_PI;
-    return normFactor * std::pow(clampedDot(mirror(wi, N), wo), a);
+    return normFactor * std::pow(clampedDot(mirror(Wi, N), Wo), a);
 }
 
 brdfSample samplePhong(const vec2 & e,
-                       const Direction3 & wi,
+                       const Direction3 & Wi,
                        const Direction3 & N,
                        const float a)
 {
-    Direction3 mirrorDir = mirror(wi, N);
+    Direction3 mirrorDir = mirror(Wi, N);
     Direction3 tangent, bitangent;
     coordinate::coordinateSystem(mirrorDir, tangent, bitangent);
 
@@ -41,11 +41,11 @@ brdfSample samplePhong(const vec2 & e,
         sin_theta * std::cos(phi) * tangent +
         sin_theta * std::sin(phi) * bitangent;
 
+    float F = phong(Wi, Wo, N, a);
+
     brdfSample S;
     S.Wo = Wo;
-    S.pdf = 1.0f; // TODO
-
-    // TODO
+    S.pdf = F;
 
     return S;
 }
