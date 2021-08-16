@@ -371,9 +371,9 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
     // Evaluate BRDF
     if(dot(S.Wo, N) > 0.0f) {
         float F = brdf::phong(Wi, S.Wo, N, exponent);
-        // FIXME - don't we need a dot(N,Wo) here?
-        L += F / S.pdf * traceRay(scene, rng, Ray(P + N * epsilon, S.Wo),
-                                  epsilon, depth + 1, mediumStack, true, true);
+        float D = clampedDot(S.Wo, N);
+        L += F * D / S.pdf * traceRay(scene, rng, Ray(P + N * epsilon, S.Wo),
+                                      epsilon, depth + 1, mediumStack, true, true);
     }
 
     return L;

@@ -45,7 +45,10 @@ brdfSample samplePhong(const vec2 & e,
 
     brdfSample S;
     S.Wo = Wo;
-    S.pdf = F;
+    // PDF includes the projected solid angle factor
+    // to ensure energy conservation (cancels out with
+    // the dot product in the rendering equation)
+    S.pdf = F * clampedDot(Wi, N);;
 
     return S;
 }
