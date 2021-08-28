@@ -126,6 +126,14 @@ inline void Image<T>::accum(size_t x, size_t y, const color::ColorRGB & c)
 }
 
 template<typename T>
+inline void Image<T>::accum3(size_t x, size_t y, T v0, T v1, T v2)
+{
+    data[index(x, y, 0)] += v0;
+    data[index(x, y, 1)] += v1;
+    data[index(x, y, 2)] += v2;
+}
+
+template<typename T>
 inline void Image<T>::set(size_t x, size_t y, int channel, T value)
 {
     data[index(x, y, channel)] = value;

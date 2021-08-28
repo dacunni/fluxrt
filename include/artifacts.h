@@ -127,6 +127,7 @@ class Artifacts
 
         inline void setAmbientOcclusion(int x, int y, float ao) { setAmbientOcclusionColor(isectAO, x, y, ao); }
         inline void setTime(int x, int y, float tm) { setTimeColor(isectTime, x, y, tm); }
+        inline void accumTime(int x, int y, float tm) { accumTimeColor(isectTime, x, y, tm); }
 
     protected:
         inline void setDistColor(Image<float> & isectDist, int x, int y, float minDistance, float distance)
@@ -211,6 +212,11 @@ class Artifacts
         inline void setTimeColor(Image<float> & image, int x, int y, float tm)
         {
             image.set3(x, y, tm, tm, tm);
+        }
+
+        inline void accumTimeColor(Image<float> & image, int x, int y, float tm)
+        {
+            image.accum3(x, y, tm, tm, tm);
         }
 
         Image<float> hitMask;

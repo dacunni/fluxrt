@@ -134,6 +134,13 @@ int main(int argc, char ** argv)
     scene.buildAccelerators();
 
     Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
+
+    auto resetFlushTimer = [&]() {
+        if(options.flushTimeout != 0) {
+            alarm(options.flushTimeout);
+        }
+    };
+
     const float minDistance = 0.0f;
 
     RNG rng[options.numThreads];
@@ -176,23 +183,42 @@ int main(int argc, char ** argv)
 
         if(flushImmediate.exchange(false)) {
             artifacts.writeAll();
-            if(options.flushTimeout != 0) {
-                alarm(options.flushTimeout);
-            }
+            resetFlushTimer();
         }
     };
 
     renderer.printConfiguration();
     printf("====[ Tracing Scene ]====\n");
 
-    if(options.flushTimeout != 0) {
-        alarm(options.flushTimeout);
-    }
+    resetFlushTimer();
 
     auto traceTimer = WallClockTimer::makeRunningTimer();
     uint32_t tileSize = 8;
+
+    // Raster order
     //scene.sensor.forEachPixelThreaded(renderPixelAllSamples, options.numThreads);
+
+    // Tiled
     scene.sensor.forEachPixelTiledThreaded(renderPixelAllSamples, tileSize, options.numThreads);
+
+    // Progressive
+#if 0
+    for(unsigned int sampleIndex = 0; sampleIndex < options.samplesPerPixel; ++sampleIndex) {
+        auto renderPixelOneSample = [&](size_t x, size_t y, size_t threadIndex) {
+            //ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
+            tracePixelRay(x, y, threadIndex, sampleIndex);
+            //artifacts.accumTime(x, y, pixelTimer.elapsed());
+
+            if(flushImmediate.exchange(false)) {
+                artifacts.writeAll();
+                printf("Progress: %.2f %%\n", 100.0f * (float) sampleIndex / (options.samplesPerPixel - 1));
+                resetFlushTimer();
+            }
+        };
+        scene.sensor.forEachPixelTiledThreaded(renderPixelOneSample, tileSize, options.numThreads);
+    }
+#endif
+
     double traceTime = traceTimer.elapsed();
     printf("Scene traced in %s\n", hoursMinutesSeconds(traceTime).c_str());
 
