@@ -20,6 +20,7 @@ class CommandLineArgumentParser
         void addArgument(int shortName, std::string longName, int & target);
         void addArgument(int shortName, std::string longName, unsigned int & target);
         void addArgument(int shortName, std::string longName, float & target);
+        void addArgument(int shortName, std::string longName, std::string & target);
 
         bool parse(int argc, char ** argv);
 
@@ -111,6 +112,12 @@ void CommandLineArgumentParser::addArgument(int shortName, std::string longName,
 void CommandLineArgumentParser::addArgument(int shortName, std::string longName, float & target)
 {
     auto callback = [&target](const std::string & s) { target = std::stof(s); };
+    addArgument(shortName, longName, callback);
+}
+
+void CommandLineArgumentParser::addArgument(int shortName, std::string longName, std::string & target)
+{
+    auto callback = [&target](const std::string & s) { target = s; };
     addArgument(shortName, longName, callback);
 }
 
