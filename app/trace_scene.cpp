@@ -56,6 +56,7 @@ int main(int argc, char ** argv)
         bool noMonteCarloRefraction = false;
         float russianRouletteChance = 0.1f;
         bool noSampleSpecularLobe = false;
+        std::string renderOrder = "default";
         struct {
             bool compute = false;
             bool sampleCosineLobe = false;
@@ -74,6 +75,7 @@ int main(int argc, char ** argv)
     argParser.addArgument('p', "sensorscale", options.sensorScaleFactor);
     argParser.addArgument('r', "rr", options.russianRouletteChance);
     argParser.addFlag('R', "nomontecarlorefraction", options.noMonteCarloRefraction);
+    argParser.addArgument('o', "renderorder", options.renderOrder);
 
     // Sampling
     argParser.addFlag('X', "nosamplespecular", options.noSampleSpecularLobe);
@@ -134,6 +136,13 @@ int main(int argc, char ** argv)
     scene.buildAccelerators();
 
     Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
+
+    auto resetFlushTimer = [&]() {
+        if(options.flushTimeout != 0) {
+            alarm(options.flushTimeout);
+        }
+    };
+
     const float minDistance = 0.0f;
 
     RNG rng[options.numThreads];
@@ -176,23 +185,52 @@ int main(int argc, char ** argv)
 
         if(flushImmediate.exchange(false)) {
             artifacts.writeAll();
-            if(options.flushTimeout != 0) {
-                alarm(options.flushTimeout);
-            }
+            resetFlushTimer();
         }
     };
 
     renderer.printConfiguration();
     printf("====[ Tracing Scene ]====\n");
 
-    if(options.flushTimeout != 0) {
-        alarm(options.flushTimeout);
-    }
+    resetFlushTimer();
 
     auto traceTimer = WallClockTimer::makeRunningTimer();
     uint32_t tileSize = 8;
-    //scene.sensor.forEachPixelThreaded(renderPixelAllSamples, options.numThreads);
-    scene.sensor.forEachPixelTiledThreaded(renderPixelAllSamples, tileSize, options.numThreads);
+
+    if(options.renderOrder == "default") {
+        options.renderOrder = "tiled";
+    }
+
+    if(options.renderOrder == "raster") {
+        // Raster order
+        scene.sensor.forEachPixelThreaded(renderPixelAllSamples, options.numThreads);
+    }
+    else if(options.renderOrder == "tiled") {
+        // Tiled
+        scene.sensor.forEachPixelTiledThreaded(renderPixelAllSamples, tileSize, options.numThreads);
+    }
+    else if(options.renderOrder == "progressive") {
+        // Progressive
+        for(unsigned int sampleIndex = 0; sampleIndex < options.samplesPerPixel; ++sampleIndex) {
+            auto renderPixelOneSample = [&](size_t x, size_t y, size_t threadIndex) {
+                //ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
+                tracePixelRay(x, y, threadIndex, sampleIndex);
+                //artifacts.accumTime(x, y, pixelTimer.elapsed());
+
+                if(flushImmediate.exchange(false)) {
+                    artifacts.writeAll();
+                    printf("Progress: %.2f %%\n", 100.0f * (float) sampleIndex / (options.samplesPerPixel - 1));
+                    resetFlushTimer();
+                }
+            };
+            scene.sensor.forEachPixelTiledThreaded(renderPixelOneSample, tileSize, options.numThreads);
+        }
+    }
+    else {
+        std::cerr << "Unrecognized render order '" + options.renderOrder + "'\n";
+        return EXIT_FAILURE;
+    }
+
     double traceTime = traceTimer.elapsed();
     printf("Scene traced in %s\n", hoursMinutesSeconds(traceTime).c_str());
 
