@@ -260,28 +260,6 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
     return Ls + Lt;
 }
 
-inline RadianceRGB Renderer::sampleDirectLighting(const Scene & scene,
-                                                  RNG & rng,
-                                                  const Position3 & P,
-                                                  const Direction3 & N) const
-{
-    RadianceRGB L;
-
-    // Sample point lights
-    for(const auto & light: scene.pointLights) {
-        LightSample S = samplePointLight(scene, light, P, N, epsilon);
-        L += S.L * clampedDot(S.direction, N);
-    }
-
-    // Sample disk lights
-    for(const auto & light : scene.diskLights) {
-        LightSample S = sampleDiskLight(scene, rng, light, P, N, epsilon);
-        L += S.L * clampedDot(S.direction, N);
-    }
-
-    return L;
-}
-
 inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
                                           const float minDistance, const unsigned int depth,
                                           const MediumStack & mediumStack,
@@ -296,7 +274,19 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
     const bool sampleEnvMap = scene.environmentMap->canImportanceSample();
 
     if(shadeDiffuseParams.sampleLights) {
-        L += sampleDirectLighting(scene, rng, P, N) / constants::PI;
+        // Sample point lights
+        for(const auto & light: scene.pointLights) {
+            LightSample S = samplePointLight(scene, light, P, N, epsilon);
+            float F = brdf::lambertian(Wi, S.direction, N);
+            L += F * S.L * clampedDot(S.direction, N);
+        }
+
+        // Sample disk lights
+        for(const auto & light : scene.diskLights) {
+            LightSample S = sampleDiskLight(scene, rng, light, P, N, epsilon);
+            float F = brdf::lambertian(Wi, S.direction, N);
+            L += F * S.L * clampedDot(S.direction, N);
+        }
     }
 
     if(sampleEnvMap) {

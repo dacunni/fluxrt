@@ -84,11 +84,6 @@ class Renderer
                                                const Position3 & P, const Direction3 & N,
                                                float exponent) const;
 
-        inline RadianceRGB sampleDirectLighting(const Scene & scene,
-                                                RNG & rng,
-                                                const Position3 & P,
-                                                const Direction3 & N) const;
-
         inline LightSample samplePointLight(const Scene & scene,
                                             const PointLight & light,
                                             const Position3 & P,
