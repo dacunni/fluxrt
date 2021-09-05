@@ -7,7 +7,9 @@ using namespace constants;
 
 namespace brdf {
 
-InverseSteradians lambertian(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N)
+InverseSteradians lambertian(const Direction3 & Wi,
+                             const Direction3 & Wo,
+                             const Direction3 & N)
 {
     return 1.0f / PI;
 }
@@ -34,7 +36,7 @@ brdfSample samplePhong(const vec2 & e,
     coordinate::coordinateSystem(mirrorDir, tangent, bitangent);
 
     float theta = std::acos(std::pow(e.x, 1.0f / (a + 1.0f)));
-    float phi = e.y * constants::TWO_PI;
+    float phi = e.y * TWO_PI;
     float sin_theta = std::sin(theta);
 
     Direction3 Wo = std::cos(theta) * mirrorDir +

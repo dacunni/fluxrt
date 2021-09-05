@@ -12,19 +12,19 @@ struct brdfSample {
 
 namespace brdf {
 
-InverseSteradians lambertian(const Direction3 & wi,
-                             const Direction3 & wo,
+InverseSteradians lambertian(const Direction3 & Wi,
+                             const Direction3 & Wo,
                              const Direction3 & N);
 
-InverseSteradians phong(const Direction3 & wi,
-                        const Direction3 & wo,
+InverseSteradians phong(const Direction3 & Wi,
+                        const Direction3 & Wo,
                         const Direction3 & N,
                         const float a);       // exponent
 
 // Importance Sampling
 
 brdfSample samplePhong(const vec2 & e,        // random samples
-                       const Direction3 & wi,
+                       const Direction3 & Wi,
                        const Direction3 & N,
                        const float a);        // exponent
 

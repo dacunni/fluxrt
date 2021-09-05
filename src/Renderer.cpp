@@ -266,20 +266,19 @@ inline RadianceRGB Renderer::sampleDirectLighting(const Scene & scene,
                                                   const Direction3 & N) const
 {
     RadianceRGB L;
-    Direction3 lightDir;
 
     // Sample point lights
     for(const auto & light: scene.pointLights) {
-        RadianceRGB Lp = samplePointLight(scene, light, P, N, epsilon, lightDir);
-        float c = clampedDot(lightDir, N);
-        L += c * Lp;
+        LightSample S = samplePointLight(scene, light, P, N, epsilon);
+        float c = clampedDot(S.direction, N);
+        L += c * S.L;
     }
 
     // Sample disk lights
     for(const auto & light : scene.diskLights) {
-        RadianceRGB Lp = sampleDiskLight(scene, rng, light, P, N, epsilon, lightDir);
-        float c = clampedDot(lightDir, N);
-        L += c * Lp;
+        LightSample S = sampleDiskLight(scene, rng, light, P, N, epsilon);
+        float c = clampedDot(S.direction, N);
+        L += c * S.L;
     }
 
     return L;
@@ -379,38 +378,41 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
     return L;
 }
 
-inline RadianceRGB Renderer::samplePointLight(const Scene & scene,
+inline LightSample Renderer::samplePointLight(const Scene & scene,
                                               const PointLight & light,
                                               const Position3 & P,
                                               const Direction3 & N,
-                                              float minDistance,
-                                              Direction3 & lightDir) const
+                                              float minDistance) const
 {
-    Direction3 toLight = light.position - P;
+    const Direction3 toLight = light.position - P;
+    LightSample S;
+    S.L = RadianceRGB::BLACK();
+    S.direction = toLight.normalized();
 
-    // Make sure the light is on the right size of the surface
-    if(dot(toLight, N) < 0.0f)
-        return RadianceRGB::BLACK();
-
-    lightDir = toLight.normalized();
     const float lightDistSq = toLight.magnitude_sq();
     const float lightDist = std::sqrt(lightDistSq);
 
-    // If we hit something, we can't see the light
-    if(intersectsWorldRay(Ray{P, lightDir}, scene, minDistance, lightDist)) {
-        return RadianceRGB::BLACK();
+    // Make sure the light is on the right size of the surface
+    if(dot(toLight, N) < 0.0f) {
+        return S;
     }
 
-    return light.intensity / lightDistSq;
+    // If we hit something, we can't see the light
+    if(intersectsWorldRay(Ray{P, S.direction}, scene, minDistance, lightDist)) {
+        return S;
+    }
+
+    S.L = light.intensity / lightDistSq;
+
+    return S;
 }
 
-inline RadianceRGB Renderer::sampleDiskLight(const Scene & scene,
+inline LightSample Renderer::sampleDiskLight(const Scene & scene,
                                              RNG & rng,
                                              const DiskLight & light,
                                              const Position3 & P,
                                              const Direction3 & N,
-                                             float minDistance,
-                                             Direction3 & lightDir) const
+                                             float minDistance) const
 {
     vec2 offset = rng.uniformCircle(light.radius);
     // rotate to align with direction
@@ -420,17 +422,21 @@ inline RadianceRGB Renderer::sampleDiskLight(const Scene & scene,
     Position3 pointOnLight = light.position + Direction3(pointOnDisk);
     Direction3 toLight = pointOnLight - P;
 
-    // Make sure the light is on the right size of the surface
-    if(dot(toLight, N) < 0.0f)
-        return RadianceRGB::BLACK();
+    LightSample S;
+    S.L = RadianceRGB::BLACK();
+    S.direction = toLight.normalized();
 
-    lightDir = toLight.normalized();
+    // Make sure the light is on the right size of the surface
+    if(dot(toLight, N) < 0.0f) {
+        return S;
+    }
+
     const float lightDistSq = toLight.magnitude_sq();
     const float lightDist = std::sqrt(lightDistSq);
 
     // If we hit something, we can't see the light
-    if(intersectsWorldRay(Ray{P, lightDir}, scene, epsilon, lightDist - epsilon)) {
-        return RadianceRGB::BLACK();
+    if(intersectsWorldRay(Ray{P, S.direction}, scene, epsilon, lightDist - epsilon)) {
+        return S;
     }
 
     const Material & material = materialFromID(light.material, scene.materials);
@@ -439,9 +445,11 @@ inline RadianceRGB Renderer::sampleDiskLight(const Scene & scene,
 
     // Scale by the solid angle of the light as seen by the shaded point
     float A = constants::PI * light.radius * light.radius;
-    float cos = std::abs(dot(light.direction, lightDir));
+    float cos = std::abs(dot(light.direction, S.direction));
     float sa = A * cos / lightDistSq;
-    return E * sa;
+    S.L = E * sa;
+
+    return S;
 }
 
 void Renderer::printConfiguration() const

@@ -14,6 +14,13 @@ struct Scene;
 struct PointLight;
 struct DiskLight;
 
+// TODO: Put this somewhere sensible
+struct LightSample
+{
+    RadianceRGB L;
+    Direction3 direction;
+};
+
 class Renderer
 {
     public:
@@ -82,20 +89,18 @@ class Renderer
                                                 const Position3 & P,
                                                 const Direction3 & N) const;
 
-        inline RadianceRGB samplePointLight(const Scene & scene,
+        inline LightSample samplePointLight(const Scene & scene,
                                             const PointLight & light,
                                             const Position3 & P,
                                             const Direction3 & N,
-                                            float minDistance,
-                                            Direction3 & lightDir) const;
+                                            float minDistance) const;
 
-        inline RadianceRGB sampleDiskLight(const Scene & scene,
+        inline LightSample sampleDiskLight(const Scene & scene,
                                            RNG & rng,
                                            const DiskLight & light,
                                            const Position3 & P,
                                            const Direction3 & N,
-                                           float minDistance,
-                                           Direction3 & lightDir) const;
+                                           float minDistance) const;
 
     public:
 
