@@ -270,15 +270,13 @@ inline RadianceRGB Renderer::sampleDirectLighting(const Scene & scene,
     // Sample point lights
     for(const auto & light: scene.pointLights) {
         LightSample S = samplePointLight(scene, light, P, N, epsilon);
-        float c = clampedDot(S.direction, N);
-        L += c * S.L;
+        L += S.L * clampedDot(S.direction, N);
     }
 
     // Sample disk lights
     for(const auto & light : scene.diskLights) {
         LightSample S = sampleDiskLight(scene, rng, light, P, N, epsilon);
-        float c = clampedDot(S.direction, N);
-        L += c * S.L;
+        L += S.L * clampedDot(S.direction, N);
     }
 
     return L;
