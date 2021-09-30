@@ -83,11 +83,11 @@ RadianceRGB Renderer::traceRay(const Scene & scene, RNG & rng,
                                bool accumEmission, bool accumEnvMap) const
 {
     RayIntersection intersection;
-    RadianceRGB L;
+    RadianceRGB Lo;
     
-    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, L);
+    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, Lo);
 
-    return L;
+    return Lo;
 }
 
 inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
@@ -262,7 +262,7 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
                                           const Direction3 & Wo,
                                           const Position3 & P, const Direction3 & N) const
 {
-    RadianceRGB L;
+    RadianceRGB Lo;
 
     // Note: We don't accumulate emission on the next hit if we sample
     //       lighting directly, to avoid double counting direct illumination.
@@ -274,14 +274,14 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
         for(const auto & light: scene.pointLights) {
             LightSample S = samplePointLight(scene, light, P, N, epsilon);
             float F = brdf::lambertian(Wo, S.direction, N);
-            L += F * S.L * clampedDot(S.direction, N);
+            Lo += F * S.L * clampedDot(S.direction, N);
         }
 
         // Sample disk lights
         for(const auto & light : scene.diskLights) {
             LightSample S = sampleDiskLight(scene, rng, light, P, N, epsilon);
             float F = brdf::lambertian(Wo, S.direction, N);
-            L += F * S.L * clampedDot(S.direction, N);
+            Lo += F * S.L * clampedDot(S.direction, N);
         }
     }
 
@@ -303,7 +303,7 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
             }
         }
 
-        L += Lenv / float(shadeDiffuseParams.numEnvMapSamples);
+        Lo += Lenv / float(shadeDiffuseParams.numEnvMapSamples);
     }
 
     brdfSample S;
@@ -321,14 +321,12 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
         S.pdf = 1.0f / constants::TWO_PI;
     }
 
+    RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W), epsilon, depth + 1, mediumStack,
+                              !shadeDiffuseParams.sampleLights, !sampleEnvMap);
     float F = brdf::lambertian(Wo, S.W, N);
-    L += F / S.pdf * clampedDot(S.W, N)
-        * traceRay(scene, rng, Ray(P + N * epsilon, S.W),
-                   epsilon, depth + 1, mediumStack,
-                   !shadeDiffuseParams.sampleLights,
-                   !sampleEnvMap);
+    Lo += F / S.pdf * clampedDot(S.W, N) * Li;
 
-    return L;
+    return Lo;
 }
 
 inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
@@ -338,7 +336,7 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
                                                  const Position3 & P, const Direction3 & N,
                                                  float exponent) const
 {
-    RadianceRGB L;
+    RadianceRGB Lo;
     brdfSample S;
 
     if(shadeSpecularParams.samplePhongLobe) {
@@ -355,11 +353,12 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
     if(dot(S.W, N) > 0.0f) {
         float F = brdf::phong(Wo, S.W, N, exponent);
         float D = clampedDot(S.W, N);
-        L += F * D / S.pdf * traceRay(scene, rng, Ray(P + N * epsilon, S.W),
-                                      epsilon, depth + 1, mediumStack, true, true);
+        RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W),
+                                  epsilon, depth + 1, mediumStack, true, true);
+        Lo += F * D / S.pdf * Li;
     }
 
-    return L;
+    return Lo;
 }
 
 inline LightSample Renderer::samplePointLight(const Scene & scene,
