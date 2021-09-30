@@ -50,12 +50,12 @@ class Renderer
 
         inline RadianceRGB shade(const Scene & scene, RNG & rng, const float minDistance, const unsigned int depth,
                                  const MediumStack & mediumStack,
-                                 const Direction3 & Wi, RayIntersection & intersection, const Material & material) const;
+                                 const Direction3 & Wo, RayIntersection & intersection, const Material & material) const;
 
         inline RadianceRGB shadeReflect(const Scene & scene, RNG & rng,
                                         const float minDistance, const unsigned int depth,
                                         const MediumStack & mediumStack,
-                                        const Direction3 & Wi,
+                                        const Direction3 & Wo,
                                         const Position3 & P, const Direction3 & N) const;
 
         inline RadianceRGB shadeRefract(const Scene & scene, RNG & rng,
@@ -68,19 +68,19 @@ class Renderer
                                                     const float minDistance, const unsigned int depth,
                                                     const MediumStack & mediumStack,
                                                     const Medium & medium,
-                                                    const Direction3 & Wi,
+                                                    const Direction3 & Wo,
                                                     const Position3 & P, const Direction3 & N) const;
 
         inline RadianceRGB shadeDiffuse(const Scene & scene, RNG & rng,
                                         const float minDistance, const unsigned int depth,
                                         const MediumStack & mediumStack,
-                                        const Direction3 & Wi,
+                                        const Direction3 & Wo,
                                         const Position3 & P, const Direction3 & N) const;
 
         inline RadianceRGB shadeSpecularGlossy(const Scene & scene, RNG & rng,
                                                const float minDistance, const unsigned int depth,
                                                const MediumStack & mediumStack,
-                                               const Direction3 & Wi,
+                                               const Direction3 & Wo,
                                                const Position3 & P, const Direction3 & N,
                                                float exponent) const;
 

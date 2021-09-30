@@ -6,7 +6,7 @@
 #include "vectortypes.h"
 
 struct brdfSample {
-    Direction3 Wo;
+    Direction3 W;
     float pdf;
 };
 

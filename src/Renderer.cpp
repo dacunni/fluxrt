@@ -40,7 +40,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
         return false;
     }
 
-    const Direction3 Wi = -ray.direction;
+    const Direction3 Wo = -ray.direction;
 
     const Material & material = materialFromID(intersection.material, scene.materials);
     auto A = material.alpha(scene.textureCache.textures, intersection.texcoord);
@@ -55,7 +55,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
         return traceRay(scene, rng, ray, newMinDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, Lo);
     }
 
-    Lo = shade(scene, rng, minDistance, depth, mediumStack, Wi, intersection, material);
+    Lo = shade(scene, rng, minDistance, depth, mediumStack, Wo, intersection, material);
 
     // Apply Beer's Law attenuation
     ParameterRGB att = mediumStack.back().beersLawAttenuation;
@@ -94,7 +94,7 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
                                    const float minDistance,
                                    const unsigned int depth,
                                    const MediumStack & mediumStack,
-                                   const Direction3 & Wi,
+                                   const Direction3 & Wo,
                                    RayIntersection & intersection,
                                    const Material & material) const
 {
@@ -102,7 +102,7 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
     const auto P = intersection.position;
     auto N = intersection.normal;
 
-    if(dot(Wi, N) < 0.0f) {
+    if(dot(Wo, N) < 0.0f) {
         N.negate();
     }
 
@@ -122,7 +122,7 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
     RadianceRGB Lo;
 
     if(material.isRefractive) {
-        Lo = shadeRefractiveInterface(scene, rng, minDistance, depth, mediumStack, medium, Wi, P, N);
+        Lo = shadeRefractiveInterface(scene, rng, minDistance, depth, mediumStack, medium, Wo, P, N);
     }
     else {
         RadianceRGB Ld, Ls;
@@ -139,23 +139,23 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
         if(material.hasSpecular()) {
             // Fresnel = specular - TODO: Is this right?
             ReflectanceRGB F0 = S;
-            F = fresnel::schlick(F0, absDot(Wi, N));
+            F = fresnel::schlick(F0, absDot(Wo, N));
         }
 
         // Trace specular bounce
         if(doSpec) {
             if(material.isGlossy()) {
-                Ls = shadeSpecularGlossy(scene, rng, minDistance, depth, mediumStack, Wi, P, N, material.specularExponent);
+                Ls = shadeSpecularGlossy(scene, rng, minDistance, depth, mediumStack, Wo, P, N, material.specularExponent);
             }
             else {
-                Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+                Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wo, P, N);
             }
             Ls /= probSpec;
         }
 
         // Trace diffuse bounce
         if(doDiffuse) {
-            Ld = shadeDiffuse(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+            Ld = shadeDiffuse(scene, rng, minDistance, depth, mediumStack, Wo, P, N);
             Ld /= probDiffuse;
         }
 
@@ -178,11 +178,11 @@ bool Renderer::traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray,
 inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
                                           const float minDistance, const unsigned int depth,
                                           const MediumStack & mediumStack,
-                                          const Direction3 & Wi,
+                                          const Direction3 & Wo,
                                           const Position3 & P, const Direction3 & N) const
 {
-    const Direction3 Wo = mirror(Wi, N);
-    const Ray ray(P + N * epsilon, Wo);
+    const Direction3 Wi = mirror(Wo, N);
+    const Ray ray(P + N * epsilon, Wi);
     return traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true, true);
 }
 
@@ -201,7 +201,7 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
                                                       const float minDistance, const unsigned int depth,
                                                       const MediumStack & mediumStack,
                                                       const Medium & medium,
-                                                      const Direction3 & Wi,
+                                                      const Direction3 & Wo,
                                                       const Position3 & P, const Direction3 & N) const
 {
     RadianceRGB Ls, Lt;
@@ -223,29 +223,29 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
         nextMediumStack.push_back(medium);
     }
 
-    Direction3 d = refract(Wi, N, n1, n2);
+    Direction3 d = refract(Wo, N, n1, n2);
 
     bool totalInternalReflection = d.isZeros();
 
     if(totalInternalReflection) {
         // Reflected ray
-        Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+        Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wo, P, N);
     }
     else {
-        float F = fresnel::dialectric::unpolarized(dot(Wi, N), dot(d, -N), n1, n2);
+        float F = fresnel::dialectric::unpolarized(dot(Wo, N), dot(d, -N), n1, n2);
 
         if(monteCarloRefraction) {
             // Randomly choose a reflected or refracted ray using Fresnel as the
             // weighting factor
             if(F == 1.0f || rng.uniform01() < F) {
-                Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+                Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wo, P, N);
             }
             else {
                 Lt = shadeRefract(scene, rng, minDistance, depth, nextMediumStack, d, P, N);
             }
         }
         else {
-            Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wi, P, N);
+            Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wo, P, N);
             Lt = shadeRefract(scene, rng, minDistance, depth, nextMediumStack, d, P, N);
             // Apply Fresnel
             Ls = F * Ls;
@@ -259,7 +259,7 @@ inline RadianceRGB Renderer::shadeRefractiveInterface(const Scene & scene, RNG &
 inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
                                           const float minDistance, const unsigned int depth,
                                           const MediumStack & mediumStack,
-                                          const Direction3 & Wi,
+                                          const Direction3 & Wo,
                                           const Position3 & P, const Direction3 & N) const
 {
     RadianceRGB L;
@@ -273,14 +273,14 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
         // Sample point lights
         for(const auto & light: scene.pointLights) {
             LightSample S = samplePointLight(scene, light, P, N, epsilon);
-            float F = brdf::lambertian(Wi, S.direction, N);
+            float F = brdf::lambertian(Wo, S.direction, N);
             L += F * S.L * clampedDot(S.direction, N);
         }
 
         // Sample disk lights
         for(const auto & light : scene.diskLights) {
             LightSample S = sampleDiskLight(scene, rng, light, P, N, epsilon);
-            float F = brdf::lambertian(Wi, S.direction, N);
+            float F = brdf::lambertian(Wo, S.direction, N);
             L += F * S.L * clampedDot(S.direction, N);
         }
     }
@@ -310,20 +310,20 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
 
     if(shadeDiffuseParams.sampleCosineLobe) {
         // Sample according to cosine lobe about the normal
-        S.Wo = Direction3(rng.cosineAboutDirection(N));
-        S.pdf = clampedDot(S.Wo, N) / constants::PI;
+        S.W = Direction3(rng.cosineAboutDirection(N));
+        S.pdf = clampedDot(S.W, N) / constants::PI;
         // FIXME - looks right, but can we avoid NaNs by not
         //         computing dot / dot?
     }
     else {
         // Uniform sampling across the hemisphere
-        S.Wo = Direction3(rng.uniformSurfaceUnitHalfSphere(N));
+        S.W = Direction3(rng.uniformSurfaceUnitHalfSphere(N));
         S.pdf = 1.0f / constants::TWO_PI;
     }
 
-    float F = brdf::lambertian(Wi, S.Wo, N);
-    L += F / S.pdf * clampedDot(S.Wo, N)
-        * traceRay(scene, rng, Ray(P + N * epsilon, S.Wo),
+    float F = brdf::lambertian(Wo, S.W, N);
+    L += F / S.pdf * clampedDot(S.W, N)
+        * traceRay(scene, rng, Ray(P + N * epsilon, S.W),
                    epsilon, depth + 1, mediumStack,
                    !shadeDiffuseParams.sampleLights,
                    !sampleEnvMap);
@@ -334,7 +334,7 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
 inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
                                                  const float minDistance, const unsigned int depth,
                                                  const MediumStack & mediumStack,
-                                                 const Direction3 & Wi,
+                                                 const Direction3 & Wo,
                                                  const Position3 & P, const Direction3 & N,
                                                  float exponent) const
 {
@@ -343,19 +343,19 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
 
     if(shadeSpecularParams.samplePhongLobe) {
         // Importance sample the Phong distribution
-        S = brdf::samplePhong(rng.uniform2DRange01(), Wi, N, exponent);
+        S = brdf::samplePhong(rng.uniform2DRange01(), Wo, N, exponent);
     }
     else {
         // Uniform sampling across the hemisphere
-        S.Wo = Direction3(rng.uniformSurfaceUnitHalfSphere(N));
+        S.W = Direction3(rng.uniformSurfaceUnitHalfSphere(N));
         S.pdf = 1.0f / constants::TWO_PI;
     }
 
     // Evaluate BRDF
-    if(dot(S.Wo, N) > 0.0f) {
-        float F = brdf::phong(Wi, S.Wo, N, exponent);
-        float D = clampedDot(S.Wo, N);
-        L += F * D / S.pdf * traceRay(scene, rng, Ray(P + N * epsilon, S.Wo),
+    if(dot(S.W, N) > 0.0f) {
+        float F = brdf::phong(Wo, S.W, N, exponent);
+        float D = clampedDot(S.W, N);
+        L += F * D / S.pdf * traceRay(scene, rng, Ray(P + N * epsilon, S.W),
                                       epsilon, depth + 1, mediumStack, true, true);
     }
 
