@@ -27,15 +27,6 @@ template<typename T> T clamp(T value) {
 
 }; // namespace channel
 
-struct ColorRGB : public ValueRGB<ColorRGB, ValueRGBInitZero>
-{
-    ColorRGB()                           : ValueRGB()        {}
-    ColorRGB(float r, float g, float b)  : ValueRGB(r, g, b) {}
-    ColorRGB(float rgb[3])               : ValueRGB(rgb)     {}
-
-    std::string string() const;
-};
-
 }; // namespace color
 
 #endif

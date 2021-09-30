@@ -16,9 +16,9 @@ static vec3 vectorToVec3(const std::vector<double> & v)
     return vec3(v[0], v[1], v[2]);
 }
 
-static color::ColorRGB vectorToColorRGB(const std::vector<double> & v)
+static ColorRGB vectorToColorRGB(const std::vector<double> & v)
 {
-    return color::ColorRGB(v[0], v[1], v[2]);
+    return ColorRGB(v[0], v[1], v[2]);
 }
 
 static RadianceRGB vectorToRadianceRGB(const std::vector<double> & v)

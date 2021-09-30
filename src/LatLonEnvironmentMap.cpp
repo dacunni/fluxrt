@@ -47,7 +47,7 @@ RadianceRGB LatLonEnvironmentMap::sampleRay(const Ray & ray)
     texcoord.u = 0.5f * (1.0f + std::atan2(D.x, -D.z) / PI);
     texcoord.v = std::acos(D.y) / PI;
 
-    color::ColorRGB sample = texture->lerpUV3(texcoord.u, texcoord.v);
+    ColorRGB sample = texture->lerpUV3(texcoord.u, texcoord.v);
 
     return { scaleFactor * sample.r,
              scaleFactor * sample.g,

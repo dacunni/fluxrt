@@ -17,23 +17,23 @@ class Artifacts
 
         inline void accumPixelRadiance(int x, int y, const RadianceRGB & rad)
         {
-            color::ColorRGB color = { rad.r, rad.g, rad.b };
+            ColorRGB color = { rad.r, rad.g, rad.b };
             accumPixelColor(x, y, color);
         }
-        inline void accumPixelColor(int x, int y, const color::ColorRGB & color)
+        inline void accumPixelColor(int x, int y, const ColorRGB & color)
         {
             // TODO: Put a flag around this
             if(std::isinf(color.r) || std::isinf(color.g) || std::isinf(color.b)) {
                 std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Inf value : " << color.string() << '\n';;
-                pixelColor.accum(x, y, ::color::ColorRGB::BLACK());
+                pixelColor.accum(x, y, ::ColorRGB::BLACK());
             }
             else if(std::isnan(color.r) || std::isnan(color.g) || std::isnan(color.b)) {
                 std::cerr << "WARNING: Pixel " << x << ", " << y << " color has NaN value : " << color.string() << '\n';;
-                pixelColor.accum(x, y, ::color::ColorRGB::BLACK());
+                pixelColor.accum(x, y, ::ColorRGB::BLACK());
             }
             else if(color.r < 0.0f || color.g < 0.0f || color.b < 0.0f) {
                 std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Negative value : " << color.string() << '\n';;
-                pixelColor.accum(x, y, ::color::ColorRGB::BLACK());
+                pixelColor.accum(x, y, ::ColorRGB::BLACK());
             }
             else {
                 pixelColor.accum(x, y, color);
@@ -152,18 +152,18 @@ class Artifacts
             }
         }
 
-        inline color::ColorRGB positionColor(const Position3 & position)
+        inline ColorRGB positionColor(const Position3 & position)
         {
-            return color::ColorRGB(position.x * 0.5f + 0.5f,
-                                   position.y * 0.5f + 0.5f,
-                                   position.z * 0.5f + 0.5f);
+            return ColorRGB(position.x * 0.5f + 0.5f,
+                            position.y * 0.5f + 0.5f,
+                            position.z * 0.5f + 0.5f);
         }
 
-        inline color::ColorRGB directionColor(const Direction3 & direction)
+        inline ColorRGB directionColor(const Direction3 & direction)
         {
-            return color::ColorRGB(direction.x * 0.5f + 0.5f,
-                                   direction.y * 0.5f + 0.5f,
-                                   direction.z * 0.5f + 0.5f);
+            return ColorRGB(direction.x * 0.5f + 0.5f,
+                            direction.y * 0.5f + 0.5f,
+                            direction.z * 0.5f + 0.5f);
         }
 
         inline void setPositionColor(Image<float> & image, int x, int y, const Position3 & position)

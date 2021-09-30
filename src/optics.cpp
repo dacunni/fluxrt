@@ -20,6 +20,15 @@ float beersLawAttenuation(float att, float dist)
     return std::exp(-att * dist);
 }
 
+ParameterRGB beersLawAttenuation(const ParameterRGB & att, float dist)
+{
+    return {
+        beersLawAttenuation(att.r, dist),
+        beersLawAttenuation(att.g, dist),
+        beersLawAttenuation(att.b, dist),
+    };
+}
+
 namespace ior {
 
 float sellmeier(float wavelength, float B[], float C[], unsigned int num_coeffs)

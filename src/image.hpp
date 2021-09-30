@@ -35,7 +35,7 @@ inline T Image<T>::get(size_t x, size_t y, int channel) const
 }
 
 template<typename T>
-inline color::ColorRGB Image<T>::getRGB(size_t x, size_t y) const
+inline ColorRGB Image<T>::getRGB(size_t x, size_t y) const
 {
     return {
         get(x, y, 0),
@@ -96,7 +96,7 @@ inline T Image<T>::lerpUV(float u, float v, int channel) const
 }
 
 template<typename T>
-inline color::ColorRGB Image<T>::lerpUV3(float u, float v) const
+inline ColorRGB Image<T>::lerpUV3(float u, float v) const
 {
     return {
         lerpUV(u, v, 0),
@@ -118,7 +118,7 @@ inline void Image<T>::accum(size_t x, size_t y, int channel, T value)
 }
 
 template<typename T>
-inline void Image<T>::accum(size_t x, size_t y, const color::ColorRGB & c)
+inline void Image<T>::accum(size_t x, size_t y, const ColorRGB & c)
 {
     data[index(x, y, 0)] += c.r;
     data[index(x, y, 1)] += c.g;
@@ -150,7 +150,7 @@ inline void Image<T>::set3(size_t x, size_t y,
 }
 
 template<typename T>
-inline void Image<T>::set3(size_t x, size_t y, const color::ColorRGB & c)
+inline void Image<T>::set3(size_t x, size_t y, const ColorRGB & c)
 {
     set3(x, y, c.r, c.g, c.b);
 }

@@ -1,0 +1,6 @@
+[[include]]
+source = "standard/materials/mirror-glossy.toml"
+
+[[include]]
+source = "standard/scenes/simple-primitives.toml"
+

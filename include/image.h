@@ -16,19 +16,19 @@ struct Image
     ~Image() = default;
 
     inline T get(size_t x, size_t y, int channel) const;
-    inline color::ColorRGB getRGB(size_t x, size_t y) const;
+    inline ColorRGB getRGB(size_t x, size_t y) const;
     inline T channelSum(size_t x, size_t y) const;
     inline T lerp(float x, float y, int channel) const;
     inline T lerpUV(float u, float v, int channel) const;
-    inline color::ColorRGB lerpUV3(float u, float v) const;
+    inline ColorRGB lerpUV3(float u, float v) const;
 
     inline void accum(size_t x, size_t y, int channel, T value);
-    inline void accum(size_t x, size_t y, const color::ColorRGB & c);
+    inline void accum(size_t x, size_t y, const ColorRGB & c);
     inline void accum3(size_t x, size_t y, T v0, T v1, T v2);
 
     inline void set(size_t x, size_t y, int channel, T value);
     inline void set3(size_t x, size_t y, T v0, T v1, T v2);
-    inline void set3(size_t x, size_t y, const color::ColorRGB & c);
+    inline void set3(size_t x, size_t y, const ColorRGB & c);
     inline void setAll(T value);
 
     inline size_t index(size_t x, size_t y, int channel) const;

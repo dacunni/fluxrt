@@ -10,27 +10,6 @@
 #include "radiometry.h"
 #include "ValueRGB.h"
 
-struct ReflectanceRGB : public ValueRGB<ReflectanceRGB, ValueRGBInitOne>
-{
-    ReflectanceRGB(float r, float g, float b)          : ValueRGB(r, g, b) {}
-    ReflectanceRGB(float rgb[3])                       : ValueRGB(rgb) {}
-    explicit ReflectanceRGB(const color::ColorRGB & c) : ValueRGB(c) {}
-};
-
-inline RadianceRGB operator*(const ReflectanceRGB & ref,
-                             const RadianceRGB & rad);
-
-struct ParameterRGB : public ValueRGB<ParameterRGB, ValueRGBInitZero>
-{
-    ParameterRGB(float r, float g, float b)          : ValueRGB(r, g, b) {}
-    ParameterRGB(float rgb[3])                       : ValueRGB(rgb) {}
-    explicit ParameterRGB(const color::ColorRGB & c) : ValueRGB(c) {}
-};
-
-inline RadianceRGB operator*(const ParameterRGB & param,
-                             const RadianceRGB & rad);
-inline RadianceRGB operator*(const RadianceRGB & rad,
-                             const ParameterRGB & param);
 
 struct Medium {
     float indexOfRefraction = 1.0f;
@@ -104,21 +83,6 @@ using MaterialArray = std::vector<Material>;
 inline const Material & materialFromID(MaterialID id, MaterialArray & materials);
 
 // Inline implementations
-
-inline RadianceRGB operator*(const ReflectanceRGB & ref,
-                             const RadianceRGB & rad) {
-    return { ref.r * rad.r, ref.g * rad.g, ref.b * rad.b };
-}
-
-inline RadianceRGB operator*(const ParameterRGB & param,
-                             const RadianceRGB & rad) {
-    return { param.r * rad.r, param.g * rad.g, param.b * rad.b };
-}
-
-inline RadianceRGB operator*(const RadianceRGB & rad,
-                             const ParameterRGB & param) {
-    return operator*(param, rad);
-}
 
 inline ReflectanceRGB Material::diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {

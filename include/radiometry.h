@@ -29,31 +29,6 @@ using Radiance = float;
 //   Radiance per nanometer wavelength
 using SpectralRadiance = float;
 
-// RGB Radiance Samples
-struct RadianceRGB : public ValueRGB<RadianceRGB, ValueRGBInitZero>
-{
-    RadianceRGB()                          : ValueRGB()        {}
-    RadianceRGB(float r, float g, float b) : ValueRGB(r, g, b) {}
-    RadianceRGB(float rgb[3])              : ValueRGB(rgb)     {}
-};
-
-inline RadianceRGB operator+(const RadianceRGB & a, const RadianceRGB & b)
-    { return { a.r + b.r, a.g + b.g, a.b + b.b }; }
-inline RadianceRGB operator+=(RadianceRGB & a, const RadianceRGB & b)
-    { a = a + b; return a; }
-
-inline RadianceRGB operator*(float s, const RadianceRGB & r)
-    { return { s * r.r, s * r.g, s * r.b }; }
-inline RadianceRGB operator*(const RadianceRGB & r, float s)
-    { return operator*(s, r); }
-inline RadianceRGB operator*=(RadianceRGB & r, float s)
-    { r = r * s; return r; }
-
-inline RadianceRGB operator/(const RadianceRGB & r, float s)
-    { return { r.r / s, r.g / s, r.b / s }; }
-inline RadianceRGB operator/=(RadianceRGB & r, float s)
-    { r = r / s; return r; }
-
 // Utility functions
 Irradiance irradianceAtDistanceFromPointLight(Power power, float radius);
 

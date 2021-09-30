@@ -59,11 +59,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
 
     // Apply Beer's Law attenuation
     ParameterRGB att = mediumStack.back().beersLawAttenuation;
-    ParameterRGB beer {
-        optics::beersLawAttenuation(att.r, intersection.distance),
-        optics::beersLawAttenuation(att.g, intersection.distance),
-        optics::beersLawAttenuation(att.b, intersection.distance)
-    };
+    ParameterRGB beer = optics::beersLawAttenuation(att, intersection.distance);
     Lo = Lo * beer;
 
     // Emission

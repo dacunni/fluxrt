@@ -1,6 +1,8 @@
 #ifndef _OPTICS_H_
 #define _OPTICS_H_
 
+#include "ValueRGB.h"
+
 namespace optics {
 
 // Snell's Law : Angle formulation
@@ -13,6 +15,8 @@ float snellsLawSine(float n_i, float sin_i, float n_o);
 // attenuation coefficient. This is a unitless quantity that relates
 // transmitted radiant flux to incident radiant flux.
 float beersLawAttenuation(float att, float dist);
+
+ParameterRGB beersLawAttenuation(const ParameterRGB & att, float dist);
 
 namespace ior {
 

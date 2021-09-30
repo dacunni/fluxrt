@@ -117,7 +117,7 @@ RadianceRGB CubeMapEnvironmentMap::sampleRay(const Ray & ray)
 
     directionToTileCoord(ray.direction, texture, texcoord);
 
-    color::ColorRGB sample = texture->lerpUV3(texcoord.u, texcoord.v);
+    ColorRGB sample = texture->lerpUV3(texcoord.u, texcoord.v);
 
     return { scaleFactor * sample.r,
              scaleFactor * sample.g,

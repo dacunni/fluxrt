@@ -1,0 +1,7 @@
+[[namedmaterials]]
+name = "heromat"
+type = "diffusespecular"
+diffuse = [ 0.0, 0.0, 0.0 ]
+specular = [ 1.0, 1.0, 1.0 ]
+specular_exponent = 100.0
+
