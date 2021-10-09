@@ -55,6 +55,7 @@ int main(int argc, char ** argv)
         float sensorScaleFactor = 1.0f;
         bool noMonteCarloRefraction = false;
         float russianRouletteChance = 0.1f;
+        bool noSampleCosineLobe = false;
         bool noSampleSpecularLobe = false;
         std::string renderOrder = "default";
         struct {
@@ -78,6 +79,7 @@ int main(int argc, char ** argv)
     argParser.addArgument('o', "renderorder", options.renderOrder);
 
     // Sampling
+    argParser.addFlag('C', "nosamplecosine", options.noSampleCosineLobe);
     argParser.addFlag('X', "nosamplespecular", options.noSampleSpecularLobe);
 
     // Ambient Occlusion
@@ -157,6 +159,7 @@ int main(int argc, char ** argv)
     renderer.maxDepth = options.maxDepth;
     renderer.monteCarloRefraction = !options.noMonteCarloRefraction;
     renderer.russianRouletteChance = options.russianRouletteChance;
+    renderer.shadeDiffuseParams.sampleCosineLobe = !options.noSampleCosineLobe;
     renderer.shadeSpecularParams.samplePhongLobe = !options.noSampleSpecularLobe;
 
     auto tracePixelRay = [&](size_t x, size_t y, size_t threadIndex, uint32_t sampleIndex) {
