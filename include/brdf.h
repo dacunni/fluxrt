@@ -4,6 +4,7 @@
 #include "radiometry.h"
 #include "vec2.h"
 #include "vectortypes.h"
+#include "rng.h"
 
 struct brdfSample {
     Direction3 W;
@@ -27,6 +28,54 @@ brdfSample samplePhong(const vec2 & e,        // random samples
                        const Direction3 & Wi,
                        const Direction3 & N,
                        const float a);        // exponent
+
+class BRDF {
+    public:
+        BRDF() = default;
+        virtual ~BRDF() = default;
+
+        // Evaluate the BRDF
+        virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) = 0;
+
+        // Sample Wo from the BRDF, given Wi and random numbers
+        virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) = 0;
+};
+
+class LambertianBRDF : public BRDF {
+    public:
+        LambertianBRDF() = default;
+        virtual ~LambertianBRDF() = default;
+        
+        virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) override {
+            return lambertian(Wi, Wo, N);
+        }
+
+        virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) override {
+            // Sample according to cosine lobe about the normal
+            Direction3 Wo = Direction3(RNG::cosineAboutDirection(e, N));
+            brdfSample S;
+            S.W = Wo;
+            S.pdf = clampedDot(S.W, N) / constants::PI;
+            return S;
+        }
+};
+
+class PhongBRDF : public BRDF {
+    public:
+        PhongBRDF(float a) : a(a) {}
+        virtual ~PhongBRDF() = default;
+        
+        virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) override {
+            return phong(Wi, Wo, N, a);
+        }
+
+        virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) override {
+            return samplePhong(e, Wi, N, a);
+        }
+
+        float a = 0.0f;
+};
+
 
 }; // brdf
 

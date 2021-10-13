@@ -22,6 +22,24 @@ inline float RNG::gaussian(float stddev)
     return normalDistribution(engine) * stddev;
 }
 
+inline vec2 RNG::uniformCircle(const vec2 & e, float radius)
+{
+    using namespace constants;
+
+    float r = radius * std::sqrt(e.x);
+    float theta = 2.0f * float(PI) * e.y;
+
+    return vec2 {
+        r * std::cos(theta),
+        r * std::sin(theta)
+    };
+}
+
+inline vec2 RNG::uniformUnitCircle(const vec2 & e)
+{
+    return uniformCircle(e, 1.0f);
+}
+
 inline void RNG::uniformUnitCircle(float & x, float & y)
 {
     uniformCircle(1.0f, x, y);
@@ -149,6 +167,18 @@ inline vec3 RNG::uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace)
     return v;
 }
 
+inline vec3 RNG::cosineAboutDirection(const vec2 & e, const Direction3 & n)
+{
+    vec3 t, b;
+    float x, y, z;
+
+    coordinate::coordinateSystem(n, t, b);
+    vec2 v = uniformUnitCircle(e);
+    z = std::sqrt(1.0f - (v.x * v.x + v.y * v.y));
+
+    return v.x * t + v.y * b + z * n;
+}
+
 inline void RNG::cosineAboutDirection(const Direction3 & n, vec3 & v)
 {
     vec3 t, b;
@@ -163,9 +193,14 @@ inline void RNG::cosineAboutDirection(const Direction3 & n, vec3 & v)
 
 inline vec3 RNG::cosineAboutDirection(const Direction3 & n)
 {
-    vec3 v;
-    cosineAboutDirection(n, v);
-    return v;
+    vec3 t, b;
+    float x, y, z;
+
+    coordinate::coordinateSystem(n, t, b);
+    uniformUnitCircle(x, y);
+    z = std::sqrt(1.0f - (x*x + y*y));
+
+    return x * t + y * b + z * n;
 }
 
 inline vec3 RNG::gaussian3D(float mean, float stddev)

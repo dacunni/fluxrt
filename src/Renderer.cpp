@@ -263,6 +263,7 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
                                           const Position3 & P, const Direction3 & N) const
 {
     RadianceRGB Lo;
+    brdf::LambertianBRDF brdf;
 
     // Note: We don't accumulate emission on the next hit if we sample
     //       lighting directly, to avoid double counting direct illumination.
@@ -273,14 +274,14 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
         // Sample point lights
         for(const auto & light: scene.pointLights) {
             LightSample S = samplePointLight(scene, light, P, N, epsilon);
-            float F = brdf::lambertian(Wo, S.direction, N);
+            float F = brdf.eval(Wo, S.direction, N);
             Lo += F * S.L * clampedDot(S.direction, N);
         }
 
         // Sample disk lights
         for(const auto & light : scene.diskLights) {
             LightSample S = sampleDiskLight(scene, rng, light, P, N, epsilon);
-            float F = brdf::lambertian(Wo, S.direction, N);
+            float F = brdf.eval(Wo, S.direction, N);
             Lo += F * S.L * clampedDot(S.direction, N);
         }
     }
@@ -309,11 +310,7 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
     brdfSample S;
 
     if(shadeDiffuseParams.sampleCosineLobe) {
-        // Sample according to cosine lobe about the normal
-        S.W = Direction3(rng.cosineAboutDirection(N));
-        S.pdf = clampedDot(S.W, N) / constants::PI;
-        // FIXME - looks right, but can we avoid NaNs by not
-        //         computing dot / dot?
+        S = brdf.sample(rng.uniform2DRange01(), Wo, N);
     }
     else {
         // Uniform sampling across the hemisphere
@@ -323,8 +320,9 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
 
     RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W), epsilon, depth + 1, mediumStack,
                               !shadeDiffuseParams.sampleLights, !sampleEnvMap);
-    float F = brdf::lambertian(Wo, S.W, N);
-    Lo += F / S.pdf * clampedDot(S.W, N) * Li;
+    float F = brdf.eval(Wo, S.W, N);
+    float D = clampedDot(S.W, N);
+    Lo += F * D / S.pdf * Li;
 
     return Lo;
 }
@@ -337,11 +335,12 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
                                                  float exponent) const
 {
     RadianceRGB Lo;
+    brdf::PhongBRDF brdf(exponent);
     brdfSample S;
 
     if(shadeSpecularParams.samplePhongLobe) {
         // Importance sample the Phong distribution
-        S = brdf::samplePhong(rng.uniform2DRange01(), Wo, N, exponent);
+        S = brdf.sample(rng.uniform2DRange01(), Wo, N);
     }
     else {
         // Uniform sampling across the hemisphere
@@ -351,10 +350,10 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
 
     // Evaluate BRDF
     if(dot(S.W, N) > 0.0f) {
-        float F = brdf::phong(Wo, S.W, N, exponent);
-        float D = clampedDot(S.W, N);
         RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W),
                                   epsilon, depth + 1, mediumStack, true, true);
+        float F = brdf.eval(Wo, S.W, N);
+        float D = clampedDot(S.W, N);
         Lo += F * D / S.pdf * Li;
     }
 

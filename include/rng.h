@@ -13,6 +13,13 @@ struct RNG
     RNG();
     ~RNG() = default;
 
+    // TODO: Clean this up to separate picking random numbers and mapping them
+    //       to different domains
+
+    static inline vec2 uniformCircle(const vec2 & e, float radius);
+    static inline vec2 uniformUnitCircle(const vec2 & e);
+    static inline vec3 cosineAboutDirection(const vec2 & e, const Direction3 & n);
+
     // 1D
 	inline float uniform01();
 	inline float uniformRange(float min, float max);
