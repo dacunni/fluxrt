@@ -39,6 +39,16 @@ class BRDF {
 
         // Sample Wo from the BRDF, given Wi and random numbers
         virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) = 0;
+
+        // Uniform sampling across the hemisphere
+        brdfSample sampleHemisphereUniform(const vec2 & e, const Direction3 & N) {
+            brdfSample S;
+            S.W = Direction3(RNG::uniformSurfaceUnitHalfSphere(e, N));
+            S.pdf = 1.0f / constants::TWO_PI;
+            return S;
+        }
+
+        bool importanceSample = true;
 };
 
 class LambertianBRDF : public BRDF {
@@ -51,6 +61,9 @@ class LambertianBRDF : public BRDF {
         }
 
         virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) override {
+            if(!importanceSample) {
+                return sampleHemisphereUniform(e, N);
+            }
             // Sample according to cosine lobe about the normal
             Direction3 Wo = Direction3(RNG::cosineAboutDirection(e, N));
             brdfSample S;
@@ -70,6 +83,9 @@ class PhongBRDF : public BRDF {
         }
 
         virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) override {
+            if(!importanceSample) {
+                return sampleHemisphereUniform(e, N);
+            }
             return samplePhong(e, Wi, N, a);
         }
 

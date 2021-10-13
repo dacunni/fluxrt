@@ -307,16 +307,8 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
         Lo += Lenv / float(shadeDiffuseParams.numEnvMapSamples);
     }
 
-    brdfSample S;
-
-    if(shadeDiffuseParams.sampleCosineLobe) {
-        S = brdf.sample(rng.uniform2DRange01(), Wo, N);
-    }
-    else {
-        // Uniform sampling across the hemisphere
-        S.W = Direction3(rng.uniformSurfaceUnitHalfSphere(N));
-        S.pdf = 1.0f / constants::TWO_PI;
-    }
+    brdf.importanceSample = shadeDiffuseParams.sampleCosineLobe;
+    brdfSample S = brdf.sample(rng.uniform2DRange01(), Wo, N);
 
     RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W), epsilon, depth + 1, mediumStack,
                               !shadeDiffuseParams.sampleLights, !sampleEnvMap);
@@ -336,17 +328,9 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
 {
     RadianceRGB Lo;
     brdf::PhongBRDF brdf(exponent);
-    brdfSample S;
 
-    if(shadeSpecularParams.samplePhongLobe) {
-        // Importance sample the Phong distribution
-        S = brdf.sample(rng.uniform2DRange01(), Wo, N);
-    }
-    else {
-        // Uniform sampling across the hemisphere
-        S.W = Direction3(rng.uniformSurfaceUnitHalfSphere(N));
-        S.pdf = 1.0f / constants::TWO_PI;
-    }
+    brdf.importanceSample = shadeSpecularParams.samplePhongLobe;
+    brdfSample S = brdf.sample(rng.uniform2DRange01(), Wo, N);
 
     // Evaluate BRDF
     if(dot(S.W, N) > 0.0f) {

@@ -123,6 +123,24 @@ inline vec2 RNG::gaussian2D(float stddev)
     return { gaussian(stddev), gaussian(stddev) };
 }
 
+inline vec3 RNG::uniformSurfaceUnitSphere(const vec2 & e)
+{
+    using namespace constants;
+
+    float u1 = e.x;
+    float u2 = e.y;
+    vec3 v;
+    
+    v.z = 1.0f - 2.0f * u1;
+    float r = std::sqrt(std::max(0.0f, 1.0f - v.z * v.z));
+    float phi = 2.0f * float(PI) * u2;
+
+    v.x = r * std::cos(phi);
+    v.y = r * std::sin(phi);
+
+    return v;
+}
+
 inline void RNG::uniformSurfaceUnitSphere(float & x, float & y, float & z)
 {
     using namespace constants;
@@ -147,6 +165,18 @@ inline vec3 RNG::uniformSurfaceUnitSphere()
 {
     vec3 v;
     uniformSurfaceUnitSphere(v);
+    return v;
+}
+
+inline vec3 RNG::uniformSurfaceUnitHalfSphere(const vec2 & e, const Direction3 & halfSpace)
+{
+    vec3 v = uniformSurfaceUnitSphere(e);
+
+    // If we're on the wrong side, just flip to the right side
+    if(dot(v, halfSpace) < 0.0f) {
+        v.negate();
+    }
+
     return v;
 }
 

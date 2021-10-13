@@ -19,6 +19,8 @@ struct RNG
     static inline vec2 uniformCircle(const vec2 & e, float radius);
     static inline vec2 uniformUnitCircle(const vec2 & e);
     static inline vec3 cosineAboutDirection(const vec2 & e, const Direction3 & n);
+    static inline vec3 uniformSurfaceUnitSphere(const vec2 & e);
+    static inline vec3 uniformSurfaceUnitHalfSphere(const vec2 & e, const Direction3 & halfSpace);
 
     // 1D
 	inline float uniform01();
