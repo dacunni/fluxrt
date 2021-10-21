@@ -24,6 +24,10 @@ class PYBIND11_EXPORT Camera;
 #include "microfacet.h"
 #include "fresnel.h"
 #include "optics.h"
+#include "EnvironmentMap.h"
+#include "GradientEnvironmentMap.h"
+#include "LatLonEnvironmentMap.h"
+#include "CubeMapEnvironmentMap.h"
 
 // Bindings
 #include "vec2_bindings.h"
@@ -39,6 +43,7 @@ class PYBIND11_EXPORT Camera;
 #include "microfacet_bindings.h"
 #include "fresnel_bindings.h"
 #include "optics_bindings.h"
+#include "envmap_bindings.h"
 
 PYBIND11_MODULE(pyfluxrt, m) {
     m.doc() = "Python bindings for fluxrt";
@@ -56,5 +61,6 @@ PYBIND11_MODULE(pyfluxrt, m) {
     microfacet_bindings(m);
     fresnel_bindings(m);
     optics_bindings(m);
+    envmap_bindings(m);
 }
 

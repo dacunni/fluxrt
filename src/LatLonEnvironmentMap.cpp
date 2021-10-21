@@ -5,6 +5,7 @@
 #include "vectortypes.h"
 #include "interpolation.h"
 #include "rng.h"
+#include "constants.h"
 
 void LatLonEnvironmentMap::loadFromFile(const std::string & filename)
 {
@@ -20,9 +21,6 @@ void LatLonEnvironmentMap::loadFromFile(const std::string & filename)
     texture->outOfBoundsBehavior = Texture::Repeat;
 
     buildImportanceSampleLookup();
-
-    // Debug
-    //saveDebugImages();
 }
 
 void LatLonEnvironmentMap::loadFromImage(const Image<float> & image)
@@ -61,14 +59,15 @@ void LatLonEnvironmentMap::buildImportanceSampleLookup()
     rowSums = std::make_shared<Texture>(w, h, 1);
     cumRows.resize(texture->height);
     pdf2D = std::make_shared<Texture>(w, h, 1);
-    //debugSamples = std::make_shared<Texture>(w, h, 1);
 
     float totalCumVal = 0.0f;
     
     for(int y = 0; y < h; ++y) {
         // Weight by the cosine of the elevation angle to account for
         // area distortion in a flattened lat/lon representation
-        float cosEl = std::cos(lerpFromTo<float>(y, 0, h, -constants::PI_OVER_TWO, constants::PI_OVER_TWO));
+        //float cosEl = std::cos(lerpFromTo<float>(float(y)+0.5f, 0.0f, float(h)+0.5f,
+        float cosEl = std::cos(lerpFromTo<float>(float(y)+0.5f, 0.0f, float(h),
+                                                 -constants::PI_OVER_TWO, constants::PI_OVER_TWO));
         // Compute cumulative sums for each row
         float rowCumVal = 0.0f;
         for(int x = 0; x < w; ++x) {
@@ -93,9 +92,15 @@ void LatLonEnvironmentMap::buildImportanceSampleLookup()
             cumRows[y] /= totalCumVal;
         }
     }
+
+    float pdfSum = 0.0f;
+    pdf2D->forEachPixel([&pdfSum](Image<float> & img, size_t x, size_t y) {
+                    pdfSum += img.get(x, y, 0); });
+
+    // Normalize the PDF
     for(int y = 0; y < h; ++y) {
         for(int x = 0; x < w; ++x) {
-            pdf2D->set(x, y, 0, pdf2D->get(x, y, 0) / totalCumVal);
+            pdf2D->set(x, y, 0, pdf2D->get(x, y, 0) / pdfSum / constants::FOUR_PI);
         }
     }
 }
@@ -104,30 +109,33 @@ vec2 LatLonEnvironmentMap::importanceSample(float e1, float e2, float & pdf) con
 {
     const int w = texture->width, h = texture->height;
 
-#if 0
+#if 0  // WORKING
     // Linear search y using row sums
     int y;
     for(y = 0; y < h - 1; ++y) {
-        if(cumRows[y+1] > e2)
+        if(cumRows[y] > e2)
             break;
     }
 
     // Linear search for x in row given by y
     int x;
     for(x = 0; x < w - 1; ++x) {
-        if(rowSums->get(x+1, y, 0) > e1)
+        if(rowSums->get(x, y, 0) > e1)
             break;
     }
+
 #else
+
     // Binary search for y using row sums
 
     int y1 = 0, y2 = h - 1;
+    //int y1 = 0, y2 = h;
     int y = (y1 + y2) / 2;
 
-    while(y1 < y2 - 1) {
+    while(y1 < y2) {
         float value = cumRows[y];
-        if(e2 < value) { y2 = y; }
-        else           { y1 = y; }
+        if(value > e2) { y2 = y; }
+        else           { y1 = y + 1; }
         y = (y1 + y2) / 2;
     }
 
@@ -136,21 +144,34 @@ vec2 LatLonEnvironmentMap::importanceSample(float e1, float e2, float & pdf) con
     int x1 = 0, x2 = w - 1;
     int x = (x1 + x2) / 2;
 
-    while(x1 < x2 - 1) {
+    while(x1 < x2) {
         float value = rowSums->get(x, y, 0);
-        if(e1 <= value) { x2 = x; }
-        else            { x1 = x; }
+        if(value > e1) { x2 = x; }
+        else           { x1 = x + 1; }
         x = (x1 + x2) / 2;
     }
 #endif
 
     pdf = pdf2D->get(x, y, 0) * w * h;
 
-    // Debug
-    //debugSamples->set(x, y, 0, 1.0f);
+#if 0 // TODO: Seems okay, but needs more testing
+    // Grab some lower order bits of the random numbers and treat them
+    // as separate random numbers for subpixel sampling.
+    float sx = float(x), sy = float(y);
+    float shift = 2.0e4f;
 
-    // FIXME - choose subpixel coordinate
+    float e3 = e1 * shift - floor(e1 * shift);
+    float e4 = e2 * shift - floor(e2 * shift);
+    //printf("e1 %f e2 %f : e3 %f e4 %f\n", e1, e2, e3, e4); // TEMP
+
+    sx += e3;
+    sy += e4;
+
+    return { sx, sy };
+#else
+    // No subpixel sampling
     return { float(x) + 0.5f, float(y) + 0.5f };
+#endif
 }
 
 RandomDirection LatLonEnvironmentMap::importanceSampleDirection(float e1, float e2) const
@@ -182,12 +203,6 @@ void LatLonEnvironmentMap::saveDebugImages()
     writePNG(*texture, "envmap_texture.png");
     writePNG(*rowSums, "envmap_rowsums.png");
     writePNG(applyGamma(*pdf2D, 1.0/10.0), "envmap_pdf.png");
-}
-
-void LatLonEnvironmentMap::saveDebugSampleImage()
-{
-    if(debugSamples) {
-        writePNG(*debugSamples, "envmap_samples.png");
-    }
+    //writePNG(*pdf2D, "envmap_pdf.png");
 }
 

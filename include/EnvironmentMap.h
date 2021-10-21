@@ -28,7 +28,6 @@ class EnvironmentMap
         virtual bool canImportanceSample() const { return false; }
 
         virtual void saveDebugImages() {};
-        virtual void saveDebugSampleImage() {};
 };
 
 

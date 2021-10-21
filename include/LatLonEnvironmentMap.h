@@ -25,7 +25,6 @@ class LatLonEnvironmentMap : public EnvironmentMap
         bool canImportanceSample() const override { return true; }
 
         void saveDebugImages() override;
-        void saveDebugSampleImage() override;
 
     protected:
         void buildImportanceSampleLookup();

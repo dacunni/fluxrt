@@ -299,7 +299,9 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
             if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
                 Ray r{ P + N * epsilon, dirSample.direction };
                 if(!intersectsWorldRay(r, scene, minDistance)) {
-                    Lenv += DdotN * scene.environmentMap->sampleRay(r) / dirSample.pdf;
+                    float F = brdf.eval(Wo, dirSample.direction, N);
+                    RadianceRGB Li = scene.environmentMap->sampleRay(r); 
+                    Lenv += F * DdotN * Li / dirSample.pdf;
                 }
             }
         }
