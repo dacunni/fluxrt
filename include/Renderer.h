@@ -4,6 +4,7 @@
 #include "fresnel.h"
 #include "radiometry.h"
 #include "material.h"
+#include "brdf.h"
 
 struct Direction3;
 struct Position3;
@@ -90,12 +91,27 @@ class Renderer
                                             const Direction3 & N,
                                             float minDistance) const;
 
+        inline RadianceRGB sampleAllPointLights(const Scene & scene,
+                                                const brdf::BRDF & brdf,
+                                                const Direction3 & Wo,
+                                                const Position3 & P,
+                                                const Direction3 & N,
+                                                float minDistance) const;
+
         inline LightSample sampleDiskLight(const Scene & scene,
                                            RNG & rng,
                                            const DiskLight & light,
                                            const Position3 & P,
                                            const Direction3 & N,
                                            float minDistance) const;
+
+        inline RadianceRGB sampleAllDiskLights(const Scene & scene,
+                                               RNG & rng,
+                                               const brdf::BRDF & brdf,
+                                               const Direction3 & Wo,
+                                               const Position3 & P,
+                                               const Direction3 & N,
+                                               float minDistance) const;
 
     public:
 

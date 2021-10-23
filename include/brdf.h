@@ -35,7 +35,7 @@ class BRDF {
         virtual ~BRDF() = default;
 
         // Evaluate the BRDF
-        virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) = 0;
+        virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) const = 0;
 
         // Sample Wo from the BRDF, given Wi and random numbers
         virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) = 0;
@@ -56,7 +56,7 @@ class LambertianBRDF : public BRDF {
         LambertianBRDF() = default;
         virtual ~LambertianBRDF() = default;
         
-        virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) override {
+        virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) const override {
             return lambertian(Wi, Wo, N);
         }
 
@@ -78,7 +78,7 @@ class PhongBRDF : public BRDF {
         PhongBRDF(float a) : a(a) {}
         virtual ~PhongBRDF() = default;
         
-        virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) override {
+        virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) const override {
             return phong(Wi, Wo, N, a);
         }
 

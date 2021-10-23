@@ -271,19 +271,8 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
     const bool sampleEnvMap = scene.environmentMap->canImportanceSample();
 
     if(shadeDiffuseParams.sampleLights) {
-        // Sample point lights
-        for(const auto & light: scene.pointLights) {
-            LightSample S = samplePointLight(scene, light, P, N, epsilon);
-            float F = brdf.eval(Wo, S.direction, N);
-            Lo += F * S.L * clampedDot(S.direction, N);
-        }
-
-        // Sample disk lights
-        for(const auto & light : scene.diskLights) {
-            LightSample S = sampleDiskLight(scene, rng, light, P, N, epsilon);
-            float F = brdf.eval(Wo, S.direction, N);
-            Lo += F * S.L * clampedDot(S.direction, N);
-        }
+        Lo += sampleAllPointLights(scene, brdf, Wo, P, N, epsilon);
+        Lo += sampleAllDiskLights(scene, rng, brdf, Wo, P, N, epsilon);
     }
 
     if(sampleEnvMap) {
@@ -331,13 +320,25 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
     RadianceRGB Lo;
     brdf::PhongBRDF brdf(exponent);
 
+#if 0
+    if(shadeDiffuseParams.sampleLights) {
+        Lo += sampleAllPointLights(scene, brdf, Wo, P, N, epsilon);
+        Lo += sampleAllDiskLights(scene, rng, brdf, Wo, P, N, epsilon);
+    }
+#endif
+
     brdf.importanceSample = shadeSpecularParams.samplePhongLobe;
     brdfSample S = brdf.sample(rng.uniform2DRange01(), Wo, N);
 
     // Evaluate BRDF
     if(dot(S.W, N) > 0.0f) {
         RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W),
+#if 1
                                   epsilon, depth + 1, mediumStack, true, true);
+#else
+                                  epsilon, depth + 1, mediumStack,
+                                  !shadeDiffuseParams.sampleLights, true);
+#endif
         float F = brdf.eval(Wo, S.W, N);
         float D = clampedDot(S.W, N);
         Lo += F * D / S.pdf * Li;
@@ -373,6 +374,26 @@ inline LightSample Renderer::samplePointLight(const Scene & scene,
     S.L = light.intensity / lightDistSq;
 
     return S;
+}
+
+
+inline RadianceRGB Renderer::sampleAllPointLights(const Scene & scene,
+                                                  const brdf::BRDF & brdf,
+                                                  const Direction3 & Wo,
+                                                  const Position3 & P,
+                                                  const Direction3 & N,
+                                                  float minDistance) const
+{
+    RadianceRGB Lo;
+
+    // Sample point lights
+    for(const auto & light: scene.pointLights) {
+        LightSample S = samplePointLight(scene, light, P, N, epsilon);
+        float F = brdf.eval(Wo, S.direction, N);
+        Lo += F * S.L * clampedDot(S.direction, N);
+    }
+
+    return Lo;
 }
 
 inline LightSample Renderer::sampleDiskLight(const Scene & scene,
@@ -418,6 +439,26 @@ inline LightSample Renderer::sampleDiskLight(const Scene & scene,
     S.L = E * sa;
 
     return S;
+}
+
+inline RadianceRGB Renderer::sampleAllDiskLights(const Scene & scene,
+                                                 RNG & rng,
+                                                 const brdf::BRDF & brdf,
+                                                 const Direction3 & Wo,
+                                                 const Position3 & P,
+                                                 const Direction3 & N,
+                                                 float minDistance) const
+{
+    RadianceRGB Lo;
+
+    // Sample disk lights
+    for(const auto & light : scene.diskLights) {
+        LightSample S = sampleDiskLight(scene, rng, light, P, N, epsilon);
+        float F = brdf.eval(Wo, S.direction, N);
+        Lo += F * S.L * clampedDot(S.direction, N);
+    }
+
+    return Lo;
 }
 
 void Renderer::printConfiguration() const

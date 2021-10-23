@@ -1,9 +1,9 @@
 [[include]]
-source = "standard/materials/diffuse-white.toml"
+source = "standard/materials/smooth-white-plastic.toml"
 
 [[include]]
 source = "standard/scenes/suzanne-and-spheres.toml"
 
 [[pointlights]]
 position = [ 5.0, 5.0, 2.0 ]
-intensity = [ 10.0, 10.0, 10.0 ]
+intensity = [ 20.0, 20.0, 20.0 ]

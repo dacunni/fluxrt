@@ -16,10 +16,10 @@ pixelheight = 300
 
 type = "latlon"
 #file = "hdrihaven/street_lamp_1k.hdr"
-#file = "hdrihaven/adams_place_bridge_1k.hdr"
+file = "hdrihaven/adams_place_bridge_1k.hdr"
 #file = "hdrihaven/kloppenheim_02_1k.hdr"
 #file = "hdrihaven/spruit_sunrise_1k.hdr"
-file = "hdrihaven/leadenhall_market_1k.hdr"
+#file = "hdrihaven/leadenhall_market_1k.hdr"
 
 [[meshes]]
 #file = "blender/monkey_simple_smooth.obj"
