@@ -181,9 +181,22 @@ inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
                                           const Direction3 & Wo,
                                           const Position3 & P, const Direction3 & N) const
 {
-    const Direction3 Wi = mirror(Wo, N);
-    const Ray ray(P + N * epsilon, Wi);
-    return traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack, true, true);
+    RadianceRGB Lo;
+    brdf::MirrorBRDF brdf;
+
+    brdfSample S = brdf.sample(rng.uniform2DRange01(), Wo, N);
+    const Ray ray(P + N * epsilon, S.W);
+    RadianceRGB Li = traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack,
+                              true, true);
+
+    float F = brdf.eval(Wo, S.W, N);
+    float D = 1.0f;
+    if(!S.isDelta()) {
+        D = clampedDot(S.W, N);
+    }
+    Lo += F * D / S.pdf * Li;
+
+    return Lo;
 }
 
 

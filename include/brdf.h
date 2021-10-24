@@ -7,8 +7,12 @@
 #include "rng.h"
 
 struct brdfSample {
+
+    bool isDelta() const { return delta; }
+
     Direction3 W;
     float pdf;
+    bool delta = false;
 };
 
 namespace brdf {
@@ -90,6 +94,24 @@ class PhongBRDF : public BRDF {
         }
 
         float a = 0.0f;
+};
+
+class MirrorBRDF : public BRDF {
+    public:
+        MirrorBRDF() {}
+        virtual ~MirrorBRDF() = default;
+        
+        virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) const override {
+            return 1.0f;
+        }
+
+        virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) override {
+            brdfSample S;
+            S.W = mirror(Wi, N);
+            S.pdf = 1.0f;
+            S.delta = true;
+            return S;
+        }
 };
 
 
