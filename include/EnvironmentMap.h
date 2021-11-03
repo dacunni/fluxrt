@@ -29,6 +29,8 @@ class EnvironmentMap
 
         virtual void saveDebugImages() {};
         virtual void saveDebugSampleImage() {};
+
+        static std::string lookupPath(const std::string & fileName);
 };
 
 
