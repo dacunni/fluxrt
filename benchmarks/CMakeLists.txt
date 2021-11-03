@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.6)
-
 PROJECT (fluxrt_benchmark)
 
 option(BUILD_BENCHMARKS "Build benchmarks" ON)
