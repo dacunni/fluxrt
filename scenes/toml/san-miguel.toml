@@ -18,7 +18,7 @@ pixelwidth = 400
 pixelheight = 400
 
 [[meshes]]
-file = "san-miguel/san-miguel.obj"
-#file = "san-miguel-2/san-miguel.obj"
+file = "casual-effects.com/san-miguel/san-miguel.obj"
+#file = "casual-effects.com/san-miguel-2/san-miguel.obj"
 scaletocube = 10.0
 

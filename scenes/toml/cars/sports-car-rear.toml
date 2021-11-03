@@ -14,13 +14,13 @@ pixelheight = 200
 #pixelheight = 300
 
 [envmap]
-#type = "gradient"
-#low = [ 0.0, 0.0, 0.0 ]
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
 #high = [ 0.8, 0.6, 0.6 ]
 #low = [ 0.0, 0.0, 0.0 ]
-#high = [ 1.0, 1.0, 1.0 ]
+high = [ 1.0, 1.0, 1.0 ]
 
-type = "cubemap"
+#type = "cubemap"
 
 #xneg = "HornstullsStrand2/negx.jpg"
 #xpos = "HornstullsStrand2/posx.jpg"
@@ -36,12 +36,12 @@ type = "cubemap"
 #zneg = "SaintPetersBasilica/negz.jpg"
 #zpos = "SaintPetersBasilica/posz.jpg"
 
-xneg = "ArstaBridge/negx.jpg"
-xpos = "ArstaBridge/posx.jpg"
-yneg = "ArstaBridge/negy.jpg"
-ypos = "ArstaBridge/posy.jpg"
-zneg = "ArstaBridge/negz.jpg"
-zpos = "ArstaBridge/posz.jpg"
+#xneg = "ArstaBridge/negx.jpg"
+#xpos = "ArstaBridge/posx.jpg"
+#yneg = "ArstaBridge/negy.jpg"
+#ypos = "ArstaBridge/posy.jpg"
+#zneg = "ArstaBridge/negz.jpg"
+#zpos = "ArstaBridge/posz.jpg"
 
 [[meshes]]
 file = "casual-effects.com/sportsCar/sportsCar.obj"

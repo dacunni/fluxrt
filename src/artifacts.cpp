@@ -15,7 +15,7 @@ Artifacts::Artifacts(int w, int h)
     isectTangent(w, h, 3),
     isectBitangent(w, h, 3),
     isectTexCoord(w, h, 3),
-    isectPos(w, h, 3),
+    //isectPos(w, h, 3),
     isectBasicLighting(w, h, 3),
     isectMatDiffuse(w, h, 3),
     isectMatSpecular(w, h, 3),
@@ -32,7 +32,7 @@ Artifacts::Artifacts(int w, int h)
     isectTangent.setAll(0.0f);
     isectBitangent.setAll(0.0f);
     isectTexCoord.setAll(0.0f);
-    isectPos.setAll(0.0f);
+    //isectPos.setAll(0.0f);
     isectBasicLighting.setAll(0.0f);
     isectMatDiffuse.setAll(0.0f);
     isectMatDiffuse.setAll(0.0f);
@@ -54,7 +54,7 @@ void Artifacts::writeAll()
     writePNG(isectTangent, prefix + "isect_tangent.png");
     writePNG(isectBitangent, prefix + "isect_bitangent.png");
     writePNG(isectTexCoord, prefix + "isect_texcoord.png");
-    writePNG(isectPos, prefix + "isect_position.png");
+    //writePNG(isectPos, prefix + "isect_position.png");
     if(doBasicLighting) {
         writePNG(applyStandardGamma(isectBasicLighting), prefix + "isect_basic_lighting.png");
     }

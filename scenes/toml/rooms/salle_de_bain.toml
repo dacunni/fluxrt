@@ -20,11 +20,11 @@ pixelheight = 1000
 file = "casual-effects.com/salle_de_bain/salle_de_bain.obj"
 
 [envmap]
-#type = "gradient"
-#low = [ 1.0, 1.0, 1.0 ]
-#high = [ 1.0, 1.0, 1.0 ]
+type = "gradient"
+low = [ 1.0, 1.0, 1.0 ]
+high = [ 1.0, 1.0, 1.0 ]
 
-type = "cubemap"
+#type = "cubemap"
 #xneg = "NissiBeach/negx.jpg"
 #xpos = "NissiBeach/posx.jpg"
 #yneg = "NissiBeach/negy.jpg"
@@ -32,13 +32,13 @@ type = "cubemap"
 #zneg = "NissiBeach/negz.jpg"
 #zpos = "NissiBeach/posz.jpg"
 
-xneg = "HornstullsStrand2/negx.jpg"
-xpos = "HornstullsStrand2/posx.jpg"
-yneg = "HornstullsStrand2/negy.jpg"
-ypos = "HornstullsStrand2/posy.jpg"
-zneg = "HornstullsStrand2/negz.jpg"
-zpos = "HornstullsStrand2/posz.jpg"
-scalefactor = 5.0
+#xneg = "HornstullsStrand2/negx.jpg"
+#xpos = "HornstullsStrand2/posx.jpg"
+#yneg = "HornstullsStrand2/negy.jpg"
+#ypos = "HornstullsStrand2/posy.jpg"
+#zneg = "HornstullsStrand2/negz.jpg"
+#zpos = "HornstullsStrand2/posz.jpg"
+#scalefactor = 5.0
 
 #[[pointlights]]
 #position = [ 0.0, 0.0, 0.0 ]

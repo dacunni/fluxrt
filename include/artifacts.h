@@ -65,7 +65,7 @@ class Artifacts
         {
             setHit(x, y, true);
             setDistance(x, y, minDistance, intersection.distance);
-            setPosition(x, y, intersection.position);
+            //setPosition(x, y, intersection.position);
             setNormal(x, y, intersection.normal);
             setTangent(x, y, intersection.tangent);
             setBitangent(x, y, intersection.bitangent);
@@ -79,7 +79,7 @@ class Artifacts
 
         inline void setHit(int x, int y, bool hit) { hitMask.set(x, y, 0, 1.0f); }
         inline void setDistance(int x, int y, float minDistance, float distance) { setDistColor(isectDist, x, y, minDistance, distance); }
-        inline void setPosition(int x, int y, const Position3 & position) { setPositionColor(isectPos, x, y, position); }
+        //inline void setPosition(int x, int y, const Position3 & position) { setPositionColor(isectPos, x, y, position); }
         inline void setNormal(int x, int y, const Direction3 & direction) { setDirectionColor(isectNormal, x, y, direction); }
         inline void setTangent(int x, int y, const Direction3 & direction) { setDirectionColor(isectTangent, x, y, direction); }
         inline void setBitangent(int x, int y, const Direction3 & direction) { setDirectionColor(isectBitangent, x, y, direction); }
@@ -225,7 +225,7 @@ class Artifacts
         Image<float> isectTangent;
         Image<float> isectBitangent;
         Image<float> isectTexCoord;
-        Image<float> isectPos;
+        //Image<float> isectPos;
         Image<float> isectBasicLighting;
         Image<float> isectMatDiffuse;
         Image<float> isectMatSpecular;
