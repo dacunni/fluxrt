@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.6)
-
 PROJECT (fluxrt_tests)
 
 SET(CMAKE_CXX_FLAGS "-std=c++14 -O2")

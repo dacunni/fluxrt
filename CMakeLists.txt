@@ -79,7 +79,9 @@ endif(BUILD_PYTHON_BINDINGS)
 
 add_subdirectory(app)
 
-add_subdirectory(benchmarks)
+if(BUILD_BENCHMARKS)
+	add_subdirectory(benchmarks)
+endif(BUILD_BENCHMARKS)
 
 enable_testing()
 add_subdirectory(unittests)

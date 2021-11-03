@@ -28,6 +28,8 @@ class EnvironmentMap
         virtual bool canImportanceSample() const { return false; }
 
         virtual void saveDebugImages() {};
+
+        static std::string lookupPath(const std::string & fileName);
 };
 
 

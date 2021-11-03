@@ -16,6 +16,7 @@
 #include "argparse.h"
 #include "Renderer.h"
 #include "Logger.h"
+#include "LatLonEnvironmentMap.h"
 
 std::atomic<bool> flushImmediate(false); // Flush the color output as soon as possible
 
@@ -63,6 +64,10 @@ int main(int argc, char ** argv)
             bool sampleCosineLobe = false;
             unsigned int numSamples = 10;
         } ambientOcclusion;
+        struct {
+            std::string latLonOverride;
+            float scaleFactor = 1.0f;
+        } envmap;
     } options;
 
     // General
@@ -86,6 +91,10 @@ int main(int argc, char ** argv)
     argParser.addFlag('a', "ao", options.ambientOcclusion.compute);
     argParser.addFlag('c', "aocosine", options.ambientOcclusion.sampleCosineLobe);
     argParser.addArgument('S', "aosamples", options.ambientOcclusion.numSamples);
+
+    // Environment Map
+    argParser.addArgument('E', "envmap", options.envmap.latLonOverride);
+    argParser.addArgument('F', "envmapscale", options.envmap.scaleFactor);
 
     argParser.parse(argc, argv);
 
@@ -132,6 +141,14 @@ int main(int argc, char ** argv)
         scene.sensor.pixelwidth *= options.sensorScaleFactor;
         scene.sensor.pixelheight *= options.sensorScaleFactor;
         printf("New sensor size %u x %u\n", scene.sensor.pixelwidth, scene.sensor.pixelheight);
+    }
+
+    if(!options.envmap.latLonOverride.empty()) {
+        std::string file = EnvironmentMap::lookupPath(options.envmap.latLonOverride);
+        auto envmap = std::make_unique<LatLonEnvironmentMap>();
+        envmap->loadFromFile(file);
+        envmap->setScaleFactor(options.envmap.scaleFactor);
+        scene.environmentMap = std::move(envmap);
     }
 
     printf("Building scene graph accelerators\n");
@@ -238,9 +255,6 @@ int main(int argc, char ** argv)
     printf("Scene traced in %s\n", hoursMinutesSeconds(traceTime).c_str());
 
     artifacts.writeAll();
-
-    // TEMP
-    //scene.environmentMap->saveDebugSampleImage();
 
     return EXIT_SUCCESS;
 }
