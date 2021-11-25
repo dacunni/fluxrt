@@ -289,11 +289,7 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
     }
 
     if(sampleEnvMap) {
-        RadianceRGB Lenv;
-        for(unsigned int envSample = 0; envSample < shadeDiffuseParams.numEnvMapSamples; ++envSample) {
-            Lenv += sampleEnvironmentMap(scene, rng, brdf, Wo, P, N, minDistance);
-        }
-        Lo += Lenv / float(shadeDiffuseParams.numEnvMapSamples);
+        Lo += sampleEnvironmentMap(scene, rng, brdf, Wo, P, N, minDistance, shadeDiffuseParams.numEnvMapSamples);
     }
 
     brdf.importanceSample = shadeDiffuseParams.sampleCosineLobe;
@@ -318,12 +314,21 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
     RadianceRGB Lo;
     brdf::PhongBRDF brdf(exponent);
 
+    // Note: We don't accumulate emission on the next hit if we sample
+    //       lighting directly, to avoid double counting direct illumination.
+
+    const bool sampleEnvMap = scene.environmentMap->canImportanceSample();
+
 #if 0
     if(shadeDiffuseParams.sampleLights) {
         Lo += sampleAllPointLights(scene, brdf, Wo, P, N, epsilon);
         Lo += sampleAllDiskLights(scene, rng, brdf, Wo, P, N, epsilon);
     }
 #endif
+
+    if(sampleEnvMap) {
+        Lo += sampleEnvironmentMap(scene, rng, brdf, Wo, P, N, minDistance, shadeSpecularParams.numEnvMapSamples);
+    }
 
     brdf.importanceSample = shadeSpecularParams.samplePhongLobe;
     brdfSample S = brdf.sample(rng.uniform2DRange01(), Wo, N);
@@ -332,10 +337,10 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
     if(dot(S.W, N) > 0.0f) {
         RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W),
 #if 1
-                                  epsilon, depth + 1, mediumStack, true, true);
+                                  epsilon, depth + 1, mediumStack, true, !sampleEnvMap);
 #else
                                   epsilon, depth + 1, mediumStack,
-                                  !shadeDiffuseParams.sampleLights, true);
+                                  !shadeDiffuseParams.sampleLights, !sampleEnvMap);
 #endif
         float F = brdf.eval(Wo, S.W, N);
         float D = clampedDot(S.W, N);
@@ -462,26 +467,28 @@ inline RadianceRGB Renderer::sampleAllDiskLights(const Scene & scene,
 inline RadianceRGB Renderer::sampleEnvironmentMap(
                 const Scene & scene, RNG & rng, const brdf::BRDF & brdf,
                 const Direction3 & Wo, const Position3 & P, const Direction3 & N,
-                float minDistance) const
+                float minDistance, unsigned int numSamples) const
 {
     RadianceRGB Lenv;
 
     // Importance sample environment map. Note, we do not draw another
     // sample if the sample is not visible, as doing so biases the estimate.
-    vec2 e = rng.uniform2DRange01();
-    RandomDirection dirSample = scene.environmentMap->importanceSampleDirection(e.x, e.y);
-    float DdotN = dot(dirSample.direction, N);
-    
-    if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
-        Ray r{ P + N * epsilon, dirSample.direction };
-        if(!intersectsWorldRay(r, scene, minDistance)) {
-            float F = brdf.eval(Wo, dirSample.direction, N);
-            RadianceRGB Li = scene.environmentMap->sampleRay(r); 
-            Lenv += F * DdotN * Li / dirSample.pdf;
+    for(unsigned int envSample = 0; envSample < numSamples; ++envSample) {
+        vec2 e = rng.uniform2DRange01();
+        RandomDirection dirSample = scene.environmentMap->importanceSampleDirection(e.x, e.y);
+        float DdotN = dot(dirSample.direction, N);
+        
+        if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
+            Ray r{ P + N * epsilon, dirSample.direction };
+            if(!intersectsWorldRay(r, scene, minDistance)) {
+                float F = brdf.eval(Wo, dirSample.direction, N);
+                RadianceRGB Li = scene.environmentMap->sampleRay(r); 
+                Lenv += F * DdotN * Li / dirSample.pdf;
+            }
         }
     }
 
-    return Lenv;
+    return Lenv / float(numSamples);
 }
 
 void Renderer::printConfiguration() const

@@ -119,7 +119,8 @@ class Renderer
                                                 const Direction3 & Wo,
                                                 const Position3 & P,
                                                 const Direction3 & N,
-                                                float minDistance) const;
+                                                float minDistance,
+                                                unsigned int numSamples) const;
 
     public:
 
@@ -148,6 +149,7 @@ class Renderer
 
         // Specular shading parameters
         struct SpecularShadingParameters {
+            unsigned int numEnvMapSamples = 10;
             bool samplePhongLobe = true;
         } shadeSpecularParams;
 };
