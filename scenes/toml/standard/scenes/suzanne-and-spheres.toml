@@ -14,7 +14,8 @@ pixelheight = 300
 
 [[meshes]]
 #file = "blender/monkey_simple_smooth.obj"
-file = "blender/monkey2.obj"
+#file = "blender/monkey2.obj"
+file = "blender/suzanne-smooth.obj"
     [meshes.material]
     include = "heromat"
     [[meshes.transform]]

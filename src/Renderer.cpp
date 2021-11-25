@@ -290,24 +290,9 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
 
     if(sampleEnvMap) {
         RadianceRGB Lenv;
-
         for(unsigned int envSample = 0; envSample < shadeDiffuseParams.numEnvMapSamples; ++envSample) {
-            // Importance sample environment map. Note, we do not draw another
-            // sample if the sample is not visible, as doing so biases the estimate.
-            vec2 e = rng.uniform2DRange01();
-            RandomDirection dirSample = scene.environmentMap->importanceSampleDirection(e.x, e.y);
-            float DdotN = dot(dirSample.direction, N);
-
-            if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
-                Ray r{ P + N * epsilon, dirSample.direction };
-                if(!intersectsWorldRay(r, scene, minDistance)) {
-                    float F = brdf.eval(Wo, dirSample.direction, N);
-                    RadianceRGB Li = scene.environmentMap->sampleRay(r); 
-                    Lenv += F * DdotN * Li / dirSample.pdf;
-                }
-            }
+            Lenv += sampleEnvironmentMap(scene, rng, brdf, Wo, P, N, minDistance);
         }
-
         Lo += Lenv / float(shadeDiffuseParams.numEnvMapSamples);
     }
 
@@ -472,6 +457,31 @@ inline RadianceRGB Renderer::sampleAllDiskLights(const Scene & scene,
     }
 
     return Lo;
+}
+
+inline RadianceRGB Renderer::sampleEnvironmentMap(
+                const Scene & scene, RNG & rng, const brdf::BRDF & brdf,
+                const Direction3 & Wo, const Position3 & P, const Direction3 & N,
+                float minDistance) const
+{
+    RadianceRGB Lenv;
+
+    // Importance sample environment map. Note, we do not draw another
+    // sample if the sample is not visible, as doing so biases the estimate.
+    vec2 e = rng.uniform2DRange01();
+    RandomDirection dirSample = scene.environmentMap->importanceSampleDirection(e.x, e.y);
+    float DdotN = dot(dirSample.direction, N);
+    
+    if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
+        Ray r{ P + N * epsilon, dirSample.direction };
+        if(!intersectsWorldRay(r, scene, minDistance)) {
+            float F = brdf.eval(Wo, dirSample.direction, N);
+            RadianceRGB Li = scene.environmentMap->sampleRay(r); 
+            Lenv += F * DdotN * Li / dirSample.pdf;
+        }
+    }
+
+    return Lenv;
 }
 
 void Renderer::printConfiguration() const

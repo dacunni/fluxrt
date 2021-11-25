@@ -113,6 +113,14 @@ class Renderer
                                                const Direction3 & N,
                                                float minDistance) const;
 
+        inline RadianceRGB sampleEnvironmentMap(const Scene & scene,
+                                                RNG & rng,
+                                                const brdf::BRDF & brdf,
+                                                const Direction3 & Wo,
+                                                const Position3 & P,
+                                                const Direction3 & N,
+                                                float minDistance) const;
+
     public:
 
         static constexpr float        DEFAULT_EPSILON   = 1.0e-4;

@@ -8,7 +8,7 @@ source = "standard/scenes/suzanne-and-spheres.toml"
 position = [ 3.0, 4.0, 3.0 ]
 direction = [ 1.0, 0.0, 0.0 ]
 radius = 1.1
-intensity = [ 0.3, 0.3, 0.3 ]
+intensity = [ 2.0, 2.0, 2.0 ]
 
 #[[disklights]]
 #position = [ -3.0, 4.0, 3.0 ]

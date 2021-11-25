@@ -39,4 +39,7 @@ file = "myminifactory.com/scantheworld/41-smk-mater-dolorosa-germain-pilon-louvr
 [[slabs]]
 min = [ -1000.0, -1000.0, -1000.0 ]
 max = [ 1000.0, -0.5, 1000.0 ]
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.5, 0.5, 0.5 ]
 

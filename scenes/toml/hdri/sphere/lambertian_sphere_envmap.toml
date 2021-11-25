@@ -9,7 +9,7 @@ up = [ 0.0, 1.0, 0.0 ]
 
 [envmap]
 type = "latlon"
-file = "hdrihaven/adams_place_bridge_1k.hdr"
+file = "polyhaven.com/adams_place_bridge_1k.hdr"
 
 [sensor]
 pixelwidth = 200
