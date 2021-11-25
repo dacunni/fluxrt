@@ -319,12 +319,10 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
 
     const bool sampleEnvMap = scene.environmentMap->canImportanceSample();
 
-#if 0
-    if(shadeDiffuseParams.sampleLights) {
+    if(shadeSpecularParams.sampleLights) {
         Lo += sampleAllPointLights(scene, brdf, Wo, P, N, epsilon);
         Lo += sampleAllDiskLights(scene, rng, brdf, Wo, P, N, epsilon);
     }
-#endif
 
     if(sampleEnvMap) {
         Lo += sampleEnvironmentMap(scene, rng, brdf, Wo, P, N, minDistance, shadeSpecularParams.numEnvMapSamples);
@@ -336,12 +334,8 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
     // Evaluate BRDF
     if(dot(S.W, N) > 0.0f) {
         RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W),
-#if 1
-                                  epsilon, depth + 1, mediumStack, true, !sampleEnvMap);
-#else
                                   epsilon, depth + 1, mediumStack,
-                                  !shadeDiffuseParams.sampleLights, !sampleEnvMap);
-#endif
+                                  !shadeSpecularParams.sampleLights, !sampleEnvMap);
         float F = brdf.eval(Wo, S.W, N);
         float D = clampedDot(S.W, N);
         Lo += F * D / S.pdf * Li;

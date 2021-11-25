@@ -151,6 +151,7 @@ class Renderer
         struct SpecularShadingParameters {
             unsigned int numEnvMapSamples = 10;
             bool samplePhongLobe = true;
+            bool sampleLights = true;
         } shadeSpecularParams;
 };
 
