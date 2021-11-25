@@ -275,33 +275,12 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
                                           const Direction3 & Wo,
                                           const Position3 & P, const Direction3 & N) const
 {
-    RadianceRGB Lo;
     brdf::LambertianBRDF brdf;
-
-    // Note: We don't accumulate emission on the next hit if we sample
-    //       lighting directly, to avoid double counting direct illumination.
-
-    const bool sampleEnvMap = scene.environmentMap->canImportanceSample();
-
-    if(shadeDiffuseParams.sampleLights) {
-        Lo += sampleAllPointLights(scene, brdf, Wo, P, N, epsilon);
-        Lo += sampleAllDiskLights(scene, rng, brdf, Wo, P, N, epsilon);
-    }
-
-    if(sampleEnvMap) {
-        Lo += sampleEnvironmentMap(scene, rng, brdf, Wo, P, N, minDistance, shadeDiffuseParams.numEnvMapSamples);
-    }
-
     brdf.importanceSample = shadeDiffuseParams.sampleCosineLobe;
-    brdfSample S = brdf.sample(rng.uniform2DRange01(), Wo, N);
 
-    RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W), epsilon, depth + 1, mediumStack,
-                              !shadeDiffuseParams.sampleLights, !sampleEnvMap);
-    float F = brdf.eval(Wo, S.W, N);
-    float D = clampedDot(S.W, N);
-    Lo += F * D / S.pdf * Li;
-
-    return Lo;
+    return shadeBRDF(scene, rng, minDistance, depth, mediumStack, Wo, P, N, brdf,
+                     shadeDiffuseParams.sampleLights,
+                     shadeDiffuseParams.numEnvMapSamples);
 }
 
 inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
@@ -311,37 +290,49 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
                                                  const Position3 & P, const Direction3 & N,
                                                  float exponent) const
 {
-    RadianceRGB Lo;
     brdf::PhongBRDF brdf(exponent);
+    brdf.importanceSample = shadeSpecularParams.samplePhongLobe;
+
+    return shadeBRDF(scene, rng, minDistance, depth, mediumStack, Wo, P, N, brdf,
+                     shadeSpecularParams.sampleLights,
+                     shadeSpecularParams.numEnvMapSamples);
+}
+
+inline RadianceRGB Renderer::shadeBRDF(const Scene & scene, RNG & rng,
+                                       const float minDistance, const unsigned int depth,
+                                       const MediumStack & mediumStack,
+                                       const Direction3 & Wo,
+                                       const Position3 & P, const Direction3 & N,
+                                       brdf::BRDF & brdf,
+                                       bool sampleLights,
+                                       unsigned int numEnvMapSamples) const
+{
+    RadianceRGB Lo;
 
     // Note: We don't accumulate emission on the next hit if we sample
     //       lighting directly, to avoid double counting direct illumination.
 
     const bool sampleEnvMap = scene.environmentMap->canImportanceSample();
 
-    if(shadeSpecularParams.sampleLights) {
+    if(sampleLights) {
         Lo += sampleAllPointLights(scene, brdf, Wo, P, N, epsilon);
         Lo += sampleAllDiskLights(scene, rng, brdf, Wo, P, N, epsilon);
     }
 
     if(sampleEnvMap) {
-        Lo += sampleEnvironmentMap(scene, rng, brdf, Wo, P, N, minDistance, shadeSpecularParams.numEnvMapSamples);
+        Lo += sampleEnvironmentMap(scene, rng, brdf, Wo, P, N, minDistance, numEnvMapSamples);
     }
 
-    brdf.importanceSample = shadeSpecularParams.samplePhongLobe;
     brdfSample S = brdf.sample(rng.uniform2DRange01(), Wo, N);
 
-    // Evaluate BRDF
-    if(dot(S.W, N) > 0.0f) {
-        RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W),
-                                  epsilon, depth + 1, mediumStack,
-                                  !shadeSpecularParams.sampleLights, !sampleEnvMap);
-        float F = brdf.eval(Wo, S.W, N);
-        float D = clampedDot(S.W, N);
-        Lo += F * D / S.pdf * Li;
-    }
+    RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W), epsilon, depth + 1, mediumStack,
+                              !sampleLights, !sampleEnvMap);
+    float F = brdf.eval(Wo, S.W, N);
+    float D = clampedDot(S.W, N);
+    Lo += F * D / S.pdf * Li;
 
     return Lo;
+
 }
 
 inline LightSample Renderer::samplePointLight(const Scene & scene,

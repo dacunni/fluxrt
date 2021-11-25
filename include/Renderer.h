@@ -85,6 +85,15 @@ class Renderer
                                                const Position3 & P, const Direction3 & N,
                                                float exponent) const;
 
+        inline RadianceRGB shadeBRDF(const Scene & scene, RNG & rng,
+                                     const float minDistance, const unsigned int depth,
+                                     const MediumStack & mediumStack,
+                                     const Direction3 & Wo,
+                                     const Position3 & P, const Direction3 & N,
+                                     brdf::BRDF & brdf,
+                                     bool sampleLights,
+                                     unsigned int numEnvMapSamples) const;
+
         inline LightSample samplePointLight(const Scene & scene,
                                             const PointLight & light,
                                             const Position3 & P,
