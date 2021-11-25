@@ -181,22 +181,11 @@ inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
                                           const Direction3 & Wo,
                                           const Position3 & P, const Direction3 & N) const
 {
-    RadianceRGB Lo;
     brdf::MirrorBRDF brdf;
 
-    brdfSample S = brdf.sample(rng.uniform2DRange01(), Wo, N);
-    const Ray ray(P + N * epsilon, S.W);
-    RadianceRGB Li = traceRay(scene, rng, ray, epsilon, depth + 1, mediumStack,
-                              true, true);
-
-    float F = brdf.eval(Wo, S.W, N);
-    float D = 1.0f;
-    if(!S.isDelta()) {
-        D = clampedDot(S.W, N);
-    }
-    Lo += F * D / S.pdf * Li;
-
-    return Lo;
+    return shadeBRDF(scene, rng, minDistance, depth, mediumStack, Wo, P, N, brdf,
+                     false,
+                     0);
 }
 
 
@@ -312,7 +301,9 @@ inline RadianceRGB Renderer::shadeBRDF(const Scene & scene, RNG & rng,
     // Note: We don't accumulate emission on the next hit if we sample
     //       lighting directly, to avoid double counting direct illumination.
 
-    const bool sampleEnvMap = scene.environmentMap->canImportanceSample();
+    const bool sampleEnvMap =
+        numEnvMapSamples > 0
+        && scene.environmentMap->canImportanceSample();
 
     if(sampleLights) {
         Lo += sampleAllPointLights(scene, brdf, Wo, P, N, epsilon);
@@ -328,7 +319,10 @@ inline RadianceRGB Renderer::shadeBRDF(const Scene & scene, RNG & rng,
     RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W), epsilon, depth + 1, mediumStack,
                               !sampleLights, !sampleEnvMap);
     float F = brdf.eval(Wo, S.W, N);
-    float D = clampedDot(S.W, N);
+    float D = 1.0f;
+    if(!S.isDelta()) {
+        D = clampedDot(S.W, N);
+    }
     Lo += F * D / S.pdf * Li;
 
     return Lo;
