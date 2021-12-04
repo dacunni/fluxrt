@@ -31,12 +31,16 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
         return false;
     }
 
+    // Russian roulette factor applied if we didn't terminate early
+    float RR = (depth >= russianRouletteMinDepth) ?  1.0f - russianRouletteChance : 1.0f;
+
     bool hit = findIntersectionWorldRay(ray, scene, minDistance, intersection);
 
     if(!hit) {
         if(accumEnvMap) {
             Lo = scene.environmentMap->sampleRay(ray);
         }
+        Lo /= RR;
         return false;
     }
 
@@ -52,7 +56,9 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
     if(A < 1.0f && rng.uniform01() > A) {
         // Trace a new ray just past the intersection
         float newMinDistance = intersection.distance + epsilon;
-        return traceRay(scene, rng, ray, newMinDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, Lo);
+        bool hit = traceRay(scene, rng, ray, newMinDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, Lo);
+        Lo /= RR;
+        return hit;
     }
 
     Lo = shade(scene, rng, minDistance, depth, mediumStack, Wo, intersection, material);
@@ -69,9 +75,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
     }
 
     // Account for RR loss
-    if(depth >= russianRouletteMinDepth) {
-        Lo /= (1.0f - russianRouletteChance);
-    }
+    Lo /= RR;
 
     return true;
 }
