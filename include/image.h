@@ -31,6 +31,8 @@ struct Image
     inline void set3(size_t x, size_t y, const ColorRGB & c);
     inline void setAll(T value);
 
+    T maxValueAllChannels() const;
+
     inline size_t index(size_t x, size_t y, int channel) const;
 
     using PixelFunction = std::function<void(Image<T> &,

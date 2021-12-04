@@ -148,3 +148,11 @@ Image<uint8_t> applyGamma(const Image<uint8_t> & image, float gamma)
     return newImage;
 }
 
+template<typename T>
+T Image<T>::maxValueAllChannels() const
+{
+    return *std::max_element(data.begin(), data.end());
+}
+
+template float Image<float>::maxValueAllChannels() const;
+

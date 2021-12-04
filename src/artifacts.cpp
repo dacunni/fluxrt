@@ -94,16 +94,17 @@ void Artifacts::writePixelColor()
     auto divideByNumSamples = [&](Image<float> & image, size_t x, size_t y, int c) {
         auto numSamples = samplesPerPixel.get(x, y, 0);
         float value = image.get(x, y, c) / float(numSamples);
-        //value = tonemapping::reinhard(value);
         image.set(x, y, c, value);
     };
     finalPixelColor.forEachPixelChannel(divideByNumSamples);
     writePNG(applyStandardGamma(finalPixelColor), prefix + "color.png");
     writeHDR(finalPixelColor, prefix + "color.hdr");
 
+    //float maxValue = finalPixelColor.maxValueAllChannels();
     auto applyToneMap = [&](Image<float> & image, size_t x, size_t y, int c) {
         float value = image.get(x, y, c);
         value = tonemapping::reinhard(value);
+        //value = tonemapping::reinhardExtended(value, maxValue);
         image.set(x, y, c, value);
     };
     finalPixelColor.forEachPixelChannel(applyToneMap);
