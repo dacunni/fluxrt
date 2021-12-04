@@ -172,6 +172,11 @@ bool Renderer::traceCameraRay(const Scene & scene, RNG & rng, const Ray & ray,
 {
     bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, true, true, intersection, Lo);
 
+    if(verbose.radiance && hit) {
+        printf("traceCameraRay: hit %s, Lo (%.1f, %.1f, %.1f)\n",
+               hit ? "YES" : "NO", Lo.r, Lo.g, Lo.b);
+    }
+
     return hit;
 }
 
@@ -319,11 +324,14 @@ inline RadianceRGB Renderer::shadeBRDF(const Scene & scene, RNG & rng,
     RadianceRGB Li = traceRay(scene, rng, Ray(P + N * epsilon, S.W), epsilon, depth + 1, mediumStack,
                               !sampleLights, !sampleEnvMap);
     float F = brdf.eval(Wo, S.W, N);
-    float D = 1.0f;
-    if(!S.isDelta()) {
-        D = clampedDot(S.W, N);
+    float D = S.isDelta() ? 1.0f : clampedDot(S.W, N);
+
+    Lo += Li * F * D / S.pdf;
+
+    if(verbose.radiance) {
+        printf("shadeBRDF: Lo (%.1f, %.1f, %.1f) = Li (%.1f, %.1f, %.1f) * F (%.1f) * D (%.1f) / pdf (%.1f)\n",
+               Lo.r, Lo.g, Lo.b, Li.r, Li.g, Li.b, F, D, S.pdf);
     }
-    Lo += F * D / S.pdf * Li;
 
     return Lo;
 

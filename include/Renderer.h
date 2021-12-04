@@ -147,7 +147,7 @@ class Renderer
         // Russian roulette chance [0, 1]. 0 = no RR termination
         float russianRouletteChance = 0.1f;
         // Only apply RR if at or beyond this depth
-        unsigned int russianRouletteMinDepth = 2;
+        unsigned int russianRouletteMinDepth = 3;
 
         // Diffuse shading parameters
         struct DiffuseShadingParameters {
@@ -162,6 +162,11 @@ class Renderer
             bool samplePhongLobe = true;
             bool sampleLights = true;
         } shadeSpecularParams;
+
+        // Verbosity
+        struct VerbosityParameters {
+            bool radiance = false;
+        } verbose;
 };
 
 #endif
