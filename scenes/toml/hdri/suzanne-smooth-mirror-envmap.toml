@@ -20,7 +20,7 @@ file = "hdrihaven/adams_place_bridge_1k.hdr"
 #file = "hdrihaven/spruit_sunrise_1k.hdr"
 
 [[meshes]]
-file = "blender/monkey_simple_smooth.obj"
+file = "blender/suzanne-smooth.obj"
     [meshes.material]
     type = "mirror"
     [[meshes.transform]]

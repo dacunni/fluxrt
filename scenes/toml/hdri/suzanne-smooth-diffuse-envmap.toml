@@ -22,8 +22,7 @@ file = "polyhaven.com/adams_place_bridge_1k.hdr"
 #file = "polyhaven.com/leadenhall_market_1k.hdr"
 
 [[meshes]]
-#file = "blender/monkey_simple_smooth.obj"
-file = "blender/monkey2.obj"
+file = "blender/suzanne-smooth.obj"
     [meshes.material]
     type = "diffuse"
     diffuse = [ 0.8, 0.8, 0.8 ]
