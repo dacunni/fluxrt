@@ -8,6 +8,10 @@
 //
 // Wavefront OBJ format
 //
+// References:
+//   http://paulbourke.net/dataformats/obj/
+//   http://paulbourke.net/dataformats/mtl/
+// 
 static void loadMaterialsFromOBJ(MaterialArray & materials,
                                  std::vector<MaterialID> & objMatToMatArrIndex,
                                  TextureCache & textureCache,
@@ -35,6 +39,9 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
        
         // Note: We ignore the ambient term, as it is non-physical
         switch(objmaterial.illum) {
+            case 0: // Constant color - interpret as Lambertian diffuse
+                material = Material::makeDiffuse(D);
+                break;
             case 1: // Lambertian diffuse
                 material = Material::makeDiffuse(D);
                 break;
