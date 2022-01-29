@@ -47,12 +47,9 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                 break;
             case 2: // diffuse + specular (Blinn-Phong)
             case 3: // diffuse + specular (Blinn-Phong) + Whitted
+            case 4: // glassy
                 material = Material::makeDiffuseSpecular(D, S);
                 break;
-            //case 4: // glassy ???
-                //material = Material::makeDiffuseSpecular(D, S);
-                // TODO
-                //break;
             //case 5: // diffuse + specular (Blinn-Phong) + Fresnel
                 // TODO
                 //break;
@@ -69,10 +66,10 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                 }
                 material = Material::makeRefractive(objmaterial.ior);
                 break;
-            //case 8: // TODO
-            //    break;
-            //case 9: // TODO
-            //    break;
+            case 8:
+            case 9:
+                material = Material::makeDiffuseSpecular(D, S);
+                break;
             //case 10: // TODO
             //    break;
             default:
