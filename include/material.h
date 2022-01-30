@@ -80,7 +80,7 @@ static const Material DefaultMaterial = Material();
 
 using MaterialArray = std::vector<Material>;
 
-inline const Material & materialFromID(MaterialID id, MaterialArray & materials);
+inline const Material & materialFromID(MaterialID id, const MaterialArray & materials);
 
 // Inline implementations
 
