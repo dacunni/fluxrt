@@ -36,6 +36,20 @@ static ParameterRGB vectorToParameterRGB(const std::vector<double> & v)
     return ParameterRGB(v[0], v[1], v[2]);
 }
 
+void loadMaterialAlphaComponent(const std::shared_ptr<cpptoml::table> & table, Scene & scene, Material & material)
+{
+    // Try to load as either a single color or a texture
+    auto alpha = table->get_as<double>("alpha").value_or(-1.0);
+    auto tex = table->get_as<std::string>("alpha");
+
+    if(alpha != -1.0) {
+        material.opacity = (float) alpha;
+    }
+    else if(tex) {
+        material.alphaTexture = scene.textureCache.loadTextureFromFile("", *tex);
+    }
+}
+
 void loadMaterialDiffuseComponent(const std::shared_ptr<cpptoml::table> & table, Scene & scene, Material & material)
 {
     // Try to load as either a single color or a texture
@@ -89,6 +103,8 @@ MaterialID loadMaterial(const std::shared_ptr<cpptoml::table> & materialTable, S
     if(!type) { throw std::runtime_error("Material must supply a type"); }
 
     Material material;
+
+    loadMaterialAlphaComponent(materialTable, scene, material);
 
     if(*type == "diffuse") {
         loadMaterialDiffuseComponent(materialTable, scene, material);
@@ -374,6 +390,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                     loadTransformsForObject(meshTable, *meshOctree, scene);
                 }
                 else {
+                    std::cout << "No accelerator" << std::endl;
                     scene.objects.push_back(mesh);
                     loadTransformsForObject(meshTable, *mesh, scene);
                 }

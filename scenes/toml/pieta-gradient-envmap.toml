@@ -32,6 +32,11 @@ direction = [ 1, 0, 0 ]
 
 [[meshes]]
 file = "myminifactory.com/scantheworld/smk16-kas115-pieta-michelangelo.stl"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 0.8, 0.8, 0.8 ]
+    #type = "refractive"
+    #ior = 2.42
 
     [[meshes.transform]]
     rotate_axis = [ 1.0, 0.0, 0.0 ]
@@ -41,4 +46,8 @@ file = "myminifactory.com/scantheworld/smk16-kas115-pieta-michelangelo.stl"
 [[slabs]]
 min = [ -1000.0, -1000.0, -1000.0 ]
 max = [ 1000.0, -0.5, 1000.0 ]
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.7, 0.7, 0.7 ]
+
 

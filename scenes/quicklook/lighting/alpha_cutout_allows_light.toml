@@ -1,0 +1,44 @@
+[camera]
+type = "pinhole"
+hfov = 60
+
+position = [ 0.0, 2.0, 3.0 ]
+lookat = [ 0.0, 1.0, 0.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 400
+
+#[envmap]
+#type = "gradient"
+#low = [ 1.0, 1.0, 1.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
+#direction = [ -1.0, 0.0, -1.0 ]
+
+[[disklights]]
+position = [ 0.0, 3.0, 0.0 ]
+direction = [ 0.0, 1.0, 0.0 ]
+radius = 0.5
+intensity = [ 10.0, 10.0, 10.0 ]
+
+[[meshes]]
+file = "blender/suzanne-smooth.obj"
+#accelerator = "none"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 1.0, 0.5, 0.5 ]
+    #diffuse = "/Users/dave/Projects/data/textures/alpha_cutout_stars.png"
+    #alpha = 0.5
+    alpha = "/Users/dave/Projects/data/textures/alpha_cutout_stars.png"
+    [[meshes.transform]]
+    translate = [ 0.0, 1.2, 0.0 ]
+
+# Floor
+[[slabs]]
+min = [ -1000.0, -1000.0, -1000.0 ]
+max = [ 1000.0, 0.0, 1000.0 ]
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.5, 0.5, 0.5 ]
+
