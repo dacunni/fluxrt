@@ -95,12 +95,14 @@ class Renderer
                                      unsigned int numEnvMapSamples) const;
 
         inline LightSample samplePointLight(const Scene & scene,
+                                            RNG & rng,
                                             const PointLight & light,
                                             const Position3 & P,
                                             const Direction3 & N,
                                             float minDistance) const;
 
         inline RadianceRGB sampleAllPointLights(const Scene & scene,
+                                                RNG & rng,
                                                 const brdf::BRDF & brdf,
                                                 const Direction3 & Wo,
                                                 const Position3 & P,
@@ -130,6 +132,12 @@ class Renderer
                                                 const Direction3 & N,
                                                 float minDistance,
                                                 unsigned int numSamples) const;
+
+        inline bool intersectsScene(const Scene & scene,
+                                    RNG & rng,
+                                    const Ray & ray,
+                                    float minDistance,
+                                    float maxDistance = std::numeric_limits<float>::max()) const;
 
     public:
 

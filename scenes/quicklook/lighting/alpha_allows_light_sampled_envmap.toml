@@ -1,0 +1,38 @@
+[camera]
+type = "pinhole"
+hfov = 60
+
+position = [ 0.0, 2.0, 3.0 ]
+lookat = [ 0.0, 1.0, 0.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 400
+pixelheight = 400
+
+[envmap]
+type = "latlon"
+file = "polyhaven.com/street_lamp_1k.hdr"
+#file = "polyhaven.com/adams_place_bridge_1k.hdr"
+#file = "polyhaven.com/kloppenheim_02_1k.hdr"
+#file = "polyhaven.com/spruit_sunrise_1k.hdr"
+#file = "polyhaven.com/leadenhall_market_1k.hdr"
+
+[[meshes]]
+file = "blender/suzanne-smooth.obj"
+#accelerator = "none"
+    [meshes.material]
+    type = "diffuse"
+    diffuse = [ 1.0, 0.5, 0.5 ]
+    alpha = 0.5
+    [[meshes.transform]]
+    translate = [ 0.0, 1.2, 0.0 ]
+
+# Floor
+[[slabs]]
+min = [ -1000.0, -1000.0, -1000.0 ]
+max = [ 1000.0, 0.0, 1000.0 ]
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.5, 0.5, 0.5 ]
+

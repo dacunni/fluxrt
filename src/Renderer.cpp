@@ -315,7 +315,7 @@ inline RadianceRGB Renderer::shadeBRDF(const Scene & scene, RNG & rng,
         && scene.environmentMap->canImportanceSample();
 
     if(sampleLights) {
-        Lo += sampleAllPointLights(scene, brdf, Wo, P, N, epsilon);
+        Lo += sampleAllPointLights(scene, rng, brdf, Wo, P, N, epsilon);
         Lo += sampleAllDiskLights(scene, rng, brdf, Wo, P, N, epsilon);
     }
 
@@ -342,6 +342,7 @@ inline RadianceRGB Renderer::shadeBRDF(const Scene & scene, RNG & rng,
 }
 
 inline LightSample Renderer::samplePointLight(const Scene & scene,
+                                              RNG & rng,
                                               const PointLight & light,
                                               const Position3 & P,
                                               const Direction3 & N,
@@ -361,7 +362,7 @@ inline LightSample Renderer::samplePointLight(const Scene & scene,
     }
 
     // If we hit something, we can't see the light
-    if(intersectsWorldRay(Ray{P, S.direction}, scene, minDistance, lightDist)) {
+    if(intersectsScene(scene, rng, Ray{P, S.direction}, epsilon, lightDist - epsilon)) {
         return S;
     }
 
@@ -372,6 +373,7 @@ inline LightSample Renderer::samplePointLight(const Scene & scene,
 
 
 inline RadianceRGB Renderer::sampleAllPointLights(const Scene & scene,
+                                                  RNG & rng,
                                                   const brdf::BRDF & brdf,
                                                   const Direction3 & Wo,
                                                   const Position3 & P,
@@ -382,7 +384,7 @@ inline RadianceRGB Renderer::sampleAllPointLights(const Scene & scene,
 
     // Sample point lights
     for(const auto & light: scene.pointLights) {
-        LightSample S = samplePointLight(scene, light, P, N, epsilon);
+        LightSample S = samplePointLight(scene, rng, light, P, N, epsilon);
         float F = brdf.eval(Wo, S.direction, N);
         Lo += F * S.L * clampedDot(S.direction, N);
     }
@@ -418,7 +420,7 @@ inline LightSample Renderer::sampleDiskLight(const Scene & scene,
     const float lightDist = std::sqrt(lightDistSq);
 
     // If we hit something, we can't see the light
-    if(intersectsWorldRay(Ray{P, S.direction}, scene, epsilon, lightDist - epsilon)) {
+    if(intersectsScene(scene, rng, Ray{P, S.direction}, epsilon, lightDist - epsilon)) {
         return S;
     }
 
@@ -455,6 +457,35 @@ inline RadianceRGB Renderer::sampleAllDiskLights(const Scene & scene,
     return Lo;
 }
 
+inline bool Renderer::intersectsScene(const Scene & scene,
+                                      RNG & rng,
+                                      const Ray & ray,
+                                      float minDistance,
+                                      float maxDistance) const
+{
+    RayIntersection intersection;
+    float A = 1.0f;
+    bool hit = false;
+
+    // Check for intersection with the scene. If we hit a transparent material, keep trying.
+    do {
+        hit = findIntersectionWorldRay(ray, scene, minDistance, intersection);
+
+        if(hit && intersection.distance > maxDistance) {
+            return false;
+        }
+
+        // Transparency
+        if(hit) {
+            const Material & material = materialFromID(intersection.material, scene.materials);
+            A = material.alpha(scene.textureCache.textures, intersection.texcoord);
+            minDistance = intersection.distance + epsilon;
+        }
+    } while(hit && A < 1.0f && rng.uniform01() > A);
+
+    return hit;
+}
+
 inline RadianceRGB Renderer::sampleEnvironmentMap(
                 const Scene & scene, RNG & rng, const brdf::BRDF & brdf,
                 const Direction3 & Wo, const Position3 & P, const Direction3 & N,
@@ -470,10 +501,13 @@ inline RadianceRGB Renderer::sampleEnvironmentMap(
         float DdotN = dot(dirSample.direction, N);
         
         if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
-            Ray r{ P + N * epsilon, dirSample.direction };
-            if(!intersectsWorldRay(r, scene, minDistance)) {
+            Ray ray{ P + N * epsilon, dirSample.direction };
+
+            bool hit = intersectsScene(scene, rng, ray, minDistance);
+
+            if(!hit) {
                 float F = brdf.eval(Wo, dirSample.direction, N);
-                RadianceRGB Li = scene.environmentMap->sampleRay(r); 
+                RadianceRGB Li = scene.environmentMap->sampleRay(ray); 
                 Lenv += F * DdotN * Li / dirSample.pdf;
             }
         }
