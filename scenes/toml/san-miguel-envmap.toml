@@ -1,7 +1,8 @@
 [camera]
 type = "pinhole"
+hfov = 30
 #hfov = 45
-hfov = 60
+#hfov = 60
 #type = "ortho"
 #hsize = 8
 
@@ -24,8 +25,13 @@ hfov = 60
 #position = [ -3.0, -4.0, 0.0 ]
 #lookat = [ 5.0, -5.0, 0.0 ]
 
+# table with fountain in background
 position = [ -3.0, -4.0, 0.0 ]
 lookat = [ 0.0, -5.0, 5.0 ]
+
+# Leaves under table (good shadow ray alpha test)
+#position = [ -3.0, -4.0, 0.0 ]
+#lookat = [ 0.0, -7.0, 5.0 ]
 
 up = [ 0.0, 1.0, 0.0 ]
 
