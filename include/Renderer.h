@@ -14,6 +14,7 @@ struct RNG;
 struct Scene;
 struct PointLight;
 struct DiskLight;
+class Logger;
 
 // TODO: Put this somewhere sensible
 struct LightSample
@@ -46,6 +47,7 @@ class Renderer
                             RayIntersection & intersection, RadianceRGB & Lo) const;
 
         void printConfiguration() const;
+        void logConfiguration(Logger & logger) const;
 
     protected:
 

@@ -145,6 +145,8 @@ int main(int argc, char ** argv)
 
     if(!options.envmap.latLonOverride.empty()) {
         std::string file = EnvironmentMap::lookupPath(options.envmap.latLonOverride);
+        logger->normal() << "Environment map override: " << file;
+        logger->normal() << "Environment map scale factor " << options.envmap.scaleFactor;
         auto envmap = std::make_unique<LatLonEnvironmentMap>();
         envmap->loadFromFile(file);
         envmap->setScaleFactor(options.envmap.scaleFactor);
@@ -209,6 +211,7 @@ int main(int argc, char ** argv)
         }
     };
 
+    renderer.logConfiguration(*logger);
     renderer.printConfiguration();
     printf("====[ Tracing Scene ]====\n");
 

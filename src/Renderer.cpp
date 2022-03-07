@@ -1,5 +1,6 @@
 #include "material.h"
 #include "Renderer.h"
+#include "Logger.h"
 #include "Ray.h"
 #include "rng.h"
 #include "scene.h"
@@ -542,3 +543,25 @@ void Renderer::printConfiguration() const
            onoff(sp.samplePhongLobe));
 }
 
+void Renderer::logConfiguration(Logger & logger) const
+{
+    auto onoff = [](bool v) { return v ? "ON" : "OFF"; };
+
+    logger.normalf("Renderer Configuration:");
+    logger.normalf("  Epsilon = %.8f", epsilon);
+    logger.normalf("  Max depth = %u", maxDepth);
+    logger.normalf("  Monte Carlo refraction = %s", onoff(monteCarloRefraction));
+    logger.normalf("  Russian Roulette:");
+    logger.normalf("    Chance = %.2f", russianRouletteChance);
+    logger.normalf("    Minimum depth = %u", russianRouletteMinDepth);
+
+    auto & dp = shadeDiffuseParams;
+    logger.normalf("  Diffuse shading:");
+    logger.normalf("    Environment map samples = %u", dp.numEnvMapSamples);
+    logger.normalf("    Sample cosine lobe = %s", onoff(dp.sampleCosineLobe));
+    logger.normalf("    Sample point lights = %s", onoff(dp.sampleLights));
+
+    auto & sp = shadeSpecularParams;
+    logger.normalf("  Specular shading:");
+    logger.normalf("    Sample Phong lobe = %s", onoff(sp.samplePhongLobe));
+}
