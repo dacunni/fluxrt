@@ -15,8 +15,6 @@ struct brdfSample {
     bool delta = false;
 };
 
-namespace brdf {
-
 InverseSteradians lambertian(const Direction3 & Wi,
                              const Direction3 & Wo,
                              const Direction3 & N);
@@ -113,8 +111,5 @@ class MirrorBRDF : public BRDF {
             return S;
         }
 };
-
-
-}; // brdf
 
 #endif

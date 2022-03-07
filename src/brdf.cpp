@@ -5,8 +5,6 @@
 
 using namespace constants;
 
-namespace brdf {
-
 InverseSteradians lambertian(const Direction3 & Wi,
                              const Direction3 & Wo,
                              const Direction3 & N)
@@ -17,7 +15,7 @@ InverseSteradians lambertian(const Direction3 & Wi,
 InverseSteradians phong(const Direction3 & Wi,
                         const Direction3 & Wo,
                         const Direction3 & N,
-                        float a)
+                        const float a)
 {
     // TODO[DAC]: References show both of these as possible normalizing factors.
     //            Both seem to conserve energy. Not sure which is best.
@@ -51,6 +49,4 @@ brdfSample samplePhong(const vec2 & e,
 
     return S;
 }
-
-}; // brdf
 

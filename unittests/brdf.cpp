@@ -39,7 +39,7 @@ TEST(BrdfTest, Integrate_LambertianBrdfTimesProjSolidAngle_OverHemisphere_IsOne)
         return integrate::timesProjectedSolidAngleOverUnitHemisphere(
             [N, wo](float theta, float phi) {
                 Direction3 wi = Direction3(coordinate::polarToEuclidean(theta, phi, 1.0f));
-                return brdf::lambertian(wi, wo, N);
+                return lambertian(wi, wo, N);
             }, thetaSteps, phiSteps);
     };
 
@@ -64,7 +64,7 @@ TEST(BrdfTest, Integrate_PhongBrdfTimesProjSolidAngle_OverHemisphere_IsOne) {
         return integrate::timesProjectedSolidAngleOverUnitHemisphere(
             [N, wo, &a](float theta, float phi) {
                 Direction3 wi = Direction3(coordinate::polarToEuclidean(theta, phi, 1.0f));
-                return brdf::phong(wi, wo, N, a);
+                return phong(wi, wo, N, a);
             }, thetaSteps, phiSteps);
     };
 
@@ -104,7 +104,7 @@ TEST(BrdfTest, Positivity_LambertianBrdf) {
     const float closeness = 0.01;
 
     forEachWiWoPairHemisphere([&](const Direction3 & wi, const Direction3 & wo) {
-        EXPECT_TRUE(brdf::lambertian(wi, wo, N) >= 0.0f);
+        EXPECT_TRUE(lambertian(wi, wo, N) >= 0.0f);
     }, thetaSteps, phiSteps);
 }
 
@@ -114,13 +114,13 @@ TEST(BrdfTest, Positivity_PhongBrdf) {
     const float closeness = 0.01;
 
     forEachWiWoPairHemisphere([&](const Direction3 & wi, const Direction3 & wo) {
-        EXPECT_TRUE(brdf::phong(wi, wo, N, 1.0f) >= 0.0f);
+        EXPECT_TRUE(phong(wi, wo, N, 1.0f) >= 0.0f);
     }, thetaSteps, phiSteps);
     forEachWiWoPairHemisphere([&](const Direction3 & wi, const Direction3 & wo) {
-        EXPECT_TRUE(brdf::phong(wi, wo, N, 10.0f) >= 0.0f);
+        EXPECT_TRUE(phong(wi, wo, N, 10.0f) >= 0.0f);
     }, thetaSteps, phiSteps);
     forEachWiWoPairHemisphere([&](const Direction3 & wi, const Direction3 & wo) {
-        EXPECT_TRUE(brdf::phong(wi, wo, N, 100.0f) >= 0.0f);
+        EXPECT_TRUE(phong(wi, wo, N, 100.0f) >= 0.0f);
     }, thetaSteps, phiSteps);
 }
 
@@ -134,13 +134,13 @@ TEST(BrdfTest, HelmholtzReciprocity_LambertianBrdf) {
     const float closeness = 0.01;
 
     forEachWiWoPairHemisphere([&](const Direction3 & wi, const Direction3 & wo) {
-        EXPECT_NEAR(brdf::phong(wi, wo, N, 1.0f), brdf::phong(wo, wi, N, 1.0f), closeness);
+        EXPECT_NEAR(phong(wi, wo, N, 1.0f), phong(wo, wi, N, 1.0f), closeness);
     }, thetaSteps, phiSteps);
     forEachWiWoPairHemisphere([&](const Direction3 & wi, const Direction3 & wo) {
-        EXPECT_NEAR(brdf::phong(wi, wo, N, 10.0f), brdf::phong(wo, wi, N, 10.0f), closeness);
+        EXPECT_NEAR(phong(wi, wo, N, 10.0f), phong(wo, wi, N, 10.0f), closeness);
     }, thetaSteps, phiSteps);
     forEachWiWoPairHemisphere([&](const Direction3 & wi, const Direction3 & wo) {
-        EXPECT_NEAR(brdf::phong(wi, wo, N, 100.0f), brdf::phong(wo, wi, N, 100.0f), closeness);
+        EXPECT_NEAR(phong(wi, wo, N, 100.0f), phong(wo, wi, N, 100.0f), closeness);
     }, thetaSteps, phiSteps);
 }
 

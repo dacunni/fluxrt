@@ -116,7 +116,7 @@ class Artifacts
             // Specular exponential response
             Direction3 wi(isect.ray.direction.negated());
             Direction3 wo(mirror(wi, isect.normal));
-            float Sin = brdf::phong(wi, Direction3(L), isect.normal, 10.0);
+            float Sin = phong(wi, Direction3(L), isect.normal, 10.0);
 
             r += NdL * ((1.0f - S.r) * D.r + S.r * Sin);
             g += NdL * ((1.0f - S.g) * D.g + S.g * Sin);

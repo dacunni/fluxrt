@@ -191,7 +191,7 @@ inline RadianceRGB Renderer::shadeReflect(const Scene & scene, RNG & rng,
                                           const Direction3 & Wo,
                                           const Position3 & P, const Direction3 & N) const
 {
-    brdf::MirrorBRDF brdf;
+    MirrorBRDF brdf;
 
     return shadeBRDF(scene, rng, minDistance, depth, mediumStack, Wo, P, N, brdf,
                      false,
@@ -274,7 +274,7 @@ inline RadianceRGB Renderer::shadeDiffuse(const Scene & scene, RNG & rng,
                                           const Direction3 & Wo,
                                           const Position3 & P, const Direction3 & N) const
 {
-    brdf::LambertianBRDF brdf;
+    LambertianBRDF brdf;
     brdf.importanceSample = shadeDiffuseParams.sampleCosineLobe;
 
     return shadeBRDF(scene, rng, minDistance, depth, mediumStack, Wo, P, N, brdf,
@@ -289,7 +289,7 @@ inline RadianceRGB Renderer::shadeSpecularGlossy(const Scene & scene, RNG & rng,
                                                  const Position3 & P, const Direction3 & N,
                                                  float exponent) const
 {
-    brdf::PhongBRDF brdf(exponent);
+    PhongBRDF brdf(exponent);
     brdf.importanceSample = shadeSpecularParams.samplePhongLobe;
 
     return shadeBRDF(scene, rng, minDistance, depth, mediumStack, Wo, P, N, brdf,
@@ -302,7 +302,7 @@ inline RadianceRGB Renderer::shadeBRDF(const Scene & scene, RNG & rng,
                                        const MediumStack & mediumStack,
                                        const Direction3 & Wo,
                                        const Position3 & P, const Direction3 & N,
-                                       brdf::BRDF & brdf,
+                                       BRDF & brdf,
                                        bool sampleLights,
                                        unsigned int numEnvMapSamples) const
 {
@@ -375,7 +375,7 @@ inline LightSample Renderer::samplePointLight(const Scene & scene,
 
 inline RadianceRGB Renderer::sampleAllPointLights(const Scene & scene,
                                                   RNG & rng,
-                                                  const brdf::BRDF & brdf,
+                                                  const BRDF & brdf,
                                                   const Direction3 & Wo,
                                                   const Position3 & P,
                                                   const Direction3 & N,
@@ -440,7 +440,7 @@ inline LightSample Renderer::sampleDiskLight(const Scene & scene,
 
 inline RadianceRGB Renderer::sampleAllDiskLights(const Scene & scene,
                                                  RNG & rng,
-                                                 const brdf::BRDF & brdf,
+                                                 const BRDF & brdf,
                                                  const Direction3 & Wo,
                                                  const Position3 & P,
                                                  const Direction3 & N,
@@ -488,7 +488,7 @@ inline bool Renderer::intersectsScene(const Scene & scene,
 }
 
 inline RadianceRGB Renderer::sampleEnvironmentMap(
-                const Scene & scene, RNG & rng, const brdf::BRDF & brdf,
+                const Scene & scene, RNG & rng, const BRDF & brdf,
                 const Direction3 & Wo, const Position3 & P, const Direction3 & N,
                 float minDistance, unsigned int numSamples) const
 {

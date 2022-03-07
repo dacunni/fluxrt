@@ -92,7 +92,7 @@ class Renderer
                                      const MediumStack & mediumStack,
                                      const Direction3 & Wo,
                                      const Position3 & P, const Direction3 & N,
-                                     brdf::BRDF & brdf,
+                                     BRDF & brdf,
                                      bool sampleLights,
                                      unsigned int numEnvMapSamples) const;
 
@@ -105,7 +105,7 @@ class Renderer
 
         inline RadianceRGB sampleAllPointLights(const Scene & scene,
                                                 RNG & rng,
-                                                const brdf::BRDF & brdf,
+                                                const BRDF & brdf,
                                                 const Direction3 & Wo,
                                                 const Position3 & P,
                                                 const Direction3 & N,
@@ -120,7 +120,7 @@ class Renderer
 
         inline RadianceRGB sampleAllDiskLights(const Scene & scene,
                                                RNG & rng,
-                                               const brdf::BRDF & brdf,
+                                               const BRDF & brdf,
                                                const Direction3 & Wo,
                                                const Position3 & P,
                                                const Direction3 & N,
@@ -128,7 +128,7 @@ class Renderer
 
         inline RadianceRGB sampleEnvironmentMap(const Scene & scene,
                                                 RNG & rng,
-                                                const brdf::BRDF & brdf,
+                                                const BRDF & brdf,
                                                 const Direction3 & Wo,
                                                 const Position3 & P,
                                                 const Direction3 & N,
