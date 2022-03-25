@@ -64,13 +64,17 @@ void Artifacts::writeAll()
         writePNG(applyStandardGamma(isectAO), prefix + "ao.png");
     }
 
+#if 0
     auto scaledTime = isectTime;
     float maxTime = *std::max_element(begin(isectTime.data), end(isectTime.data));
     auto scaleToMax = [&](Image<float> & image, size_t x, size_t y, int c) {
         image.set(x, y, c, image.get(x, y, c) / maxTime);
     };
     scaledTime.forEachPixelChannel(scaleToMax);
-    writePNG(scaledTime, prefix + "isect_time.png");
+#endif
+    //writePNG(scaledTime, prefix + "isect_time.png");
+    //writeHDR(scaledTime, prefix + "isect_time.hdr");
+    writeHDR(isectTime, prefix + "isect_time.hdr");
 
     auto stddev = runningVarianceS;
     auto makeStdDev = [&](Image<float> & image, size_t x, size_t y, int c) {
@@ -101,10 +105,11 @@ void Artifacts::writePixelColor()
     writeHDR(finalPixelColor, prefix + "color.hdr");
 
     //float maxValue = finalPixelColor.maxValueAllChannels();
+    float maxValue = 4.0f;
     auto applyToneMap = [&](Image<float> & image, size_t x, size_t y, int c) {
         float value = image.get(x, y, c);
-        value = tonemapping::reinhard(value);
-        //value = tonemapping::reinhardExtended(value, maxValue);
+        //value = tonemapping::reinhard(value);
+        value = tonemapping::reinhardExtended(value, maxValue);
         image.set(x, y, c, value);
     };
     finalPixelColor.forEachPixelChannel(applyToneMap);
