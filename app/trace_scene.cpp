@@ -236,9 +236,9 @@ int main(int argc, char ** argv)
         // Progressive
         for(unsigned int sampleIndex = 0; sampleIndex < options.samplesPerPixel; ++sampleIndex) {
             auto renderPixelOneSample = [&](size_t x, size_t y, size_t threadIndex) {
-                //ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
+                ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
                 tracePixelRay(x, y, threadIndex, sampleIndex);
-                //artifacts.accumTime(x, y, pixelTimer.elapsed());
+                artifacts.accumTime(x, y, pixelTimer.elapsed());
 
                 if(flushImmediate.exchange(false)) {
                     artifacts.writeAll();
