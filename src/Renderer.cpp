@@ -126,6 +126,15 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
 
     RadianceRGB Lo;
 
+    // TODO
+    //  - Material
+    //    - distinctive types (diffuse, specular, refractive, PBR, etc)
+    //    - returns MaterialInterface with BRDF
+    //    - call shadeBRDF
+    //    - remove custom shade* functions
+    //    - add more BRDFs and materials
+    //    - RGB BRDF?
+
     if(material.isRefractive) {
         Lo = shadeRefractiveInterface(scene, rng, minDistance, depth, mediumStack, medium, Wo, P, N);
     }
@@ -149,8 +158,9 @@ inline RadianceRGB Renderer::shade(const Scene & scene, RNG & rng,
 
         // Trace specular bounce
         if(doSpec) {
-            if(material.isGlossy()) {
-                Ls = shadeSpecularGlossy(scene, rng, minDistance, depth, mediumStack, Wo, P, N, material.specularExponent);
+            if(material.isGlossy(scene.textureCache.textures, intersection.texcoord)) {
+                float specularExponent = material.specularExponent(scene.textureCache.textures, intersection.texcoord);
+                Ls = shadeSpecularGlossy(scene, rng, minDistance, depth, mediumStack, Wo, P, N, specularExponent);
             }
             else {
                 Ls = shadeReflect(scene, rng, minDistance, depth, mediumStack, Wo, P, N);

@@ -9,7 +9,9 @@
 #include "texture.h"
 #include "radiometry.h"
 #include "ValueRGB.h"
+#include "MaterialParameter.h"
 
+class BRDF;
 
 struct Medium {
     float indexOfRefraction = 1.0f;
@@ -26,28 +28,31 @@ static const MaterialID NoMaterial = std::numeric_limits<MaterialID>::max();
 
 struct Material
 {
-    ReflectanceRGB diffuseColor =  { 1.0f, 1.0f, 1.0f };
-    // Specular of all 0 indicates no specular present
-    ReflectanceRGB specularColor = { 0.0f, 0.0f, 0.0f };
+    // Diffuse reflectance
+    MaterialParameterRGB diffuseParam = {{ 1.0f, 1.0f, 1.0f }};
+
+    // Specular reflectance (all 0 indicates no specular present)
+    MaterialParameterRGB specularParam = {{ 0.0f, 0.0f, 0.0f }};
+    // Specular exponent (0 = mirror)
+    MaterialParameterScalar specularExponentParam = { 0.0f };
+
+    // Non-refractive opacity
+    MaterialParameterScalar alphaParam = { 1.0f };
+    float opacity = 1.0f;
+
+    // Emission
     RadianceRGB emissionColor = { 0.0f, 0.0f, 0.0f };
 
-    TextureID diffuseTexture  = NoTexture;
-    TextureID specularTexture = NoTexture;
-    TextureID alphaTexture    = NoTexture;
+    // Normal Map
     TextureID normalMapTexture = NoTexture;
-
-    // Specular exponent (0 = mirror)
-    float specularExponent = 0.0f;
 
     // Refractive layer
     Medium innerMedium;
     bool isRefractive = false;
 
-    // Non-refractive opacity
-    float opacity = 1.0f;
-
     inline ReflectanceRGB diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline ReflectanceRGB specular(const TextureArray & tex, const TextureCoordinate & texcoord) const;
+    inline float specularExponent(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline RadianceRGB emission(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline Direction3 normalMap(const TextureArray & tex, const TextureCoordinate & texcoord) const;
     inline float alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const;
@@ -57,7 +62,8 @@ struct Material
     inline bool hasEmission() const;
     inline bool hasNormalMap() const;
 
-    inline bool isGlossy() const { return specularExponent > 0.01f; }
+    inline bool isGlossy(const TextureArray & tex, const TextureCoordinate & texcoord) const
+        { return specularExponent(tex, texcoord) > 0.01f; }
 
     // Apply normal map (if any) to the supplied basis vectors
     inline void applyNormalMap(const TextureArray & tex, const TextureCoordinate & texcoord,
@@ -86,50 +92,32 @@ inline const Material & materialFromID(MaterialID id, const MaterialArray & mate
 
 inline ReflectanceRGB Material::diffuse(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {
-    if(diffuseTexture != NoTexture) {
-        auto & texture = tex[diffuseTexture];
-        return ReflectanceRGB(texture->lerpUV3(texcoord.u, texcoord.v));
-    }
-    else {
-        return diffuseColor;
-    }
+    return diffuseParam.get(tex, texcoord);
 }
 
 inline bool Material::hasDiffuse() const
 {
-    return diffuseTexture != NoTexture
-        || diffuseColor.hasNonZeroComponent();
+    return diffuseParam.isNonZero();
 }
 
 inline ReflectanceRGB Material::specular(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {
-    if(specularTexture != NoTexture) {
-        auto & texture = tex[specularTexture];
-        return ReflectanceRGB(texture->lerpUV3(texcoord.u, texcoord.v));
-    }
-    else {
-        return specularColor;
-    }
+    return specularParam.get(tex, texcoord);
 }
 
 inline bool Material::hasSpecular() const
 {
-    return specularTexture != NoTexture
-        || specularColor.hasNonZeroComponent();
+    return specularParam.isNonZero();
+}
+
+inline float Material::specularExponent(const TextureArray & tex, const TextureCoordinate & texcoord) const
+{
+    return specularExponentParam.get(tex, texcoord);
 }
 
 inline float Material::alpha(const TextureArray & tex, const TextureCoordinate & texcoord) const
 {
-    if(alphaTexture != NoTexture) {
-        auto & texture = tex[alphaTexture];
-        float u = texcoord.u;
-        float v = texcoord.v;
-        // Take the last channel, assuming 1 channel is a mask, 3 is B&W, and 4 has alpha
-        return opacity * texture->lerpUV(u, v, texture->numChannels - 1);
-    }
-    else {
-        return opacity;
-    }
+    return opacity * alphaParam.get(tex, texcoord);
 }
 
 inline RadianceRGB Material::emission(const TextureArray & tex, const TextureCoordinate & texcoord) const

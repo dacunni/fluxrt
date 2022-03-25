@@ -46,7 +46,7 @@ void loadMaterialAlphaComponent(const std::shared_ptr<cpptoml::table> & table, S
         material.opacity = (float) alpha;
     }
     else if(tex) {
-        material.alphaTexture = scene.textureCache.loadTextureFromFile("", *tex);
+        material.alphaParam = scene.textureCache.loadTextureFromFile("", *tex);
     }
 }
 
@@ -57,13 +57,13 @@ void loadMaterialDiffuseComponent(const std::shared_ptr<cpptoml::table> & table,
     auto tex = table->get_as<std::string>("diffuse");
 
     if(rgb) {
-        material.diffuseColor = vectorToReflectanceRGB(*rgb);
+        material.diffuseParam = vectorToReflectanceRGB(*rgb);
     }
     else if(tex) {
-        material.diffuseTexture = scene.textureCache.loadTextureFromFile("", *tex);
+        material.diffuseParam = scene.textureCache.loadTextureFromFile("", *tex);
     }
     else {
-        material.diffuseColor = {0.0f, 0.0f, 0.0};
+        material.diffuseParam = ReflectanceRGB{0.0f, 0.0f, 0.0};
     }
 }
 
@@ -73,16 +73,16 @@ void loadMaterialSpecularComponent(const std::shared_ptr<cpptoml::table> & table
     auto tex = table->get_as<std::string>("specular");
     auto specularExponent = table->get_as<double>("specular_exponent").value_or(0.0);
 
-    material.specularExponent = specularExponent;
+    material.specularExponentParam = float(specularExponent);
 
     if(rgb) {
-        material.specularColor = vectorToReflectanceRGB(*rgb);
+        material.specularParam = vectorToReflectanceRGB(*rgb);
     }
     else if(tex) {
-        material.specularTexture = scene.textureCache.loadTextureFromFile("", *tex);
+        material.specularParam = scene.textureCache.loadTextureFromFile("", *tex);
     }
     else {
-        material.specularColor = {0.0f, 0.0f, 0.0};
+        material.specularParam = {{ 0.0f, 0.0f, 0.0 }};
     }
 }
 
