@@ -29,19 +29,19 @@ pixelheight = 600
 [envmap]
 
 type = "gradient"
-#low = [ 0.0, 0.0, 0.0 ]
-#high = [ 0.8, 0.6, 0.6 ]
 low = [ 0.0, 0.0, 0.0 ]
 high = [ 1.0, 1.0, 1.0 ]
 direction = [ -1.0, 0.0, -1.0 ]
 
 [[meshes]]
-file = "Dachshund_t.stl"
+file = "thingiverse/dachshund/Cleaned-Dachshund_t_manuallyFilled.stl"
 scaletocube = 0.5
-#accelerator = "none"
 
 # Floor - included floor is thin and light shines through
 [[slabs]]
 min = [ -1000.0, -1000.0, -1000.0 ]
 max = [ 1000.0, -0.58, 1000.0 ]
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.2, 0.2, 0.2 ]
 

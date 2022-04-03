@@ -1,0 +1,36 @@
+[camera]
+type = "pinhole"
+hfov = 45
+
+position = [ 0.0, 0.0, 3.0 ]
+direction = [ 0.0, 0.0, -1.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 1000
+pixelheight = 1000
+
+[[meshes]]
+#file = "casual-effects.com/living_room/living_room.obj"
+# DAC removed ceiling and window blockers
+file = "casual-effects.com/living_room/living_room_DAC_no_ceiling.obj"
+scaletocube = 10.0
+
+[envmap]
+#type = "gradient"
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
+type = "latlon"
+file = "polyhaven.com/street_lamp_1k.hdr"
+#file = "polyhaven.com/adams_place_bridge_1k.hdr"
+#file = "polyhaven.com/abandoned_factory_canteen_02_1k.hdr"
+
+#[[pointlights]]
+#position = [ 0.0, 0.0, 0.0 ]
+#intensity = [ 3.0, 3.0, 3.0 ]
+
+#[[disklights]]
+#position = [ 0.0, 0.0, -3.0 ]
+#direction = [ 0.0, 1.0, 1.0 ]
+#radius = 0.25
+#intensity = [ 30.0, 30.0, 30.0 ]
