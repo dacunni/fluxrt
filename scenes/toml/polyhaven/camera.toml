@@ -1,12 +1,12 @@
 [camera]
 type = "pinhole"
-hfov = 15
+hfov = 10
 
 #focus_distance = 7.75
 #focus_divergence = 0.01
 
-position = [ 6.0, 2.0, 6.0 ]
-direction = [ -1.0, -0.35, -1.0 ]
+position = [ 1.0, 0.25, 1.0 ]
+lookat = [ 0.0, 0.05, 0.0 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
@@ -24,11 +24,11 @@ type = "latlon"
 file = "polyhaven.com/artist_workshop_1k.hdr"
 
 [[meshes]]
-file = "thingiverse/dachshund/Cleaned-Dachshund_t_manuallyFilled.stl"
-scaletocube = 0.5
-    [meshes.material]
-    type = "diffuse"
-    diffuse = [ 1.0, 1.0, 1.0 ]
+file = "polyhaven.com/Camera/Camera_01_1k.obj"
+#scaletocube = 2.0
+    #[meshes.material]
+    #type = "diffuse"
+    #diffuse = [ 1.0, 1.0, 1.0 ]
     #type = "mirror"
     #type = "refractive"
     #ior = 1.5
@@ -38,8 +38,8 @@ scaletocube = 0.5
 
 # Floor - included floor is thin and light shines through
 [[slabs]]
-min = [ -0.8, -0.8, -1.2 ]
-max = [ 0.8, -0.58, 0.8 ]
+min = [ -0.2, -0.05, -0.2 ]
+max = [ 0.2, 0.0, 0.2 ]
     [slabs.material]
     type = "diffuse"
     diffuse = [ 0.2, 0.2, 0.2 ]

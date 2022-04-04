@@ -33,6 +33,7 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         logger.normalf(" D %.1f %.1f %.1f Dt '%s'", D[0], D[1], D[2], objmaterial.diffuse_texname.c_str());
         logger.normalf(" S %.1f %.1f %.1f St '%s'", S[0], S[1], S[2], objmaterial.specular_texname.c_str());
         logger.normalf(" E %.1f %.1f %.1f Et '%s'", E[0], E[1], E[2], objmaterial.emissive_texname.c_str());
+        logger.normalf(" Nt '%s'", objmaterial.bump_texname.c_str());
         logger.normalf(" At '%s' dissolve %.1f shininess %.1f", objmaterial.alpha_texname.c_str(), objmaterial.dissolve, objmaterial.shininess);
 
         Material material;
@@ -95,6 +96,15 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         }
         if(!objmaterial.alpha_texname.empty()) {
             material.alphaParam = textureCache.loadTextureFromFile(path, objmaterial.alpha_texname);
+        }
+        if(!objmaterial.bump_texname.empty()) {
+            // Despite the name, bump map seems to hold a normal map in OBJ files
+            material.normalMapTexture = textureCache.loadTextureFromFile(path, objmaterial.bump_texname);
+            auto & texture = textureCache.textures[material.normalMapTexture];
+            // Convert normal map color to normal [0, 1] -> [-1, 1]
+            texture->forEachPixelChannel([](Texture & image, size_t x, size_t y, int c) {
+                                             image.set(x, y, c, image.get(x, y, c) * 2.0f - 1.0f);
+                                         });
         }
 
         material.opacity = objmaterial.dissolve;
