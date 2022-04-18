@@ -39,14 +39,20 @@ class BRDF {
         // Evaluate the BRDF
         virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) const = 0;
 
+        // Evaluate PDF for a direction
+        virtual float pdf(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) = 0;
+
         // Sample Wo from the BRDF, given Wi and random numbers
         virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) = 0;
 
         // Uniform sampling across the hemisphere
+        float pdfHemisphereUniform() {
+            return 1.0f / constants::TWO_PI;
+        }
         brdfSample sampleHemisphereUniform(const vec2 & e, const Direction3 & N) {
             brdfSample S;
             S.W = Direction3(RNG::uniformSurfaceUnitHalfSphere(e, N));
-            S.pdf = 1.0f / constants::TWO_PI;
+            S.pdf = pdfHemisphereUniform();
             return S;
         }
 
@@ -60,6 +66,13 @@ class LambertianBRDF : public BRDF {
         
         virtual InverseSteradians eval(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) const override {
             return lambertian(Wi, Wo, N);
+        }
+
+        virtual float pdf(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) override {
+            if(!importanceSample) {
+                return pdfHemisphereUniform();
+            }
+            return clampedDot(Wo, N) / constants::PI;
         }
 
         virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) override {
@@ -84,6 +97,13 @@ class PhongBRDF : public BRDF {
             return phong(Wi, Wo, N, a);
         }
 
+        virtual float pdf(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) override {
+            if(!importanceSample) {
+                return pdfHemisphereUniform();
+            }
+            return phong(Wi, Wo, N, a);
+        }
+
         virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) override {
             if(!importanceSample) {
                 return sampleHemisphereUniform(e, N);
@@ -103,10 +123,14 @@ class MirrorBRDF : public BRDF {
             return 1.0f;
         }
 
+        virtual float pdf(const Direction3 & Wi, const Direction3 & Wo, const Direction3 & N) override {
+            return 1.0f;
+        }
+
         virtual brdfSample sample(const vec2 & e, const Direction3 & Wi, const Direction3 & N) override {
             brdfSample S;
             S.W = mirror(Wi, N);
-            S.pdf = 1.0f;
+            S.pdf = pdf(Wi, S.W, N);
             S.delta = true;
             return S;
         }
