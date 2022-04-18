@@ -16,6 +16,8 @@
 #include "traceable.h"
 #include "TraceableKDTree.h"
 
+class Logger;
+
 struct Scene
 {
 	Scene();
@@ -24,6 +26,8 @@ struct Scene
     void buildAccelerators();
 
     void print() const;
+
+    void logSummary(Logger & logger) const;
 
     // Objects
     std::vector<TraceablePtr> objects;

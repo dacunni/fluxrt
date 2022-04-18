@@ -6,6 +6,8 @@
 #include "Ray.h"
 #include "constants.h"
 
+class Logger;
+
 struct Camera
 {
 	Camera() = default;
@@ -13,6 +15,8 @@ struct Camera
 	virtual ~Camera() = default;
 
     void print() const;
+
+    virtual void logSummary(Logger & logger) const = 0;
 
     // Ray passing through a standardized image plane that always
     // ranges from x in [-1,+1], y in [-1,+1], regardless of actual
@@ -38,6 +42,8 @@ struct PinholeCamera : public Camera
     PinholeCamera(float hfov, float vfov);
 	virtual ~PinholeCamera() = default;
 
+    virtual void logSummary(Logger & logger) const override;
+
     virtual Ray rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const override;
 
     float hfov = DegreesToRadians(45.0f);
@@ -60,6 +66,8 @@ struct OrthoCamera : public Camera
     OrthoCamera() = default;
     OrthoCamera(float hsize, float vsize) : hsize(hsize), vsize(vsize) {}
     virtual ~OrthoCamera() = default;
+
+    virtual void logSummary(Logger & logger) const override;
 
     virtual Ray rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const override;
 

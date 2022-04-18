@@ -2,6 +2,7 @@
 #include "camera.h"
 #include "constants.h"
 #include "interpolation.h"
+#include "Logger.h"
 
 Camera::Camera(const Position3 & p, const Direction3 & d, const Direction3 & u)
 {
@@ -38,6 +39,16 @@ PinholeCamera::PinholeCamera(float hfov, float vfov)
 {
 }
 
+void PinholeCamera::logSummary(Logger & logger) const
+{
+    logger.normalf("PinholeCamera:");
+    logger.normalf("  FOV h=%f v=%f", hfov, vfov);
+    logger.normalf("  lens blur=%s focus distance=%f divergence=%f",
+        Logger::yesno(applyLensBlur).c_str(),
+        focusDistance, focusDivergence
+    );
+}
+
 Ray PinholeCamera::rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const
 {
     // Calculate world offsets
@@ -71,6 +82,13 @@ Ray PinholeCamera::rayThroughStandardImagePlane(float x, float y, float blurx, f
     }
 
     return ray;
+}
+
+
+void OrthoCamera::logSummary(Logger & logger) const
+{
+    logger.normalf("OrthoCamera:");
+    logger.normalf("  size h=%f v=%f", hsize, vsize);
 }
 
 Ray OrthoCamera::rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const

@@ -1,5 +1,6 @@
 #include <cstdio>
 #include "sensor.h"
+#include "Logger.h"
 
 Sensor::Sensor(uint32_t pixelwidth, uint32_t pixelheight)
     : pixelwidth(pixelwidth), pixelheight(pixelheight)
@@ -8,6 +9,11 @@ Sensor::Sensor(uint32_t pixelwidth, uint32_t pixelheight)
 void Sensor::print() const
 {
     printf("Sensor: %u x %u\n", pixelwidth, pixelheight);
+}
+
+void Sensor::logSummary(Logger & logger) const
+{
+    logger.normalf("Sensor: %u x %u", pixelwidth, pixelheight);
 }
 
 void Sensor::forEachPixel(const PixelFunction & fn)

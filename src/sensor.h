@@ -14,6 +14,8 @@
 #include "vectortypes.h"
 #include "vec2.h"
 
+class Logger;
+
 using ThreadIndex = uint32_t;
 
 struct Sensor
@@ -42,6 +44,8 @@ struct Sensor
     inline float aspectRatio() const { return float(pixelwidth) / float(pixelheight); }
 
     void print() const;
+
+    void logSummary(Logger & logger) const;
 
     uint32_t pixelwidth = 1;
     uint32_t pixelheight = 1;
