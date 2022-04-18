@@ -47,6 +47,10 @@ void PinholeCamera::logSummary(Logger & logger) const
         Logger::yesno(applyLensBlur).c_str(),
         focusDistance, focusDivergence
     );
+    logger.normal() << "  position " << position;
+    logger.normal() << "  direction " << direction;
+    logger.normal() << "  up " << up;
+    logger.normal() << "  right " << right;
 }
 
 Ray PinholeCamera::rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const
@@ -89,6 +93,10 @@ void OrthoCamera::logSummary(Logger & logger) const
 {
     logger.normalf("OrthoCamera:");
     logger.normalf("  size h=%f v=%f", hsize, vsize);
+    logger.normal() << "  position " << position;
+    logger.normal() << "  direction " << direction;
+    logger.normal() << "  up " << up;
+    logger.normal() << "  right " << right;
 }
 
 Ray OrthoCamera::rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const
