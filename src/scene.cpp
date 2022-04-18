@@ -30,6 +30,7 @@ void Scene::logSummary(Logger & logger) const
 {
     logger.normal() << "Scene: ";
     logger.normal() << "Number of objects: " << objects.size();
+    logger.normal() << "Use objects KD-tree accelerator: " << Logger::yesno(useKDTreeAccelerator);
     logger.normal() << "Number of point lights: " << pointLights.size();
     logger.normal() << "Number of disk lights: " << diskLights.size();
     logger.normal() << "Has environment map: " << Logger::yesno(bool(environmentMap));
