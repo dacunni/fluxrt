@@ -549,7 +549,9 @@ void Renderer::printConfiguration() const
 
     auto & sp = shadeSpecularParams;
     printf("  Specular shading:\n"
+           "    Environment map samples = %u\n"
            "    Sample Phong lobe = %s\n",
+           sp.numEnvMapSamples,
            onoff(sp.samplePhongLobe));
 }
 
