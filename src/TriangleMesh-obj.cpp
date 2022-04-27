@@ -163,10 +163,9 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     meshData.vertices.reserve(attrib.vertices.size() / 3);
     meshData.normals.reserve(attrib.normals.size() / 3);
     meshData.texcoords.reserve(attrib.texcoords.size() / 2);
-    uint32_t num_indices = 0;
+    size_t num_indices = 0;
     for(size_t si = 0; si < shapes.size(); ++si) {
-        const auto num_faces = shapes[si].mesh.indices.size() / 3;
-        num_indices += num_faces * 3;
+        num_indices += shapes[si].mesh.indices.size();
     }
     meshData.indices.vertex.reserve(num_indices);
     meshData.indices.normal.reserve(num_indices);
@@ -175,8 +174,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     // load vertices
     for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
-        auto pos = Position3(coord[0], coord[1], coord[2]);
-        meshData.vertices.push_back(pos);
+        meshData.vertices.emplace_back(coord[0], coord[1], coord[2]);
     }
     meshData.bounds = ::boundingBox(meshData.vertices);
 
