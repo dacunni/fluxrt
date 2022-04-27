@@ -127,6 +127,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> objmaterials;
 
+    logger.normal("Reading OBJ with tinyobjloader");
     bool ret = tinyobj::LoadObj(&attrib, &shapes, &objmaterials, &warn, &err,
                                 (path + '/' + filename).c_str(), path.c_str());
     if(!warn.empty()) {
@@ -158,6 +159,20 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     mesh.meshData = std::make_shared<TriangleMeshData>();
     auto & meshData = *mesh.meshData;
 
+    // reserve memory
+    meshData.vertices.reserve(attrib.vertices.size() / 3);
+    meshData.normals.reserve(attrib.normals.size() / 3);
+    meshData.texcoords.reserve(attrib.texcoords.size() / 2);
+    uint32_t num_indices = 0;
+    for(size_t si = 0; si < shapes.size(); ++si) {
+        const auto num_faces = shapes[si].mesh.indices.size() / 3;
+        num_indices += num_faces * 3;
+    }
+    meshData.indices.vertex.reserve(num_indices);
+    meshData.indices.normal.reserve(num_indices);
+    meshData.indices.texcoord.reserve(num_indices);
+
+    // load vertices
     for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
         auto pos = Position3(coord[0], coord[1], coord[2]);
@@ -165,6 +180,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     }
     meshData.bounds = ::boundingBox(meshData.vertices);
 
+    // load normals
     for(int ni = 0; ni < attrib.normals.size() / 3; ++ni) {
         auto coord = &attrib.normals[ni * 3];
         auto dir = Direction3(coord[0], coord[1], coord[2]);
@@ -178,6 +194,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         meshData.normals.push_back(dir);
     }
 
+    // load texture coordinates
     for(int ti = 0; ti < attrib.texcoords.size() / 2; ++ti) {
         auto coord = &attrib.texcoords[ti * 2];
         auto tc = TextureCoordinate{coord[0], 1.0f - coord[1]};
