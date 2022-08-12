@@ -10,6 +10,7 @@ struct vec3
     inline vec3() = default;
     inline vec3(const vec3 & a) : x(a.x), y(a.y), z(a.z) {}
 	inline vec3(float xn, float yn, float zn) : x(xn), y(yn), z(zn) {}
+    inline vec3(float v[3]) : x(v[0]), y(v[1]), z(v[2]) {}
     inline ~vec3() = default;
 
     static vec3 zero();
@@ -32,6 +33,7 @@ struct vec3
     std::string string() const;
 
     bool isZeros() const { return x == 0.0f && y == 0.0f && z == 0.0f; }
+    bool isOnes() const { return x == 1.0f && y == 1.0f && z == 1.0f; }
     bool hasNaN() const { return std::isnan(x) || std::isnan(y) || std::isnan(z); }
     bool hasInf() const { return std::isinf(x) || std::isinf(y) || std::isinf(z); }
 
