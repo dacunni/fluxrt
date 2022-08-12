@@ -8,6 +8,8 @@ Flutrt is a path tracer written in C++.
 
 http://dacunni.github.io/fluxrt/render_gallery.html
 
+<img src="http://dacunni.github.io/fluxrt/render_gallery/camera_hdri_10000spp.png" alt="camera" width="300"/><img src="http://dacunni.github.io/fluxrt/render_gallery/blue_dachshund.png" alt="dachshund" width="300"/>
+
 ## Setup and Build
 Fetch third party dependencies
 ```
