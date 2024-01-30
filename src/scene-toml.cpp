@@ -1,4 +1,5 @@
 #include <exception>
+#include <limits>
 #include "cpptoml.h"
 
 #include "scene.h"
