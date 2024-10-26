@@ -1,6 +1,5 @@
 # fluxrt
 
-[![CircleCI](https://circleci.com/gh/dacunni/fluxrt.svg?style=svg&circle-token=28dd027707113d1736da63596a27712c238f17d0)](https://circleci.com/gh/dacunni/fluxrt)
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/dacunni/fluxrt/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/dacunni/fluxrt/tree/master)
 
 Flutrt is a path tracer written in C++.
