@@ -4,13 +4,13 @@
 [submodule "external/tinyobjloader"]
 	path = external/tinyobjloader
 	url = https://github.com/syoyo/tinyobjloader.git
+	branch = release
 [submodule "external/cpptoml"]
 	path = external/cpptoml
 	url = https://github.com/skystrife/cpptoml.git
 [submodule "external/stlloader"]
 	path = external/stlloader
 	url = https://github.com/dacunni/stlloader.git
-  branch = release
 [submodule "external/generator"]
 	path = external/generator
 	url = git@github.com:dacunni/generator.git
