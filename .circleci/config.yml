@@ -24,9 +24,14 @@ jobs:
       - run:
           name: "Test"
           command: cd build && ctest
-      - run:
-          name: "Render Test: Quick Look Scenes"
-          command: cd build/app && ./trace_all -v -n
       - store_artifacts:
           path: build/app/trace_scene
+      - run:
+          name: "Render Test: Quick Look Scenes"
+          command: |
+            mkdir build/app/render_tests
+            cd build/app/render_tests
+            ../trace_all -v -n
+      - store_artifacts:
+          path: build/app/render_tests
 
