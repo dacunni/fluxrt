@@ -31,6 +31,7 @@ jobs:
           command: |
             mkdir build/app/render_tests
             cd build/app/render_tests
+            touch test
             ../trace_all -v -n -s ../../../scenes/quicklook
       - store_artifacts:
           path: build/app/render_tests
