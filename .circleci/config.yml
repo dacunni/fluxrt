@@ -32,7 +32,7 @@ jobs:
             mkdir build/app/render_tests
             cd build/app/render_tests
             echo test > test
-            ../trace_all -v -n -s ../../../scenes/quicklook
+            ../trace_all -v -s ../../../scenes/quicklook
       - store_artifacts:
           path: build/app/render_tests
 
