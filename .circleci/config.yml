@@ -20,7 +20,7 @@ jobs:
           name: "Build"
           command: cd build && make -j install
       - store_artifacts:
-          path: /workspace/build/app/trace_scene
+          path: build/app/trace_scene
       - persist_to_workspace:
           root: .
           paths:
