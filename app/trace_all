@@ -96,7 +96,7 @@ for scene in scenes:
     if not options.dryrun:
         with open("output.txt", "w") as output_file, open("errors.txt", "w") as error_file:
             result = subprocess.run(
-                command,
+                cmd,
                 stdout=output_file,
                 stderr=error_file
             )
