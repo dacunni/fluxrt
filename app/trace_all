@@ -80,7 +80,9 @@ html_summary = ""
 
 job_id = 0
 for scene in scenes:
-    job_dir = "{:04}".format(job_id)
+    #job_dir = "{:04}".format(job_id)
+    scene_name = os.path.splitext(os.path.basename(file_path))[0]
+    job_dir = f"{job_id:04}_{scene_name}"
     job_path = "{}/{}".format(run_path(run_id), job_dir)
     print("Job ID = {} Path = {} Scene = {}".format(job_id, job_path, scene))
 
@@ -108,14 +110,6 @@ for scene in scenes:
         else:
             print(f"Command failed with return code: {result.returncode}")
 
-        #cmd_output = subprocess.check_output(cmd, shell=True,
-        #                                     stderr=subprocess.STDOUT)
-        #if options.verbose:
-        #    print(cmd_output)
-
-        #with open("output.txt", "w") as output_file:
-        #    output_file.write(cmd_output)
-
     #html_summary += "<div><a href=\"{}/trace_color.png\">{}</a></div>\n".format(job_dir, job_dir)
     html_summary += """
         <div>
@@ -138,6 +132,4 @@ html_summary = """
 if not options.dryrun:
     with open("{}/summary.html".format(run_path(run_id)), "w") as output_file:
         output_file.write(html_summary)
-
-print(html_summary)
 
