@@ -19,6 +19,10 @@ jobs:
       - run:
           name: "Build"
           command: cd build && make -j install
+      - persist_to_workspace:
+          root: .
+          paths:
+            - . # Specify files/folders to save in the workspace
   unittest:
     docker:
       - image: dacunni/hobby:ubuntu_compilers
@@ -26,6 +30,9 @@ jobs:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
     steps:
+      - attach_workspace:
+          at: /workspace
+      - run: ls -l /workspace
       - run:
           name: "Test"
           command: cd build && ctest
@@ -38,6 +45,8 @@ jobs:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
     steps:
+      - attach_workspace:
+          at: /workspace
       - run:
           name: "Render Test: Quick Look Scenes"
           command: |
