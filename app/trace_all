@@ -4,6 +4,7 @@ import glob
 import os
 import subprocess
 import argparse
+import sys
 
 job_base_path = "jobs"
 base_cmd = "trace_scene"
@@ -78,6 +79,7 @@ init_cwd = os.getcwd()
 
 html_summary = ""
 
+all_succeeded = True
 job_id = 0
 for scene in scenes:
     #job_dir = "{:04}".format(job_id)
@@ -109,6 +111,7 @@ for scene in scenes:
             print("Command succeeded.")
         else:
             print(f"Command failed with return code: {result.returncode}")
+            all_succeeded = False
 
     #html_summary += "<div><a href=\"{}/trace_color.png\">{}</a></div>\n".format(job_dir, job_dir)
     html_summary += """
@@ -132,4 +135,7 @@ html_summary = """
 if not options.dryrun:
     with open("{}/summary.html".format(run_path(run_id)), "w") as output_file:
         output_file.write(html_summary)
+
+if not all_succeeded:
+    sys.exit(1)
 
