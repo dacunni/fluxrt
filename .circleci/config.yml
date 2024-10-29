@@ -19,11 +19,25 @@ jobs:
       - run:
           name: "Build"
           command: cd build && make -j install
+  unittest:
+    docker:
+      - image: dacunni/hobby:ubuntu_compilers
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    steps:
       - run:
           name: "Test"
           command: cd build && ctest
       - store_artifacts:
           path: build/app/trace_scene
+  rendertest:
+    docker:
+      - image: dacunni/hobby:ubuntu_compilers
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    steps:
       - run:
           name: "Render Test: Quick Look Scenes"
           command: |
@@ -34,4 +48,14 @@ jobs:
             trace_all -v -s ../../../scenes/quicklook
       - store_artifacts:
           path: build/app/render_tests
+workflows:
+  build-test:
+    jobs:
+      - build
+      - unittest:
+          requires:
+            - build
+      - rendertest:
+          requires:
+            - build
 
