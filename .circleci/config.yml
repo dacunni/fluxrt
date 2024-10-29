@@ -19,6 +19,8 @@ jobs:
       - run:
           name: "Build"
           command: cd build && make -j install
+      - store_artifacts:
+          path: /workspace/build/app/trace_scene
       - persist_to_workspace:
           root: .
           paths:
@@ -36,8 +38,6 @@ jobs:
       - run:
           name: "Test"
           command: cd /workspace/build && ctest
-      - store_artifacts:
-          path: /workspace/build/app/trace_scene
   rendertest:
     docker:
       - image: dacunni/hobby:ubuntu_compilers
@@ -51,8 +51,9 @@ jobs:
       - run:
           name: "Render Test: Quick Look Scenes"
           command: |
+            cd /workspace
             mkdir -p build/app/render_tests
-            cd /workspace/build/app
+            cd build/app
             export PATH=`pwd`:$PATH
             cd render_tests
             trace_all -v -s ../../../scenes/quicklook
