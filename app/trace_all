@@ -81,7 +81,7 @@ html_summary = ""
 job_id = 0
 for scene in scenes:
     #job_dir = "{:04}".format(job_id)
-    scene_name = os.path.splitext(os.path.basename(file_path))[0]
+    scene_name = os.path.splitext(os.path.basename(scene))[0]
     job_dir = f"{job_id:04}_{scene_name}"
     job_path = "{}/{}".format(run_path(run_id), job_dir)
     print("Job ID = {} Path = {} Scene = {}".format(job_id, job_path, scene))
