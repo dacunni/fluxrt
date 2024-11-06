@@ -7,8 +7,8 @@ lookat = [ 0.0, 1.0, 0.0 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
-pixelwidth = 400
-pixelheight = 400
+pixelwidth = 200
+pixelheight = 200
 
 [envmap]
 type = "latlon"
