@@ -56,9 +56,9 @@ jobs:
             cd build/app
             export PATH=`pwd`:$PATH
             cd render_tests
-            find ../../../external/fluxrt-ci-data
-            export MESH_PATH=../../../external/fluxrt-ci-data/3dmodels
-            trace_all -v -s ../../../scenes/quicklook
+            export MESH_PATH=/workspace/external/fluxrt-ci-data/3dmodels
+            find $MESH_PATH
+            trace_all -v -s /workspace/scenes/quicklook
       - store_artifacts:
           path: /workspace/build/app/render_tests
 workflows:
