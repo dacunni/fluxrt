@@ -373,7 +373,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                     throw std::runtime_error("Error loading mesh");
                 }
 
-                loadMaterialForObject(meshTable, *mesh, scene, namedMaterials);
+                loadMaterialForObject(meshTable, *mesh, scene, namedMaterials, texturePath);
 
                 auto scaletocube = meshTable->get_as<double>("scaletocube");
                 if(scaletocube) {
@@ -410,7 +410,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 auto obj = std::make_shared<Sphere>(position, radius);
                 scene.objects.push_back(obj);
-                loadMaterialForObject(sphereTable, *obj, scene, namedMaterials);
+                loadMaterialForObject(sphereTable, *obj, scene, namedMaterials, texturePath);
                 loadTransformsForObject(sphereTable, *obj, scene);
             }
         }
@@ -425,7 +425,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 auto obj = std::make_shared<Slab>(min, max);
                 scene.objects.push_back(obj);
-                loadMaterialForObject(slabTable, *obj, scene, namedMaterials);
+                loadMaterialForObject(slabTable, *obj, scene, namedMaterials, texturePath);
                 loadTransformsForObject(slabTable, *obj, scene);
             }
         }
