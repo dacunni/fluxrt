@@ -10,7 +10,7 @@ up = [ 0.0, 1.0, 0.0 ]
 [envmap]
 type = "latlon"
 #file = "latlon_furnace_0_8.png"
-file = "latlon_furnace_0_8_100x50.png"
+file = "furnace/latlon_furnace_0_8_100x50.png"
 
 [sensor]
 pixelwidth = 200

@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
@@ -13,17 +13,66 @@ jobs:
           command: |
             git submodule init
             git submodule update --remote
-      - run: ls -l
       - run:
           name: "Setup Build"
           command: mkdir build && cd build && cmake ..
       - run:
           name: "Build"
           command: cd build && make -j install
-      - run: ls -lR build
-      - run:
-          name: "Test"
-          command: cd build && ctest
       - store_artifacts:
           path: build/app/trace_scene
+      - persist_to_workspace:
+          root: .
+          paths:
+            - . # Specify files/folders to save in the workspace
+  unittest:
+    docker:
+      - image: dacunni/hobby:ubuntu_compilers
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - attach_workspace:
+          at: /workspace
+      - run: ls -l /workspace
+      - run:
+          name: "Test"
+          command: cd /workspace/build && ctest
+  rendertest:
+    docker:
+      - image: dacunni/hobby:ubuntu_compilers
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - attach_workspace:
+          at: /workspace
+      - run: ls -l /workspace
+      - run:
+          name: "Render Test: Quick Look Scenes"
+          command: |
+            cd /workspace
+            mkdir -p build/app/render_tests
+            cd build/app
+            export PATH=`pwd`:$PATH
+            cd render_tests
+            export MESH_PATH=/workspace/external/fluxrt-ci-data/3dmodels
+            export ENV_MAP_PATH=/workspace/external/fluxrt-ci-data/envmaps
+            export TEXTURE_PATH=/workspace/external/fluxrt-ci-data/textures
+            find $MESH_PATH
+            find $ENV_MAP_PATH
+            find $TEXTURE_PATH
+            trace_all -v -s /workspace/scenes/quicklook
+      - store_artifacts:
+          path: /workspace/build/app/render_tests
+workflows:
+  build-test:
+    jobs:
+      - build
+      - unittest:
+          requires:
+            - build
+      - rendertest:
+          requires:
+            - build
 

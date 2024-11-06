@@ -7,8 +7,8 @@ lookat = [ 0.0, 1.0, 0.0 ]
 up = [ 0.0, 1.0, 0.0 ]
 
 [sensor]
-pixelwidth = 400
-pixelheight = 400
+pixelwidth = 200
+pixelheight = 200
 
 [[pointlights]]
 position = [ 0.0, 5.0, 0.0 ]
@@ -20,7 +20,7 @@ file = "blender/suzanne-smooth.obj"
     [meshes.material]
     type = "diffuse"
     diffuse = [ 1.0, 0.5, 0.5 ]
-    alpha = "/Users/dave/Projects/data/textures/alpha_cutout_stars.png"
+    alpha = "alpha_cutout_stars.png"
     [[meshes.transform]]
     translate = [ 0.0, 1.2, 0.0 ]
 

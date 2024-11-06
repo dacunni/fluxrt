@@ -20,3 +20,7 @@
 [submodule "external/pybind11"]
 	path = external/pybind11
 	url = https://github.com/pybind/pybind11.git
+[submodule "external/fluxrt-ci-data"]
+	path = external/fluxrt-ci-data
+	url = git@github.com:dacunni/fluxrt-ci-data.git
+	branch = main

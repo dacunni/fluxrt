@@ -15,12 +15,12 @@ pixelheight = 120
 [envmap]
 type = "cubemap"
 
-xneg = "NissiBeach/negx.jpg"
-xpos = "NissiBeach/posx.jpg"
-yneg = "NissiBeach/negy.jpg"
-ypos = "NissiBeach/posy.jpg"
-zneg = "NissiBeach/negz.jpg"
-zpos = "NissiBeach/posz.jpg"
+xneg = "humus.name/NissiBeach2/negx.jpg"
+xpos = "humus.name/NissiBeach2/posx.jpg"
+yneg = "humus.name/NissiBeach2/negy.jpg"
+ypos = "humus.name/NissiBeach2/posy.jpg"
+zneg = "humus.name/NissiBeach2/negz.jpg"
+zpos = "humus.name/NissiBeach2/posz.jpg"
 
 [[meshes]]
 file = "casual-effects.com/bmw/bmw.obj"
