@@ -354,7 +354,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 auto name = namedMaterialTable->get_as<std::string>("name");
                 if(!name) { throw std::runtime_error("Named material requires a name"); }
                 std::cout << "Named material: " << *name << '\n';
-                namedMaterials[*name] = loadMaterial(namedMaterialTable, scene, namedMaterials);
+                namedMaterials[*name] = loadMaterial(namedMaterialTable, scene, namedMaterials, texturePath);
             }
         }
 
