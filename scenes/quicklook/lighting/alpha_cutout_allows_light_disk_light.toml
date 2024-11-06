@@ -23,7 +23,7 @@ file = "blender/suzanne-smooth.obj"
     type = "diffuse"
     diffuse = [ 1.0, 0.5, 0.5 ]
     #alpha = 0.5
-    alpha = "/Users/dave/Projects/data/textures/alpha_cutout_stars.png"
+    alpha = "alpha_cutout_stars.png"
     [[meshes.transform]]
     translate = [ 0.0, 1.2, 0.0 ]
 

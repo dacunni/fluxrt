@@ -37,7 +37,7 @@ static ParameterRGB vectorToParameterRGB(const std::vector<double> & v)
     return ParameterRGB(v[0], v[1], v[2]);
 }
 
-void loadMaterialAlphaComponent(const std::shared_ptr<cpptoml::table> & table, Scene & scene, Material & material)
+void loadMaterialAlphaComponent(const std::shared_ptr<cpptoml::table> & table, Scene & scene, Material & material, const std::string & texturePath)
 {
     // Try to load as either a single color or a texture
     auto alpha = table->get_as<double>("alpha").value_or(-1.0);
@@ -47,7 +47,7 @@ void loadMaterialAlphaComponent(const std::shared_ptr<cpptoml::table> & table, S
         material.opacity = (float) alpha;
     }
     else if(tex) {
-        material.alphaParam = scene.textureCache.loadTextureFromFile("", *tex);
+        material.alphaParam = scene.textureCache.loadTextureFromFile(texturePath, *tex);
     }
 }
 
@@ -88,7 +88,7 @@ void loadMaterialSpecularComponent(const std::shared_ptr<cpptoml::table> & table
 }
 
 MaterialID loadMaterial(const std::shared_ptr<cpptoml::table> & materialTable, Scene & scene,
-                        const std::map<std::string, MaterialID> & namedMaterials)
+                        const std::map<std::string, MaterialID> & namedMaterials, const std::string & texturePath)
 {
     auto include = materialTable->get_as<std::string>("include");
     if(include) {
@@ -105,7 +105,7 @@ MaterialID loadMaterial(const std::shared_ptr<cpptoml::table> & materialTable, S
 
     Material material;
 
-    loadMaterialAlphaComponent(materialTable, scene, material);
+    loadMaterialAlphaComponent(materialTable, scene, material, texturePath);
 
     if(*type == "diffuse") {
         loadMaterialDiffuseComponent(materialTable, scene, material);
@@ -149,11 +149,11 @@ MaterialID loadMaterial(const std::shared_ptr<cpptoml::table> & materialTable, S
 
 template<typename OBJ>
 void loadMaterialForObject(const std::shared_ptr<cpptoml::table> & table, OBJ & obj, Scene & scene,
-                           std::map<std::string, MaterialID> & namedMaterials)
+                           std::map<std::string, MaterialID> & namedMaterials, const std::string & texturePath)
 {
     auto materialTable = table->get_table("material");
     if(materialTable) {
-        obj.material = loadMaterial(materialTable, scene, namedMaterials);
+        obj.material = loadMaterial(materialTable, scene, namedMaterials, texturePath);
     }
 }
 
@@ -218,6 +218,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
         std::string meshPath = getEnvVar("MESH_PATH");
         std::string envMapPath = getEnvVar("ENV_MAP_PATH");
         std::string scenePath = getEnvVar("SCENE_PATH");
+        std::string texturePath = getEnvVar("TEXTURE_PATH");
 
         auto applyPathPrefix = [](const std::string & prefix, const std::string & path) {
             // If prefix is defined and path is not absolute
@@ -230,6 +231,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
         std::cout << "Mesh path = " << meshPath << '\n';
         std::cout << "Env map path = " << envMapPath << '\n';
         std::cout << "Scene path = " << scenePath << '\n';
+        std::cout << "Texture path = " << texturePath << '\n';
 
         auto includeTableArray = top->get_table_array("include");
         if(includeTableArray) {

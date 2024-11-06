@@ -58,8 +58,10 @@ jobs:
             cd render_tests
             export MESH_PATH=/workspace/external/fluxrt-ci-data/3dmodels
             export ENV_MAP_PATH=/workspace/external/fluxrt-ci-data/envmaps
+            export TEXTURE_PATH=/workspace/external/fluxrt-ci-data/textures
             find $MESH_PATH
             find $ENV_MAP_PATH
+            find $TEXTURE_PATH
             trace_all -v -s /workspace/scenes/quicklook
       - store_artifacts:
           path: /workspace/build/app/render_tests
