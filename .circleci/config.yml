@@ -37,9 +37,9 @@ jobs:
       - run: ls -l /workspace
       - run:
           name: "Test"
-          command: cd /workspace/build && ctest --output-junit
+          command: cd /workspace/build && ctest --output-junit test-out.xml
       - store_test_results:
-          path: build/out.xml
+          path: build/test-out.xml
   rendertest:
     docker:
       - image: dacunni/hobby:ubuntu_compilers
