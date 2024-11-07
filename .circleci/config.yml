@@ -34,16 +34,12 @@ jobs:
     steps:
       - attach_workspace:
           at: /workspace
-      - run:
-          name: "Install latest CMake"
-          command: |
-            wget https://github.com/Kitware/CMake/releases/download/v3.31.0-rc3/cmake-3.31.0-rc3-linux-x86_64.sh
-            ./cmake-3.31.0-rc3-linux-x86_64.sh
       - run: ls -l /workspace
       - run:
           name: "Test"
           command: |
             cd /workspace/build
+            # NOTE: test-out.xml will not work until we use a newer version of cmake
             ctest --version
             ctest --output-junit test-out.xml
             pwd
