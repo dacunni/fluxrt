@@ -37,7 +37,11 @@ jobs:
       - run: ls -l /workspace
       - run:
           name: "Test"
-          command: cd /workspace/build && ctest --output-junit test-out.xml
+          command: |
+            cd /workspace/build
+            ctest --output-junit test-out.xml
+            pwd
+            ls -l
       - store_test_results:
           path: /workspace/build/test-out.xml
   rendertest:
