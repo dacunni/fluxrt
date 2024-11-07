@@ -39,7 +39,7 @@ jobs:
           name: "Test"
           command: cd /workspace/build && ctest --output-junit test-out.xml
       - store_test_results:
-          path: build/test-out.xml
+          path: /workspace/build/test-out.xml
   rendertest:
     docker:
       - image: dacunni/hobby:ubuntu_compilers
