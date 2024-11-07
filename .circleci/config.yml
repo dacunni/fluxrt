@@ -39,6 +39,7 @@ jobs:
           name: "Test"
           command: |
             cd /workspace/build
+            ctest --version
             ctest --output-junit test-out.xml
             pwd
             ls -l
