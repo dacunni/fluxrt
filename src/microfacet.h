@@ -1,6 +1,8 @@
 #ifndef _MICROFACET_H_
 #define _MICROFACET_H_
 
+#include <stdexcept>
+
 namespace Microfacet {
 
 namespace GeometryShadowing {
