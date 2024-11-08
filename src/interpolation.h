@@ -2,6 +2,7 @@
 #define __INTERPOLATION_H__
 
 #include <cmath>
+#include <cstdint>
 
 template <typename T> inline T lerpImpl(T a, T v1, T v2)  { return (T(1.0) - a) * v1 + a * v2; }
 
