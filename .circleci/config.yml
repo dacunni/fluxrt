@@ -32,6 +32,7 @@ jobs:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
     steps:
+      - run: cat /etc/os-release
       - attach_workspace:
           at: /workspace
       - run: ls -l /workspace
