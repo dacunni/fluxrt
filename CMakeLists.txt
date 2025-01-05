@@ -27,6 +27,7 @@ include_directories(external/tinyobjloader)
 include_directories(external/stlloader)
 include_directories(external/cpptoml/include)
 include_directories(external/generator)
+include_directories(external/raylib)
 
 set(SRCS
     src/artifacts.cpp
@@ -75,6 +76,8 @@ if(BUILD_PYTHON_BINDINGS)
     add_subdirectory(external/pybind11)
     add_subdirectory(bindings/python)
 endif(BUILD_PYTHON_BINDINGS)
+
+add_subdirectory(external/raylib)
 
 add_subdirectory(app)
 
