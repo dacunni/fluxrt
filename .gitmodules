@@ -24,3 +24,6 @@
 	path = external/fluxrt-ci-data
 	url = git@github.com:dacunni/fluxrt-ci-data.git
 	branch = main
+[submodule "external/raylib"]
+	path = external/raylib
+	url = https://github.com/raysan5/raylib.git
