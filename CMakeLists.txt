@@ -27,7 +27,7 @@ include_directories(external/tinyobjloader)
 include_directories(external/stlloader)
 include_directories(external/cpptoml/include)
 include_directories(external/generator)
-include_directories(external/raylib)
+include_directories(external/raylib/src)
 
 set(SRCS
     src/artifacts.cpp
@@ -53,6 +53,7 @@ set(SRCS
     src/optics.cpp
     src/radiometry.cpp
     src/Ray.cpp
+    src/RaylibWrapper.cpp
     src/Renderer.cpp
     src/rng.cpp
     src/sensor.cpp
@@ -77,7 +78,9 @@ if(BUILD_PYTHON_BINDINGS)
     add_subdirectory(bindings/python)
 endif(BUILD_PYTHON_BINDINGS)
 
+add_definitions(-DSTB_IMAGE_STATIC -DSTB_IMAGE_WRITE_STATIC)
 add_subdirectory(external/raylib)
+remove_definitions(-DSTB_IMAGE_STATIC -DSTB_IMAGE_WRITE_STATIC)
 
 add_subdirectory(app)
 

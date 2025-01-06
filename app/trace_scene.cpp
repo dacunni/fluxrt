@@ -17,6 +17,7 @@
 #include "Renderer.h"
 #include "Logger.h"
 #include "LatLonEnvironmentMap.h"
+#include "RaylibWrapper.h"
 
 std::atomic<bool> flushImmediate(false); // Flush the color output as soon as possible
 
@@ -224,35 +225,58 @@ int main(int argc, char ** argv)
         options.renderOrder = "tiled";
     }
 
-    if(options.renderOrder == "raster") {
-        // Raster order
-        scene.sensor.forEachPixelThreaded(renderPixelAllSamples, options.numThreads);
-    }
-    else if(options.renderOrder == "tiled") {
-        // Tiled
-        scene.sensor.forEachPixelTiledThreaded(renderPixelAllSamples, tileSize, options.numThreads);
-    }
-    else if(options.renderOrder == "progressive") {
-        // Progressive
-        for(unsigned int sampleIndex = 0; sampleIndex < options.samplesPerPixel; ++sampleIndex) {
-            auto renderPixelOneSample = [&](size_t x, size_t y, size_t threadIndex) {
-                ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
-                tracePixelRay(x, y, threadIndex, sampleIndex);
-                artifacts.accumTime(x, y, pixelTimer.elapsed());
-
-                if(flushImmediate.exchange(false)) {
-                    artifacts.writeAll();
-                    printf("Progress: %.2f %%\n", 100.0f * (float) sampleIndex / (options.samplesPerPixel - 1));
-                    resetFlushTimer();
-                }
-            };
-            scene.sensor.forEachPixelTiledThreaded(renderPixelOneSample, tileSize, options.numThreads);
+    auto renderThreadFn = [&]() {
+        if(options.renderOrder == "raster") {
+            // Raster order
+            scene.sensor.forEachPixelThreaded(renderPixelAllSamples, options.numThreads);
         }
+        else if(options.renderOrder == "tiled") {
+            // Tiled
+            scene.sensor.forEachPixelTiledThreaded(renderPixelAllSamples, tileSize, options.numThreads);
+        }
+        else if(options.renderOrder == "progressive") {
+            // Progressive
+            for(unsigned int sampleIndex = 0; sampleIndex < options.samplesPerPixel; ++sampleIndex) {
+                auto renderPixelOneSample = [&](size_t x, size_t y, size_t threadIndex) {
+                    ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
+                    tracePixelRay(x, y, threadIndex, sampleIndex);
+                    artifacts.accumTime(x, y, pixelTimer.elapsed());
+
+                    if(flushImmediate.exchange(false)) {
+                        artifacts.writeAll();
+                        printf("Progress: %.2f %%\n", 100.0f * (float) sampleIndex / (options.samplesPerPixel - 1));
+                        resetFlushTimer();
+                    }
+                };
+                scene.sensor.forEachPixelTiledThreaded(renderPixelOneSample, tileSize, options.numThreads);
+            }
+        }
+        else {
+            std::cerr << "Unrecognized render order '" + options.renderOrder + "'\n";
+            //return EXIT_FAILURE;
+        }
+    };
+
+    auto renderFut = std::async(std::launch::async, renderThreadFn);
+
+    int windowWidth = 640;
+    int windowHeight = 480;
+    using raylib = RaylibWrapper;
+
+    raylib::InitWindow(windowWidth, windowHeight, "Preview");
+    raylib::SetTargetFPS(60);
+    
+    while(!raylib::WindowShouldClose()) {
+
+        raylib::BeginDrawing();
+        raylib::ClearBackground(raylib::ColorEnum::RAYLIB_WHITE);
+        raylib::DrawText("Testing...123", 190, 200, 20, raylib::ColorEnum::RAYLIB_BLACK);
+        raylib::EndDrawing();
+
     }
-    else {
-        std::cerr << "Unrecognized render order '" + options.renderOrder + "'\n";
-        return EXIT_FAILURE;
-    }
+    raylib::CloseWindow();
+
+    renderFut.wait();
 
     double traceTime = traceTimer.elapsed();
     printf("Scene traced in %s\n", hoursMinutesSeconds(traceTime).c_str());
