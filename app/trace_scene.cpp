@@ -69,6 +69,7 @@ int main(int argc, char ** argv)
             std::string latLonOverride;
             float scaleFactor = 1.0f;
         } envmap;
+        bool previewVisualization = false;
     } options;
 
     // General
@@ -96,6 +97,9 @@ int main(int argc, char ** argv)
     // Environment Map
     argParser.addArgument('E', "envmap", options.envmap.latLonOverride);
     argParser.addArgument('F', "envmapscale", options.envmap.scaleFactor);
+
+    // Visualization
+    argParser.addFlag('v', "previewvis", options.previewVisualization);
 
     argParser.parse(argc, argv);
 
@@ -259,22 +263,24 @@ int main(int argc, char ** argv)
 
     auto renderFut = std::async(std::launch::async, renderThreadFn);
 
-    int windowWidth = 640;
-    int windowHeight = 480;
-    using raylib = RaylibWrapper;
+    if(options.previewVisualization) {
+        int windowWidth = 640;
+        int windowHeight = 480;
+        using raylib = RaylibWrapper;
 
-    raylib::InitWindow(windowWidth, windowHeight, "Preview");
-    raylib::SetTargetFPS(60);
-    
-    while(!raylib::WindowShouldClose()) {
+        raylib::InitWindow(windowWidth, windowHeight, "Preview");
+        raylib::SetTargetFPS(60);
 
-        raylib::BeginDrawing();
-        raylib::ClearBackground(raylib::ColorEnum::RAYLIB_WHITE);
-        raylib::DrawText("Testing...123", 190, 200, 20, raylib::ColorEnum::RAYLIB_BLACK);
-        raylib::EndDrawing();
+        while(!raylib::WindowShouldClose()) {
 
+            raylib::BeginDrawing();
+            raylib::ClearBackground(raylib::ColorEnum::RAYLIB_WHITE);
+            raylib::DrawText("Testing...123", 190, 200, 20, raylib::ColorEnum::RAYLIB_BLACK);
+            raylib::EndDrawing();
+
+        }
+        raylib::CloseWindow();
     }
-    raylib::CloseWindow();
 
     renderFut.wait();
 

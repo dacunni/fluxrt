@@ -5,7 +5,10 @@ struct RaylibWrapper
 {
     enum class ColorEnum : int {
         RAYLIB_WHITE,
-        RAYLIB_BLACK
+        RAYLIB_BLACK,
+        RAYLIB_RED,
+        RAYLIB_GREEN,
+        RAYLIB_BLUE
     };
     // Taken from raylib.h
     static void InitWindow(int width, int height, const char *title);  // Initialize window and OpenGL context

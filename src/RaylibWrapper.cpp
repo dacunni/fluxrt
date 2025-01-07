@@ -7,6 +7,9 @@ Color ColorEnumToRaylib(RaylibWrapper::ColorEnum color)
     switch(color) {
         case RaylibWrapper::ColorEnum::RAYLIB_WHITE: return WHITE;
         case RaylibWrapper::ColorEnum::RAYLIB_BLACK: return BLACK;
+        case RaylibWrapper::ColorEnum::RAYLIB_RED:   return RED;
+        case RaylibWrapper::ColorEnum::RAYLIB_GREEN: return GREEN;
+        case RaylibWrapper::ColorEnum::RAYLIB_BLUE:  return BLUE;
         default: return BLACK;
     }
 }
