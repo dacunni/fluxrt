@@ -42,6 +42,7 @@ RadianceRGB LatLonEnvironmentMap::sampleRay(const Ray & ray)
 
     float PI = float(constants::PI);
 
+    // FIXME: should this be atan2(-D.z, D.x) ?
     texcoord.u = 0.5f * (1.0f + std::atan2(D.x, -D.z) / PI);
     texcoord.v = std::acos(D.y) / PI;
 
