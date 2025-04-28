@@ -8,23 +8,17 @@ ENV TZ=America/Denver
 RUN apt-get update
 
 # Version Control
-RUN apt-get install -y git
-
 # Build System / Compilers
-RUN apt-get install -y cmake make
-RUN apt-get install -y gcc g++
-RUN apt-get install -y clang
-
 # Python Bindings
-RUN apt-get install -y python3
-RUN apt-get install -y python3-pip
-RUN python3 -m pip install pybind11
+RUN apt-get install -y \
+ git cmake make gcc g++ clang \
+ python3 python3-pip python3-pybind11
 
 # Install Google Test
 RUN git clone -q https://github.com/google/googletest.git /googletest \
     && mkdir -p /googletest/build \
     && cd /googletest/build \
-    && cmake .. && make -j && make install \
+    && cmake .. && make -j 8 && make install \
     && cd / && rm -rf /googletest
 
 # Install Google Benchmark
@@ -32,7 +26,7 @@ RUN git clone -q https://github.com/google/benchmark.git /googlebenchmark \
     && cd /googlebenchmark \
     && cmake -E make_directory "build" \
     && cmake -E chdir "build" cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../ \
-    && cmake --build "build" --config Release \
+    && cmake --build "build" --config Release -j 8 \
     && cmake --build "build" --config Release --target install \
     && cd / && rm -rf /googlebenchmark
 

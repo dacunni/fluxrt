@@ -5,6 +5,15 @@ docker build -t ubuntu_current_checkout -f Dockerfile.ubuntu_current_checkout .
 
 docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro ubuntu_current_checkout
 
+## x64 on MacOS
+docker build -t ubuntu_compilers_amd64 -f Dockerfile.ubuntu_compilers --platform linux/amd64 .
+docker build -t ubuntu_current_checkout_amd64 -f Dockerfile.ubuntu_current_checkout --platform linux/amd64 .
+
+docker build -t ubuntu_compilers -f Dockerfile.ubuntu_compilers --platform linux/amd64 .
+docker build -t ubuntu_current_checkout -f Dockerfile.ubuntu_current_checkout --platform linux/amd64 .
+
+docker run -it -v /Volumes/Extra/data/3dmodels:/app/models:ro ubuntu_current_checkout_amd64
+
 # Emscripten
 docker build -t emscripten -f Dockerfile.emscripten .
 docker build -t emscripten_current_checkout -f Dockerfile.emscripten_current_checkout .
