@@ -68,6 +68,7 @@ set(SRCS
     src/TraceableKDTree.cpp
     src/traceable.cpp
     src/ValueRGB.cpp
+    src/ValueArray.cpp
     )
 ADD_LIBRARY(fluxrt ${SRCS})
 

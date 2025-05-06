@@ -2,8 +2,12 @@
 #define _RADIOMETRY_H_
 
 #include "ValueRGB.h"
+#include "ValueArray.h"
 
 // Radiometric units
+
+// Wavelength (m)
+using Wavelength = float;
 
 // Radiant Flux (Phi) or Power (units: Joules/sec, J/s)
 //   Energy passing through a surface or region per unit time
