@@ -22,12 +22,12 @@ struct ValueArray
         }
     }
     ValueArray(float v[N]) {
-        std::copy(begin(v), end(v), begin(values));
+        std::copy(std::begin(v), std::end(v), std::begin(values));
     }
     // Other value array type
     template <typename S>
     explicit ValueArray(const S & s) {
-        std::copy(begin(s.values), end(s.values), begin(values));
+        std::copy(std::begin(s), std::end(s), std::begin(values));
     }
     // TODO: Add move/copy constructors and simplify operators below
 
