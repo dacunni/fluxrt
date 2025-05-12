@@ -105,7 +105,7 @@ template<unsigned int N>
 struct ColorArray : public ValueArray<ColorArray<N>, N, ValueArrayInitZero>
 {
     ColorArray() = default;
-    ColorArray(float v[N]) = default;
+    ColorArray(float v[N]) : ValueArray<ColorArray<N>, N>() {}
 
     std::string string() const;
 };
@@ -114,14 +114,14 @@ template<unsigned int N>
 struct RadianceArray : public ValueArray<RadianceArray<N>, N, ValueArrayInitZero>
 {
     RadianceArray() = default;
-    RadianceArray(float v[N]) = default;
+    RadianceArray(float v[N]) : ValueArray<RadianceArray<N>, N>() {}
 };
 
 template<unsigned int N>
 struct ReflectanceArray : public ValueArray<ReflectanceArray<N>, N, ValueArrayInitOne>
 {
     ReflectanceArray() = default;
-    ReflectanceArray(float v[N]) = default;
+    ReflectanceArray(float v[N]) : ValueArray<ReflectanceArray<N>, N>() {}
     explicit ReflectanceArray(const ColorArray<N> & c) : ValueArray<ReflectanceArray<N>, N>(c) {}
 };
 
@@ -133,7 +133,7 @@ template<unsigned int N>
 struct ParameterArray : public ValueArray<ParameterArray<N>, N, ValueArrayInitZero>
 {
     ParameterArray() = default;
-    ParameterArray(float v[N]) = default;
+    ParameterArray(float v[N]) : ValueArray<ParameterArray<N>, N>() {}
     explicit ParameterArray(const ColorArray<N> & c) : ValueArray<ParameterArray<N>, N>(c) {}
 };
 
