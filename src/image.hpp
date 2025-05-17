@@ -158,8 +158,8 @@ inline void Image<T>::set3(size_t x, size_t y, const ColorRGB & c)
 template<typename T>
 void Image<T>::forEachPixel(const PixelFunction & fn)
 {
-    for(int y = 0; y < height; y++) {
-        for(int x = 0; x < width; x++) {
+    for(size_t y = 0; y < height; y++) {
+        for(size_t x = 0; x < width; x++) {
             fn(*this, x, y);
         }
     }
@@ -168,8 +168,8 @@ void Image<T>::forEachPixel(const PixelFunction & fn)
 template<typename T>
 void Image<T>::forEachPixelChannel(const PixelChannelFunction & fn)
 {
-    for(int y = 0; y < height; y++) {
-        for(int x = 0; x < width; x++) {
+    for(size_t y = 0; y < height; y++) {
+        for(size_t x = 0; x < width; x++) {
             for(int c = 0; c < numChannels; c++) {
                 fn(*this, x, y, c);
             }
@@ -180,7 +180,7 @@ void Image<T>::forEachPixelChannel(const PixelChannelFunction & fn)
 template<typename T>
 void Image<T>::forEachPixelInRow(size_t y, const PixelFunction & fn)
 {
-    for(int x = 0; x < width; x++) {
+    for(size_t x = 0; x < width; x++) {
         fn(*this, x, y);
     }
 }
