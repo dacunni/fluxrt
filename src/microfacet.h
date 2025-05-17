@@ -83,7 +83,6 @@ inline float Beckman(float roughness, float NdH)
 inline float BlinnPhong(float roughness, float NdH)
 {
     float m2 = roughness * roughness;
-    float NdH2 = NdH * NdH;
 
     //assert(m2 > 0.0f);
 
