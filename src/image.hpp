@@ -234,7 +234,7 @@ Image<T> colorRange()
     yband++;
 
     // middle gray and equivalent checkerboard
-    auto midOrChecker = [&](int x, int y) {
+    auto midOrChecker = [&](size_t x, size_t y) {
         if(y > bandSize / 3 && y < 2 * bandSize / 3)
             return (x & 0x1) ^ (y & 0x1) ? low : high;
         else

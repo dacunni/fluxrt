@@ -84,7 +84,6 @@ inline float BlinnPhong(float roughness, float NdH)
 {
     float m2 = roughness * roughness;
     float NdH2 = NdH * NdH;
-    float NdH4 = NdH2 * NdH2;
 
     //assert(m2 > 0.0f);
 
