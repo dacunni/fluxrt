@@ -90,7 +90,8 @@ RadianceRGB Renderer::traceRay(const Scene & scene, RNG & rng,
     RayIntersection intersection;
     RadianceRGB Lo;
     
-    bool hit = traceRay(scene, rng, ray, minDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, Lo);
+    // Ignore return
+    traceRay(scene, rng, ray, minDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, Lo);
 
     return Lo;
 }

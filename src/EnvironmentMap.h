@@ -6,8 +6,8 @@
 #include "vectortypes.h"
 #include "vec2.h"
 
-class Ray;
-class RNG;
+struct Ray;
+struct RNG;
 
 struct RandomDirection {
     Direction3 direction;

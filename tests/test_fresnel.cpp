@@ -124,7 +124,6 @@ void make_beers_law_images()
     const int w = 512, h = 128;
     Image<float> image(w, h, 3);
 
-    float bg[3]  = { 1.0f, 1.0f, 1.0f };
     float att[5][3] = {
         { 0.2, 0.7, 0.7 },
         { 0.7, 0.2, 0.7 },

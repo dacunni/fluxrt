@@ -5,7 +5,7 @@
 #include "transform.h"
 #include "Ray.h"
 
-class Slab;
+struct Slab;
 
 // Base class for traceable objects
 struct Traceable

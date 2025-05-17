@@ -200,7 +200,7 @@ inline vec3 RNG::uniformSurfaceUnitHalfSphere(const Direction3 & halfSpace)
 inline vec3 RNG::cosineAboutDirection(const vec2 & e, const Direction3 & n)
 {
     vec3 t, b;
-    float x, y, z;
+    float z;
 
     coordinate::coordinateSystem(n, t, b);
     vec2 v = uniformUnitCircle(e);

@@ -15,7 +15,7 @@ Image<uint8_t> convert<uint8_t, float>(const Image<float> & image)
     std::transform(image.data.begin(), image.data.end(),
                    newImage.data.begin(),
                    [](float v) { return clamp01(v) * 255.0f; });
-    return std::move(newImage);
+    return newImage;
 }
 
 template<>
@@ -70,7 +70,7 @@ std::shared_ptr<Image<float>> readImage(const char * filename)
 
         stbi_image_free(stbiData);
 
-        return std::move(image);
+        return image;
     }
     else {
         // Load float data, adjusting dynamic range if necessary
@@ -89,7 +89,7 @@ std::shared_ptr<Image<float>> readImage(const char * filename)
 
         stbi_image_free(stbiData);
 
-        return std::move(image);
+        return image;
     }
 }
 
