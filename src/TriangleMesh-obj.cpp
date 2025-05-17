@@ -24,7 +24,7 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
 
     objMatToMatArrIndex.resize(objmaterials.size());
 
-    for(int mi = 0; mi < objmaterials.size(); ++mi) {
+    for(size_t mi = 0; mi < objmaterials.size(); ++mi) {
         auto & objmaterial = objmaterials[mi];
         auto & D = objmaterial.diffuse;
         auto & S = objmaterial.specular;
@@ -177,14 +177,14 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     meshData.indices.texcoord.reserve(num_indices);
 
     // load vertices
-    for(int vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
+    for(size_t vi = 0; vi < attrib.vertices.size() / 3; ++vi) {
         auto coord = &attrib.vertices[vi * 3];
         meshData.vertices.emplace_back(coord[0], coord[1], coord[2]);
     }
     meshData.bounds = ::boundingBox(meshData.vertices);
 
     // load normals
-    for(int ni = 0; ni < attrib.normals.size() / 3; ++ni) {
+    for(size_t ni = 0; ni < attrib.normals.size() / 3; ++ni) {
         auto coord = &attrib.normals[ni * 3];
         auto dir = Direction3(coord[0], coord[1], coord[2]);
         dir.normalize();
@@ -198,7 +198,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     }
 
     // load texture coordinates
-    for(int ti = 0; ti < attrib.texcoords.size() / 2; ++ti) {
+    for(size_t ti = 0; ti < attrib.texcoords.size() / 2; ++ti) {
         auto coord = &attrib.texcoords[ti * 2];
         auto tc = TextureCoordinate{coord[0], 1.0f - coord[1]};
         meshData.texcoords.push_back(tc);
@@ -215,7 +215,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
         // faces
         for(size_t fi = 0; fi < num_faces; ++fi) {
             auto indices = &shape.mesh.indices[3 * fi];
-            auto matIndex = shape.mesh.material_ids[fi];
+            size_t matIndex = shape.mesh.material_ids[fi];
             MaterialID materialId = 0;
             if(matIndex >= 0 && matIndex < objMatToMatArrIndex.size()) {
                 materialId = objMatToMatArrIndex[matIndex];

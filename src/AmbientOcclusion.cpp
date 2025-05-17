@@ -7,7 +7,7 @@ float computeAmbientOcclusion(Scene & scene, const RayIntersection & intersectio
     Position3 p = intersection.position + intersection.normal * epsilon;
     Direction3 d;
     float ao = 0.0f;
-    for(int i = 0; i < numSamples; ++i) {
+    for(size_t i = 0; i < numSamples; ++i) {
         if(sampleCosineLobe) {
             // Sample according to cosine lobe about the normal
             rng.cosineAboutDirection(intersection.normal, d);

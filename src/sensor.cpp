@@ -30,8 +30,8 @@ void Sensor::forEachPixelInRect(const PixelFunction & fn,
                                 size_t xmin, size_t ymin,
                                 size_t xdim, size_t ydim)
 {
-    for(int y = ymin; y < ymin + ydim; y++) {
-        for(int x = xmin; x < xmin + xdim; x++) {
+    for(size_t y = ymin; y < ymin + ydim; y++) {
+        for(size_t x = xmin; x < xmin + xdim; x++) {
             fn(x, y, 0);
         }
     }
@@ -64,13 +64,13 @@ void Sensor::forEachPixelThreaded(const PixelFunction & fn, uint32_t numThreads)
     }
 
     auto rowFn = [&](int y, ThreadIndex tid) {
-        for(int x = 0; x < pixelwidth; x++) {
+        for(size_t x = 0; x < pixelwidth; x++) {
             fn(x, y, tid);
         }
     };
 
     auto threadFn = [&](ThreadIndex tid) {
-        for(int y = tid; y < pixelheight; y += numThreads) {
+        for(size_t y = tid; y < pixelheight; y += numThreads) {
             rowFn(y, tid);
         }
     };
