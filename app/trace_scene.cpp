@@ -11,7 +11,7 @@
 #include "artifacts.h"
 #include "constants.h"
 #include "rng.h"
-#include "ambientocclusion.h"
+#include "AmbientOcclusion.h"
 #include "timer.h"
 #include "argparse.h"
 #include "Renderer.h"

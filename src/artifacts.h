@@ -20,22 +20,26 @@ class Artifacts
             ColorRGB color = { rad.r, rad.g, rad.b };
             accumPixelColor(x, y, color);
         }
-        inline void accumPixelColor(int x, int y, const ColorRGB & color)
+        inline void accumPixelColor(int x, int y, const ColorRGB & color, bool clampInvalid = true)
         {
-            // TODO: Put a flag around this
-            if(std::isinf(color.r) || std::isinf(color.g) || std::isinf(color.b)) {
-                std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Inf value : " << color.string() << '\n';;
-                pixelColor.accum(x, y, ::ColorRGB::BLACK());
+            bool isValid = true;
+
+            if(clampInvalid) {
+                if(std::isinf(color.r) || std::isinf(color.g) || std::isinf(color.b)) {
+                    std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Inf value : " << color.string() << '\n';;
+                    isValid = false;
+                }
+                else if(std::isnan(color.r) || std::isnan(color.g) || std::isnan(color.b)) {
+                    std::cerr << "WARNING: Pixel " << x << ", " << y << " color has NaN value : " << color.string() << '\n';;
+                    isValid = false;
+                }
+                else if(color.r < 0.0f || color.g < 0.0f || color.b < 0.0f) {
+                    std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Negative value : " << color.string() << '\n';;
+                    isValid = false;
+                }
             }
-            else if(std::isnan(color.r) || std::isnan(color.g) || std::isnan(color.b)) {
-                std::cerr << "WARNING: Pixel " << x << ", " << y << " color has NaN value : " << color.string() << '\n';;
-                pixelColor.accum(x, y, ::ColorRGB::BLACK());
-            }
-            else if(color.r < 0.0f || color.g < 0.0f || color.b < 0.0f) {
-                std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Negative value : " << color.string() << '\n';;
-                pixelColor.accum(x, y, ::ColorRGB::BLACK());
-            }
-            else {
+
+            if(isValid) {
                 pixelColor.accum(x, y, color);
                 // Update running variance
                 auto Np = samplesPerPixel.get(x, y, 0) + 1;
@@ -58,6 +62,10 @@ class Artifacts
                 runningVarianceM.set3(x, y, Mn.x, Mn.y, Mn.z);
                 runningVarianceS.set3(x, y, Sn.x, Sn.y, Sn.z);
             }
+            else {
+                pixelColor.accum(x, y, ::ColorRGB::BLACK());
+            }
+
             samplesPerPixel.accum(x, y, 0, 1);
         }
 
