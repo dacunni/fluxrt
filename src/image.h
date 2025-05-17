@@ -64,7 +64,7 @@ struct Image
 template<typename T>
 std::shared_ptr<Image<T>> readImage(const char * filename);
 template<typename T>
-std::shared_ptr<Image<T>> readImage(const std::string & filename) { return std::move(readImage<T>(filename.c_str())); }
+std::shared_ptr<Image<T>> readImage(const std::string & filename) { return readImage<T>(filename.c_str()); }
 
 template<typename T>
 bool writePNG(const Image<T> & image, const char * filename);

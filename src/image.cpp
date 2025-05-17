@@ -121,14 +121,12 @@ Image<float> applyGamma(const Image<float> & image, float gamma)
 {
     Image<float> newImage(image.width, image.height, image.numChannels);
 
-    for(int y = 0; y < image.height; ++y) {
-        for(int x = 0; x < image.width; ++x) {
-            for(int c = 0; c < image.numChannels; ++c) {
-                auto v = image.get(x, y, c);
-                newImage.set(x, y, c, std::pow(v, gamma));
-            }
-        }
-    }
+    auto doGamma = [&](Image<float> & _, size_t x, size_t y, int c) {
+        auto v = image.get(x, y, c);
+        newImage.set(x, y, c, std::pow(v, gamma));
+    };
+
+    newImage.forEachPixelChannel(doGamma);
 
     return newImage;
 }
@@ -138,14 +136,12 @@ Image<uint8_t> applyGamma(const Image<uint8_t> & image, float gamma)
 {
     Image<uint8_t> newImage(image.width, image.height, image.numChannels);
 
-    for(int y = 0; y < image.height; ++y) {
-        for(int x = 0; x < image.width; ++x) {
-            for(int c = 0; c < image.numChannels; ++c) {
-                auto v = image.get(x, y, c);
-                newImage.set(x, y, c, std::pow(float(v) / 255.0f, gamma) * 255.0f);
-            }
-        }
-    }
+    auto doGamma = [&](Image<uint8_t> & _, size_t x, size_t y, int c) {
+        auto v = image.get(x, y, c);
+        newImage.set(x, y, c, std::pow(float(v) / 255.0f, gamma) * 255.0f);
+    };
+
+    newImage.forEachPixelChannel(doGamma);
 
     return newImage;
 }
