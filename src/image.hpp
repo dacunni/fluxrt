@@ -202,12 +202,12 @@ Image<T> grayRamp(size_t xsize, size_t ysize)
     const auto high = maxValue<T>();
     Image<T> image(xsize, ysize, 3);
 
-    for(int y = 0; y < ysize; ++y) {
-        for(int x = 0; x < xsize; ++x) {
-            T value = (T) (float(x) / float(xsize - 1) * high);
-            image.set3(x, y, value, value, value);
-        }
-    }
+    auto setValue = [&](Image<T> & image, size_t x, size_t y) {
+        T value = (T) (float(x) / float(xsize - 1) * high);
+        image.set3(x, y, value, value, value);
+    };
+
+    image.forEachPixel(setValue);
 
     return image;
 }
@@ -225,8 +225,8 @@ Image<T> colorRange()
     int yband = 0;
 
     // gradient
-    for(int y = 0; y < bandSize; ++y) {
-        for(int x = 0; x < size; ++x) {
+    for(size_t y = 0; y < bandSize; ++y) {
+        for(size_t x = 0; x < size; ++x) {
             value = (T) (float(x) / float(size - 1) * high);
             image.set3(x, y + yband * bandSize, value, value, value);
         }
@@ -242,8 +242,8 @@ Image<T> colorRange()
     };
 
     // middle gray and equivalent checkerboard
-    for(int y = 0; y < bandSize; ++y) {
-        for(int x = 0; x < size; ++x) {
+    for(size_t y = 0; y < bandSize; ++y) {
+        for(size_t x = 0; x < size; ++x) {
             value = midOrChecker(x, y);
             image.set3(x, y + yband * bandSize, value, value, value);
         }
@@ -251,8 +251,8 @@ Image<T> colorRange()
     yband++;
 
     auto setChannelMidOrChecker = [&](int channel) {
-        for(int y = 0; y < bandSize; ++y) {
-            for(int x = 0; x < size; ++x) {
+        for(size_t y = 0; y < bandSize; ++y) {
+            for(size_t x = 0; x < size; ++x) {
                 value = midOrChecker(x, y);
                 image.set(x, y + yband * bandSize, channel, value);
             }
