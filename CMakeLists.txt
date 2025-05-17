@@ -30,6 +30,7 @@ include_directories(external/generator)
 
 set(SRCS
     src/artifacts.cpp
+    src/AmbientOcclusion.cpp
     src/barycentric.cpp
     src/brdf.cpp
     src/camera.cpp
