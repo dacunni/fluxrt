@@ -61,7 +61,7 @@ void CommandLineArgumentParser::addFlag(int shortName, std::string longName)
         "", // filled in by parse()
         no_argument,
         &_arguments.back().flagValue,
-        1
+        shortName
     };
 
     argument.getoptParams = opt;
@@ -143,9 +143,8 @@ bool CommandLineArgumentParser::parse(int argc, char ** argv)
         }
 
         if(c == 0) {
-            if(getoptTable[optionIndex].flag) {
-                continue;
-            }
+            // Set to the value stored in the option table, which we've set to the short name
+            c = getoptTable[optionIndex].val;
         }
 
         auto & argument = _arguments[_shortNameToArgumentIndex[c]];
