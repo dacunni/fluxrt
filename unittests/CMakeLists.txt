@@ -23,6 +23,7 @@ add_executable(coordinate coordinate.cpp)
 add_executable(filesystem filesystem.cpp)
 add_executable(jacobian jacobian.cpp)
 add_executable(boundingbox boundingbox.cpp)
+add_executable(argparse argparse.cpp)
 
 set(LIBS ${GTEST_BOTH_LIBRARIES} fluxrt pthread)
 
@@ -43,6 +44,7 @@ target_link_libraries(coordinate ${LIBS})
 target_link_libraries(filesystem ${LIBS})
 target_link_libraries(jacobian ${LIBS})
 target_link_libraries(boundingbox ${LIBS})
+target_link_libraries(argparse ${LIBS})
 
 add_test(AllTestsInVec3 vec3)
 add_test(AllTestsInVec4 vec4)
@@ -61,5 +63,6 @@ add_test(AllTestsInCoordinate coordinate)
 add_test(AllTestsInFileSystem filesystem)
 add_test(AllTestsInJacobian jacobian)
 add_test(AllTestsInBoundingBox boundingbox)
+add_test(AllTestsInArgParse argparse)
 
 

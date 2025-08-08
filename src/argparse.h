@@ -27,6 +27,9 @@ class CommandLineArgumentParser
         bool getFlag(int shortName);
         std::string getArgument(int shortName);
 
+        size_t numNamedArguments() const;
+        size_t numUnnamedArguments() const;
+
         std::vector<std::string> unnamedArguments();
 
         void print();
@@ -177,6 +180,16 @@ std::string CommandLineArgumentParser::getArgument(int shortName)
 {
     auto & argument = _arguments[_shortNameToArgumentIndex[shortName]];
     return argument.value;
+}
+
+size_t CommandLineArgumentParser::numNamedArguments() const
+{
+    return _arguments.size();
+}
+
+size_t CommandLineArgumentParser::numUnnamedArguments() const
+{
+    return _unnamedArguments.size();
 }
 
 std::vector<std::string> CommandLineArgumentParser::unnamedArguments()
