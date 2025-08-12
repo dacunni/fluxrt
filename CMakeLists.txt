@@ -4,6 +4,7 @@ PROJECT (fluxrt)
 
 option(OPTIMIZE_FOR_NATIVE "Build with -march=native" OFF)
 option(BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
+option(BUILD_BENCHMARKS "Build benchmarks" OFF)
 
 if(OPTIMIZE_FOR_NATIVE)
     include(CheckCXXCompilerFlag)
