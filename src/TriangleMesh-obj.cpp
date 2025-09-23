@@ -108,11 +108,13 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
         }
 
         material.opacity = objmaterial.dissolve;
-        vec3 transmittance(objmaterial.transmittance);
-        if(!transmittance.isOnes()) {
-            // FIXME: Per-channel opacity
-            material.opacity = transmittance.minElement();
-        }
+
+        // FIXME: Some obj models appear completely transparent with default materials
+        //vec3 transmittance(objmaterial.transmittance);
+        //if(!transmittance.isOnes()) {
+        //    // FIXME: Per-channel opacity
+        //    material.opacity = transmittance.minElement();
+        //}
 
         objMatToMatArrIndex[mi] = materials.size();
         materials.push_back(material);

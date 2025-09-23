@@ -1,6 +1,7 @@
 [camera]
 type = "pinhole"
 hfov = 10
+#hfov = 60
 
 #focus_distance = 7.75
 #focus_divergence = 0.01
@@ -14,18 +15,17 @@ pixelwidth = 800
 pixelheight = 600
 
 [envmap]
-#type = "gradient"
+type = "gradient"
 low = [ 0.0, 0.0, 0.0 ]
 high = [ 1.0, 1.0, 1.0 ]
 direction = [ -1.0, 0.0, -1.0 ]
 
-type = "latlon"
+#type = "latlon"
 #file = "polyhaven.com/sepulchral_chapel_rotunda_1k.hdr"
-file = "polyhaven.com/artist_workshop_1k.hdr"
+#file = "polyhaven.com/artist_workshop_1k.hdr"
 
 [[meshes]]
 file = "polyhaven.com/Camera/Camera_01_1k.obj"
-#scaletocube = 2.0
     #[meshes.material]
     #type = "diffuse"
     #diffuse = [ 1.0, 1.0, 1.0 ]

@@ -389,6 +389,7 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                     meshOctree->build();
                     auto writeTime = writeTimer.elapsed();
                     printf("Octree built in %f sec\n", writeTime);
+                    //meshOctree->printNodes();
                     scene.objects.push_back(meshOctree);
                     loadTransformsForObject(meshTable, *meshOctree, scene);
                 }

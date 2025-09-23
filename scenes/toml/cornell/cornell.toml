@@ -12,17 +12,17 @@ pixelwidth = 1000
 pixelheight = 1000
 
 [[meshes]]
-#file = "casual-effects.com/CornellBox/CornellBox-Empty-CO.obj"
-file = "casual-effects.com/CornellBox/CornellBox-Empty-RG.obj"
-#file = "casual-effects.com/CornellBox/CornellBox-Empty-Squashed.obj" # FIXME - handle missing normal indices
-#file = "casual-effects.com/CornellBox/CornellBox-Empty-White.obj"
-#file = "casual-effects.com/CornellBox/CornellBox-Glossy-Floor.obj"
-#file = "casual-effects.com/CornellBox/CornellBox-Glossy.obj"
-#file = "casual-effects.com/CornellBox/CornellBox-Mirror.obj"
-#file = "casual-effects.com/CornellBox/CornellBox-Original.obj"
-#file = "casual-effects.com/CornellBox/CornellBox-Sphere.obj"
-#file = "casual-effects.com/CornellBox/CornellBox-Water.obj"
-#file = "casual-effects.com/CornellBox/water.obj"
+#file = "casual-effects.com/cornell_box/CornellBox-Empty-CO.obj"
+#file = "casual-effects.com/cornell_box/CornellBox-Empty-RG.obj"
+#file = "casual-effects.com/cornell_box/CornellBox-Empty-Squashed.obj" # FIXME - handle missing normal indices
+#file = "casual-effects.com/cornell_box/CornellBox-Empty-White.obj"
+#file = "casual-effects.com/cornell_box/CornellBox-Glossy-Floor.obj"
+#file = "casual-effects.com/cornell_box/CornellBox-Glossy.obj"
+#file = "casual-effects.com/cornell_box/CornellBox-Mirror.obj"
+file = "casual-effects.com/cornell_box/CornellBox-Original.obj"
+#file = "casual-effects.com/cornell_box/CornellBox-Sphere.obj"
+#file = "casual-effects.com/cornell_box/CornellBox-Water.obj"
+#file = "casual-effects.com/cornell_box/water.obj"
 
 # TEMP - remove when we have emissive meshes
 #[[pointlights]]

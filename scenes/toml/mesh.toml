@@ -13,20 +13,29 @@ up = [ 0.0, 1.0, 0.0 ]
 pixelwidth = 400
 pixelheight = 200
 
+[envmap]
+type = "gradient"
+low = [ 0.0, 0.0, 0.0 ]
+high = [ 1.0, 1.0, 1.0 ]
+direction = [ -1.0, 0.0, -1.0 ]
 #[[spheres]]
 #radius = 1.0
 
 [[meshes]]
 name = "monkey1"
-#file = "blender/monkey_simple_smooth.obj"
+file = "blender/suzanne-smooth.obj"
 #file = "casual-effects.com/bmw/bmw.obj"
 #file = "casual-effects.com/sportsCar/sportsCar.obj"
 #file = "dabrovic-sponza/sponza.obj"
-file = "hairball.obj"
+#file = "hairball.obj"
 #scaletocube = 2.0
 #scaletocube = 9.0
-scaletocube = 2.0
+#scaletocube = 2.0
+scaletocube = 8.0
 #accelerator = "none"
+    #[meshes.material]
+    #type = "diffuse"
+    #diffuse = [ 1.0, 1.0, 1.0 ]
 
 #[[meshes.transforms]]
 #	translate = [ 0.0, 0.0, 5.2 ]
