@@ -38,7 +38,7 @@ jobs:
       - run: ls -l /workspace
       - run:
           name: "Test"
-          command: cd /workspace/build && ctest
+          command: cd /workspace/build && ctest --rerun-failed --output-on-failure
   rendertest:
     docker:
       - image: dacunni/hobby:ubuntu_compilers
