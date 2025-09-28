@@ -1,3 +1,6 @@
+[[include]]
+source = "standard/materials/smooth-white-plastic.toml"
+
 [camera]
 type = "pinhole"
 hfov = 45
@@ -11,6 +14,15 @@ up = [ 0.0, 1.0, 0.0 ]
 [sensor]
 pixelwidth = 400
 pixelheight = 300
+
+[envmap]
+#type = "gradient"
+#low = [ 0.0, 0.0, 0.0 ]
+#high = [ 1.0, 1.0, 1.0 ]
+#direction = [ 1.0, 1.0, 1.0 ]
+
+type = "latlon"
+file = "polyhaven.com/adams_place_bridge_1k.hdr"
 
 [[meshes]]
 #file = "blender/monkey_simple_smooth.obj"

@@ -1,3 +1,6 @@
+[[include]]
+source = "standard/materials/smooth-white-plastic.toml"
+
 [camera]
 type = "pinhole"
 hfov = 45
@@ -28,8 +31,8 @@ direction = [ 1.0, 1.0, 1.0 ]
 
 [[meshes]]
 file = "casual-effects.com/mitsuba/mitsuba-sphere.obj"
-    [meshes.material]
-    include = "heromat"
+#    [meshes.material]
+#    include = "heromat"
 
 [[spheres]]
 radius = 0.5
