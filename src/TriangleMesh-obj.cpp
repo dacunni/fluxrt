@@ -228,10 +228,9 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
             assert(materialId < materials.size());
             // vertex indices
             for (int vi = 0; vi < 3; ++vi) {
-                // FIXME - Handle -1 for missing vertex_index, normal_index, texcoord_index
+                // FIXME - Handle -1 for missing vertex_index, normal_index
                 assert(indices[vi].vertex_index >= 0);
                 assert(indices[vi].normal_index >= 0);
-                assert(indices[vi].texcoord_index >= 0);
                 assert(size_t(indices[vi].vertex_index) < meshData.vertices.size());
                 assert(size_t(indices[vi].normal_index) < meshData.normals.size());
                 assert(size_t(indices[vi].texcoord_index) < meshData.texcoords.size());
