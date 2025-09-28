@@ -233,7 +233,6 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
                 assert(indices[vi].normal_index >= 0);
                 assert(size_t(indices[vi].vertex_index) < meshData.vertices.size());
                 assert(size_t(indices[vi].normal_index) < meshData.normals.size());
-                assert(size_t(indices[vi].texcoord_index) < meshData.texcoords.size());
 
                 meshData.indices.vertex.push_back(indices[vi].vertex_index);
                 meshData.indices.normal.push_back(indices[vi].normal_index);
