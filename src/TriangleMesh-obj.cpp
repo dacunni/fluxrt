@@ -210,9 +210,10 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     for(size_t si = 0; si < shapes.size(); ++si) {
         const auto & shape = shapes[si];
         const auto num_faces = shape.mesh.indices.size() / 3;
+#ifndef NDEBUG
         const auto num_materials = shape.mesh.material_ids.size();
-
         assert(num_materials == num_faces); // per-face material
+#endif
 
         // faces
         for(size_t fi = 0; fi < num_faces; ++fi) {
@@ -223,9 +224,18 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
                 materialId = objMatToMatArrIndex[matIndex];
             }
             meshData.faces.material.push_back(materialId);
+            assert(materialId >= 0);
+            assert(materialId < materials.size());
             // vertex indices
             for (int vi = 0; vi < 3; ++vi) {
                 // FIXME - Handle -1 for missing vertex_index, normal_index, texcoord_index
+                assert(indices[vi].vertex_index >= 0);
+                assert(indices[vi].normal_index >= 0);
+                assert(indices[vi].texcoord_index >= 0);
+                assert(indices[vi].vertex_index < meshData.vertices.size());
+                assert(indices[vi].normal_index < meshData.normals.size());
+                assert(indices[vi].texcoord_index < meshData.texcoords.size());
+
                 meshData.indices.vertex.push_back(indices[vi].vertex_index);
                 meshData.indices.normal.push_back(indices[vi].normal_index);
                 if(indices[vi].texcoord_index < 0) {

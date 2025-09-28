@@ -33,10 +33,6 @@ void TriangleMeshOctree::build()
 
     triangles.reserve(mesh->numTriangles());
     buildNode(rootIndex, tris, bounds);
-    assert(triangles.size() >= buildCutOffNumTriangles);
-    for(auto tri: triangles) {
-        assert(tri < mesh->numTriangles());
-    }
 }
 
 void TriangleMeshOctree::buildNode(uint32_t nodeIndex,
@@ -128,8 +124,6 @@ void TriangleMeshOctree::buildChild(Node & node,
                                     const std::vector<uint32_t> & childTris,
                                     const Slab & childBounds)
 {
-    assert(childIndex >= 0); // TEMP
-    assert(childIndex < 8); // TEMP
     if(childTris.empty())
         return;
     auto childNodeIndex = addNode(node.level + 1);
@@ -324,12 +318,10 @@ bool TriangleMeshOctree::findIntersectionNodeTriangles(
     auto & node = nodes[nodeIndex];
     bool hit = false;
 
-    assert(mesh);
-
     if(node.numTriangles > 0) {
         float t = FLT_MAX;
+        assert(node.firstTriangle + node.numTriangles - 1 < triangles.size());
         for(uint32_t ti = 0; ti < node.numTriangles; ++ti) {
-            assert(node.firstTriangle + ti < triangles.size());
             auto tri = triangles[node.firstTriangle + ti];
             if(intersectsTriangle(ray,
                                   mesh->triangleVertex(tri, 0),
@@ -391,7 +383,6 @@ bool TriangleMeshOctree::findIntersection(const Ray & ray, float minDistance,
     if(!hit)
         return false;
 
-    assert(mesh);
     mesh->fillTriangleMeshIntersection(ray, bestTriangle, bestDistance, intersection);
 
     return true;

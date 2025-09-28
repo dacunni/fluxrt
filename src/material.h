@@ -178,6 +178,7 @@ inline const Material & materialFromID(MaterialID id, const MaterialArray & mate
         return DefaultMaterial;
     }
     else {
+        assert(id < materials.size());
         return materials[id];
     }
 }

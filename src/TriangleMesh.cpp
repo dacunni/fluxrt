@@ -214,17 +214,29 @@ bool TriangleMesh::hasNormals() const
 
 const Position3 & TriangleMesh::triangleVertex(uint32_t tri, uint32_t index) const
 {
-    return meshData->vertices[meshData->indices.vertex[3 * tri + index]];
+    uint32_t tri_vertex_index = 3 * tri + index;
+    assert(tri_vertex_index < meshData->indices.vertex.size());
+    uint32_t vertex_index = meshData->indices.vertex[tri_vertex_index];
+    assert(vertex_index < meshData->vertices.size());
+    return meshData->vertices[vertex_index];
 }
 
 const Direction3 & TriangleMesh::triangleNormal(uint32_t tri, uint32_t index) const
 {
-    return meshData->normals[meshData->indices.normal[3 * tri + index]];
+    uint32_t tri_normal_index = 3 * tri + index;
+    assert(tri_normal_index < meshData->indices.normal.size());
+    uint32_t normal_index = meshData->indices.normal[tri_normal_index];
+    assert(normal_index < meshData->normals.size());
+    return meshData->normals[normal_index];
 }
 
 const TextureCoordinate & TriangleMesh::triangleTextureCoordinate(uint32_t tri, uint32_t index) const
 {
-    return meshData->texcoords[meshData->indices.texcoord[3 * tri + index]];
+    uint32_t tri_texcoord_index = 3 * tri + index;
+    assert(tri_texcoord_index < meshData->indices.texcoord.size());
+    uint32_t texcoord_index = meshData->indices.texcoord[tri_texcoord_index];
+    assert(texcoord_index < meshData->texcoords.size());
+    return meshData->texcoords[texcoord_index];
 }
 
 void TriangleMesh::printMeta() const
