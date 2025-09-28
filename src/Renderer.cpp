@@ -39,6 +39,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
 
     if(!hit) {
         if(accumEnvMap) {
+            assert(scene.environmentMap);
             Lo = scene.environmentMap->sampleRay(ray);
         }
         Lo /= RR;

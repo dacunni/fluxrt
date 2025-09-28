@@ -28,7 +28,10 @@ inline bool Slab::contains(const Position3 & P) const
 
 inline bool Slab::intersects(const Ray & ray, float minDistance, float maxDistance) const
 {
-    vec3 dinv(1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z);
+    float dinvx = 1.0f / ray.direction.x;
+    float dinvy = 1.0f / ray.direction.y;
+    float dinvz = 1.0f / ray.direction.z;
+    vec3 dinv(dinvx, dinvy, dinvz);
 
     float tx1 = (xmin - ray.origin.x) * dinv.x;
     float tx2 = (xmax - ray.origin.x) * dinv.x;

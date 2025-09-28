@@ -3,6 +3,7 @@
 #include <functional>
 #include <iostream>
 #include <cassert>
+#include <stack>
 
 #include "TriangleMeshOctree.h"
 #include "TriangleMesh.h"
@@ -196,6 +197,12 @@ void TriangleMeshOctree::childOrderForDirection(const Direction3 & d, child_arra
     }
 }
 
+void TriangleMeshOctree::reverseChildOrderForDirection(const Direction3 & d, child_array_t indices)
+{
+    childOrderForDirection(d, indices);
+    std::reverse(&indices[0], &indices[MAX_CHILDREN]);
+}
+
 const char * TriangleMeshOctree::octantString(child_index_t childIndex)
 {
     switch(childIndex) {
@@ -266,36 +273,27 @@ bool TriangleMeshOctree::intersects(const Ray & ray, float minDistance, float ma
 bool TriangleMeshOctree::findIntersectionNode(const Ray & ray, float minDistance,
                                               uint32_t & bestTriangle, float & bestDistance,
                                               const TriangleMeshOctree::child_array_t & childOrder,
-                                              uint32_t nodeIndex) const
+                                              uint32_t nodeIndex,
+                                              uint32_t level) const
 {
+    assert(level < buildMaxLevel);
+    assert(nodeIndex < nodes.size());
     auto & node = nodes[nodeIndex];
     bool hit = false;
 
     if(!node.bounds.intersects(ray, minDistance, std::numeric_limits<float>::max()))
        return false;
-
-    if(node.numTriangles > 0) {
-        float t = FLT_MAX;
-        for(uint32_t ti = 0; ti < node.numTriangles; ++ti) {
-            auto tri = triangles[node.firstTriangle + ti];
-            if(intersectsTriangle(ray,
-                                  mesh->triangleVertex(tri, 0), mesh->triangleVertex(tri, 1), mesh->triangleVertex(tri, 2),
-                                  minDistance, std::numeric_limits<float>::max(), &t)) {
-                if(t < bestDistance) {
-                    bestTriangle = tri;
-                    bestDistance = t;
-                    hit = true;
-                }
-            }
-        }
-    }
+    
+    hit |= findIntersectionNodeTriangles(
+                ray, minDistance, bestTriangle, bestDistance,
+                nodeIndex);
 
     if(node.numChildren > 0) {
         for(auto childIndex : childOrder) {
             auto childNode = node.children[childIndex];
             if(childNode == TriangleMeshOctree::NO_CHILD)
                 continue; // empty child cell
-            if(findIntersectionNode(ray, minDistance, bestTriangle, bestDistance, childOrder, childNode)) {
+            if(findIntersectionNode(ray, minDistance, bestTriangle, bestDistance, childOrder, childNode, level + 1)) {
                 // FIXME[WAR]: We have a bug in the octree building logic that includes triangles in cells
                 //             that do not actually contain them. This leads to incorrectly determining the first
                 //             hit in the wrong cell sometimes. By iterating over all children, we make sure to
@@ -310,16 +308,78 @@ bool TriangleMeshOctree::findIntersectionNode(const Ray & ray, float minDistance
     return hit;
 }
 
-bool TriangleMeshOctree::findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const
+bool TriangleMeshOctree::findIntersectionNodeTriangles(
+    const Ray & ray,
+    float minDistance,
+    uint32_t & bestTriangle,
+    float & bestDistance,
+    uint32_t nodeIndex) const
+{
+    auto & node = nodes[nodeIndex];
+    bool hit = false;
+
+    if(node.numTriangles > 0) {
+        float t = FLT_MAX;
+        assert(node.firstTriangle + node.numTriangles - 1 < triangles.size());
+        for(uint32_t ti = 0; ti < node.numTriangles; ++ti) {
+            auto tri = triangles[node.firstTriangle + ti];
+            if(intersectsTriangle(ray,
+                                  mesh->triangleVertex(tri, 0),
+                                  mesh->triangleVertex(tri, 1),
+                                  mesh->triangleVertex(tri, 2),
+                                  minDistance, std::numeric_limits<float>::max(), &t)) {
+                if(t < bestDistance) {
+                    bestTriangle = tri;
+                    bestDistance = t;
+                    hit = true;
+                }
+            }
+        }
+    }
+
+    return hit;
+}
+
+bool TriangleMeshOctree::findIntersection(const Ray & ray, float minDistance,
+                                          RayIntersection & intersection) const
 {
     TriangleMeshOctree::child_array_t childOrder = {};
-    TriangleMeshOctree::childOrderForDirection(ray.direction, childOrder);
-
+    std::stack<uint32_t> nodesToCheck;
     uint32_t bestTriangle = 0;
     float bestDistance = FLT_MAX;
+    bool hit = false;
 
-    bool hit = findIntersectionNode(ray, minDistance, bestTriangle, bestDistance, childOrder, 0);
-    
+    // Get the reverse child order because we are setting up a depth-first
+    // search using a stack
+    TriangleMeshOctree::reverseChildOrderForDirection(ray.direction, childOrder);
+
+    // Start at the root node
+    nodesToCheck.push(0);
+
+    while(!nodesToCheck.empty()) {
+        uint32_t nodeIndex = nodesToCheck.top();
+        nodesToCheck.pop();
+        auto & node = nodes[nodeIndex];
+
+        // Check intersection with bounding box for node
+        if(!node.bounds.intersects(ray, minDistance, std::numeric_limits<float>::max()))
+           continue;
+        
+        // Check intersection with triangles in the node
+        hit |= findIntersectionNodeTriangles(ray, minDistance, bestTriangle, bestDistance, nodeIndex);
+
+        // Push children onto the stack in reverse order so the resulting
+        // traversal is depth-first from near to far along the ray.
+        if(node.numChildren > 0) {
+            for(auto childIndex : childOrder) {
+                auto childNode = node.children[childIndex];
+                if(childNode == TriangleMeshOctree::NO_CHILD)
+                    continue; // empty child cell
+                nodesToCheck.push(childNode);
+            }
+        }
+    }
+
     if(!hit)
         return false;
 

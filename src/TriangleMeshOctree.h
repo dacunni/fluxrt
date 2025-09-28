@@ -33,7 +33,15 @@ struct TriangleMeshOctree : public Traceable
     bool findIntersectionNode(const Ray & ray, float minDistance,
                               uint32_t & bestTriangle, float & bestDistance,
                               const TriangleMeshOctree::child_array_t & childOrder,
-                              uint32_t nodeIndex) const;
+                              uint32_t nodeIndex,
+                              uint32_t level) const;
+
+    bool findIntersectionNodeTriangles(
+        const Ray & ray,
+        float minDistance,
+        uint32_t & bestTriangle,
+        float & bestDistance,
+        uint32_t nodeIndex) const;
 
     // Bounding volume
     Slab boundingBox() override;
@@ -51,6 +59,8 @@ struct TriangleMeshOctree : public Traceable
     // Traversal helper
     static void childOrderForDirection(const Direction3 & d,
                                        child_array_t indices);
+    static void reverseChildOrderForDirection(const Direction3 & d,
+                                              child_array_t indices);
     static const char * octantString(child_index_t childIndex);
     static void printChildOrder(child_array_t & indices);
 
