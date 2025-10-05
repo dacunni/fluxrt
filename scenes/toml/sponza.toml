@@ -18,7 +18,7 @@ pixelheight = 400
 
 [[pointlights]]
 position = [ 0.0, 5.0, 0.0 ]
-intensity = [ 10.0, 10.0, 10.0 ]
+intensity = [ 100000.0, 100000.0, 100000.0 ]
 
 [[meshes]]
 file = "casual-effects.com/sponza/sponza.obj"

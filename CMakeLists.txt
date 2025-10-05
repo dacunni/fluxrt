@@ -21,6 +21,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -Wno-unused-const-variable -Wno-unused-function")
 
+# DEBUG: Memory corruption
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector")
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-report")
 

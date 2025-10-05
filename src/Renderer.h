@@ -141,12 +141,16 @@ class Renderer
                                     float minDistance,
                                     float maxDistance = std::numeric_limits<float>::max()) const;
 
+    float applyRayDistanceEpsilon(float minDistance) const;
+
     public:
 
-        static constexpr float        DEFAULT_EPSILON   = 1.0e-4;
+        static constexpr float        DEFAULT_EPSILON_ADDITIVE       = 1.0e-4f;
+        static constexpr float        DEFAULT_EPSILON_MULTIPLICATIVE = 1.001f;
         static constexpr unsigned int DEFAULT_MAX_DEPTH = 10;
 
-        float epsilon = DEFAULT_EPSILON;
+        float epsilon     = DEFAULT_EPSILON_ADDITIVE;
+        float epsilon_far = DEFAULT_EPSILON_MULTIPLICATIVE;
 
         unsigned int maxDepth = DEFAULT_MAX_DEPTH;
 

@@ -51,7 +51,7 @@ int main(int argc, char ** argv)
         unsigned int flushTimeout = 0;
         unsigned int numThreads = 1;
         unsigned int samplesPerPixel = 1;
-        float epsilon = Renderer::DEFAULT_EPSILON;
+        float epsilon = Renderer::DEFAULT_EPSILON_ADDITIVE;
         unsigned int maxDepth = Renderer::DEFAULT_MAX_DEPTH;
         float sensorScaleFactor = 1.0f;
         bool noMonteCarloRefraction = false;

@@ -305,6 +305,8 @@ bool TriangleMeshOctree::findIntersectionNode(const Ray & ray, float minDistance
         }
     }
 
+    assert(!hit || bestDistance >= minDistance);
+
     return hit;
 }
 
@@ -379,6 +381,8 @@ bool TriangleMeshOctree::findIntersection(const Ray & ray, float minDistance,
             }
         }
     }
+
+    assert(!hit || bestDistance >= minDistance);
 
     if(!hit)
         return false;

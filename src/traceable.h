@@ -78,6 +78,9 @@ inline bool Traceable::findIntersectionWorldRay(const Ray & rayWorld, float minD
         intersection.bitangent = multTranspose(transform.rev, intersection.bitangent).normalized();
         // Get distance in world space
         intersection.distance = (intersection.position - rayWorld.origin).magnitude();
+        // Ensure the distance returned is at least the minimum distance
+        intersection.distance = std::max(intersection.distance, minDistanceWorld);
+        //assert(intersection.distance >= minDistanceWorld);
     }
 
     return hit;

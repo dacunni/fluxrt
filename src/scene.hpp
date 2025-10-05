@@ -27,6 +27,7 @@ inline bool findIntersectionWorldRay(const Ray & rayWorld, const Scene & scene,
         if(!hit || nextIntersection.distance < intersection.distance) {
             intersection = nextIntersection;
             hit = true;
+            assert(intersection.distance >= minDistance);
         }
     };
 

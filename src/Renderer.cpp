@@ -46,6 +46,8 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
         return false;
     }
 
+    assert(intersection.distance >= minDistance);
+
     const Direction3 Wo = -ray.direction;
 
     const Material & material = materialFromID(intersection.material, scene.materials);
@@ -57,7 +59,7 @@ bool Renderer::traceRay(const Scene & scene, RNG & rng, const Ray & ray,
     // Transparency
     if(A < 1.0f && rng.uniform01() > A) {
         // Trace a new ray just past the intersection
-        float newMinDistance = intersection.distance + epsilon;
+        const float newMinDistance = applyRayDistanceEpsilon(intersection.distance);
         bool hit = traceRay(scene, rng, ray, newMinDistance, depth, mediumStack, accumEmission, accumEnvMap, intersection, Lo);
         Lo /= RR;
         return hit;
@@ -492,7 +494,7 @@ inline bool Renderer::intersectsScene(const Scene & scene,
         if(hit) {
             const Material & material = materialFromID(intersection.material, scene.materials);
             A = material.alpha(scene.textureCache.textures, intersection.texcoord);
-            minDistance = intersection.distance + epsilon;
+            minDistance = applyRayDistanceEpsilon(intersection.distance);
         }
     } while(hit && A < 1.0f && rng.uniform01() > A);
 
@@ -579,3 +581,22 @@ void Renderer::logConfiguration(Logger & logger) const
     logger.normalf("  Specular shading:");
     logger.normalf("    Sample Phong lobe = %s", onoff(sp.samplePhongLobe));
 }
+
+float Renderer::applyRayDistanceEpsilon(float minDistance) const
+{
+    assert(minDistance >= 0.0f);
+
+    // Nudge minimum distance a small amount
+    float newMinDistance = minDistance + epsilon;
+
+    // If the distance didn't change due to numerical precision, nudge it more
+    if(newMinDistance <= minDistance) {
+        newMinDistance = minDistance * epsilon_far;
+    }
+
+    // Ensure we changed it
+    assert(newMinDistance > minDistance);
+    assert(minDistance >= 0.0f);
+    return newMinDistance;
+}
+
