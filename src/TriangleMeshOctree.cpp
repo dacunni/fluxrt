@@ -144,7 +144,7 @@ void TriangleMeshOctree::printNodes() const
            (unsigned int) mesh->numTriangles(),
            (unsigned int) triangles.size());
     for(uint32_t i = 0; i < nodes.size(); ++i) {
-        auto & node = nodes[i];
+        const auto & node = nodes[i];
         printf("%3u : level %2u first %u count %u\n", i,
                (unsigned int) node.level, node.firstTriangle, node.numTriangles);
         if(node.numChildren > 0) {
@@ -160,7 +160,7 @@ bool TriangleMeshOctree::nodesCoverAllTriangles() const
 {
     std::vector<uint8_t> claimed(mesh->numTriangles());
     std::fill(claimed.begin(), claimed.end(), uint8_t(0));
-    for(auto & node : nodes) {
+    for(const auto & node : nodes) {
         for(uint32_t ti = 0; ti < node.numTriangles; ++ti) {
             claimed[triangles[node.firstTriangle + ti]] = uint8_t(1);
         }
@@ -232,7 +232,7 @@ bool TriangleMeshOctree::intersectsNode(const Ray & ray, float minDistance, floa
                                         const TriangleMeshOctree::child_array_t & childOrder,
                                         uint32_t nodeIndex) const
 {
-    auto & node = nodes[nodeIndex];
+    const auto & node = nodes[nodeIndex];
 
     if(!node.bounds.intersects(ray, minDistance, maxDistance))
        return false;
@@ -278,7 +278,7 @@ bool TriangleMeshOctree::findIntersectionNode(const Ray & ray, float minDistance
 {
     assert(level < buildMaxLevel);
     assert(nodeIndex < nodes.size());
-    auto & node = nodes[nodeIndex];
+    const auto & node = nodes[nodeIndex];
     bool hit = false;
 
     if(!node.bounds.intersects(ray, minDistance, std::numeric_limits<float>::max()))
@@ -317,7 +317,7 @@ bool TriangleMeshOctree::findIntersectionNodeTriangles(
     float & bestDistance,
     uint32_t nodeIndex) const
 {
-    auto & node = nodes[nodeIndex];
+    const auto & node = nodes[nodeIndex];
     bool hit = false;
 
     if(node.numTriangles > 0) {
@@ -361,7 +361,7 @@ bool TriangleMeshOctree::findIntersection(const Ray & ray, float minDistance,
     while(!nodesToCheck.empty()) {
         uint32_t nodeIndex = nodesToCheck.top();
         nodesToCheck.pop();
-        auto & node = nodes[nodeIndex];
+        const auto & node = nodes[nodeIndex];
 
         // Check intersection with bounding box for node
         if(!node.bounds.intersects(ray, minDistance, std::numeric_limits<float>::max()))

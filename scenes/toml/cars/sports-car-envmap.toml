@@ -32,10 +32,10 @@ pixelheight = 1000
 #low = [ 0.0, 0.0, 0.0 ]
 #high = [ 1.0, 1.0, 1.0 ]
 
-#type = "latlon"
-#file = "hdrihaven/adams_place_bridge_1k.hdr"
+type = "latlon"
+file = "polyhaven.com/adams_place_bridge_1k.hdr"
 
-type = "cubemap"
+#type = "cubemap"
 
 #xneg = "HornstullsStrand2/negx.jpg"
 #xpos = "HornstullsStrand2/posx.jpg"
