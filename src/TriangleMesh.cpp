@@ -242,8 +242,8 @@ const TextureCoordinate & TriangleMesh::triangleTextureCoordinate(uint32_t tri, 
 void TriangleMesh::printMeta() const
 {
     printf("TriangleMesh vertices %lu normals %lu indices v %lu n %lu\n",
-           meshData->vertices.size(), meshData->normals.size(),
-           meshData->indices.vertex.size(), meshData->indices.normal.size());
+           (unsigned long) meshData->vertices.size(), (unsigned long) meshData->normals.size(),
+           (unsigned long) meshData->indices.vertex.size(), (unsigned long) meshData->indices.normal.size());
 }
 
 void TriangleMesh::scaleToFit(const Slab & bounds)
