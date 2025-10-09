@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <getopt.h>
+#include <functional>
 
 class CommandLineArgumentParser
 {
