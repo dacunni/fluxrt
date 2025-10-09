@@ -477,7 +477,9 @@ bool loadSceneFromTOMLFile(Scene & scene, const std::string & filename,
                            std::map<std::string, MaterialID> & namedMaterials)
 {
     try {
+        std::cout << "Parsing TOML\n";
         auto top = cpptoml::parse_file(filename);
+        std::cout << "Loading scene from TOML\n";
         return loadSceneFromParsedTOML(scene, top, namedMaterials);
     }
     catch(cpptoml::parse_exception & e) {

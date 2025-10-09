@@ -6,11 +6,12 @@
 #include <sstream>
 #include <fstream>
 #include <mutex>
+#include <chrono>
 
 class Logger
 {
     public:
-        Logger() = default;
+        Logger();
         virtual ~Logger() = default;
 
         enum Severity {
@@ -72,15 +73,19 @@ class Logger
         // back-to-back messages
         void join();
 
+        double relativeTimeSinceStart() const;
+
         static std::string yesno(bool p) { return p ? "yes" : "no"; }
 
     protected:
-        void logToStout(Severity s, const std::string & msg);
+        void logToStdout(Severity s, const std::string & msg);
 
         std::mutex mutex;
 
         bool joinNext = false;
         bool messageOnlyForJoin = false;
+
+        std::chrono::time_point<std::chrono::high_resolution_clock> startTimePoint;
 };
 
 class FileLogger : public Logger

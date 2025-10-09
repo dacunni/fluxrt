@@ -7,6 +7,7 @@
 
 #include "base.h"
 #include "image.h"
+#include "Logger.h"
 
 template<>
 Image<uint8_t> convert<uint8_t, float>(const Image<float> & image)

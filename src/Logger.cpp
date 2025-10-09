@@ -53,9 +53,17 @@ const std::string Logger::severityToString(Severity s, bool colorize)
     }
 }
 
-void Logger::logToStout(Logger::Severity s, const std::string & msg)
+Logger::Logger()
+    : startTimePoint(std::chrono::high_resolution_clock::now())
+{
+
+}
+
+void Logger::logToStdout(Logger::Severity s, const std::string & msg)
 {
     const bool loggingToTerminal = isatty(STDOUT_FILENO);
+
+    const double relTime = relativeTimeSinceStart();
 
     std::lock_guard<std::mutex> guard(mutex);
     if(messageOnlyForJoin) {
@@ -63,6 +71,7 @@ void Logger::logToStout(Logger::Severity s, const std::string & msg)
     }
     else {
         std::cout << severityToString(s, loggingToTerminal)
+                  << "\t" << relTime
                   << "\t" << msg;
     }
     if(!joinNext) {
@@ -72,7 +81,7 @@ void Logger::logToStout(Logger::Severity s, const std::string & msg)
 
 void Logger::log(Logger::Severity s, const std::string & msg)
 {
-    logToStout(s, msg);
+    logToStdout(s, msg);
 }
 
 void Logger::vlogf(Severity s, const char * fmt, va_list args)
@@ -124,11 +133,17 @@ void Logger::join()
     joinNext = true;
 }
 
+double Logger::relativeTimeSinceStart() const
+{
+    auto now = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration<double>(now - startTimePoint).count();
+}
+
 FileLogger::FileLogger(const std::string & filename)
 {
     outFile.open(filename, std::ofstream::out | std::ofstream::trunc);
     if(!outFile.good()) {
-        logToStout(Fatal, "Unable to open " + filename + " for writing");
+        logToStdout(Fatal, "Unable to open " + filename + " for writing");
         exit(EXIT_FAILURE);
     }
 }
@@ -138,8 +153,10 @@ void FileLogger::log(Severity s, const std::string & msg)
     // Optionally mirror logging to stdout
     bool isWarningOrWorse = (s == Warning || s == Error || s == Error);
     if(mirrorToStdout || isWarningOrWorse) {
-        logToStout(s, msg);
+        logToStdout(s, msg);
     }
+
+    const double relTime = relativeTimeSinceStart();
 
     std::lock_guard<std::mutex> guard(mutex);
     
@@ -151,6 +168,7 @@ void FileLogger::log(Severity s, const std::string & msg)
     else {
         // Output severity and message
         outFile << severityToString(s, false)
+                << "\t" << relTime
                 << "\t" << msg;
     }
 
