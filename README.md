@@ -19,16 +19,14 @@ git submodule update --remote
 
 Setup the build
 ```
-mkdir build
-cd build
-cmake ..
+cmake -B build ..
 ```
 
 Build and unit test the code
 ```
-# In the 'build' directory
-make -j install
+cmake --build build
 # Run unit tests
+cd build
 ctest
 ```
 ### Building With Another Version of GCC
