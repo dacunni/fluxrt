@@ -21,6 +21,11 @@ struct ValueArray
             v = INIT::value();
         }
     }
+    // Copy constructor
+    explicit ValueArray(const ValueArray & a) {
+        std::copy(a.values, a.values + N, values);
+    }
+    // Array constructor
     ValueArray(float v[N]) {
         std::copy(v, v + N, values);
     }
@@ -29,7 +34,6 @@ struct ValueArray
     explicit ValueArray(const S & s) {
         std::copy(std::begin(s), std::end(s), values);
     }
-    // TODO: Add move/copy constructors and simplify operators below
 
     SubType residual() const;
 
