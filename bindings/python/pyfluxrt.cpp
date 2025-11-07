@@ -10,7 +10,7 @@ namespace py = pybind11;
 #include <sstream>
 
 // fluxrt
-class PYBIND11_EXPORT Camera;
+struct PYBIND11_EXPORT Camera;
 #include "vec2.h"
 #include "vec3.h"
 #include "scene.h"
