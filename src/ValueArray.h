@@ -13,7 +13,7 @@ struct ValueArrayInitOne {
     static constexpr float value() { return 1.0f; }
 };
 
-template <typename T, unsigned int N, typename INIT = ValueArrayInitZero>
+template <typename SubType, unsigned int N, typename INIT = ValueArrayInitZero>
 struct ValueArray
 {
     ValueArray() {
@@ -31,26 +31,33 @@ struct ValueArray
     }
     // TODO: Add move/copy constructors and simplify operators below
 
-    T residual() const {
-        ValueArray<T, N> a = *this;
-        for(auto & v : a.values) {
-            v = 1.0f - v; 
-        } 
-        return a;
-    }
+    SubType residual() const;
 
-    bool hasNonZeroComponent() const {
-        for(auto v : values) {
-            if(v > 0.0f) {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool hasNonZeroComponent() const;
 
     float values[N];
     static constexpr unsigned int NumElements = N;
 };
+
+// Method Implementations
+template <typename SubType, unsigned int N, typename INIT>
+SubType ValueArray<SubType, N, INIT>::residual() const {
+    ValueArray<SubType, N> a = *this;
+    for(auto & v : a.values) {
+        v = 1.0f - v; 
+    } 
+    return a;
+}
+
+template <typename SubType, unsigned int N, typename INIT>
+bool ValueArray<SubType, N, INIT>::hasNonZeroComponent() const {
+    for(auto v : values) {
+        if(v > 0.0f) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // Operators
 template<class Op, typename ReturnType, typename LeftType, typename RightType>
