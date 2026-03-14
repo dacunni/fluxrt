@@ -25,6 +25,7 @@ add_executable(filesystem filesystem.cpp)
 add_executable(jacobian jacobian.cpp)
 add_executable(boundingbox boundingbox.cpp)
 add_executable(argparse argparse.cpp)
+add_executable(raytrianglemeshoctree_intersect raytrianglemeshoctree_intersect.cpp)
 
 set(LIBS ${GTEST_BOTH_LIBRARIES} fluxrt pthread)
 
@@ -47,6 +48,9 @@ target_link_libraries(filesystem ${LIBS})
 target_link_libraries(jacobian ${LIBS})
 target_link_libraries(boundingbox ${LIBS})
 target_link_libraries(argparse ${LIBS})
+target_link_libraries(raytrianglemeshoctree_intersect ${LIBS})
+
+add_test(AllTestsInRayTriangleMeshOctreeIntersect raytrianglemeshoctree_intersect)
 
 add_test(AllTestsInVec3 vec3)
 add_test(AllTestsInVec4 vec4)
