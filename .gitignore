@@ -11,3 +11,5 @@ happy_snaps
 tags
 
 .claude/
+jobs/
+.venv/

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job — FluxRT</title>
+  <link rel="stylesheet" href="/static/dashboard/dashboard.css">
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="/" title="Back to dashboard">←</a>
+  <h1 id="page-title">Job</h1>
+</header>
+
+<main>
+
+  <!-- ── Info panel ───────────────────────────────────────── -->
+  <section>
+    <div class="info-panel" id="info-panel">
+      <div class="info-item"><label>Scene</label><div class="value" id="info-scene">—</div></div>
+      <div class="info-item"><label>Status</label><div class="value" id="info-status">—</div></div>
+      <div class="info-item"><label>Started</label><div class="value" id="info-started">—</div></div>
+      <div class="info-item"><label>Finished</label><div class="value" id="info-finished">—</div></div>
+      <div class="info-item"><label>Elapsed</label><div class="value" id="info-elapsed">—</div></div>
+      <div class="info-item"><label>Exit code</label><div class="value" id="info-exit">—</div></div>
+      <div class="info-item"><label>SPP</label><div class="value" id="info-spp">—</div></div>
+      <div class="info-item"><label>Threads</label><div class="value" id="info-threads">—</div></div>
+      <div class="info-item"><label>Max depth</label><div class="value" id="info-depth">—</div></div>
+      <div class="info-item"><label>Sensor scale</label><div class="value" id="info-scale">—</div></div>
+      <div class="info-item"><label>Render order</label><div class="value" id="info-order">—</div></div>
+    </div>
+  </section>
+
+  <!-- ── Image grid ───────────────────────────────────────── -->
+  <section>
+    <div class="section-header">
+      <h2>Images</h2>
+      <button id="flush-btn" style="display:none">⚡ Flush</button>
+      <button id="refresh-btn" style="display:none">↺ Refresh images</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div id="no-images" style="color:#555; font-size:14px; display:none">
+      No images yet — render in progress.
+    </div>
+  </section>
+
+  <!-- ── Log viewer ───────────────────────────────────────── -->
+  <section>
+    <div class="section-header">
+      <h2>Logs</h2>
+    </div>
+    <div class="log-tabs">
+      <button class="log-tab active" id="tab-stdout" onclick="switchTab('stdout')">stdout</button>
+      <button class="log-tab"        id="tab-stderr" onclick="switchTab('stderr')">stderr</button>
+    </div>
+    <pre class="log-pre" id="log-stdout"></pre>
+    <pre class="log-pre" id="log-stderr" style="display:none"></pre>
+  </section>
+
+</main>
+
+<!-- Lens + Lightbox -->
+<div class="lens" id="lens"><canvas id="lens-canvas"></canvas></div>
+<div id="lightbox">
+  <img id="lightbox-img" src="" alt="">
+  <div id="lightbox-label"></div>
+</div>
+
+<script src="/static/dashboard/dashboard.js"></script>
+<script>
+// ── Job ID from URL ──────────────────────────────────────────────────────────
+
+const JOB_ID = location.pathname.split('/').filter(Boolean).pop();
+const IMAGE_BASE = `/jobs/${JOB_ID}/`;
+
+// ── Update info panel ────────────────────────────────────────────────────────
+
+function updateInfoPanel(job) {
+  const p = job.params || {};
+  document.getElementById('page-title').textContent =
+    `${job.scene_short || job.scene_short} — ${job.status}`;
+  document.title = `${job.scene_short || 'Job'} — FluxRT`;
+  document.getElementById('info-scene').textContent   = job.scene || '—';
+  document.getElementById('info-status').innerHTML    = statusBadge(job.status);
+  document.getElementById('info-started').textContent = formatDatetime(job.started_at);
+  document.getElementById('info-finished').textContent = formatDatetime(job.finished_at);
+  document.getElementById('info-elapsed').textContent = formatElapsed(job.elapsed_seconds);
+  document.getElementById('info-exit').textContent    = job.exit_code != null ? job.exit_code : '—';
+  document.getElementById('info-spp').textContent     = p.spp ?? '—';
+  document.getElementById('info-threads').textContent = p.threads ?? '—';
+  document.getElementById('info-depth').textContent   = p.depth ?? '—';
+  document.getElementById('info-scale').textContent   = p.sensor_scale != null ? Math.round(p.sensor_scale * 100) + '%' : '—';
+  document.getElementById('info-order').textContent   = p.render_order ?? '—';
+
+  const isRunning = job.status === 'running';
+  document.getElementById('flush-btn').style.display   = isRunning ? '' : 'none';
+  document.getElementById('refresh-btn').style.display = isRunning ? '' : 'none';
+}
+
+// ── Image grid ───────────────────────────────────────────────────────────────
+
+let imagesLoaded = false;
+
+function updateGrid(images, cacheBust) {
+  const noImages = document.getElementById('no-images');
+  if (images.length === 0) {
+    noImages.style.display = '';
+    return;
+  }
+  noImages.style.display = 'none';
+  if (!imagesLoaded || cacheBust) {
+    buildGridWithPaths(images, IMAGE_BASE, cacheBust);
+    if (!imagesLoaded) {
+      setupLens();
+      setupLightbox();
+      imagesLoaded = true;
+    }
+  }
+}
+
+// ── Log tabs ─────────────────────────────────────────────────────────────────
+
+let activeTab = 'stdout';
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('log-stdout').style.display = tab === 'stdout' ? '' : 'none';
+  document.getElementById('log-stderr').style.display = tab === 'stderr' ? '' : 'none';
+  document.getElementById('tab-stdout').classList.toggle('active', tab === 'stdout');
+  document.getElementById('tab-stderr').classList.toggle('active', tab === 'stderr');
+}
+
+// ── Incremental log tailing ───────────────────────────────────────────────────
+
+const logState = {
+  stdout: { offset: 0, el: null },
+  stderr: { offset: 0, el: null },
+};
+
+function initLogState() {
+  logState.stdout.el = document.getElementById('log-stdout');
+  logState.stderr.el = document.getElementById('log-stderr');
+}
+
+async function tailLog(which) {
+  const state = logState[which];
+  const endpoint = which === 'stdout' ? 'output' : 'errors';
+  const data = await apiGet(`/api/jobs/${JOB_ID}/${endpoint}?offset=${state.offset}`);
+  if (data.text) {
+    state.el.textContent += data.text;
+    state.offset = data.next_offset;
+    // Auto-scroll to bottom when near the bottom
+    const el = state.el;
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 60;
+    if (nearBottom) el.scrollTop = el.scrollHeight;
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+
+document.getElementById('flush-btn').addEventListener('click', async function () {
+  this.disabled = true;
+  try { await apiPost(`/api/jobs/${JOB_ID}/flush`, {}); }
+  catch (e) { alert('Flush failed: ' + e.message); }
+  finally { this.disabled = false; }
+});
+
+document.getElementById('refresh-btn').addEventListener('click', () => {
+  refreshGridImages();
+});
+
+// ── Main polling loop ────────────────────────────────────────────────────────
+
+let firstLoad = true;
+
+const poller = createPoller(async () => {
+  const job = await apiGet(`/api/jobs/${JOB_ID}`);
+  updateInfoPanel(job);
+  updateGrid(job.images || [], !firstLoad && job.status === 'running');
+  firstLoad = false;
+
+  const isRunning = job.status === 'running';
+  if (isRunning) {
+    await Promise.all([tailLog('stdout'), tailLog('stderr')]);
+  } else {
+    // Final drain of logs
+    await Promise.all([tailLog('stdout'), tailLog('stderr')]);
+    poller.stop();
+  }
+  return isRunning;
+}, 3000, 3000);
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+
+initLogState();
+setupLens();
+setupLightbox();
+</script>
+</body>
+</html>
