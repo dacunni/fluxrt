@@ -102,6 +102,27 @@ void TriangleMeshOctree::buildNode(uint32_t nodeIndex,
     std::copy_if(HH.begin(), HH.end(), std::back_inserter(HHL), isInZLow);
     std::copy_if(HH.begin(), HH.end(), std::back_inserter(HHH), isInZHigh);
 
+    // Guard against pathological splits where no progress is made.
+    // This occurs when the bounding box is degenerate in some dimension
+    // (e.g., a flat mesh at z=0 causes every triangle to land in both
+    // the ZLow and ZHigh bins, leading to exponential duplication).
+    // If the largest child bin is as large as the parent, splitting
+    // is not reducing the problem, so store as a leaf instead.
+    {
+        size_t parentSize = (size_t)(last - first);
+        size_t maxChildSize = std::max({
+            LLL.size(), LLH.size(), LHL.size(), LHH.size(),
+            HLL.size(), HLH.size(), HHL.size(), HHH.size()
+        });
+        if (maxChildSize >= parentSize) {
+            node.firstTriangle = uint32_t(triangles.size());
+            node.numTriangles = uint32_t(parentSize);
+            std::copy(first, last, std::back_inserter(triangles));
+            nodes[nodeIndex] = node;
+            return;
+        }
+    }
+
     // Create child nodes
     buildChild(node, TriangleMeshOctree::LLL, LLL, Slab(xmin, ymin, zmin, xmid, ymid, zmid));
     buildChild(node, TriangleMeshOctree::LLH, LLH, Slab(xmin, ymin, zmid, xmid, ymid, zmax));
