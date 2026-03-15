@@ -10,3 +10,4 @@ happy_snaps
 *.code-workspace
 tags
 
+.claude/
