@@ -9,4 +9,6 @@ happy_snaps
 .vscode
 *.code-workspace
 tags
+.claude
+CLAUDE.md
 
