@@ -1,5 +1,6 @@
 #include "material.h"
 #include "Renderer.h"
+#include "IESLight.h"
 #include "Logger.h"
 #include "Ray.h"
 #include "rng.h"
@@ -332,6 +333,7 @@ inline RadianceRGB Renderer::shadeBRDF(const Scene & scene, RNG & rng,
     if(sampleLights) {
         Lo += sampleAllPointLights(scene, rng, brdf, Wo, P, N, epsilon);
         Lo += sampleAllDiskLights(scene, rng, brdf, Wo, P, N, epsilon);
+        Lo += sampleAllIESLights(scene, rng, brdf, Wo, P, N, epsilon);
     }
 
     if(sampleEnvMap) {
@@ -465,6 +467,84 @@ inline RadianceRGB Renderer::sampleAllDiskLights(const Scene & scene,
     // Sample disk lights
     for(const auto & light : scene.diskLights) {
         LightSample S = sampleDiskLight(scene, rng, light, P, N, epsilon);
+        float F = brdf.eval(Wo, S.direction, N);
+        Lo += F * S.L * clampedDot(S.direction, N);
+    }
+
+    return Lo;
+}
+
+inline LightSample Renderer::sampleIESLight(const Scene & scene,
+                                            RNG & rng,
+                                            const IESLight & light,
+                                            const Position3 & P,
+                                            const Direction3 & N,
+                                            float minDistance) const
+{
+    LightSample S;
+    S.L = RadianceRGB::BLACK();
+
+    const Direction3 toLight = light.position - P;
+    S.direction = toLight.normalized();
+
+    // Make sure the light is on the right side of the surface
+    if(dot(toLight, N) < 0.0f) {
+        return S;
+    }
+
+    const float lightDistSq = toLight.magnitude_sq();
+    const float lightDist   = std::sqrt(lightDistSq);
+
+    // Occlusion test
+    if(intersectsScene(scene, rng, Ray{P, S.direction}, epsilon, lightDist - epsilon)) {
+        return S;
+    }
+
+    // Compute the direction FROM the light TO the shading point in the light's
+    // local frame to determine the IES vertical and horizontal angles.
+    //
+    // IES convention: vertical angle 0 = nadir (fixture "down" direction),
+    //                 90 = horizontal, 180 = zenith.
+    // light.direction is the fixture "down" axis.
+    const Direction3 fromLight = -S.direction;  // light → shading point
+
+    // Vertical angle: angle between fixture "down" and direction to shading point
+    float cosVert = dot(light.direction, fromLight);
+    cosVert = std::max(-1.0f, std::min(1.0f, cosVert));
+    float vertDeg = std::acos(cosVert) * (180.0f / constants::PI);
+
+    // Horizontal angle: azimuth around the fixture "down" axis
+    // Build an orthonormal frame (ax1, ax2) perpendicular to light.direction
+    vec3 ax1, ax2;
+    coordinate::coordinateSystem(light.direction, ax1, ax2);
+    float px = dot(vec3(fromLight.x, fromLight.y, fromLight.z), ax1);
+    float py = dot(vec3(fromLight.x, fromLight.y, fromLight.z), ax2);
+    float horizDeg = std::atan2(py, px) * (180.0f / constants::PI);
+    if(horizDeg < 0.0f) horizDeg += 360.0f;
+
+    float candela = 0.0f;
+    if(light.profile) {
+        candela = light.profile->sample(vertDeg, horizDeg);
+    }
+
+    // Candela → radiance: scale by 1/r² (same fall-off as point light)
+    S.L = light.color * (candela / lightDistSq);
+
+    return S;
+}
+
+inline RadianceRGB Renderer::sampleAllIESLights(const Scene & scene,
+                                                RNG & rng,
+                                                const BRDF & brdf,
+                                                const Direction3 & Wo,
+                                                const Position3 & P,
+                                                const Direction3 & N,
+                                                float minDistance) const
+{
+    RadianceRGB Lo;
+
+    for(const auto & light : scene.iesLights) {
+        LightSample S = sampleIESLight(scene, rng, light, P, N, epsilon);
         float F = brdf.eval(Wo, S.direction, N);
         Lo += F * S.L * clampedDot(S.direction, N);
     }

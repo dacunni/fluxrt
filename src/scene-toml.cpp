@@ -11,6 +11,7 @@
 #include "GradientEnvironmentMap.h"
 #include "LatLonEnvironmentMap.h"
 #include "CubeMapEnvironmentMap.h"
+#include "IESProfile.h"
 
 static vec3 vectorToVec3(const std::vector<double> & v)
 {
@@ -453,6 +454,30 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
                 MaterialID id = scene.materials.size();
                 scene.materials.push_back(material);
                 scene.diskLights.emplace_back(position, direction, radius, id);
+            }
+        }
+
+        auto iesLightTableArray = top->get_table_array("ieslights");
+        if(iesLightTableArray) {
+            for(const auto & iesTable : *iesLightTableArray) {
+                auto filePath = iesTable->get_as<std::string>("file");
+                if(!filePath) { throw std::runtime_error("IES lights must supply a file path"); }
+                std::string fullPath = applyPathPrefix(meshPath, *filePath);
+
+                auto profile = loadIESProfile(fullPath);
+                if(!profile) {
+                    throw std::runtime_error("Failed to load IES profile: " + fullPath);
+                }
+
+                auto position = Position3(vectorToVec3(iesTable->get_array_of<double>("position").value_or(std::vector<double>{0.0, 0.0, 0.0})));
+                auto direction = Direction3(vectorToVec3(iesTable->get_array_of<double>("direction").value_or(std::vector<double>{0.0, -1.0, 0.0})));
+                direction.normalize();
+                auto color = vectorToRadianceRGB(iesTable->get_array_of<double>("color").value_or(std::vector<double>{1.0, 1.0, 1.0}));
+
+                std::cout << "IES light: file " << fullPath
+                          << " peak candela " << profile->peak() << '\n';
+
+                scene.iesLights.emplace_back(position, direction, color, profile);
             }
         }
 

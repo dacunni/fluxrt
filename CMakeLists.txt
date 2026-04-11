@@ -46,6 +46,7 @@ set(SRCS
     src/CubeMapEnvironmentMap.cpp
     src/filesystem.cpp
     src/fresnel.cpp
+    src/IESProfile.cpp
     src/image.cpp
     src/integrate.cpp
     src/jacobian.cpp
