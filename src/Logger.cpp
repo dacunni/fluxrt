@@ -75,7 +75,7 @@ void Logger::logToStdout(Logger::Severity s, const std::string & msg)
                   << "\t" << msg;
     }
     if(!joinNext) {
-        std::cout << std::endl;
+        std::cout << '\n';
     }
 }
 
@@ -178,7 +178,7 @@ void FileLogger::log(Severity s, const std::string & msg)
         messageOnlyForJoin = true;
     }
     else {
-        outFile << std::endl;
+        outFile << '\n';
     }
 }
 

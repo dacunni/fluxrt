@@ -77,6 +77,7 @@ set(SRCS
     src/ValueArray.cpp
     )
 ADD_LIBRARY(fluxrt ${SRCS})
+set_target_properties(fluxrt PROPERTIES CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN YES)
 
 if(BUILD_PYTHON_BINDINGS)
     add_subdirectory(external/pybind11)
