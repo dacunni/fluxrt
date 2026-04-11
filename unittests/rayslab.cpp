@@ -63,6 +63,42 @@ TEST(RaySlabIntersectTest, OffCenterDiagonalRay_OffCenterSlab_IntersectsTrue) {
                                 minDistance, maxDistance));
 }
 
+// Origin inside slab: exit surface within maxDistance -> surface hit
+TEST(RaySlabIntersectTest, OriginInsideSlab_ExitWithinMaxDist_IntersectsTrue) {
+    Slab obj(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f);
+    const float minDistance = 0.01f;
+    // exit along +x is at t=1.0, maxDistance=2.0 -> should hit
+    EXPECT_TRUE(obj.intersects(Ray(Position3(0, 0, 0), Direction3(1, 0, 0)), minDistance, 2.0f));
+    EXPECT_TRUE(obj.intersects(Ray(Position3(0, 0, 0), Direction3(-1, 0, 0)), minDistance, 2.0f));
+    EXPECT_TRUE(obj.intersects(Ray(Position3(0, 0, 0), Direction3(0, 1, 0)), minDistance, 2.0f));
+    EXPECT_TRUE(obj.intersects(Ray(Position3(0, 0, 0), Direction3(0, 0, 1)), minDistance, 2.0f));
+}
+
+// Origin inside slab: exit surface beyond maxDistance -> no surface hit in range
+TEST(RaySlabIntersectTest, OriginInsideSlab_ExitBeyondMaxDist_IntersectsFalse) {
+    Slab obj(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f);
+    const float minDistance = 0.01f;
+    // exit along +x is at t=1.0, maxDistance=0.5 -> no surface within range
+    EXPECT_FALSE(obj.intersects(Ray(Position3(0, 0, 0), Direction3(1, 0, 0)), minDistance, 0.5f));
+    EXPECT_FALSE(obj.intersects(Ray(Position3(0, 0, 0), Direction3(-1, 0, 0)), minDistance, 0.5f));
+    EXPECT_FALSE(obj.intersects(Ray(Position3(0, 0, 0), Direction3(0, 1, 0)), minDistance, 0.5f));
+    EXPECT_FALSE(obj.intersects(Ray(Position3(0, 0, 0), Direction3(0, 0, 1)), minDistance, 0.5f));
+}
+
+// intersectsVolume: origin inside slab, exit beyond maxDistance -> volume still overlaps range
+TEST(RaySlabIntersectVolumeTest, OriginInsideSlab_ExitBeyondMaxDist_VolumeIntersectsTrue) {
+    Slab obj(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f);
+    const float minDistance = 0.01f;
+    EXPECT_TRUE(obj.intersectsVolume(Ray(Position3(0, 0, 0), Direction3(1, 0, 0)), minDistance, 0.5f));
+}
+
+// intersectsVolume: slab entirely behind ray -> false
+TEST(RaySlabIntersectVolumeTest, SlabBehindRay_VolumeIntersectsFalse) {
+    Slab obj(-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f);
+    const float minDistance = 0.01f, maxDistance = 1000.0f;
+    EXPECT_FALSE(obj.intersectsVolume(Ray(Position3(10, 0, 0), Direction3(1, 0, 0)), minDistance, maxDistance));
+}
+
 // ---------------------- Find Intersection Tests ------------------------
 
 TEST(RaySlabFindIntersectionTest, OnAxisCenteredRay_CenteredSlab_FindsFirstIntersection) {

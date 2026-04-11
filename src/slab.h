@@ -45,6 +45,10 @@ struct Slab : public Traceable
     inline virtual bool intersects(const Ray & ray, float minDistance, float maxDistance) const override;
     inline virtual bool findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const override;
 
+    // Volume intersection: true if the ray segment [minDistance, maxDistance] overlaps the slab volume.
+    // Use this for bounding box / accelerator tests where the origin may be inside the slab.
+    inline bool intersectsVolume(const Ray & ray, float minDistance, float maxDistance) const;
+
     // Bounding volume
     Slab boundingBox() override { return *this; }
 
