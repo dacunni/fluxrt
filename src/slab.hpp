@@ -26,34 +26,49 @@ inline bool Slab::contains(const Position3 & P) const
         zmin <= P.z && zmax >= P.z;
 }
 
-inline bool Slab::intersects(const Ray & ray, float minDistance, float maxDistance) const
+inline void slabRayT(const Slab & slab, const Ray & ray, float & tmin, float & tmax)
 {
     float dinvx = 1.0f / ray.direction.x;
     float dinvy = 1.0f / ray.direction.y;
     float dinvz = 1.0f / ray.direction.z;
-    vec3 dinv(dinvx, dinvy, dinvz);
 
-    float tx1 = (xmin - ray.origin.x) * dinv.x;
-    float tx2 = (xmax - ray.origin.x) * dinv.x;
+    float tx1 = (slab.xmin - ray.origin.x) * dinvx;
+    float tx2 = (slab.xmax - ray.origin.x) * dinvx;
+    tmin = std::min(tx1, tx2);
+    tmax = std::max(tx1, tx2);
 
-    float tmin = std::min(tx1, tx2);
-    float tmax = std::max(tx1, tx2);
-
-    float ty1 = (ymin - ray.origin.y) * dinv.y;
-    float ty2 = (ymax - ray.origin.y) * dinv.y;
-
+    float ty1 = (slab.ymin - ray.origin.y) * dinvy;
+    float ty2 = (slab.ymax - ray.origin.y) * dinvy;
     tmin = std::max(tmin, std::min(ty1, ty2));
     tmax = std::min(tmax, std::max(ty1, ty2));
 
-    float tz1 = (zmin - ray.origin.z) * dinv.z;
-    float tz2 = (zmax - ray.origin.z) * dinv.z;
-
+    float tz1 = (slab.zmin - ray.origin.z) * dinvz;
+    float tz2 = (slab.zmax - ray.origin.z) * dinvz;
     tmin = std::max(tmin, std::min(tz1, tz2));
     tmax = std::min(tmax, std::max(tz1, tz2));
+}
 
-    return tmax >= tmin
-        && (tmin >= minDistance || tmax >= minDistance)
-        && (tmin <= maxDistance || tmax <= maxDistance);
+// Surface intersection: returns true if the ray hits a slab face within [minDistance, maxDistance].
+// When the ray origin is inside the slab, only the exit face counts.
+inline bool Slab::intersects(const Ray & ray, float minDistance, float maxDistance) const
+{
+    float tmin, tmax;
+    slabRayT(*this, ray, tmin, tmax);
+
+    if(tmax < tmin) return false;       // ray misses slab entirely
+    if(tmax < minDistance) return false; // slab entirely behind ray
+    float t = (tmin >= minDistance) ? tmin : tmax; // nearest surface within range
+    return t <= maxDistance;
+}
+
+// Volume intersection: returns true if the ray segment [minDistance, maxDistance] overlaps
+// the slab volume. Use for bounding box / accelerator tests where origin may be inside.
+inline bool Slab::intersectsVolume(const Ray & ray, float minDistance, float maxDistance) const
+{
+    float tmin, tmax;
+    slabRayT(*this, ray, tmin, tmax);
+
+    return tmax >= tmin && tmax >= minDistance && tmin <= maxDistance;
 }
 
 static const Direction3 boxNormals[6] = {

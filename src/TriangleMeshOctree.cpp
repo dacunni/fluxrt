@@ -234,7 +234,7 @@ bool TriangleMeshOctree::intersectsNode(const Ray & ray, float minDistance, floa
 {
     const auto & node = nodes[nodeIndex];
 
-    if(!node.bounds.intersects(ray, minDistance, maxDistance))
+    if(!node.bounds.intersectsVolume(ray, minDistance, maxDistance))
        return false;
 
     if(node.numTriangles > 0) {
@@ -281,7 +281,7 @@ bool TriangleMeshOctree::findIntersectionNode(const Ray & ray, float minDistance
     const auto & node = nodes[nodeIndex];
     bool hit = false;
 
-    if(!node.bounds.intersects(ray, minDistance, std::numeric_limits<float>::max()))
+    if(!node.bounds.intersectsVolume(ray, minDistance, std::numeric_limits<float>::max()))
        return false;
     
     hit |= findIntersectionNodeTriangles(
