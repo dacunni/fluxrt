@@ -16,7 +16,8 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                                  std::vector<MaterialID> & objMatToMatArrIndex,
                                  TextureCache & textureCache,
                                  std::vector<tinyobj::material_t> & objmaterials,
-                                 const std::string & path)
+                                 const std::string & path,
+                                 const TriangleMeshLoadOptions & options)
 {
     auto & logger = getLogger();
 
@@ -78,9 +79,9 @@ static void loadMaterialsFromOBJ(MaterialArray & materials,
                 material = Material::makeDiffuseSpecular(D, S);
         }
 
-        // FIXME: This is fine, but we should add a way to disable emission
-        // in loaded models so we can test without the lights they include.
-        //material.emissionColor = RadianceRGB(E);
+        if(!options.disableEmission) {
+            material.emissionColor = RadianceRGB(E[0], E[1], E[2]);
+        }
 
         material.specularExponentParam = objmaterial.shininess;
 
@@ -125,7 +126,8 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
                              MaterialArray & materials,
                              TriangleMeshDataCache & meshDataCache,
                              TextureCache & textureCache,
-                             const std::string & path, const std::string & filename)
+                             const std::string & path, const std::string & filename,
+                             const TriangleMeshLoadOptions & options)
 {
     auto & logger = getLogger();
 
@@ -161,7 +163,7 @@ bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
     // the materials array
     std::vector<MaterialID> objMatToMatArrIndex;
 
-    loadMaterialsFromOBJ(materials, objMatToMatArrIndex, textureCache, objmaterials, path);
+    loadMaterialsFromOBJ(materials, objMatToMatArrIndex, textureCache, objmaterials, path, options);
 
     mesh.meshData = std::make_shared<TriangleMeshData>();
     auto & meshData = *mesh.meshData;

@@ -16,7 +16,8 @@ bool loadTriangleMesh(TriangleMesh & mesh,
                       MaterialArray & materials,
                       TriangleMeshDataCache & meshDataCache,
                       TextureCache & textureCache,
-                      const std::string & pathToFile)
+                      const std::string & pathToFile,
+                      const TriangleMeshLoadOptions & options)
 {
     auto & logger = getLogger();
     logger.normal() << "Loading mesh from " << pathToFile;
@@ -39,10 +40,10 @@ bool loadTriangleMesh(TriangleMesh & mesh,
     bool success = false;
 
     if(filesystem::hasExtension(filename, ".obj")) {
-        success = loadTriangleMeshFromOBJ(mesh, materials, meshDataCache, textureCache, path, filename);
+        success = loadTriangleMeshFromOBJ(mesh, materials, meshDataCache, textureCache, path, filename, options);
     }
     else if(filesystem::hasExtension(filename, ".stl")) {
-        success = loadTriangleMeshFromSTL(mesh, materials, meshDataCache, textureCache, path, filename);
+        success = loadTriangleMeshFromSTL(mesh, materials, meshDataCache, textureCache, path, filename, options);
     }
     else {
         std::cerr << "Unrecognized mesh type " << filename << '\n';

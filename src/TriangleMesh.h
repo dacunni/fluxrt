@@ -73,20 +73,27 @@ struct TriangleMesh : public Traceable
     MaterialID material = NoMaterial;
 };
 
+struct TriangleMeshLoadOptions {
+    bool disableEmission = false;
+};
+
 bool loadTriangleMesh(TriangleMesh & mesh,
                       MaterialArray & materials,
                       TriangleMeshDataCache & meshDataCache,
                       TextureCache & textureCache,
-                      const std::string & pathToFile);
+                      const std::string & pathToFile,
+                      const TriangleMeshLoadOptions & options = {});
 bool loadTriangleMeshFromOBJ(TriangleMesh & mesh,
                              MaterialArray & materials,
                              TriangleMeshDataCache & meshDataCache,
                              TextureCache & textureCache,
-                             const std::string & path, const std::string & filename);
+                             const std::string & path, const std::string & filename,
+                             const TriangleMeshLoadOptions & options = {});
 bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
                              MaterialArray & materials,
                              TriangleMeshDataCache & meshDataCache,
                              TextureCache & textureCache,
-                             const std::string & path, const std::string & filename);
+                             const std::string & path, const std::string & filename,
+                             const TriangleMeshLoadOptions & options = {});
 
 #endif

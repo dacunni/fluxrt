@@ -8,7 +8,8 @@ bool loadTriangleMeshFromSTL(TriangleMesh & mesh,
                              MaterialArray & materials,
                              TriangleMeshDataCache & meshDataCache,
                              TextureCache & textureCache,
-                             const std::string & path, const std::string & filename)
+                             const std::string & path, const std::string & filename,
+                             const TriangleMeshLoadOptions & options)
 {
     stlloader::Mesh stlmesh;
     stlloader::parse_file((path + '/' + filename).c_str(), stlmesh);
