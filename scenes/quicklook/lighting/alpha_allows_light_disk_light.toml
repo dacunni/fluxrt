@@ -16,15 +16,14 @@ direction = [ 0.0, 1.0, 0.0 ]
 radius = 0.5
 intensity = [ 10.0, 10.0, 10.0 ]
 
-[[meshes]]
-file = "blender/suzanne-smooth.obj"
-#accelerator = "none"
-    [meshes.material]
+# Semi-transparent sphere: alpha < 1 lets disk light through to floor
+[[spheres]]
+radius = 0.8
+position = [ 0.0, 1.2, 0.0 ]
+    [spheres.material]
     type = "diffuse"
     diffuse = [ 1.0, 0.5, 0.5 ]
     alpha = 0.5
-    [[meshes.transform]]
-    translate = [ 0.0, 1.2, 0.0 ]
 
 # Floor
 [[slabs]]
@@ -33,4 +32,3 @@ max = [ 1000.0, 0.0, 1000.0 ]
     [slabs.material]
     type = "diffuse"
     diffuse = [ 0.5, 0.5, 0.5 ]
-

@@ -10,18 +10,21 @@ up = [ 0.0, 1.0, 0.0 ]
 pixelwidth = 200
 pixelheight = 200
 
-[envmap]
-type = "latlon"
-file = "polyhaven.com/street_lamp_1k.hdr"
+[[disklights]]
+position = [ 0.0, 3.0, 0.0 ]
+direction = [ 0.0, 1.0, 0.0 ]
+radius = 0.5
+intensity = [ 10.0, 10.0, 10.0 ]
 
-# Semi-transparent sphere: alpha < 1 lets env map light through to floor
-[[spheres]]
-radius = 0.8
-position = [ 0.0, 1.2, 0.0 ]
-    [spheres.material]
+[[meshes]]
+file = "blender/suzanne-smooth.obj"
+#accelerator = "none"
+    [meshes.material]
     type = "diffuse"
     diffuse = [ 1.0, 0.5, 0.5 ]
     alpha = 0.5
+    [[meshes.transform]]
+    translate = [ 0.0, 1.2, 0.0 ]
 
 # Floor
 [[slabs]]
@@ -30,3 +33,4 @@ max = [ 1000.0, 0.0, 1000.0 ]
     [slabs.material]
     type = "diffuse"
     diffuse = [ 0.5, 0.5, 0.5 ]
+
