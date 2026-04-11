@@ -369,7 +369,10 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
 
                 auto mesh = std::make_shared<TriangleMesh>();
 
-                if(!loadTriangleMesh(*mesh, scene.materials, scene.meshDataCache, scene.textureCache, fullFilePath)) {
+                TriangleMeshLoadOptions meshLoadOptions;
+                meshLoadOptions.disableEmission = meshTable->get_as<bool>("disable_emission").value_or(false);
+
+                if(!loadTriangleMesh(*mesh, scene.materials, scene.meshDataCache, scene.textureCache, fullFilePath, meshLoadOptions)) {
                     throw std::runtime_error("Error loading mesh");
                 }
 
