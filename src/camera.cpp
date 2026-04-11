@@ -107,3 +107,26 @@ Ray OrthoCamera::rayThroughStandardImagePlane(float x, float y, float blurx, flo
     return Ray(Position3(position + dpos), direction);
 }
 
+void SphericalCamera::logSummary(Logger & logger) const
+{
+    logger.normalf("SphericalCamera:");
+    logger.normal() << "  position " << position;
+    logger.normal() << "  direction " << direction;
+    logger.normal() << "  up " << up;
+    logger.normal() << "  right " << right;
+}
+
+Ray SphericalCamera::rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const
+{
+    // x in [-1,+1] -> azimuth in [-pi, +pi]
+    // y in [-1,+1] -> elevation in [-pi/2, +pi/2]
+    const float az = x * float(constants::PI);
+    const float el = y * float(constants::PI_OVER_TWO);
+    const float cosEl = std::cos(el);
+    auto d = direction * (cosEl * std::cos(az))
+           + right    * (cosEl * std::sin(az))
+           + up       * std::sin(el);
+    d.normalize();
+    return Ray(position, d);
+}
+

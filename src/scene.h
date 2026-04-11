@@ -49,6 +49,8 @@ struct Scene
 
     Sensor sensor;
     std::shared_ptr<Camera> camera;
+
+    std::string renderProjection = "single";
 };
 
 // Load scene from a file, deducing the type from the extension

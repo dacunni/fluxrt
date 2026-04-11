@@ -15,6 +15,7 @@
 #include "timer.h"
 #include "argparse.h"
 #include "Renderer.h"
+#include "RenderProjection.h"
 #include "Logger.h"
 #include "LatLonEnvironmentMap.h"
 
@@ -59,6 +60,7 @@ int main(int argc, char ** argv)
         bool noSampleCosineLobe = false;
         bool noSampleSpecularLobe = false;
         std::string renderOrder = "default";
+        std::string renderProjection = "";  // empty = use scene setting
         struct {
             bool compute = false;
             bool sampleCosineLobe = false;
@@ -82,6 +84,7 @@ int main(int argc, char ** argv)
     argParser.addArgument('r', "rr", options.russianRouletteChance);
     argParser.addFlag('R', "nomontecarlorefraction", options.noMonteCarloRefraction);
     argParser.addArgument('o', "renderorder", options.renderOrder);
+    argParser.addArgument('T', "projection", options.renderProjection);
 
     // Sampling
     argParser.addFlag('C', "nosamplecosine", options.noSampleCosineLobe);
@@ -156,23 +159,6 @@ int main(int argc, char ** argv)
     printf("Building scene graph accelerators\n");
     scene.buildAccelerators();
 
-    Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
-
-    auto resetFlushTimer = [&]() {
-        if(options.flushTimeout != 0) {
-            alarm(options.flushTimeout);
-        }
-    };
-
-    const float minDistance = 0.0f;
-
-    RNG rng[options.numThreads];
-
-    // Jitter offsets (applied the same to all corresponding pixel samples)
-    vec2 jitter[options.samplesPerPixel];
-    //std::generate(jitter, jitter + options.samplesPerPixel, [&]() { return rng[0].uniformRectangle(-0.5f, 0.5f, -0.5f, 0.5f); });
-    std::generate(jitter, jitter + options.samplesPerPixel, [&]() { return rng[0].gaussian2D(0.5f); });
-
     Renderer renderer;
     renderer.epsilon = options.epsilon;
     renderer.maxDepth = options.maxDepth;
@@ -181,84 +167,41 @@ int main(int argc, char ** argv)
     renderer.shadeDiffuseParams.sampleCosineLobe = !options.noSampleCosineLobe;
     renderer.shadeSpecularParams.samplePhongLobe = !options.noSampleSpecularLobe;
 
-    auto tracePixelRay = [&](size_t x, size_t y, size_t threadIndex, uint32_t sampleIndex) {
-        const vec2 pixelCenter = vec2(x, y) + vec2(0.5f, 0.5f);
-        vec2 jitteredPixel = pixelCenter + jitter[sampleIndex];
-        auto standardPixel = scene.sensor.pixelStandardImageLocation(jitteredPixel);
-
-        vec2 randomBlurCoord = rng[threadIndex].uniformUnitCircle();
-        auto ray = scene.camera->rayThroughStandardImagePlane(standardPixel, randomBlurCoord);
-
-        RayIntersection intersection;
-        RadianceRGB pixelRadiance;
-        bool hit = renderer.traceCameraRay(scene, rng[threadIndex], ray, minDistance, 1, { VaccuumMedium }, intersection, pixelRadiance);
-        artifacts.accumPixelRadiance(x, y, pixelRadiance);
-        if(hit) {
-            artifacts.setIntersection(x, y, minDistance, scene, intersection);
-        }
-    };
-
-    auto renderPixelAllSamples = [&](size_t x, size_t y, size_t threadIndex) {
-        ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
-        for(unsigned int sampleIndex = 0; sampleIndex < options.samplesPerPixel; ++sampleIndex) {
-            tracePixelRay(x, y, threadIndex, sampleIndex);
-        }
-        artifacts.setTime(x, y, pixelTimer.elapsed());
-
-        if(flushImmediate.exchange(false)) {
-            artifacts.writeAll();
-            resetFlushTimer();
-        }
-    };
-
     renderer.logConfiguration(*logger);
     renderer.printConfiguration();
-    printf("====[ Tracing Scene ]====\n");
 
-    resetFlushTimer();
+    // Resolve render projection: CLI flag overrides TOML setting
+    const std::string projectionName = options.renderProjection.empty()
+                                       ? scene.renderProjection
+                                       : options.renderProjection;
+    printf("Render projection: %s\n", projectionName.c_str());
 
-    auto traceTimer = WallClockTimer::makeRunningTimer();
-    uint32_t tileSize = 8;
+    auto renderProjection = RenderProjection::create(projectionName);
 
     if(options.renderOrder == "default") {
         options.renderOrder = "tiled";
     }
 
-    if(options.renderOrder == "raster") {
-        // Raster order
-        scene.sensor.forEachPixelThreaded(renderPixelAllSamples, options.numThreads);
-    }
-    else if(options.renderOrder == "tiled") {
-        // Tiled
-        scene.sensor.forEachPixelTiledThreaded(renderPixelAllSamples, tileSize, options.numThreads);
-    }
-    else if(options.renderOrder == "progressive") {
-        // Progressive
-        for(unsigned int sampleIndex = 0; sampleIndex < options.samplesPerPixel; ++sampleIndex) {
-            auto renderPixelOneSample = [&](size_t x, size_t y, size_t threadIndex) {
-                ProcessorTimer pixelTimer = ProcessorTimer::makeRunningTimer();
-                tracePixelRay(x, y, threadIndex, sampleIndex);
-                artifacts.accumTime(x, y, pixelTimer.elapsed());
-
-                if(flushImmediate.exchange(false)) {
-                    artifacts.writeAll();
-                    printf("Progress: %.2f %%\n", 100.0f * (float) sampleIndex / (options.samplesPerPixel - 1));
-                    resetFlushTimer();
-                }
-            };
-            scene.sensor.forEachPixelTiledThreaded(renderPixelOneSample, tileSize, options.numThreads);
+    auto resetFlushTimer = [&]() {
+        if(options.flushTimeout != 0) {
+            alarm(options.flushTimeout);
         }
-    }
-    else {
-        std::cerr << "Unrecognized render order '" + options.renderOrder + "'\n";
-        return EXIT_FAILURE;
-    }
+    };
+    resetFlushTimer();
+
+    RenderParams renderParams;
+    renderParams.numThreads      = options.numThreads;
+    renderParams.samplesPerPixel = options.samplesPerPixel;
+    renderParams.renderOrder     = options.renderOrder;
+    renderParams.flushImmediate  = &flushImmediate;
+
+    printf("====[ Tracing Scene ]====\n");
+    auto traceTimer = WallClockTimer::makeRunningTimer();
+
+    renderProjection->render(scene, renderer, renderParams);
 
     double traceTime = traceTimer.elapsed();
     printf("Scene traced in %s\n", hoursMinutesSeconds(traceTime).c_str());
 
-    artifacts.writeAll();
-
     return EXIT_SUCCESS;
 }
-

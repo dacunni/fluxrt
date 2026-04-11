@@ -59,6 +59,7 @@ set(SRCS
     src/radiometry.cpp
     src/Ray.cpp
     src/Renderer.cpp
+    src/RenderProjection.cpp
     src/rng.cpp
     src/sensor.cpp
     src/slab.cpp

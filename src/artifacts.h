@@ -10,7 +10,7 @@ class Artifacts
 {
     public:
         Artifacts();
-        Artifacts(int w, int h);
+        Artifacts(int w, int h, const std::string & prefix = "trace_");
 
         void writeAll();
         void writePixelColor();
