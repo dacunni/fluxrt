@@ -7,8 +7,8 @@ Artifacts::Artifacts()
 {
 }
 
-Artifacts::Artifacts(int w, int h)
-    : 
+Artifacts::Artifacts(int w, int h, const std::string & pfx)
+    :
     hitMask(w, h, 1),
     isectDist(w, h, 3),
     isectNormal(w, h, 3),
@@ -27,6 +27,7 @@ Artifacts::Artifacts(int w, int h)
     runningVarianceS(w, h, 3),
     w(w), h(h)
 {
+    prefix = pfx;
     hitMask.setAll(0.0f);
     isectDist.setAll(0.0f);
     isectNormal.setAll(0.0f);

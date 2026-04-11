@@ -317,6 +317,12 @@ bool loadSceneFromParsedTOML(Scene & scene, std::shared_ptr<cpptoml::table> & to
             scene.camera->setPositionDirectionUp(position, direction, up);
         }
 
+        auto renderTable = top->get_table("render");
+        if(renderTable) {
+            scene.renderProjection = renderTable->get_as<std::string>("projection").value_or("single");
+            std::cout << "Render projection: " << scene.renderProjection << '\n';
+        }
+
         auto envmapTable = top->get_table("envmap");
         if(envmapTable) {
             auto type = envmapTable->get_as<std::string>("type").value_or("none");

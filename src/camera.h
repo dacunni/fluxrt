@@ -75,4 +75,17 @@ struct OrthoCamera : public Camera
     float vsize = 2.0f;
 };
 
+// Spherical (equirectangular / lat-lon) camera.
+// x in [-1, +1] maps to azimuth in [-pi, +pi] (full 360 degrees)
+// y in [-1, +1] maps to elevation in [-pi/2, +pi/2] (full 180 degrees)
+struct SphericalCamera : public Camera
+{
+    SphericalCamera() = default;
+    virtual ~SphericalCamera() = default;
+
+    virtual void logSummary(Logger & logger) const override;
+
+    virtual Ray rayThroughStandardImagePlane(float x, float y, float blurx, float blury) const override;
+};
+
 #endif
