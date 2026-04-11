@@ -25,6 +25,7 @@ add_executable(filesystem filesystem.cpp)
 add_executable(jacobian jacobian.cpp)
 add_executable(boundingbox boundingbox.cpp)
 add_executable(argparse argparse.cpp)
+add_executable(plyloading plyloading.cpp)
 
 set(LIBS ${GTEST_BOTH_LIBRARIES} fluxrt pthread)
 
@@ -47,6 +48,7 @@ target_link_libraries(filesystem ${LIBS})
 target_link_libraries(jacobian ${LIBS})
 target_link_libraries(boundingbox ${LIBS})
 target_link_libraries(argparse ${LIBS})
+target_link_libraries(plyloading ${LIBS})
 
 add_test(AllTestsInVec3 vec3)
 add_test(AllTestsInVec4 vec4)
@@ -67,5 +69,6 @@ add_test(AllTestsInFileSystem filesystem)
 add_test(AllTestsInJacobian jacobian)
 add_test(AllTestsInBoundingBox boundingbox)
 add_test(AllTestsInArgParse argparse)
+add_test(AllTestsInPLYLoading plyloading)
 
 
