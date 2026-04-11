@@ -117,7 +117,7 @@ void LatLonProjection::render(const Scene & scene, Renderer & renderer, const Re
                                scene.camera->direction,
                                scene.camera->up);
 
-    Artifacts artifacts(int(W), int(H), "latlon_");
+    Artifacts artifacts(int(W), int(H), "trace_");
     renderView(scene, renderer, cam, W, H, artifacts, params);
     artifacts.writeAll();
 }
@@ -139,7 +139,7 @@ void CubemapProjection::render(const Scene & scene, Renderer & renderer, const R
     const unsigned int totalW = 4 * N;
     const unsigned int totalH = 3 * N;
 
-    Artifacts artifacts(int(totalW), int(totalH), "cubemap_");
+    Artifacts artifacts(int(totalW), int(totalH), "trace_");
 
     const float fov90 = float(DegreesToRadians(90.0));
 

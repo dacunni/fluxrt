@@ -7,7 +7,7 @@
 #            [-X] [+Z] [+X] [-Z]
 #                 [-Y]
 #
-# Output: cubemap_color.png / cubemap_color.hdr
+# Output: trace_color.png / trace_color.hdr
 
 [render]
 projection = "cubemap"

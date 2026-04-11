@@ -2,7 +2,7 @@
 #
 # Renders a full spherical capture from the camera position.
 # Output width is always 2x height (2:1 aspect).
-# Output: latlon_color.png / latlon_color.hdr
+# Output: trace_color.png / trace_color.hdr
 #
 # Sensor pixelheight sets the output height; width = 2 * height.
 
