@@ -44,6 +44,9 @@ bool loadTriangleMesh(TriangleMesh & mesh,
     else if(filesystem::hasExtension(filename, ".stl")) {
         success = loadTriangleMeshFromSTL(mesh, materials, meshDataCache, textureCache, path, filename);
     }
+    else if(filesystem::hasExtension(filename, ".ply")) {
+        success = loadTriangleMeshFromPLY(mesh, materials, meshDataCache, textureCache, path, filename);
+    }
     else {
         std::cerr << "Unrecognized mesh type " << filename << '\n';
         success = false;

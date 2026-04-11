@@ -68,6 +68,7 @@ set(SRCS
     src/timer.cpp
     src/Triangle.cpp
     src/TriangleMesh.cpp
+    src/TriangleMesh-ply.cpp
     src/TriangleMesh-stl.cpp
     src/TriangleMesh-obj.cpp
     src/TriangleMeshOctree.cpp
