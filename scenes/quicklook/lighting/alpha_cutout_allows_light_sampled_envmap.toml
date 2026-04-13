@@ -18,15 +18,14 @@ file = "polyhaven.com/street_lamp_1k.hdr"
 #file = "polyhaven.com/spruit_sunrise_1k.hdr"
 #file = "polyhaven.com/leadenhall_market_1k.hdr"
 
-[[meshes]]
-file = "blender/suzanne-smooth.obj"
-#accelerator = "none"
-    [meshes.material]
+# Cutout-alpha sphere: texture mask lets env map light through to floor
+[[spheres]]
+radius = 0.8
+position = [ 0.0, 1.2, 0.0 ]
+    [spheres.material]
     type = "diffuse"
     diffuse = [ 1.0, 0.5, 0.5 ]
     alpha = "alpha_cutout_stars.png"
-    [[meshes.transform]]
-    translate = [ 0.0, 1.2, 0.0 ]
 
 # Floor
 [[slabs]]
@@ -35,4 +34,3 @@ max = [ 1000.0, 0.0, 1000.0 ]
     [slabs.material]
     type = "diffuse"
     diffuse = [ 0.5, 0.5, 0.5 ]
-
