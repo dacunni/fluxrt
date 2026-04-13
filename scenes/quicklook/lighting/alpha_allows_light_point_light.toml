@@ -14,14 +14,16 @@ pixelheight = 200
 position = [ 0.0, 5.0, 0.0 ]
 intensity = [ 20.0, 20.0, 20.0 ]
 
-# Semi-transparent sphere: alpha < 1 lets point light through to floor
-[[spheres]]
-radius = 0.8
-position = [ 0.0, 1.2, 0.0 ]
-    [spheres.material]
+[[meshes]]
+file = "simple/cube.obj"
+    [meshes.material]
     type = "diffuse"
     diffuse = [ 1.0, 0.5, 0.5 ]
     alpha = 0.5
+    [[meshes.transform]]
+    translate = [ 0.0, 1.2, 0.0 ]
+    [[meshes.transform]]
+    scale = [ 1.5, 1.5, 1.5 ]
 
 # Floor
 [[slabs]]
