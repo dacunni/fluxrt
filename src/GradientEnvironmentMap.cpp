@@ -21,7 +21,7 @@ GradientEnvironmentMap::GradientEnvironmentMap(const RadianceRGB & low,
 
 }
 
-RadianceRGB GradientEnvironmentMap::sampleRay(const Ray & ray)
+RadianceRGB GradientEnvironmentMap::sampleRay(const Ray & ray) const
 {
     // [-1, 1] assuming ray.direction is normalized
     float a = dot(ray.direction, direction);

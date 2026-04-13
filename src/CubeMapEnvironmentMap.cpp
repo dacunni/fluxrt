@@ -41,7 +41,7 @@ void CubeMapEnvironmentMap::loadFromDirectionFiles(
 // Reference: https://en.wikipedia.org/wiki/Cube_mapping
 void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
                                                  TexturePtr & texture,
-                                                 TextureCoordinate & texcoord)
+                                                 TextureCoordinate & texcoord) const
 {
     float absX = std::abs(v.x);
     float absY = std::abs(v.y);
@@ -110,7 +110,7 @@ void CubeMapEnvironmentMap::directionToTileCoord(const Direction3 & v,
     texcoord.v = -texcoord.v;
 }
 
-RadianceRGB CubeMapEnvironmentMap::sampleRay(const Ray & ray)
+RadianceRGB CubeMapEnvironmentMap::sampleRay(const Ray & ray) const
 {
     TexturePtr texture;
     TextureCoordinate texcoord;

@@ -12,7 +12,7 @@ class GradientEnvironmentMap : public EnvironmentMap
                                const RadianceRGB & high,
                                const Direction3 & direction);
 
-        RadianceRGB sampleRay(const Ray & ray) override;
+        RadianceRGB sampleRay(const Ray & ray) const override;
 
     protected:
         RadianceRGB low;

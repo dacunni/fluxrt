@@ -510,20 +510,19 @@ inline RadianceRGB Renderer::sampleEnvironmentMap(
 
     // Importance sample environment map. Note, we do not draw another
     // sample if the sample is not visible, as doing so biases the estimate.
-    for(unsigned int envSample = 0; envSample < numSamples; ++envSample) {
+    for(unsigned int si = 0; si < numSamples; ++si) {
         vec2 e = rng.uniform2DRange01();
-        RandomDirection dirSample = scene.environmentMap->importanceSampleDirection(e.x, e.y);
-        float DdotN = dot(dirSample.direction, N);
-        
-        if(dirSample.pdf > 0.0f && DdotN > 0.0f) {
-            Ray ray{ P + N * epsilon, dirSample.direction };
+        EnvironmentMapSample s = scene.environmentMap->importanceSampleFull(e.x, e.y);
+        float DdotN = dot(s.direction, N);
+
+        if(s.pdf > 0.0f && DdotN > 0.0f) {
+            Ray ray{ P + N * epsilon, s.direction };
 
             bool hit = intersectsScene(scene, rng, ray, minDistance);
 
             if(!hit) {
-                float F = brdf.eval(Wo, dirSample.direction, N);
-                RadianceRGB Li = scene.environmentMap->sampleRay(ray); 
-                Lenv += F * DdotN * Li / dirSample.pdf;
+                float F = brdf.eval(Wo, s.direction, N);
+                Lenv += F * DdotN * s.radiance / s.pdf;
             }
         }
     }

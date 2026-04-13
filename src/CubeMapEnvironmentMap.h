@@ -16,7 +16,7 @@ class CubeMapEnvironmentMap : public EnvironmentMap
                                     const std::string & negz,
                                     const std::string & posz);
 
-        RadianceRGB sampleRay(const Ray & ray) override;
+        RadianceRGB sampleRay(const Ray & ray) const override;
 
         void setScaleFactor(float f) { scaleFactor = f; }
 
@@ -25,7 +25,7 @@ class CubeMapEnvironmentMap : public EnvironmentMap
 
         void directionToTileCoord(const Direction3 & v,
                                   TexturePtr & texture,
-                                  TextureCoordinate & texcoord);
+                                  TextureCoordinate & texcoord) const;
 
         TexturePtr xn;
         TexturePtr xp;

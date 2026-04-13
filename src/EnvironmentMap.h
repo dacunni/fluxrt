@@ -14,17 +14,25 @@ struct RandomDirection {
     float pdf;
 };
 
+struct EnvironmentMapSample {
+    Direction3  direction;
+    float       pdf;
+    RadianceRGB radiance;
+};
+
 class EnvironmentMap
 {
     public:
         EnvironmentMap() = default;
         virtual ~EnvironmentMap() = default;
 
-        virtual RadianceRGB sampleRay(const Ray & ray);
+        virtual RadianceRGB sampleRay(const Ray & ray) const;
 
         // Importance sampling
         virtual vec2 importanceSample(float e1, float e2, float & pdf) const { pdf = 0.0f; return vec2(0.0f, 0.0f); }
         virtual RandomDirection importanceSampleDirection(float e1, float e2) const { return { Direction3(0.0f, 0.0f, 0.0f), 0.0f }; }
+        // Returns direction, PDF, and radiance in one call — avoids redundant coordinate transforms
+        virtual EnvironmentMapSample importanceSampleFull(float e1, float e2) const;
         virtual bool canImportanceSample() const { return false; }
 
         virtual void saveDebugImages() {};
