@@ -33,5 +33,8 @@ target_link_libraries(random_bench ${LIBS})
 add_executable(stdlib_bench stdlib.cpp)
 target_link_libraries(stdlib_bench ${LIBS})
 
+add_executable(envmap_sampling_bench envmap_sampling.cpp)
+target_link_libraries(envmap_sampling_bench ${LIBS})
+
 
 
