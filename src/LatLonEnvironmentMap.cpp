@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 #include "constants.h"
 #include "LatLonEnvironmentMap.h"
 #include "Ray.h"
@@ -56,98 +55,101 @@ RadianceRGB LatLonEnvironmentMap::sampleRay(const Ray & ray) const
 
 void LatLonEnvironmentMap::buildImportanceSampleLookup()
 {
-    const int w = texture->width, h = texture->height;
-    const int N = w * h;
+    int w = texture->width, h = texture->height;
 
-    // Compute per-pixel sampling weights (cosine-elevation-weighted luminance)
-    // and raw luminance sum for PDF normalization.
-    // cosElevation corrects for the area distortion of the lat/lon projection:
-    // pixels near the poles cover less solid angle and are down-weighted.
-    std::vector<float> weights(N);
-    float pdfSum     = 0.0f;
-    float totalWeight = 0.0f;
+    rowSums = std::make_shared<Texture>(w, h, 1);
+    cumRows.resize(texture->height);
+    pdf2D = std::make_shared<Texture>(w, h, 1);
+
+    float totalCumVal = 0.0f;
 
     for(int y = 0; y < h; ++y) {
-        float cosEl = std::cos(lerpFromTo<float>(float(y) + 0.5f, 0.0f, float(h),
+        // Weight by the cosine of the elevation angle to account for
+        // area distortion in a flattened lat/lon representation
+        float cosEl = std::cos(lerpFromTo<float>(float(y)+0.5f, 0.0f, float(h),
                                                  -constants::PI_OVER_TWO, constants::PI_OVER_TWO));
+        // Compute cumulative sums for each row
+        float rowCumVal = 0.0f;
         for(int x = 0; x < w; ++x) {
-            float lum    = texture->channelSum(x, y);
-            float weight = lum * cosEl * float(constants::TWO_PI);
-            weights[y * w + x] = weight;
-            pdfSum      += lum;
-            totalWeight += weight;
+            float value = texture->channelSum(x, y);
+            rowCumVal += value * constants::TWO_PI;
+            pdf2D->set(x, y, 0, value);
+            rowSums->set(x, y, 0, rowCumVal);
+        }
+        totalCumVal += rowCumVal * cosEl;
+        cumRows[y] = totalCumVal;
+
+        // Normalize PDFs and CDFs to [0, 1]
+        if(rowCumVal > 0.0f) {
+            for(int x = 0; x < w; ++x) {
+                rowSums->set(x, y, 0, rowSums->get(x, y, 0) / rowCumVal);
+            }
+        }
+    }
+    // Normalize cumulative row sums to [0, 1]
+    if(totalCumVal > 0.0f) {
+        for(int y = 0; y < h; ++y) {
+            cumRows[y] /= totalCumVal;
         }
     }
 
-    // PDF normalization factor — matches the convention used in the original code:
-    //   pdf(x,y) = channelSum(x,y) / pdfSum / FOUR_PI * (w * h)
-    pdfNormFactor = (pdfSum > 0.0f)
-        ? float(N) / pdfSum / float(constants::FOUR_PI)
-        : 0.0f;
+    float pdfSum = 0.0f;
+    pdf2D->forEachPixel([&pdfSum](Image<float> & img, size_t x, size_t y) {
+                    pdfSum += img.get(x, y, 0); });
 
-    // Build Walker alias table from the cosine-weighted sampling distribution.
-    // Construction runs once at load time; each sample costs 2 array lookups + 1 compare.
-    aliasProb.assign(N, 1.0f);
-    aliasIdx.assign(N, 0);
-
-    // Scale weights so the average is 1.0
-    const float invTotal = (totalWeight > 0.0f) ? float(N) / totalWeight : 0.0f;
-    std::vector<float> scaled(N);
-    for(int i = 0; i < N; ++i) {
-        scaled[i] = weights[i] * invTotal;
+    // Normalize the PDF
+    for(int y = 0; y < h; ++y) {
+        for(int x = 0; x < w; ++x) {
+            pdf2D->set(x, y, 0, pdf2D->get(x, y, 0) / pdfSum / constants::FOUR_PI);
+        }
     }
-
-    // Vose's O(n) alias table construction
-    std::vector<int> small, large;
-    small.reserve(N);
-    large.reserve(N);
-    for(int i = 0; i < N; ++i) {
-        if(scaled[i] < 1.0f) small.push_back(i);
-        else                  large.push_back(i);
-    }
-    while(!small.empty() && !large.empty()) {
-        int l = small.back(); small.pop_back();
-        int g = large.back(); large.pop_back();
-        aliasProb[l] = scaled[l];
-        aliasIdx[l]  = uint32_t(g);
-        scaled[g]    = (scaled[g] + scaled[l]) - 1.0f;
-        if(scaled[g] < 1.0f) small.push_back(g);
-        else                  large.push_back(g);
-    }
-    // Any remaining entries have probability 1 (already set by assign above)
 }
 
 vec2 LatLonEnvironmentMap::importanceSample(float e1, float e2, float & pdf) const
 {
-    const int N = int(aliasProb.size());
-    const int i   = std::min(int(e1 * float(N)), N - 1);
-    const int idx = (e2 < aliasProb[i]) ? i : int(aliasIdx[i]);
+    const int w = texture->width, h = texture->height;
 
-    const int x = idx % texture->width;
-    const int y = idx / texture->width;
+    // Binary search for y using row sums
+    int y1 = 0, y2 = h - 1;
+    int y = (y1 + y2) / 2;
 
-    pdf = texture->channelSum(x, y) * pdfNormFactor;
+    while(y1 < y2) {
+        float value = cumRows[y];
+        if(value > e2) { y2 = y; }
+        else           { y1 = y + 1; }
+        y = (y1 + y2) / 2;
+    }
+
+    // Binary search for x in row given by y
+    int x1 = 0, x2 = w - 1;
+    int x = (x1 + x2) / 2;
+
+    while(x1 < x2) {
+        float value = rowSums->get(x, y, 0);
+        if(value > e1) { x2 = x; }
+        else           { x1 = x + 1; }
+        x = (x1 + x2) / 2;
+    }
+
+    pdf = pdf2D->get(x, y, 0) * w * h;
     return { float(x) + 0.5f, float(y) + 0.5f };
 }
 
 EnvironmentMapSample LatLonEnvironmentMap::importanceSampleFull(float e1, float e2) const
 {
-    const int N = int(aliasProb.size());
-    const int i   = std::min(int(e1 * float(N)), N - 1);
-    const int idx = (e2 < aliasProb[i]) ? i : int(aliasIdx[i]);
+    float pdf;
+    vec2 pixel = importanceSample(e1, e2, pdf);
 
-    const int x = idx % texture->width;
-    const int y = idx / texture->width;
+    const int x = int(pixel.x);
+    const int y = int(pixel.y);
 
-    const float pdf = texture->channelSum(x, y) * pdfNormFactor;
-
-    // Convert pixel center to a spherical direction — same mapping as sampleRay's inverse
+    // Convert pixel center to spherical direction
     const float PI     = float(constants::PI);
     const float TWO_PI = float(constants::TWO_PI);
-    const float u     = (float(x) + 0.5f) / float(texture->width);
-    const float v     = (float(y) + 0.5f) / float(texture->height);
-    const float phi   = u * TWO_PI - PI;
-    const float theta = v * PI;
+    const float u      = pixel.x / float(texture->width);
+    const float v      = pixel.y / float(texture->height);
+    const float phi    = u * TWO_PI - PI;
+    const float theta  = v * PI;
     const float sinTheta = std::sin(theta);
     const Direction3 dir {
         std::sin(phi) * sinTheta,
@@ -155,7 +157,7 @@ EnvironmentMapSample LatLonEnvironmentMap::importanceSampleFull(float e1, float 
         -std::cos(phi) * sinTheta
     };
 
-    // Direct pixel fetch — no round-trip coordinate transform needed
+    // Direct pixel fetch — skips the atan2/acos/bilinear round-trip of sampleRay
     const RadianceRGB rad {
         scaleFactor * texture->get(x, y, 0),
         scaleFactor * texture->get(x, y, 1),
@@ -173,14 +175,7 @@ RandomDirection LatLonEnvironmentMap::importanceSampleDirection(float e1, float 
 
 void LatLonEnvironmentMap::saveDebugImages()
 {
-    const int w = texture->width, h = texture->height;
-
     writePNG(*texture, "envmap_texture.png");
-
-    // Reconstruct a PDF image for visualization
-    Texture pdfTex(w, h, 1);
-    for(int y = 0; y < h; ++y)
-        for(int x = 0; x < w; ++x)
-            pdfTex.set(x, y, 0, texture->channelSum(x, y) * pdfNormFactor);
-    writePNG(applyGamma(pdfTex, 1.0/10.0), "envmap_pdf.png");
+    writePNG(*rowSums, "envmap_rowsums.png");
+    writePNG(applyGamma(*pdf2D, 1.0/10.0), "envmap_pdf.png");
 }

@@ -1,7 +1,6 @@
 #include <benchmark/benchmark.h>
 #include <vector>
 #include <cmath>
-#include <algorithm>
 
 #include "image.h"
 #include "LatLonEnvironmentMap.h"
@@ -36,79 +35,6 @@ static Image<float> makeSyntheticEnvMap(int w, int h)
 }
 
 // ---------------------------------------------------------------------------
-// "Old" binary-search sampler — reimplements the pre-alias-table CDF logic
-// using flat std::vectors (slightly faster than the original Texture-based
-// approach, so this is generous to the old code)
-// ---------------------------------------------------------------------------
-
-struct BinarySearchSampler
-{
-    int w = 0, h = 0;
-    std::vector<float> cumRows;  // h elements: normalized row CDF
-    std::vector<float> rowSums;  // w*h elements: per-row normalized CDFs
-    std::vector<float> pixelPdf; // w*h elements: precomputed PDF
-
-    void build(const Image<float> & img)
-    {
-        w = int(img.width);
-        h = int(img.height);
-        cumRows.resize(h);
-        rowSums.resize(w * h);
-        pixelPdf.resize(w * h);
-
-        float totalCumVal = 0.0f;
-        for (int y = 0; y < h; ++y) {
-            float cosEl = std::cos(lerpFromTo<float>(float(y) + 0.5f, 0.0f, float(h),
-                                                     -float(constants::PI_OVER_TWO),
-                                                      float(constants::PI_OVER_TWO)));
-            float rowCumVal = 0.0f;
-            for (int x = 0; x < w; ++x) {
-                float value    = img.channelSum(x, y);
-                rowCumVal     += value * float(constants::TWO_PI);
-                pixelPdf[y*w + x] = value;
-                rowSums [y*w + x] = rowCumVal;
-            }
-            totalCumVal += rowCumVal * cosEl;
-            cumRows[y]   = totalCumVal;
-
-            if (rowCumVal > 0.0f)
-                for (int x = 0; x < w; ++x)
-                    rowSums[y*w + x] /= rowCumVal;
-        }
-        if (totalCumVal > 0.0f)
-            for (int y = 0; y < h; ++y)
-                cumRows[y] /= totalCumVal;
-
-        float pdfSum = 0.0f;
-        for (float v : pixelPdf) pdfSum += v;
-        float invPdfNorm = (pdfSum > 0.0f) ? 1.0f / (pdfSum * float(constants::FOUR_PI)) : 0.0f;
-        for (float & v : pixelPdf) v *= invPdfNorm;
-    }
-
-    // Returns the sampled PDF; mirrors the original importanceSample() return value
-    float sample(float e1, float e2) const
-    {
-        // Binary search for row
-        int y1 = 0, y2 = h - 1, y = (y1 + y2) / 2;
-        while (y1 < y2) {
-            if (cumRows[y] > e2) y2 = y;
-            else                  y1 = y + 1;
-            y = (y1 + y2) / 2;
-        }
-
-        // Binary search for column in selected row
-        int x1 = 0, x2 = w - 1, x = (x1 + x2) / 2;
-        while (x1 < x2) {
-            if (rowSums[y*w + x] > e1) x2 = x;
-            else                         x1 = x + 1;
-            x = (x1 + x2) / 2;
-        }
-
-        return pixelPdf[y*w + x] * float(w * h);
-    }
-};
-
-// ---------------------------------------------------------------------------
 // Global fixture — built once, shared across all benchmarks
 // ---------------------------------------------------------------------------
 
@@ -117,14 +43,12 @@ struct Fixture
     static constexpr int W = 1024;
     static constexpr int H = 512;
 
-    Image<float>          img;
-    BinarySearchSampler   bss;
-    LatLonEnvironmentMap  latlon;
+    Image<float>         img;
+    LatLonEnvironmentMap latlon;
 
     Fixture()
         : img(makeSyntheticEnvMap(W, H))
     {
-        bss.build(img);
         latlon.loadFromImage(img);
     }
 };
@@ -132,87 +56,54 @@ struct Fixture
 static Fixture * g_fixture = nullptr;
 
 // ---------------------------------------------------------------------------
-// BM1: importanceSample only — binary search vs alias table
-//      Tests the core CDF/alias lookup in isolation (no direction, no radiance)
+// BM_ImportanceSample: binary search lookup in isolation
 // ---------------------------------------------------------------------------
 
-static void BM_BinarySearch_ImportanceSample(benchmark::State & state)
-{
-    const BinarySearchSampler & bss = g_fixture->bss;
-    RNG rng;
-    for (auto _ : state) {
-        vec2 e   = rng.uniform2DRange01();
-        float pdf = bss.sample(e.x, e.y);
-        benchmark::DoNotOptimize(pdf);
-    }
-}
-BENCHMARK(BM_BinarySearch_ImportanceSample);
-
-static void BM_AliasTable_ImportanceSample(benchmark::State & state)
+static void BM_ImportanceSample(benchmark::State & state)
 {
     LatLonEnvironmentMap & latlon = g_fixture->latlon;
     RNG rng;
     float pdf;
     for (auto _ : state) {
-        vec2 e    = rng.uniform2DRange01();
+        vec2 e     = rng.uniform2DRange01();
         vec2 coord = latlon.importanceSample(e.x, e.y, pdf);
         benchmark::DoNotOptimize(coord);
         benchmark::DoNotOptimize(pdf);
     }
 }
-BENCHMARK(BM_AliasTable_ImportanceSample);
+BENCHMARK(BM_ImportanceSample);
 
 // ---------------------------------------------------------------------------
-// BM2: full sampling path — direction + radiance
-//      "Old" = binary search + pixel→trig→direction + sampleRay(atan2/acos/bilinear)
-//      "New" = alias table + importanceSampleFull (direct pixel fetch)
+// BM_Full_OldPath: binary search + direction + sampleRay (atan2/acos/bilinear)
+//   Approximates what importanceSampleDirection + sampleRay cost together
 // ---------------------------------------------------------------------------
 
-static void BM_BinarySearch_Full(benchmark::State & state)
+static void BM_Full_OldPath(benchmark::State & state)
 {
-    const BinarySearchSampler & bss    = g_fixture->bss;
-    LatLonEnvironmentMap &      latlon = g_fixture->latlon;
-    const float PI     = float(constants::PI);
-    const float TWO_PI = float(constants::TWO_PI);
-    const int   W = bss.w, H = bss.h;
+    LatLonEnvironmentMap & latlon = g_fixture->latlon;
     RNG rng;
-
     for (auto _ : state) {
         vec2 e = rng.uniform2DRange01();
 
-        // Binary search for (x, y)
-        int y1 = 0, y2 = H-1, y = (y1+y2)/2;
-        while (y1 < y2) {
-            if (bss.cumRows[y] > e.y) y2 = y; else y1 = y+1;
-            y = (y1+y2)/2;
-        }
-        int x1 = 0, x2 = W-1, x = (x1+x2)/2;
-        while (x1 < x2) {
-            if (bss.rowSums[y*W + x] > e.x) x2 = x; else x1 = x+1;
-            x = (x1+x2)/2;
-        }
-        float pdf = bss.pixelPdf[y*W + x] * float(W*H);
+        // Same work as importanceSampleDirection
+        RandomDirection d = latlon.importanceSampleDirection(e.x, e.y);
 
-        // Old direction path: pixel center → spherical → Cartesian
-        float u     = (float(x) + 0.5f) / float(W);
-        float v     = (float(y) + 0.5f) / float(H);
-        float phi   = u * TWO_PI - PI;
-        float theta = v * PI;
-        float sinT  = std::sin(theta);
-        Direction3 dir { std::sin(phi)*sinT, std::cos(theta), -std::cos(phi)*sinT };
-
-        // Old radiance path: direction → atan2/acos → bilinear texture lookup
-        Ray ray{ Position3(0.0f, 0.0f, 0.0f), dir };
+        // Then sampleRay: direction -> atan2/acos -> bilinear lookup
+        Ray ray{ Position3(0.0f, 0.0f, 0.0f), d.direction };
         RadianceRGB rad = latlon.sampleRay(ray);
 
-        benchmark::DoNotOptimize(pdf);
-        benchmark::DoNotOptimize(dir);
+        benchmark::DoNotOptimize(d);
         benchmark::DoNotOptimize(rad);
     }
 }
-BENCHMARK(BM_BinarySearch_Full);
+BENCHMARK(BM_Full_OldPath);
 
-static void BM_AliasTable_Full(benchmark::State & state)
+// ---------------------------------------------------------------------------
+// BM_Full_NewPath: binary search + direction + direct pixel fetch
+//   importanceSampleFull combines all three steps without the round-trip
+// ---------------------------------------------------------------------------
+
+static void BM_Full_NewPath(benchmark::State & state)
 {
     LatLonEnvironmentMap & latlon = g_fixture->latlon;
     RNG rng;
@@ -222,7 +113,7 @@ static void BM_AliasTable_Full(benchmark::State & state)
         benchmark::DoNotOptimize(s);
     }
 }
-BENCHMARK(BM_AliasTable_Full);
+BENCHMARK(BM_Full_NewPath);
 
 // ---------------------------------------------------------------------------
 

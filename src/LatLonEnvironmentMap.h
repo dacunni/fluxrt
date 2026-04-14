@@ -32,10 +32,10 @@ class LatLonEnvironmentMap : public EnvironmentMap
 
         TexturePtr texture;
 
-        // Importance sampling via Walker alias table — O(1) per sample
-        std::vector<float>    aliasProb; // Acceptance probability for each pixel
-        std::vector<uint32_t> aliasIdx;  // Alias index for each pixel
-        float pdfNormFactor = 0.0f;      // Precomputed: N / pdfSum / FOUR_PI
+        // Importance sampling — PDFs/CDFs stored per row in textures
+        TexturePtr         rowSums; // Cumulative sums along rows (normalized per row)
+        std::vector<float> cumRows; // Cumulative sum of row sums (normalized)
+        TexturePtr         pdf2D;   // PDF per pixel
 
         float scaleFactor = 1.0f;
 
