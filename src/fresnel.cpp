@@ -97,7 +97,7 @@ float normal(float n_i, float n_t)
     return num / denom;
 }
 
-}; // dialectric
+} // dialectric
 
 namespace conductor {
 
@@ -123,7 +123,7 @@ float normal(float n_i, float n_t, float k_t)
     return num / denom;
 }
 
-}; // conductor
+} // conductor
 
-}; // fresnel
+} // fresnel
 

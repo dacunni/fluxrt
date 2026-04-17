@@ -65,7 +65,7 @@ bool TriangleMesh::intersects(const Ray & ray, float minDistance, float maxDista
 
 bool TriangleMesh::findIntersection(const Ray & ray, float minDistance, RayIntersection & intersection) const
 {
-    float bestDistance = FLT_MAX, t = FLT_MAX;
+    float bestDistance = std::numeric_limits<float>::max(), t = std::numeric_limits<float>::max();
     uint32_t bestTriangle = 0;
     bool hit = false;
 

@@ -12,7 +12,7 @@ inline bool intersects(const Ray & ray, const Triangle & triangle, float minDist
 
 inline bool findIntersection(const Ray & ray, const Triangle & triangle, float minDistance, RayIntersection & intersection)
 {
-    float t = FLT_MAX;
+    float t = std::numeric_limits<float>::max();
     const auto & v0 = triangle.vertices[0];
     const auto & v1 = triangle.vertices[1];
     const auto & v2 = triangle.vertices[2];

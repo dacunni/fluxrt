@@ -26,15 +26,15 @@ class Artifacts
 
             if(clampInvalid) {
                 if(std::isinf(color.r) || std::isinf(color.g) || std::isinf(color.b)) {
-                    std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Inf value : " << color.string() << '\n';;
+                    std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Inf value : " << color.string() << '\n';
                     isValid = false;
                 }
                 else if(std::isnan(color.r) || std::isnan(color.g) || std::isnan(color.b)) {
-                    std::cerr << "WARNING: Pixel " << x << ", " << y << " color has NaN value : " << color.string() << '\n';;
+                    std::cerr << "WARNING: Pixel " << x << ", " << y << " color has NaN value : " << color.string() << '\n';
                     isValid = false;
                 }
                 else if(color.r < 0.0f || color.g < 0.0f || color.b < 0.0f) {
-                    std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Negative value : " << color.string() << '\n';;
+                    std::cerr << "WARNING: Pixel " << x << ", " << y << " color has Negative value : " << color.string() << '\n';
                     isValid = false;
                 }
             }
@@ -148,14 +148,10 @@ class Artifacts
                 isectDist.set3(x, y, 1.0f, 0.0f, 1.0f);
             else if(distance < minDistance)
                 isectDist.set3(x, y, 0.0f, 1.0f, 1.0f);
-            else if(distance == FLT_MAX)
+            else if(distance == std::numeric_limits<float>::max())
                 isectDist.set3(x, y, 1.0f, 0.5f, 0.0f);
             else {
-#if 1
                 float v = lerpFromTo(distance, 1.0f, 20.0f, 0.0f, 1.0f);
-#else
-                float v = std::log10(distance);
-#endif
                 isectDist.set3(x, y, v, v, v);
             }
         }

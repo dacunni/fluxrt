@@ -13,7 +13,7 @@ inline float Function(FunctionSelector selector, float NdH, float NdV, float NdL
 inline float Implicit(float NdV, float NdL);
 inline float CookTorrance(float NdH, float NdV, float NdL, float VdH);
 
-}; // GeometryShadowing
+} // GeometryShadowing
 
 namespace NormalDistribution {
 
@@ -23,7 +23,7 @@ inline float Function(FunctionSelector selector, float roughness, float NdH);
 inline float Beckman(float roughness, float NdH);
 inline float BlinnPhong(float roughness, float NdH);
 
-}; // NormalDistribution
+} // NormalDistribution
 
 // Implementations
 
@@ -51,7 +51,7 @@ inline float CookTorrance(float NdH, float NdV, float NdL, float VdH)
     return std::min(1.0f, std::min(G1, G2));
 }
 
-}; // GeometryShadowing
+} // GeometryShadowing
 
 namespace NormalDistribution {
 
@@ -93,9 +93,9 @@ inline float BlinnPhong(float roughness, float NdH)
     return D;
 }
 
-}; // NormalDistribution
+} // NormalDistribution
 
-}; // Microfacet
+} // Microfacet
 
 
 #endif

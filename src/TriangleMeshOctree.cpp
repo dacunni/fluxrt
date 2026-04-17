@@ -321,7 +321,7 @@ bool TriangleMeshOctree::findIntersectionNodeTriangles(
     bool hit = false;
 
     if(node.numTriangles > 0) {
-        float t = FLT_MAX;
+        float t = std::numeric_limits<float>::max();
         assert(node.firstTriangle + node.numTriangles - 1 < triangles.size());
         for(uint32_t ti = 0; ti < node.numTriangles; ++ti) {
             auto tri = triangles[node.firstTriangle + ti];
@@ -348,7 +348,7 @@ bool TriangleMeshOctree::findIntersection(const Ray & ray, float minDistance,
     TriangleMeshOctree::child_array_t childOrder = {};
     std::stack<uint32_t> nodesToCheck;
     uint32_t bestTriangle = 0;
-    float bestDistance = FLT_MAX;
+    float bestDistance = std::numeric_limits<float>::max();
     bool hit = false;
 
     // Get the reverse child order because we are setting up a depth-first
