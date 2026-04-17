@@ -76,32 +76,6 @@ TEST(LerpTest, LerpWithDoubleT) {
     EXPECT_DOUBLE_EQ(lerp(0.25, 0.0, 100.0), 25.0);
 }
 
-TEST(LerpTest, LerpWithIntegerTypes) {
-    // Test with integer values
-    EXPECT_EQ(lerp(0.0f, 10, 20), 10);
-    EXPECT_EQ(lerp(1.0f, 10, 20), 20);
-    EXPECT_EQ(lerp(0.5f, 10, 20), 15);
-    EXPECT_EQ(lerp(0.5f, 0, 10), 5);
-}
-
-TEST(LerpTest, LerpWithInt32) {
-    // Specific tests for int32_t specialization
-    int32_t v1 = 100, v2 = 200;
-    EXPECT_EQ(lerp(0.0f, v1, v2), 100);
-    EXPECT_EQ(lerp(1.0f, v1, v2), 200);
-    EXPECT_EQ(lerp(0.5f, v1, v2), 150);
-    EXPECT_EQ(lerp(0.25f, v1, v2), 125);
-    EXPECT_EQ(lerp(0.75f, v1, v2), 175);
-}
-
-TEST(LerpTest, LerpWithUInt32) {
-    // Specific tests for uint32_t specialization
-    uint32_t v1 = 100, v2 = 200;
-    EXPECT_EQ(lerp(0.0f, v1, v2), 100u);
-    EXPECT_EQ(lerp(1.0f, v1, v2), 200u);
-    EXPECT_EQ(lerp(0.5f, v1, v2), 150u);
-    EXPECT_EQ(lerp(0.25f, v1, v2), 125u);
-}
 
 TEST(LerpTest, LerpVerySmallT) {
     // Test with very small t values

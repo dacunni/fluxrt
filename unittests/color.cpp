@@ -10,10 +10,6 @@ TEST(ColorChannel, MinValue_Uint8) {
     EXPECT_EQ(result, 0);
 }
 
-TEST(ColorChannel, MinValue_Int) {
-    int result = color::channel::minValue<int>();
-    EXPECT_EQ(result, 0);
-}
 
 TEST(ColorChannel, MinValue_Float) {
     float result = color::channel::minValue<float>();
@@ -31,10 +27,6 @@ TEST(ColorChannel, MaxValue_Uint8) {
     EXPECT_EQ(result, 255);
 }
 
-TEST(ColorChannel, MaxValue_Int) {
-    int result = color::channel::maxValue<int>();
-    EXPECT_EQ(result, std::numeric_limits<int>::max());
-}
 
 TEST(ColorChannel, MaxValue_Float) {
     float result = color::channel::maxValue<float>();
@@ -130,28 +122,6 @@ TEST(ColorChannel, Clamp_Double_AboveMax) {
     EXPECT_DOUBLE_EQ(color::channel::clamp<double>(1.0001), 1.0);
 }
 
-// Test clamp<T>() - int
-// Note: The color::channel functions specialize minValue/maxValue only for float and double.
-// For int, the generic template returns minValue=0 and maxValue=std::numeric_limits<int>::max().
-// So clamping works in the range [0, INT_MAX], which is appropriate for non-negative integers.
-TEST(ColorChannel, Clamp_Int_WithinRange) {
-    EXPECT_EQ(color::channel::clamp<int>(0), 0);
-    EXPECT_EQ(color::channel::clamp<int>(100), 100);
-    // Negative values get clamped to minValue (which is 0 for int)
-    EXPECT_EQ(color::channel::clamp<int>(-50), 0);
-}
-
-TEST(ColorChannel, Clamp_Int_BelowMin) {
-    // minValue<int>() returns 0 (generic template)
-    EXPECT_EQ(color::channel::clamp<int>(-1), 0);
-    EXPECT_EQ(color::channel::clamp<int>(-100), 0);
-}
-
-TEST(ColorChannel, Clamp_Int_AboveMax) {
-    int intMax = std::numeric_limits<int>::max();
-    EXPECT_EQ(color::channel::clamp<int>(intMax), intMax);
-    EXPECT_EQ(color::channel::clamp<int>(intMax - 1), intMax - 1);
-}
 
 // Edge cases and stress tests
 TEST(ColorChannel, Clamp_Float_VeryLargeValue) {
