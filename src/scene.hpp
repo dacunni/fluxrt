@@ -2,9 +2,16 @@
 inline bool intersectsWorldRay(const Ray & rayWorld, const Scene & scene,
                                float minDistance, float maxDistance)
 {
-    for(const auto & o : scene.objects) {
-        if(o->intersectsWorldRay(rayWorld, minDistance, maxDistance)) {
+    if(scene.useKDTreeAccelerator) {
+        if(scene.objectsKDTree.intersectsWorldRay(rayWorld, minDistance, maxDistance)) {
             return true;
+        }
+    }
+    else {
+        for(const auto & o : scene.objects) {
+            if(o->intersectsWorldRay(rayWorld, minDistance, maxDistance)) {
+                return true;
+            }
         }
     }
 
