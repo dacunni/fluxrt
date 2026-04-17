@@ -22,7 +22,7 @@ struct ValueArray
         }
     }
     // Copy constructor
-    ValueArray(const ValueArray & a) {
+    explicit ValueArray(const ValueArray & a) {
         std::copy(a.values, a.values + N, values);
     }
     // Array constructor
