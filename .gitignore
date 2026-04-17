@@ -12,3 +12,6 @@ tags
 .claude
 CLAUDE.md
 
+.claude/
+jobs/
+.venv/
