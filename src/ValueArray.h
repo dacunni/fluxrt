@@ -22,7 +22,7 @@ struct ValueArray
         }
     }
     // Copy constructor
-    explicit ValueArray(const ValueArray & a) {
+    ValueArray(const ValueArray & a) {
         std::copy(a.values, a.values + N, values);
     }
     // Array constructor
@@ -116,7 +116,7 @@ template<unsigned int N>
 struct ColorArray : public ValueArray<ColorArray<N>, N, ValueArrayInitZero>
 {
     ColorArray() = default;
-    ColorArray(float v[N]) : ValueArray<ColorArray<N>, N>() {}
+    ColorArray(float v[N]) : ValueArray<ColorArray<N>, N>(v) {}
 
     std::string string() const;
 };
@@ -125,14 +125,14 @@ template<unsigned int N>
 struct RadianceArray : public ValueArray<RadianceArray<N>, N, ValueArrayInitZero>
 {
     RadianceArray() = default;
-    RadianceArray(float v[N]) : ValueArray<RadianceArray<N>, N>() {}
+    RadianceArray(float v[N]) : ValueArray<RadianceArray<N>, N>(v) {}
 };
 
 template<unsigned int N>
 struct ReflectanceArray : public ValueArray<ReflectanceArray<N>, N, ValueArrayInitOne>
 {
     ReflectanceArray() = default;
-    ReflectanceArray(float v[N]) : ValueArray<ReflectanceArray<N>, N>() {}
+    ReflectanceArray(float v[N]) : ValueArray<ReflectanceArray<N>, N>(v) {}
     explicit ReflectanceArray(const ColorArray<N> & c) : ValueArray<ReflectanceArray<N>, N>(c) {}
 };
 
@@ -144,7 +144,7 @@ template<unsigned int N>
 struct ParameterArray : public ValueArray<ParameterArray<N>, N, ValueArrayInitZero>
 {
     ParameterArray() = default;
-    ParameterArray(float v[N]) : ValueArray<ParameterArray<N>, N>() {}
+    ParameterArray(float v[N]) : ValueArray<ParameterArray<N>, N>(v) {}
     explicit ParameterArray(const ColorArray<N> & c) : ValueArray<ParameterArray<N>, N>(c) {}
 };
 
@@ -157,7 +157,7 @@ inline RadianceArray<N> operator+(const RadianceArray<N> & a, const RadianceArra
 }
 
 template<unsigned int N>
-inline RadianceArray<N> operator+=(RadianceArray<N> & a, const RadianceArray<N> & b)
+inline RadianceArray<N> & operator+=(RadianceArray<N> & a, const RadianceArray<N> & b)
 {
     a = a + b;
     return a;
@@ -181,7 +181,7 @@ inline RadianceArray<N> operator*(float s, const RadianceArray<N> & r)
 }
 
 template<unsigned int N>
-inline RadianceArray<N> operator*=(RadianceArray<N> & r, float s)
+inline RadianceArray<N> & operator*=(RadianceArray<N> & r, float s)
 {
     r = r * s;
     return r;
@@ -194,7 +194,7 @@ inline RadianceArray<N> operator/(const RadianceArray<N> & r, float s)
 }
 
 template<unsigned int N>
-inline RadianceArray<N> operator/=(RadianceArray<N> & r, float s)
+inline RadianceArray<N> & operator/=(RadianceArray<N> & r, float s)
 {
     r = r / s;
     return r;
