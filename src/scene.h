@@ -9,6 +9,7 @@
 #include "TriangleMeshOctree.h"
 #include "PointLight.h"
 #include "DiskLight.h"
+#include "IESLight.h"
 #include "EnvironmentMap.h"
 #include "sensor.h"
 #include "camera.h"
@@ -35,6 +36,7 @@ struct Scene
     // Lights
     std::vector<PointLight> pointLights;
     std::vector<DiskLight> diskLights;
+    std::vector<IESLight> iesLights;
 
     // Accelerators
     TraceableKDTree objectsKDTree;

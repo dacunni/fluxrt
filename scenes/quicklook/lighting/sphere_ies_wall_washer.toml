@@ -1,0 +1,32 @@
+[camera]
+type = "pinhole"
+hfov = 45
+
+position = [ 0.0, 2.0, 10.0 ]
+direction = [ 0.0, 0.0, -1.0 ]
+lookat = [ 0.0, 0.0, 0.0 ]
+up = [ 0.0, 1.0, 0.0 ]
+
+[sensor]
+pixelwidth = 200
+pixelheight = 200
+
+# Asymmetric wall washer mounted on a ceiling, aimed down and slightly to the side
+[[ieslights]]
+file = "scenes/ies_profiles/wall_washer.ies"
+position = [ -2.0, 4.0, 0.0 ]
+direction = [ 0.0, -1.0, 0.0 ]
+color = [ 0.001, 0.001, 0.001 ]
+
+[[spheres]]
+radius = 1.0
+    [spheres.material]
+    type = "diffuse"
+    diffuse = [ 0.8, 0.8, 0.9 ]
+
+[[slabs]]
+min = [ -1000.0, -1000.0, -1000.0 ]
+max = [ 1000.0, -1.0, 1000.0 ]
+    [slabs.material]
+    type = "diffuse"
+    diffuse = [ 0.7, 0.7, 0.7 ]

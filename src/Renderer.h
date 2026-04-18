@@ -14,6 +14,7 @@ struct RNG;
 struct Scene;
 struct PointLight;
 struct DiskLight;
+struct IESLight;
 class Logger;
 
 // TODO: Put this somewhere sensible
@@ -125,6 +126,21 @@ class Renderer
                                                const Position3 & P,
                                                const Direction3 & N,
                                                float minDistance) const;
+
+        inline LightSample sampleIESLight(const Scene & scene,
+                                          RNG & rng,
+                                          const IESLight & light,
+                                          const Position3 & P,
+                                          const Direction3 & N,
+                                          float minDistance) const;
+
+        inline RadianceRGB sampleAllIESLights(const Scene & scene,
+                                              RNG & rng,
+                                              const BRDF & brdf,
+                                              const Direction3 & Wo,
+                                              const Position3 & P,
+                                              const Direction3 & N,
+                                              float minDistance) const;
 
         inline RadianceRGB sampleEnvironmentMap(const Scene & scene,
                                                 RNG & rng,
