@@ -371,7 +371,7 @@ inline LightSample Renderer::samplePointLight(const Scene & scene,
     const float lightDistSq = toLight.magnitude_sq();
     const float lightDist = std::sqrt(lightDistSq);
 
-    // Make sure the light is on the right size of the surface
+    // Make sure the light is on the right side of the surface
     if(dot(toLight, N) < 0.0f) {
         return S;
     }
@@ -426,7 +426,7 @@ inline LightSample Renderer::sampleDiskLight(const Scene & scene,
     S.L = RadianceRGB::BLACK();
     S.direction = toLight.normalized();
 
-    // Make sure the light is on the right size of the surface
+    // Make sure the light is on the right side of the surface
     if(dot(toLight, N) < 0.0f) {
         return S;
     }

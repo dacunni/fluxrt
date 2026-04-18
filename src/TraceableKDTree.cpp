@@ -282,7 +282,7 @@ bool TraceableKDTree::findIntersectionNode(const KDNode & node, const Ray & ray,
         for(auto object : node.objects) {
             bool hit = object->findIntersectionWorldRay(ray, minDistance, tempIntersection);
             if(hit && (!anyHit || tempIntersection.distance < intersection.distance)) {
-                intersection = tempIntersection;;
+                intersection = tempIntersection;
                 anyHit = true;
             }
         }

@@ -26,7 +26,7 @@ float perpendicularSnell(float cos_i, float n_i, float n_t);
 
 float normal(float n_i, float n_t);
 
-}; // dialectric
+} // dialectric
 
 namespace conductor {
 
@@ -34,8 +34,8 @@ float unpolarized(float cos_i, float n, float k);
 
 float normal(float n_i, float n_t, float k_t);
 
-}; // conductor
+} // conductor
 
-}; // fresnel
+} // fresnel
 
 #endif

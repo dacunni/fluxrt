@@ -40,7 +40,7 @@ struct Scene
     TraceableKDTree objectsKDTree;
     bool useKDTreeAccelerator = false;
 
-    // Always points to a valid envionment map
+    // Always points to a valid environment map
     std::unique_ptr<EnvironmentMap> environmentMap;
 
     MaterialArray materials;
