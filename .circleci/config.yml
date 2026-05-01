@@ -71,7 +71,7 @@ jobs:
                  --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch
             lcov --remove coverage.info '*/external/*' '*/unittests/*' '/usr/*' --output-file coverage.info \
                  --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch
-            lcov --list coverage.info
+            lcov --summary coverage.info
       - run:
           name: "Generate HTML Report"
           command: genhtml coverage.info --output-directory coverage-html
