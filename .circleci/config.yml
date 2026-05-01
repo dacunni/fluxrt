@@ -68,10 +68,10 @@ jobs:
             lcov --remove coverage.info '*/external/*' '*/unittests/*' '/usr/*' --output-file coverage.info
             lcov --list coverage.info
       - run:
-          name: "Upload to Codecov"
-          command: bash <(curl -s https://codecov.io/bash) -f coverage.info
+          name: "Generate HTML Report"
+          command: genhtml coverage.info --output-directory coverage-html
       - store_artifacts:
-          path: coverage.info
+          path: coverage-html
   rendertest:
     docker:
       - image: dacunni/hobby:ubuntu_compilers
