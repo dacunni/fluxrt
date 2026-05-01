@@ -53,6 +53,9 @@ jobs:
             git submodule init
             git submodule update --remote
       - run:
+          name: "Install lcov"
+          command: apt-get install -y lcov
+      - run:
           name: "Setup Coverage Build"
           command: mkdir build-cov && cd build-cov && cmake -DCMAKE_BUILD_TYPE=Coverage -DBUILD_PYTHON_BINDINGS=OFF ..
       - run:
