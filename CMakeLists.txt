@@ -78,6 +78,11 @@ set(SRCS
     )
 ADD_LIBRARY(fluxrt ${SRCS})
 
+if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+    target_compile_options(fluxrt PUBLIC --coverage -O0 -g)
+    target_link_options(fluxrt PUBLIC --coverage)
+endif()
+
 if(BUILD_PYTHON_BINDINGS)
     add_subdirectory(external/pybind11)
     add_subdirectory(bindings/python)

@@ -39,6 +39,39 @@ jobs:
       - run:
           name: "Test"
           command: cd /workspace/build && ctest --rerun-failed --output-on-failure
+  coverage:
+    docker:
+      - image: dacunni/hobby:ubuntu_compilers
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - run:
+          name: "Pull Submodules"
+          command: |
+            git submodule init
+            git submodule update --remote
+      - run:
+          name: "Setup Coverage Build"
+          command: mkdir build-cov && cd build-cov && cmake -DCMAKE_BUILD_TYPE=Coverage -DBUILD_PYTHON_BINDINGS=OFF ..
+      - run:
+          name: "Build"
+          command: cd build-cov && make -j
+      - run:
+          name: "Run Tests"
+          command: cd build-cov && ctest --output-on-failure
+      - run:
+          name: "Collect Coverage"
+          command: |
+            lcov --capture --directory build-cov --output-file coverage.info
+            lcov --remove coverage.info '*/external/*' '*/unittests/*' '/usr/*' --output-file coverage.info
+            lcov --list coverage.info
+      - run:
+          name: "Upload to Codecov"
+          command: bash <(curl -s https://codecov.io/bash) -f coverage.info
+      - store_artifacts:
+          path: coverage.info
   rendertest:
     docker:
       - image: dacunni/hobby:ubuntu_compilers
@@ -73,6 +106,7 @@ workflows:
       - unittest:
           requires:
             - build
+      - coverage
       - rendertest:
           requires:
             - build
