@@ -67,8 +67,10 @@ jobs:
       - run:
           name: "Collect Coverage"
           command: |
-            lcov --capture --directory build-cov --output-file coverage.info
-            lcov --remove coverage.info '*/external/*' '*/unittests/*' '/usr/*' --output-file coverage.info
+            lcov --capture --directory build-cov --output-file coverage.info \
+                 --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch
+            lcov --remove coverage.info '*/external/*' '*/unittests/*' '/usr/*' --output-file coverage.info \
+                 --rc geninfo_unexecuted_blocks=1 --ignore-errors mismatch
             lcov --list coverage.info
       - run:
           name: "Generate HTML Report"
