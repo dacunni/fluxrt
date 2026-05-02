@@ -1,6 +1,10 @@
 PROJECT (fluxrt_tests)
 
-SET(CMAKE_CXX_FLAGS "-std=c++14 -O2")
+if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
+    SET(CMAKE_CXX_FLAGS "-std=c++14 -O0 -g --coverage")
+else()
+    SET(CMAKE_CXX_FLAGS "-std=c++14 -O2")
+endif()
 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
