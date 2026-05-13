@@ -1,0 +1,96 @@
+/* Base */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background: #1a1a1a;
+  color: #eee;
+  font-family: sans-serif;
+  padding: 20px;
+  margin: 0;
+}
+
+h1 { color: #ccc; }
+
+/* Image grid */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.item {
+  position: relative;
+  cursor: zoom-in;
+}
+
+.item h2 {
+  color: #888;
+  font-weight: normal;
+  font-size: 14px;
+  margin: 0 0 6px 0;
+}
+
+.item img {
+  display: block;
+  image-rendering: pixelated;
+  border: 1px solid #444;
+  background: #000;
+}
+
+.item img.error {
+  opacity: 0.3;
+  outline: 2px dashed #c44;
+}
+
+/* Zoom lens */
+.lens {
+  display: none;
+  position: fixed;
+  width: 200px;
+  height: 200px;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+}
+
+.lens canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* Lightbox */
+#lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 200;
+  cursor: zoom-out;
+  align-items: center;
+  justify-content: center;
+}
+
+#lightbox.open {
+  display: flex;
+}
+
+#lightbox img {
+  max-width: 95vw;
+  max-height: 95vh;
+  image-rendering: pixelated;
+  border: 1px solid #555;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.9);
+}
+
+#lightbox-label {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #aaa;
+  font-size: 13px;
+  pointer-events: none;
+}

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FluxRT Dashboard</title>
+  <link rel="stylesheet" href="/static/dashboard/dashboard.css">
+</head>
+<body>
+
+<header>
+  <h1>FluxRT Dashboard</h1>
+</header>
+
+<main>
+
+  <!-- ── Launch panel ─────────────────────────────────────── -->
+  <section>
+    <details class="launch-panel" open>
+      <summary>Launch Render</summary>
+      <div class="launch-form">
+
+        <div class="field wide">
+          <label for="scene-select">Scene</label>
+          <select id="scene-select"><option>Loading scenes…</option></select>
+        </div>
+
+        <div class="field">
+          <label for="spp">Samples per pixel</label>
+          <input type="number" id="spp" value="64" min="1" max="100000">
+        </div>
+
+        <div class="field">
+          <label for="threads">Threads</label>
+          <input type="number" id="threads" value="7" min="1" max="64">
+        </div>
+
+        <div class="field">
+          <label for="depth">Max depth</label>
+          <input type="number" id="depth" value="8" min="1" max="64">
+        </div>
+
+        <div class="field">
+          <label>Sensor scale</label>
+          <div class="range-row">
+            <input type="range" id="sensor-scale" min="0.1" max="1.0" step="0.05" value="1.0">
+            <span class="range-val" id="sensor-scale-val">100%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="render-order">Render order</label>
+          <select id="render-order">
+            <option value="progressive">Progressive</option>
+            <option value="tiled">Tiled</option>
+            <option value="raster">Raster</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="flush-timeout">Flush interval (sec, 0=off)</label>
+          <input type="number" id="flush-timeout" value="0" min="0" max="3600">
+        </div>
+
+        <div class="launch-actions">
+          <button class="primary" id="render-btn">▶ Render</button>
+          <span id="launch-error"></span>
+        </div>
+
+      </div>
+    </details>
+  </section>
+
+  <!-- ── Job list ─────────────────────────────────────────── -->
+  <section>
+    <h2>Jobs</h2>
+    <div id="jobs-container">
+      <div class="empty-state">No jobs yet.</div>
+    </div>
+  </section>
+
+</main>
+
+<script src="/static/dashboard/dashboard.js"></script>
+<script>
+// ── Scene picker ─────────────────────────────────────────────────────────────
+
+async function loadScenes() {
+  const data = await apiGet('/api/scenes');
+  const sel = document.getElementById('scene-select');
+  sel.innerHTML = '';
+  const groups = {};
+  for (const s of data.scenes) {
+    const slash = s.lastIndexOf('/');
+    const dir   = slash === -1 ? '' : s.slice(0, slash);
+    const name  = s.slice(slash + 1).replace(/\.toml$/i, '');
+    if (!groups[dir]) groups[dir] = [];
+    groups[dir].push({ value: s, label: name });
+  }
+  const dirs = Object.keys(groups).sort((a, b) =>
+    a === '' ? -1 : b === '' ? 1 : a.localeCompare(b));
+  for (const dir of dirs) {
+    const og = document.createElement('optgroup');
+    og.label = dir || '(root)';
+    for (const { value, label } of groups[dir]) {
+      const opt = document.createElement('option');
+      opt.value = value; opt.textContent = label;
+      og.appendChild(opt);
+    }
+    sel.appendChild(og);
+  }
+}
+
+// ── Sensor scale readout ─────────────────────────────────────────────────────
+
+document.getElementById('sensor-scale').addEventListener('input', function () {
+  document.getElementById('sensor-scale-val').textContent =
+    Math.round(this.value * 100) + '%';
+});
+
+// ── Launch ───────────────────────────────────────────────────────────────────
+
+document.getElementById('render-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('render-btn');
+  const err = document.getElementById('launch-error');
+  err.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = '…';
+  try {
+    const data = await apiPost('/api/jobs', {
+      scene:         document.getElementById('scene-select').value,
+      spp:           parseInt(document.getElementById('spp').value),
+      threads:       parseInt(document.getElementById('threads').value),
+      depth:         parseInt(document.getElementById('depth').value),
+      sensor_scale:  parseFloat(document.getElementById('sensor-scale').value),
+      render_order:  document.getElementById('render-order').value,
+      flush_timeout: parseInt(document.getElementById('flush-timeout').value),
+    });
+    // Job launched — poller will pick it up within 2s
+    console.log('Launched job', data.job_id);
+  } catch (e) {
+    err.textContent = e.message;
+    err.style.display = 'inline';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '▶ Render';
+  }
+});
+
+// ── Job list rendering ───────────────────────────────────────────────────────
+
+let knownJobs = {};  // job_id → last seen data
+
+function renderJobTable(jobs) {
+  const container = document.getElementById('jobs-container');
+  if (jobs.length === 0) {
+    container.innerHTML = '<div class="empty-state">No jobs yet.</div>';
+    knownJobs = {};
+    return;
+  }
+
+  // Build or reuse table
+  let table = container.querySelector('table.jobs-table');
+  if (!table) {
+    container.innerHTML = `
+      <table class="jobs-table">
+        <thead>
+          <tr>
+            <th>Scene</th><th>Status</th><th>Params</th>
+            <th>Started</th><th>Elapsed</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="jobs-tbody"></tbody>
+      </table>`;
+  }
+  const tbody = container.querySelector('#jobs-tbody');
+
+  // Diff — update changed rows, add new, remove gone
+  const currentIds = new Set(jobs.map(j => j.job_id));
+  // Remove stale rows
+  [...tbody.querySelectorAll('tr[data-job-id]')].forEach(tr => {
+    if (!currentIds.has(tr.dataset.jobId)) tr.remove();
+  });
+
+  jobs.forEach(job => {
+    const prev = knownJobs[job.job_id];
+    // Only re-render if something changed
+    if (prev && prev.status === job.status && prev.elapsed_seconds === job.elapsed_seconds) return;
+    knownJobs[job.job_id] = job;
+
+    const p = job.params || {};
+    const paramsStr = `${p.spp}spp · ${p.threads}t · d${p.depth} · ${Math.round((p.sensor_scale||1)*100)}%`;
+    const isRunning = job.status === 'running';
+
+    const html = `
+      <td class="scene-name">${escHtml(job.scene_short || job.scene)}</td>
+      <td>${statusBadge(job.status)}</td>
+      <td class="params-summary">${escHtml(paramsStr)}</td>
+      <td class="started">${formatRelative(job.started_at)}</td>
+      <td class="elapsed">${formatElapsed(job.elapsed_seconds)}</td>
+      <td class="actions">
+        <a href="/job/${escHtml(job.job_id)}"><button>View</button></a>
+        ${isRunning ? `<button class="flush-btn" data-job-id="${escHtml(job.job_id)}">Flush</button>` : ''}
+        ${isRunning ? `<button class="cancel-btn danger" data-job-id="${escHtml(job.job_id)}">Cancel</button>` : ''}
+      </td>`;
+
+    let row = tbody.querySelector(`tr[data-job-id="${job.job_id}"]`);
+    if (!row) {
+      row = document.createElement('tr');
+      row.dataset.jobId = job.job_id;
+      // Insert at correct position (newest first)
+      const rows = [...tbody.querySelectorAll('tr[data-job-id]')];
+      const idx = jobs.findIndex(j => j.job_id === job.job_id);
+      if (idx === 0 || rows.length === 0) {
+        tbody.prepend(row);
+      } else {
+        const afterId = jobs[idx - 1].job_id;
+        const afterRow = tbody.querySelector(`tr[data-job-id="${afterId}"]`);
+        if (afterRow) afterRow.after(row);
+        else tbody.appendChild(row);
+      }
+    }
+    row.innerHTML = html;
+  });
+}
+
+// ── Button delegation ────────────────────────────────────────────────────────
+
+document.getElementById('jobs-container').addEventListener('click', async e => {
+  const flushBtn  = e.target.closest('.flush-btn');
+  const cancelBtn = e.target.closest('.cancel-btn');
+  if (flushBtn) {
+    flushBtn.disabled = true;
+    try { await apiPost(`/api/jobs/${flushBtn.dataset.jobId}/flush`, {}); }
+    catch (ex) { alert('Flush failed: ' + ex.message); }
+    finally { flushBtn.disabled = false; }
+  }
+  if (cancelBtn) {
+    if (!confirm('Cancel this render?')) return;
+    cancelBtn.disabled = true;
+    try { await apiPost(`/api/jobs/${cancelBtn.dataset.jobId}/cancel`, {}); }
+    catch (ex) { alert('Cancel failed: ' + ex.message); }
+  }
+});
+
+// ── Polling ──────────────────────────────────────────────────────────────────
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+createPoller(async () => {
+  const data = await apiGet('/api/jobs');
+  renderJobTable(data.jobs);
+  return data.jobs.some(j => j.status === 'running');
+}, 2000, 10000);
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+
+loadScenes().catch(e => {
+  document.getElementById('scene-select').innerHTML =
+    `<option>Error: ${e.message}</option>`;
+});
+</script>
+</body>
+</html>

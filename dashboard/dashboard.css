@@ -1,0 +1,371 @@
+/* FluxRT Dashboard — extends viewer aesthetic */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background: #1a1a1a;
+  color: #eee;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+a { color: #7ab4f5; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Header ──────────────────────────────────────────────── */
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  background: #111;
+  border-bottom: 1px solid #333;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ccc;
+  letter-spacing: 0.03em;
+}
+
+.back-link {
+  font-size: 18px;
+  color: #888;
+  line-height: 1;
+}
+.back-link:hover { color: #eee; text-decoration: none; }
+
+/* ── Layout ──────────────────────────────────────────────── */
+
+main {
+  padding: 24px;
+  max-width: 1400px;
+}
+
+section { margin-bottom: 32px; }
+
+h2 {
+  color: #999;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 12px 0;
+}
+
+/* ── Launch panel ────────────────────────────────────────── */
+
+details.launch-panel {
+  background: #222;
+  border: 1px solid #383838;
+  border-radius: 6px;
+  padding: 0;
+}
+
+details.launch-panel summary {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+details.launch-panel summary::before {
+  content: '▶';
+  font-size: 10px;
+  transition: transform 0.15s;
+}
+details.launch-panel[open] summary::before { transform: rotate(90deg); }
+
+.launch-form {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px 20px;
+  border-top: 1px solid #333;
+}
+
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field.wide { grid-column: 1 / -1; }
+
+label {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+input[type="number"],
+input[type="text"],
+select {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #eee;
+  padding: 6px 8px;
+  font-size: 13px;
+  width: 100%;
+}
+input[type="number"]:focus,
+select:focus { outline: 1px solid #7ab4f5; border-color: #7ab4f5; }
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #7ab4f5;
+}
+
+.range-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.range-val {
+  font-size: 13px;
+  color: #ccc;
+  min-width: 36px;
+  text-align: right;
+}
+
+.launch-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding-top: 4px;
+}
+
+button {
+  background: #2a2a2a;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: #eee;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+button:hover { background: #353535; border-color: #7ab4f5; color: #fff; }
+button:active { background: #1e1e1e; }
+button:disabled { opacity: 0.4; cursor: default; }
+
+button.primary {
+  background: #1a3a5c;
+  border-color: #3a7bd5;
+  color: #9ec8ff;
+  font-weight: 600;
+}
+button.primary:hover { background: #1e4470; border-color: #7ab4f5; color: #fff; }
+
+button.danger { border-color: #7a3030; color: #f07070; }
+button.danger:hover { background: #3a1a1a; border-color: #e05050; }
+
+#launch-error {
+  font-size: 12px;
+  color: #f07070;
+  display: none;
+}
+
+/* ── Status badges ───────────────────────────────────────── */
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badge-running   { background: #3a2e00; color: #f5c842; border: 1px solid #6a5200; }
+.badge-done      { background: #0d2e0d; color: #5ecf5e; border: 1px solid #1d5a1d; }
+.badge-failed    { background: #2e0d0d; color: #f07070; border: 1px solid #6a1a1a; }
+.badge-cancelled { background: #222;    color: #888;    border: 1px solid #444; }
+
+/* ── Jobs table ──────────────────────────────────────────── */
+
+.jobs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.jobs-table th {
+  text-align: left;
+  padding: 6px 10px;
+  color: #666;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #333;
+}
+.jobs-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #282828;
+  vertical-align: middle;
+}
+.jobs-table tr:last-child td { border-bottom: none; }
+.jobs-table tr:hover td { background: #202020; }
+
+.scene-name { color: #ccc; font-weight: 500; }
+.params-summary { color: #666; font-size: 12px; }
+.elapsed { font-variant-numeric: tabular-nums; color: #888; }
+.started { color: #666; font-size: 12px; }
+
+.actions { display: flex; gap: 6px; align-items: center; }
+.actions button { padding: 3px 10px; font-size: 12px; }
+
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+}
+
+/* ── Job detail — info panel ─────────────────────────────── */
+
+.info-panel {
+  background: #222;
+  border: 1px solid #383838;
+  border-radius: 6px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px 24px;
+}
+
+.info-item label {
+  display: block;
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 3px;
+}
+.info-item .value {
+  font-size: 13px;
+  color: #ddd;
+}
+
+/* ── Image grid (mirrors viewer/style.css) ───────────────── */
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.item {
+  position: relative;
+  cursor: zoom-in;
+}
+
+.item h2 {
+  color: #888;
+  font-weight: normal;
+  font-size: 14px;
+  margin: 0 0 6px 0;
+}
+
+.item img {
+  display: block;
+  image-rendering: pixelated;
+  border: 1px solid #444;
+  background: #000;
+}
+
+.item img.error {
+  opacity: 0.3;
+  outline: 2px dashed #c44;
+}
+
+/* Zoom lens */
+.lens {
+  display: none;
+  position: fixed;
+  width: 200px; height: 200px;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.8);
+}
+.lens canvas { display: block; image-rendering: pixelated; }
+
+/* Lightbox */
+#lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 200;
+  cursor: zoom-out;
+  align-items: center;
+  justify-content: center;
+}
+#lightbox.open { display: flex; }
+#lightbox img {
+  max-width: 95vw; max-height: 95vh;
+  image-rendering: pixelated;
+  border: 1px solid #555;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.9);
+}
+#lightbox-label {
+  position: fixed; bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  color: #aaa; font-size: 13px; pointer-events: none;
+}
+
+/* ── Log viewer ──────────────────────────────────────────── */
+
+.log-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid #333;
+  margin-bottom: 0;
+}
+
+.log-tab {
+  padding: 6px 16px;
+  font-size: 12px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #666;
+  cursor: pointer;
+  border-radius: 0;
+}
+.log-tab:hover { background: #222; color: #ccc; }
+.log-tab.active { color: #7ab4f5; border-bottom-color: #7ab4f5; }
+
+.log-pre {
+  background: #0d0d0d;
+  border: 1px solid #2a2a2a;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  padding: 12px;
+  font-size: 12px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+  height: 360px;
+  overflow-y: scroll;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin: 0;
+  color: #bbb;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.section-header h2 { margin: 0; }
