@@ -10,24 +10,19 @@ up = [ 0.0, 1.0, 0.0 ]
 pixelwidth = 200
 pixelheight = 200
 
-[envmap]
-type = "latlon"
-file = "polyhaven.com/street_lamp_1k.hdr"
-#file = "polyhaven.com/adams_place_bridge_1k.hdr"
-#file = "polyhaven.com/kloppenheim_02_1k.hdr"
-#file = "polyhaven.com/spruit_sunrise_1k.hdr"
-#file = "polyhaven.com/leadenhall_market_1k.hdr"
+[[pointlights]]
+position = [ 0.0, 5.0, 0.0 ]
+intensity = [ 20.0, 20.0, 20.0 ]
 
 [[meshes]]
-file = "simple/cube.obj"
+file = "blender/suzanne-smooth.obj"
+#accelerator = "none"
     [meshes.material]
     type = "diffuse"
     diffuse = [ 1.0, 0.5, 0.5 ]
-    alpha = 0.5
+    alpha = "alpha_cutout_stars.png"
     [[meshes.transform]]
     translate = [ 0.0, 1.2, 0.0 ]
-    [[meshes.transform]]
-    scale = [ 1.5, 1.5, 1.5 ]
 
 # Floor
 [[slabs]]
@@ -36,3 +31,4 @@ max = [ 1000.0, 0.0, 1000.0 ]
     [slabs.material]
     type = "diffuse"
     diffuse = [ 0.5, 0.5, 0.5 ]
+
