@@ -33,6 +33,20 @@ include_directories(external/stlloader)
 include_directories(external/cpptoml/include)
 include_directories(external/generator)
 
+# Generate a header containing the current git commit hash, regenerated on
+# every build so it stays accurate (used by --annotate to label output images).
+set(FLUXRT_BUILD_INFO_HEADER ${CMAKE_BINARY_DIR}/generated/build_info.h)
+add_custom_target(fluxrt_build_info ALL
+    COMMAND ${CMAKE_COMMAND}
+        -DSRC_DIR=${CMAKE_SOURCE_DIR}
+        -DTEMPLATE_FILE=${CMAKE_SOURCE_DIR}/cmake/build_info.h.in
+        -DDST_FILE=${FLUXRT_BUILD_INFO_HEADER}
+        -P ${CMAKE_SOURCE_DIR}/cmake/GenerateBuildInfo.cmake
+    BYPRODUCTS ${FLUXRT_BUILD_INFO_HEADER}
+    COMMENT "Generating build info header"
+    )
+include_directories(${CMAKE_BINARY_DIR}/generated)
+
 set(SRCS
     src/artifacts.cpp
     src/AmbientOcclusion.cpp
@@ -65,6 +79,7 @@ set(SRCS
     src/scene.cpp
     src/scene-toml.cpp
     src/texture.cpp
+    src/textoverlay.cpp
     src/timer.cpp
     src/Triangle.cpp
     src/TriangleMesh.cpp
@@ -77,6 +92,7 @@ set(SRCS
     src/ValueArray.cpp
     )
 ADD_LIBRARY(fluxrt ${SRCS})
+add_dependencies(fluxrt fluxrt_build_info)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
     target_compile_options(fluxrt PUBLIC --coverage -O0 -g)
