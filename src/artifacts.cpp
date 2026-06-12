@@ -1,6 +1,7 @@
 #include "artifacts.h"
 #include "timer.h"
 #include "tonemapping.h"
+#include "textoverlay.h"
 
 Artifacts::Artifacts()
     : Artifacts(256, 256)
@@ -102,8 +103,13 @@ void Artifacts::writePixelColor()
         image.set(x, y, c, value);
     };
     finalPixelColor.forEachPixelChannel(divideByNumSamples);
-    writePNG(applyStandardGamma(finalPixelColor), prefix + "color.png");
     writeHDR(finalPixelColor, prefix + "color.hdr");
+
+    auto colorImage = applyStandardGamma(finalPixelColor);
+    if(!annotation.empty()) {
+        textoverlay::annotateImage(colorImage, annotation);
+    }
+    writePNG(colorImage, prefix + "color.png");
 
     //float maxValue = finalPixelColor.maxValueAllChannels();
     float maxValue = 4.0f;
@@ -114,6 +120,11 @@ void Artifacts::writePixelColor()
         image.set(x, y, c, value);
     };
     finalPixelColor.forEachPixelChannel(applyToneMap);
-    writePNG(applyStandardGamma(finalPixelColor), prefix + "color_tone_mapped.png");
+
+    auto toneMappedImage = applyStandardGamma(finalPixelColor);
+    if(!annotation.empty()) {
+        textoverlay::annotateImage(toneMappedImage, annotation);
+    }
+    writePNG(toneMappedImage, prefix + "color_tone_mapped.png");
 }
 

@@ -2,6 +2,9 @@
 #include <unistd.h>
 #include <iostream>
 #include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 #include <atomic>
 #include <signal.h>
 
@@ -17,6 +20,8 @@
 #include "Renderer.h"
 #include "Logger.h"
 #include "LatLonEnvironmentMap.h"
+#include "filesystem.h"
+#include "build_info.h"
 
 std::atomic<bool> flushImmediate(false); // Flush the color output as soon as possible
 
@@ -48,6 +53,7 @@ int main(int argc, char ** argv)
     struct {
         bool help = false;
         bool verbose = false;
+        bool annotate = false;
         unsigned int flushTimeout = 0;
         unsigned int numThreads = 1;
         unsigned int samplesPerPixel = 1;
@@ -73,6 +79,7 @@ int main(int argc, char ** argv)
     // General
     argParser.addFlag('h', "help", options.help);
     argParser.addFlag('v', "verbose", options.verbose);
+    argParser.addFlag('A', "annotate", options.annotate);
     argParser.addArgument('f', "flushtimeout", options.flushTimeout);
     argParser.addArgument('t', "threads", options.numThreads);
     argParser.addArgument('s', "spp", options.samplesPerPixel);
@@ -157,6 +164,17 @@ int main(int argc, char ** argv)
     scene.buildAccelerators();
 
     Artifacts artifacts(scene.sensor.pixelwidth, scene.sensor.pixelheight);
+
+    if(options.annotate) {
+        auto now = std::chrono::system_clock::now();
+        std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
+        std::ostringstream timestamp;
+        timestamp << std::put_time(std::localtime(&nowTime), "%Y-%m-%d %H:%M:%S");
+
+        artifacts.annotation.push_back(timestamp.str());
+        artifacts.annotation.push_back(std::string("commit ") + FLUXRT_GIT_COMMIT_HASH);
+        artifacts.annotation.push_back(std::get<1>(filesystem::splitFileDirectory(sceneFile)));
+    }
 
     auto resetFlushTimer = [&]() {
         if(options.flushTimeout != 0) {

@@ -1,0 +1,6 @@
+#ifndef __BUILD_INFO_H__
+#define __BUILD_INFO_H__
+
+#define FLUXRT_GIT_COMMIT_HASH "@FLUXRT_GIT_COMMIT_HASH@"
+
+#endif

@@ -1,6 +1,9 @@
 #ifndef __ARTIFACTS_H__
 #define __ARTIFACTS_H__
 
+#include <string>
+#include <vector>
+
 #include "scene.h"
 #include "image.h"
 #include "constants.h"
@@ -14,6 +17,10 @@ class Artifacts
 
         void writeAll();
         void writePixelColor();
+
+        // Lines of text to overlay onto the final color output images
+        // (e.g. date/time, commit hash). Empty by default.
+        std::vector<std::string> annotation;
 
         inline void accumPixelRadiance(int x, int y, const RadianceRGB & rad)
         {
