@@ -31,6 +31,8 @@ add_executable(boundingbox boundingbox.cpp)
 add_executable(argparse argparse.cpp)
 add_executable(valuearray valuearray.cpp)
 add_executable(transform transform.cpp)
+add_executable(interpolation interpolation.cpp)
+add_executable(color color.cpp)
 
 set(LIBS ${GTEST_BOTH_LIBRARIES} fluxrt pthread)
 
@@ -55,6 +57,8 @@ target_link_libraries(boundingbox ${LIBS})
 target_link_libraries(argparse ${LIBS})
 target_link_libraries(valuearray ${LIBS})
 target_link_libraries(transform ${LIBS})
+target_link_libraries(interpolation ${LIBS})
+target_link_libraries(color ${LIBS})
 
 add_test(AllTestsInVec3 vec3)
 add_test(AllTestsInVec4 vec4)
@@ -77,5 +81,7 @@ add_test(AllTestsInBoundingBox boundingbox)
 add_test(AllTestsInArgParse argparse)
 add_test(AllTestsInValueArray valuearray)
 add_test(AllTestsInTransform transform)
+add_test(AllTestsInInterpolation interpolation)
+add_test(AllTestsInColor color)
 
 
